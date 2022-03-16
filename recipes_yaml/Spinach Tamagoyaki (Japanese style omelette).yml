@@ -1,0 +1,56 @@
+cuisine: .japanese
+description: Bento food, eatable cold
+directions:
+  step:
+  - 'FRESH SPINACH: wash, drop in boiling water, boil 3 mins, drain, plunge in cold
+    water'
+  - 'FROZEN SPINACH: blach in boiling water and when defrosted plunge in cold water'
+  - Squeeze water out of spinach as hard as you can
+  - "Saut\xE9 onion on high for a couple of minutes, season with salt and pepper"
+  - Add garlic, after a couple of minutes add spinach. Remove after a couple of minutes
+  - Beat egg with soy sauce, sugar, black pepper.
+  - Coat pan with oil, turn to high, and cook 1/2 the beaten egg until just about
+    firm
+  - spread spinach on top, and pour remaining egg, making it penetrate into spinach
+  - When bottom is fully firm, flip over and cook another 3 mins
+  - Cool and cut in bit size chunks
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: spinach, fresh
+      preparation: or 200 g frozen
+      quantity: '500'
+    - measurement: small
+      name: onion
+      preparation: chopped finely
+      quantity: '1'
+    - measurement: clove
+      name: garlic
+      preparation: chopped finely
+      quantity: '0.5'
+    name: Spinach
+  - ingredient:
+    - measurement: large
+      name: eggs
+      preparation: null
+      quantity: '5'
+    - measurement: tsp
+      name: soy sauce
+      preparation: null
+      quantity: '1'
+    - measurement: pinch
+      name: sugar
+      preparation: null
+      quantity: null
+    - measurement: tbsp
+      name: oil, veg
+      preparation: null
+      quantity: '1'
+    name: Egg
+  serves: '4'
+source: http://justbento.com/handbook/recipe-collection-mains/spinach-tamagoyaki-spinach-packed-omelette
+tags:
+- omelette
+- bento
+title: Spinach Tamagoyaki (Japanese style omelette)

@@ -1,0 +1,67 @@
+cuisine: .iranian
+description: This is one of the most delicious ways I know to eat spinach. Spicy,
+  buttery and nutty, I could eat endless bowls full of gomen without tiring.
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - grind dried chilies, black mustard seeds, salt to a fine powder
+  - warm yogurt on low heat until it curdles
+  - remove from heat and let cool, then tip in colander to drain and leave in fridge
+  - cook spinach in pot, covered, on medium heat until wilted
+  - remove lid and keep cooking until water evaporates
+  - add olive oil, salt and keep cooking until slightly dried
+  - Tip into a bowl and add cheese broken with a fork, mit'mita, and butter
+ingredients:
+  group:
+  - ingredient:
+    - measurement: Tbsp
+      name: dried chilies
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: black mustard seeds
+      preparation: null
+      quantity: '0'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '0'
+    name: For the mit'mita
+  - ingredient:
+      measurement: g
+      name: yogurt
+      preparation: null
+      quantity: '500'
+    name: For the cheese
+  - ingredient:
+    - measurement: g
+      name: spinach
+      preparation: null
+      quantity: '500'
+    - measurement: Tbsp
+      name: olive oil
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: butter
+      preparation: null
+      quantity: '1'
+    name: For the spinach
+  serves: '4'
+source: null
+tags:
+- side dish
+title: Gomen - Spinach with Homemade Cheese

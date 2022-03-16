@@ -1,0 +1,83 @@
+cuisine: .chinese
+description: I always order this in my local Sichuan restaurant in Bethnal Green Road
+  in east London, Gourmet San. It's a great accompaniment to meat or fish. The yardlong
+  bean is also known as the long-podded cowpea, asparagus bean, snake bean, or Chinese
+  long bean - but if you can't find yardlong beans then just use green beans. You
+  can buy the preserved mustard cabbage in vacuum packs in Chinese supermarkets.
+directions:
+  '#text': '>
+
+
+
+
+
+
+    >'
+  step:
+  - Mix pork belly, light soy sauce, rice wine, sesame oil and marinade at least for
+    20m
+  - fry yardlong beans, for 4m, until tender, then set aside
+  - sitr fry chilies with the pork high heat
+  - add pickled cabbage, spring onions for 20s
+  - add light soy sauce, sugar, rice wine, water and stir in briefly before serving
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: pork belly
+      preparation: minced
+      quantity: '150'
+    - measurement: tsp
+      name: soy sauce
+      preparation: light
+      quantity: '1'
+    - measurement: tsp
+      name: rice wine
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: oil
+      preparation: sesame
+      quantity: '1'
+    name: Marinade
+  - ingredient:
+    - measurement: kg
+      name: yardlong beans
+      preparation: or green beans
+      quantity: '1'
+    - measurement: null
+      name: chilies. dried
+      preparation: null
+      quantity: '6'
+    - measurement: Tbsp
+      name: pickled cabbage
+      preparation: chopped finely
+      quantity: '5'
+    - measurement: null
+      name: spring onions
+      preparation: shredded
+      quantity: '3'
+    name: Sir fry
+  - ingredient:
+    - measurement: tsp
+      name: soy sauce
+      preparation: light
+      quantity: '1'
+    - measurement: pimch
+      name: sugar
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: rice wine
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: water
+      preparation: null
+      quantity: '1'
+    name: Sauce
+  serves: '6'
+source: null
+tags:
+- side
+title: Double-cooked yardlong bean

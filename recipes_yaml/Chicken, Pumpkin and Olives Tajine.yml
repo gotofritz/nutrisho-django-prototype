@@ -1,0 +1,125 @@
+cuisine: null
+description: If you have never cooked with whole spices before, this is a great recipe
+  to begin. The difference will persuade you to bin those dusty pre-ground spices
+  forever. A small mortar and pestle is all you need to get started.
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - Dry toast 4 cm cinnamon stick, 1 tsp Cumin Seeds and 1 tsp Coriander Seeds over
+    low-medium heat, 3-4 minutes, until fragrant, then grind to a fine powder
+  - Peel 4 Tomatoes in boiling water, then chop
+  - Rinse the 4 Chicken Thighs and legs on the bone and pat dry with kitchen roll
+    and season generously with the salt and pepper. Lightly flour the chicken pieces,
+    tapping to remove any excess
+  - "Saut\xE9 chicken in oil for 2 minutes per side or until they are lightly golden.\
+    \ Remove chicken from the pan and lower the heat."
+  - Add a little more oil if the pan is dry. Add the onions, garlic, ginger and chilies
+    and saute gently for 5 minutes or until the onion is soft.
+  - Add the tomatoes, spice mixture, and stock and bring to a simmer. Simmer for 10
+    minutes, crushing the tomatoes with the back of a wooden spoon to break them up.
+  - Return the chicken pieces to the pan along with the pumpkin, quartered lemon or
+    mandarin and olives and bring to a gentle simmer.
+  - Add a little more stock if necessary to ensure that the chicken pieces are nearly
+    covered in liquid. Cover the pan with a tight-fitting lid and simmer the mixture
+    gently for 40 minutes or until the chicken is cooked through. Squash the lemon
+    or mandarin quarters a few times during cooking with the back of a spoon to encourage
+    the juices to release into your stew.
+  - Increase the heat and simmer for a further 5-10 minutes or until the sauce is
+    nice and thick. Taste and season with salt and pepper.
+  - Remove from the heat and allow to cool slightly. Scatter with the chopped coriander
+    and serve.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: cm
+      name: cinnamon stick
+      preparation: null
+      quantity: '4'
+    - measurement: tsp
+      name: cumin seeds
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: coriander seeds
+      preparation: null
+      quantity: '1'
+    name: Spice Mixture
+  - ingredient:
+    - measurement: null
+      name: tomatoes
+      preparation: null
+      quantity: '4'
+    - measurement: null
+      name: chicken
+      preparation: thighs
+      quantity: '4'
+    - measurement: null
+      name: chicken
+      preparation: legs
+      quantity: '4'
+    - measurement: g
+      name: flour
+      preparation: plain
+      quantity: '50'
+    - measurement: Tbsp
+      name: oil
+      preparation: null
+      quantity: '4'
+    - measurement: null
+      name: onions
+      preparation: chopped fine
+      quantity: '1'
+    - measurement: cloves
+      name: garlic
+      preparation: minced
+      quantity: '5'
+    - measurement: g
+      name: ginger
+      preparation: peele
+      quantity: '5'
+    - measurement: null
+      name: chillies
+      preparation: fresh
+      quantity: '2'
+    - measurement: ml
+      name: stock
+      preparation: chicken
+      quantity: '500'
+    - measurement: null
+      name: squash
+      preparation: butternut
+      quantity: '0.5'
+    - measurement: null
+      name: lemon
+      preparation: mandarin orange
+      quantity: '1'
+    - measurement: handful
+      name: olives
+      preparation: green
+      quantity: '1'
+    - measurement: null
+      name: Sea salt and freshly ground black pepper
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: A small handful of coriander leaves
+      preparation: coarsely chopped
+      quantity: null
+    name: Casserole
+  serves: '4'
+source: null
+tags:
+- with rice
+title: Chicken, Pumpkin and Olives Tajine

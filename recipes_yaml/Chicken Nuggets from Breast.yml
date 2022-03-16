@@ -1,0 +1,88 @@
+cuisine: .western
+description: null
+directions:
+  step:
+  - Put the salt and spices in a small pot, and just enough of the water to reach
+    to about 2 cm above the mixture. Boil until the salt is dissolved then remove
+    from heat
+  - Mix with the rest of the water and lemon juice, and let cool
+  - Put the chicken breasts in a glass container or tupperware, and cover them with
+    the brine. Marinade 4 hr in the fridge
+  - If you leave them too long in the water by mistake, throw away the brine and soak
+    again 4 hr in plain water
+  - Take out the breasts from the brine, and pat them dry
+  - 'Prepare the breading trays: flour in the first, well beaten eggs mixed with some
+    milk in the second, all the breadcrumbs ingredients whizzed in a food processor
+    in the third'
+  - Cut the breasts into chunks approximately the size of a fig, then coat them in
+    flour, shake, dip them in the egg mixture, shake, finally coat them in the breading
+    mixture
+  - Can be deep fried when fresh
+  - "To cook from frozen, bake 18 min at 180\xB0"
+ingredients:
+  group:
+  - ingredient:
+    - measurement: L
+      name: water
+      preparation: null
+      quantity: '1.5'
+    - measurement: g
+      name: salt
+      preparation: null
+      quantity: '100'
+    - measurement: tbsp
+      name: ginger powder
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: paprika
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: ground pepper
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: lemon
+      preparation: squeezed
+      quantity: '2'
+    name: Brine
+  - ingredient:
+      measurement: kg
+      name: chicke breasts
+      preparation: null
+      quantity: '1'
+    name: Meat
+  - ingredient:
+    - measurement: g
+      name: plain corn flakes
+      preparation: null
+      quantity: '150'
+    - measurement: g
+      name: breadcrumbs
+      preparation: null
+      quantity: '75'
+    - measurement: tbsp
+      name: veg oil
+      preparation: null
+      quantity: '3'
+    name: Breadcrumbs mixture
+  - ingredient:
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '70'
+    - measurement: null
+      name: eggs
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: milk
+      preparation: null
+      quantity: '2'
+    name: Breading
+  serves: '4'
+source: null
+tags:
+- meat
+title: Chicken Nuggets from Brined Breast

@@ -1,0 +1,119 @@
+cuisine: .indian.punjab
+description: null
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - soak the beans overnight then replace water, mix together all ingredients and
+    cook until ready, 1.5 to 3 hrs
+  - "Mash 180 ml of the beans to a pur\xE8and reduce the cooking water to a 360 ml"
+  - crush the spices together, add the ginger and keep crushing. Add the remaining
+    ingredients, and make into a paste
+  - meanwhile peel the tomatoes and dice them
+  - cube the paneer or halloumi, and (deep) fry it in very hot oil
+  - fry the spices, in ghee 1-2 mins, add the tomatoes, 10 mins
+  - add everything else - beans (3) reduced water (4) fried paneers (8), 15 mins
+  - mix chopped coriander and serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: Tbsp
+      name: coriander leaves
+      preparation: chopped finelyt
+      quantity: '1'
+    - measurement: g
+      name: paneer
+      preparation: or halloumi or tofu
+      quantity: '250'
+    - measurement: null
+      name: tomatoes
+      preparation: peeled in boiling water
+      quantity: '4'
+  - ingredient:
+    - measurement: tsp
+      name: bicarbonate
+      preparation: null
+      quantity: '0.25'
+    - measurement: g
+      name: red kidney beans
+      preparation: dried
+      quantity: '410'
+    - measurement: l
+      name: water
+      preparation: null
+      quantity: '1.5'
+    - measurement: null
+      name: bay leaves
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: turmeric
+      preparation: null
+      quantity: '0.25'
+    - measurement: tsp
+      name: cayenne pepper
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: ghee
+      preparation: null
+      quantity: '1'
+    name: For beans
+  - ingredient:
+    - measurement: Tbsp
+      name: coriander seeds
+      preparation: null
+      quantity: '2.5'
+    - measurement: Tbsp
+      name: cumin seeds
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: fennel seeds
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: ajwain seeds
+      preparation: or oregano
+      quantity: '0.5'
+    name: Spice mix
+  - ingredient:
+    - measurement: Tbsp
+      name: ginger
+      preparation: peeled
+      quantity: '2'
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '120'
+    - measurement: tsp
+      name: garam masala
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: turmeric
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: lemon juice
+      preparation: null
+      quantity: '1.5'
+    name: Spice paste
+  serves: null
+source: null
+tags:
+- with rice
+title: Rajma with Paneer

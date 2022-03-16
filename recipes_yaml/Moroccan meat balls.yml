@@ -1,0 +1,151 @@
+cuisine: .moroccan
+description: null
+directions:
+  step:
+  - 'MEATBALLS:'
+  - Mix the breadcrumb with 2tbsp water and let stand for 10 mins
+  - Mix the meat with lemon juice, most of the mint, egg, breadcrumb mixture. Season
+    with salt and pepper.
+  - 'For grown ups: dry roast spices then grind together with garlic and add mixture
+    to meat'
+  - Form into small meatballs, half of a 1/4 cup measuring spoon
+  - Chill for a good 30 mins
+  - 'SAUCE:'
+  - "Saut\xE9 the chopped onion in oil with sugarn, when caramelized add the olives\
+    \ and saut\xE9 some more."
+  - Add tomatoes and seasonings and cook for 15 mins, mashing with a fork every so
+    often
+  - Quickly fry the meatballs on high heat to sear them, then drop them in the tomato
+    sauce and cook for 10 mins
+  - 'HARISSA:'
+  - Dry roast spices, then let cool in mortar and grind
+  - "Saut\xE9 chopped veg until soft (not everyone uses pepper and onion), then blend.\
+    \ Store covered in oil in fridge"
+  - 'COUSCOUS:'
+  - Mix the couscous with spring onions and mint, and pour over the hot stock mixed
+    with harissa. Cover with a plate and stand for 5 mins.
+  - Mix olive oil and lemon and serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: breadcrums
+      preparation: null
+      quantity: '50'
+    - measurement: g
+      name: lamb mince
+      preparation: null
+      quantity: '500'
+    - measurement: null
+      name: lemon
+      preparation: juiced
+      quantity: '1'
+    - measurement: g
+      name: mint
+      preparation: chopped coarsely
+      quantity: '20'
+    - measurement: null
+      name: egg
+      preparation: beaten lightly
+      quantity: '1'
+    - measurement: tsp
+      name: cumin seeds
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: coriander seeds
+      preparation: null
+      quantity: '2'
+    - measurement: clove
+      name: garlic
+      preparation: crushed
+      quantity: '1'
+    name: Meatballs
+  - ingredient:
+    - measurement: null
+      name: onion
+      preparation: chopped finely
+      quantity: '1'
+    - measurement: tsp
+      name: sugar
+      preparation: null
+      quantity: '1'
+    - measurement: handful
+      name: olives
+      preparation: chopped
+      quantity: '1'
+    - measurement: null
+      name: tomatoes
+      preparation: peeled
+      quantity: '4'
+    - measurement: tsp
+      name: ground cumin
+      preparation: null
+      quantity: '0.5'
+    name: Sauce
+  - ingredient:
+    - measurement: tbsp
+      name: each coriander, fennel, cumin seeds
+      preparation: null
+      quantity: '2'
+    - measurement: cloves
+      name: garlic
+      preparation: chopped
+      quantity: '4'
+    - measurement: null
+      name: red onion
+      preparation: chopped
+      quantity: '1'
+    - measurement: null
+      name: red pepper
+      preparation: chopped
+      quantity: '1'
+    - measurement: null
+      name: chillies
+      preparation: chopped
+      quantity: '6'
+    - measurement: tbsp
+      name: sweet paprika
+      preparation: null
+      quantity: '3'
+    - measurement: tbsp
+      name: dried mint
+      preparation: (optional)
+      quantity: '2'
+    - measurement: tbsp
+      name: olive oil
+      preparation: null
+      quantity: '1'
+    name: Harissa
+  - ingredient:
+    - measurement: g
+      name: couscous
+      preparation: null
+      quantity: '350'
+    - measurement: ml
+      name: stock
+      preparation: null
+      quantity: '350'
+    - measurement: bunch
+      name: spring onions
+      preparation: sliced thinly
+      quantity: '1'
+    - measurement: tbsp
+      name: harissa
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: olive oil
+      preparation: null
+      quantity: '3'
+    - measurement: null
+      name: lemon
+      preparation: juiced
+      quantity: '1'
+    name: Couscous
+  serves: '2'
+source: http://www.bbcgoodfood.com/recipes/12344/moroccan-lamb-meatballs-with-harissa-and-couscous
+  and
+tags:
+- meatballs
+title: Moroccan Lamb Meatballs

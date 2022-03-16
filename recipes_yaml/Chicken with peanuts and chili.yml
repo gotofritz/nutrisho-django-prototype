@@ -1,0 +1,93 @@
+cuisine: .chinese.sichuan
+description: Chengdu Ji
+directions:
+  '#text': '>'
+  step:
+  - dice chicken, same size as peanuts
+  - marinade chicken 15 m at least
+  - dice bamboo shots, bell pepper, same size as peanuts, and cut spring onions
+  - deep fry peanuts, 1m then set aside
+  - deep fry chicken, 1m then set aside
+  - remove oil, wipe wok, put 2 tbsp back in
+  - stir fry vegetables, 40 s
+  - add sauces, 10 s
+  - add chicken 30 s
+  - add cornstarch mixture, until thick, 30 s
+  - stir in peanutes (4), salt and pepper nad serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: chicken thighs
+      preparation: boneless
+      quantity: '375'
+    - measurement: tsp
+      name: cornstarch
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: rice wine
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: soy sauce
+      preparation: null
+      quantity: '1'
+    name: Marinade
+  - ingredient:
+    - measurement: tsp
+      name: sichuan peppers
+      preparation: null
+      quantity: '0.25'
+    - measurement: g
+      name: peanuts
+      preparation: null
+      quantity: '45'
+    name: To serve
+  - ingredient:
+    - measurement: g
+      name: bamboo shots
+      preparation: null
+      quantity: '75'
+    - measurement: g
+      name: peppers
+      preparation: null
+      quantity: '45'
+    - measurement: null
+      name: spring onions
+      preparation: whole
+      quantity: '2'
+    - measurement: null
+      name: fresh chili
+      preparation: deseeded
+      quantity: '1'
+    - measurement: tsp
+      name: ginger
+      preparation: peeled
+      quantity: '2'
+    - measurement: tsp
+      name: garlic cloves
+      preparation: chopped
+      quantity: '2'
+    - measurement: tsp
+      name: chili bean sauce
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: sugat
+      preparation: null
+      quantity: '1.5'
+    - measurement: tsp
+      name: cornstarch
+      preparation: dissolbed in 4 tbsp stock
+      quantity: '2'
+    - measurement: cup
+      name: oil. frying
+      preparation: null
+      quantity: '1'
+    name: Stir fry
+  serves: '4'
+source: null
+tags:
+- savoring china
+title: Chicken with peanuts and chili

@@ -1,0 +1,65 @@
+cuisine: .italian.modern
+description: null
+directions:
+  step:
+  - "Saut\xE8 garlic in olive oil, then add fennel seeds powder and fennel slices."
+  - Season and add cover. Cook on low for 20 mins
+  - "Saut\xE8 chopped onions in olive oil"
+  - When translucent add rice and stir a few minutes. Sweat with wine.
+  - When evaporated add first ladle of broth. Keep stirring and adding broth as needed.
+  - After 10 minutes add the fennel. Carry on cooking until end, ladeling broth and
+    stirring
+  - Mix in the butter, cheese, lemon zest and juice, stir in vigorously and let rest
+    covered a few minutes
+  - Serve with a dusting of chilli powder and fennel tops, with grated parmesan on
+    the side
+ingredients:
+  group:
+  - ingredient:
+    - measurement: tsp
+      name: fenel seeds
+      preparation: crushed to powder
+      quantity: '0.25'
+    - measurement: cloves
+      name: garlic
+      preparation: sliced
+      quantity: '2'
+    - measurement: bulbs
+      name: fennel
+      preparation: julienned (keep tops)
+      quantity: '2'
+    name: Fennel
+  - ingredient:
+    - measurement: g
+      name: carnaroli rice
+      preparation: null
+      quantity: '190'
+    - measurement: null
+      name: onions
+      preparation: chopped finely
+      quantity: '0.5'
+    - measurement: ml
+      name: broth
+      preparation: null
+      quantity: '600'
+    name: Risotto
+  - ingredient:
+    - measurement: tbsp
+      name: ricotta
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: lime
+      preparation: zested and chopped
+      quantity: '0.5'
+    - measurement: knob
+      name: butter
+      preparation: null
+      quantity: '1'
+    name: Mantecazione
+  serves: '4'
+source: http://www.jamieoliver.com/recipes/rice-recipes/fennel-risotto-with-ricotta-and-dried-chilli-risotto-ai-finocchi-con-ricotta-e-peperoncino/
+tags:
+- risotto
+- main
+title: Fennel Risotto

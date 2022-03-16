@@ -1,0 +1,100 @@
+cuisine: .indian.bengal
+description: Bandhgobhi Mong Tarkaru
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+    >'
+  step:
+  - soak the beans in water with bicarbonate at least 4 hours
+  - discard the water, boil for 1 hour until teneder
+  - "saut\xE8 the chillies, ginger and seeds in ghee"
+  - when browned add the assofoetida and curry leaves then a few seconds later add
+    the cabbage
+  - add the spices and salt, cook 20 mins - your choice whether you want them cruncy
+    or well done
+  - when the cabbage are cooked add the bans, lemon and molasses
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: beans
+      preparation: mung
+      quantity: '135'
+    - measurement: pinch
+      name: bicarbonate
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: water
+      preparation: null
+      quantity: null
+    name: For the beans
+  - ingredient:
+    - measurement: tsp
+      name: cumin seeds
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: black mustard seeds
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: fresch chillies
+      preparation: deseeded
+      quantity: '1'
+    - measurement: Tbsp
+      name: ginger
+      preparation: peeled
+      quantity: '1'
+    - measurement: tsp
+      name: assafoetida
+      preparation: null
+      quantity: '0.25'
+    - measurement: null
+      name: curry leaves
+      preparation: null
+      quantity: '10'
+    - measurement: Tbsp
+      name: ghee
+      preparation: null
+      quantity: '5'
+    name: Initial spice mix
+  - ingredient:
+    - measurement: g
+      name: cabbage
+      preparation: shredded finely
+      quantity: '500'
+    - measurement: tsp
+      name: turmeric
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: ground coriander
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: salt
+      preparation: null
+      quantity: null
+    name: For the tarkari
+  - ingredient:
+    - measurement: null
+      name: lemon
+      preparation: juiced
+      quantity: '0.5'
+    - measurement: tsp
+      name: molasses
+      preparation: or honey
+      quantity: '1'
+    name: To serve
+  serves: null
+source: null
+tags:
+- one dish meal
+title: Mung beans + cabbage Tarkari

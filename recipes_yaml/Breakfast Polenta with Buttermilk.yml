@@ -1,0 +1,42 @@
+cuisine: .serbian
+description: "Ka\u010Damak. A kind of Serbian twist on porridge, ka\u010Damak is delicious\
+  \ served with buttermilk or salty, feta-like cheese crumbled on top."
+directions:
+  '#text': '>'
+  step:
+  - Bring the water to a simmer in a large pot or saucepan. Whisk in the polenta in
+    a slow, steady stream and then stir constantly until the water returns to a simmer.
+  - Reduce the heat until the polenta only bubbles (and eventually splutters as it
+    thickens) very occasionally, the heat should be on the gentlest of flames. Stir
+    regularly and cook for an hour until the polenta is thick, but still stirable.
+    Add a splash of water as needed if the polenta becomes stiff.
+  - Before serving, stir in the salt and butter and mix through. Drizzle generously
+    with buttermilk and serve warm.
+ingredients:
+  group:
+    ingredient:
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '1250'
+    - measurement: g
+      name: flour
+      preparation: polenta
+      quantity: '165'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: butter
+      preparation: null
+      quantity: '4'
+    - measurement: null
+      name: buttermilk for drizzling
+      preparation: null
+      quantity: null
+  serves: '6'
+source: null
+tags:
+- breakfast
+title: Breakfast Polenta with Buttermilk

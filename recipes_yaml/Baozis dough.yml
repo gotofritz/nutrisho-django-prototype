@@ -1,0 +1,31 @@
+cuisine: .chinese
+description: Jiaozi
+directions:
+  '#text': '>'
+  step:
+  - sift together flour and baking powder
+  - spring the water in a bit a the time, while kneading, until you got a rubbery
+    dough
+  - cover with a damp cloth and rest 30 mins
+  - break into 2.5cm balls
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '315'
+    - measurement: Tbsp
+      name: baking powder
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '150'
+    name: Dough
+  serves: '20'
+source: null
+tags:
+- dough
+title: Baozis dough

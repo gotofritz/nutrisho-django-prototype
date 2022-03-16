@@ -1,0 +1,74 @@
+cuisine: .cajun
+description: null
+directions:
+  step:
+  - Heat 3 tablespoons oil in a 4- to 5-quart heavy pot (preferably cast-iron) over
+    moderately high heat until hot but not smoking.
+  - Pat chicken dry and sprinkle with salt. Brown chicken in 4 batches, turning, about
+    5 minutes per batch, transferring as browned to a large bowl.
+  - Add enough of remaining oil to pot to total 1/4 cup fat, then stir in flour with
+    a flat metal or wooden spatula and cook over moderately low heat, scraping back
+    and forth constantly (not stirring), until roux is the color of milk chocolate,
+    10 to 20 minutes.
+  - Add onion, bell pepper, and celery and cook, scraping back and forth occasionally,
+    until onion is softened, about 8 minutes.
+  - Add water to roux mixture and bring to a boil, stirring occasionally until roux
+    is incorporated. (Roux will appear curdled initially, but will come together as
+    it reaches a boil.) Add chicken and any juices accumulated in bowl, then simmer,
+    partially covered, until chicken is cooked through, 30 to 35 minutes. Stir in
+    cayenne, scallion greens, and salt to taste and serve over rice.
+  - "Cooks' note:\LStew improves in flavor if made 1 day ahead (without scallion greens)\
+    \ and cooled completely, uncovered, then chilled, covered. Reheat, then stir in\
+    \ scallion greens."
+ingredients:
+  group:
+    ingredient:
+    - measurement: Tbsp
+      name: vegetable oil
+      preparation: null
+      quantity: 3 to 6
+    - measurement: (3 to 3 1/2-lb)
+      name: chicken
+      preparation: cut into serving pieces
+      quantity: '1'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: 2 1/2
+    - measurement: cup
+      name: all-purpose flour
+      preparation: null
+      quantity: 1/2
+    - measurement: medium
+      name: onion
+      preparation: chopped
+      quantity: '1'
+    - measurement: medium
+      name: green bell pepper
+      preparation: chopped
+      quantity: '1'
+    - measurement: null
+      name: celery rib
+      preparation: chopped
+      quantity: '1'
+    - measurement: cups
+      name: water
+      preparation: null
+      quantity: '3'
+    - measurement: tsp
+      name: cayenne
+      preparation: or to taste
+      quantity: 1/4
+    - measurement: cup
+      name: thinly sliced scallion greens
+      preparation: null
+      quantity: 3/4
+    - measurement: null
+      name: 'Accompaniment: cooked white rice'
+      preparation: null
+      quantity: null
+  serves: 6 servings
+source: null
+tags:
+- with rice
+title: Cajun Chicken Stew

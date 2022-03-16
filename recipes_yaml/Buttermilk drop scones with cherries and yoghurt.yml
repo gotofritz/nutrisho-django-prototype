@@ -1,0 +1,64 @@
+cuisine: .english
+description: null
+directions:
+  step:
+  - Pre-heat the oven to 180C/gas mark 5.
+  - To make the dropped scones, sieve the flour and baking powder into a bowl, and
+    then add the sugar. Stir in the golden syrup, eggs and enough of the milk to form
+    a thick smooth batter that just drops off the spoon.
+  - Heat a griddle pan, girdle or non-stick frying pan and rub it with a little butter.
+    Drop spoonfuls of the mixture into the pan and let them cook for 3 minutes until
+    bubbles rise, then turn them over with a palette knife or spatula and cook for
+    another 2-3 minutes. Place them on kitchen paper while you are cooking the rest.
+  - "Serve warm with the cherries scattered over and a spoonful of yoghurt or cr\xE8\
+    me fra\xEEche, finished with a drizzle of clear honey."
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: cherries
+      preparation: stoned
+      quantity: '400'
+    - measurement: g
+      name: thick Greek yoghurt
+      preparation: null
+      quantity: 150-200
+    - measurement: Tbsp
+      name: clear honey for drizzling
+      preparation: null
+      quantity: 2-3
+  - ingredient:
+    - measurement: g
+      name: self-raising flour
+      preparation: null
+      quantity: '225'
+    - measurement: tsp
+      name: baking powder
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: granulated sugar
+      preparation: null
+      quantity: '40'
+    - measurement: Tbsp
+      name: golden syrup
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: eggs
+      preparation: beaten
+      quantity: '2'
+    - measurement: null
+      name: ml butter milk
+      preparation: null
+      quantity: 250-275
+    - measurement: null
+      name: Butter for greasing and to serve
+      preparation: null
+      quantity: null
+    name: For The Drop Scones
+  serves: Serves 4-6
+source: null
+tags:
+- dessert
+title: Buttermilk drop scones with cherries and yoghurt

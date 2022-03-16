@@ -1,0 +1,122 @@
+cuisine: .italian
+description: null
+directions:
+  '#text': '>'
+  step:
+  - Preheat the oven to 200C/400F/Gas6. Put a small pan of water on to boil, ready
+    to test the gnocchi. Bake the potatoes, unpeeled and whole, on a bed of rock salt
+    for about an hour. While still hot, scoop out the insides from the skin and press
+    through a sieve. Set aside to cool. When the potato feels warm, rather than hot,
+    mix in the chervil, egg, flour, nutmeg and salt. Knead into a fairly firm dough,
+    adding more flour if necessary. To test the consistency, pull off a small piece
+    and blanch in the boiling water for 4-5 minutes until it floats. If it breaks
+    up, add a little more flour to stiffen the dough. Roll the dough into two sausage
+    shapes, about 2cm/3/4-inch in diameter. Roll through flour and cut into 2.5cm/1-inch
+    pieces that look a bit like little pillows. Pinch each one lightly in the middle.
+    Set aside in the refrigerator.
+  - To make the broad bean and mint sauce, blanch the beans in a saucepan of lightly
+    salted boiling water for four minutes and refresh under cold running water. Drain,
+    then squeeze all the bright green beans out of their grey-green skin.
+  - Bring a large saucepan of lightly salted cold water to the boil. Heat the olive
+    oil in a large heavy-based saucepan and fry the chilli and garlic over a low heat
+    for 3-4 minutes. Throw in the skinless broad beans and mix well. Turn up the heat
+    and pour in the wine, stirring vigorously. Let the wine evaporate before adding
+    the butter and lemon juice and rind. As soon as the butter has melted, pour the
+    stock into the sauce, whisking well to blend and emulsify. Season to taste.
+  - Drop the gnocchi into the boiling water and cook for abut 2-4 minutes until they
+    float to the surface. Drain and stir into the sauce, giving the gnocchi a chance
+    to absorb the flavours. Check the seasoning and adjust if necessary.
+  - Serve immediately with Parmesan, a sprinkling of mint and a drizzle of extra-virgin
+    olive oil.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: large Maris Piper or Russet potatoes
+      preparation: null
+      quantity: '450'
+    - measurement: g
+      name: rock salt for baking
+      preparation: null
+      quantity: '100'
+    - measurement: Tbsp
+      name: finely chopped chervil
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: free-range egg
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: plain flour or Tipo '00' pasta flour
+      preparation: which I always use as it's softer and finer and gives a lighter
+        end result
+      quantity: '2'
+    - measurement: null
+      name: nutmeg
+      preparation: grated
+      quantity: 1/2
+    - measurement: large
+      name: pinch salt
+      preparation: null
+      quantity: '1'
+    name: For The Gnocchi
+  - ingredient:
+    - measurement: g
+      name: broad beans (weight after podding)
+      preparation: null
+      quantity: '350'
+    - measurement: tsp
+      name: olive oil
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: red chilli
+      preparation: deseeded and finely chopped
+      quantity: '1'
+    - measurement: null
+      name: garlic cloves
+      preparation: pressed
+      quantity: '2'
+    - measurement: null
+      name: ml/4fl oz white wine
+      preparation: null
+      quantity: '125'
+    - measurement: null
+      name: g/31/2oz unsalted butter
+      preparation: null
+      quantity: '100'
+    - measurement: null
+      name: The juice and finely grated rind of 1/2 unwaxed lemon
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: ml/31/2fl oz hot vegetable stock
+      preparation: null
+      quantity: '100'
+    - measurement: null
+      name: Salt and pepper
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: To serve
+      preparation: null
+      quantity: null
+    - measurement: g
+      name: /1\U00be oz Parmigiano Reggiano
+      preparation: shaved
+      quantity: '50'
+    - measurement: null
+      name: handful fresh mint
+      preparation: leaves only
+      quantity: '1'
+    - measurement: null
+      name: Extra virgin olive oil
+      preparation: null
+      quantity: null
+    name: For The Broad Bean And Mint Sauce
+  serves: Serves 4
+source: null
+tags:
+- pasta
+title: Chervil gnocchi with broad beans and mint

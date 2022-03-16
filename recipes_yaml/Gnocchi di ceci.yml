@@ -1,0 +1,68 @@
+cuisine: .italian
+description: Chickpea gnocchi with wild mushrooms
+directions:
+  '#text': '>'
+  step:
+  - boil the chickpeas until cooked, then put in a blender with a bit of the water
+  - add the boiled potatoes to the chickpeas
+  - add the flour and 1 egg yolk, make into a dough
+  - roll out into tubes, cut into small pieces, use a forc to make gnocchi
+  - "saut\xE8 onion, garlic, rosemary and bay leaves"
+  - "add the wild mushrooms and saut\xE8"
+  - boil water with sage in it for 10 mins, then cook the gnocchi in it
+  - toss in sauce, add a bit raw olive oil, serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: chickpeas
+      preparation: dry
+      quantity: '200'
+    - measurement: g
+      name: potatoes
+      preparation: boiled
+      quantity: '300'
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '100'
+    - measurement: null
+      name: egg yolk
+      preparation: null
+      quantity: '1'
+    name: For the gnocchi
+  - ingredient:
+    - measurement: Tbsp
+      name: olive oil
+      preparation: null
+      quantity: '3'
+    - measurement: null
+      name: onions
+      preparation: chopped
+      quantity: '1'
+    - measurement: null
+      name: garlic cloves
+      preparation: null
+      quantity: '1'
+    - measurement: handful
+      name: rosemary
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: bay leaves
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: sage leaves
+      preparation: null
+      quantity: '10'
+    - measurement: g
+      name: wild mushrroms
+      preparation: dried and soaked or fresh
+      quantity: '100'
+    name: For the sauce
+  serves: null
+source: null
+tags:
+- pasta
+title: Gnocchi di ceci

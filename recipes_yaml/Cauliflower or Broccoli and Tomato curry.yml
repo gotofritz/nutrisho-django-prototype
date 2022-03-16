@@ -1,0 +1,81 @@
+cuisine: .indian.maharashtra
+description: Gobhi Tamatar Sabji
+directions:
+  '#text': '>
+
+
+
+
+
+
+    >'
+  step:
+  - Make a cross cut at the bottom of the tomatoes, soak in boiling water a couple
+    of minutes, then rinse in fresh water and peel. Cut into eights
+  - Melt the ghee or oil / butter mixture over medium high heat. Fry the grated ginger,
+    chopped chilies, cumin seeds, mustard seeds until the mustard seeds begin to pop.
+  - Stir in cauliflower, ground coriander, turmeric, salt and stir a coupe of minutes
+  - Add the tomatoes, lower heat and cook with a tight fitting lid for 15 - 20 mins,
+    shaking the pan occasionally. The moisture in the tomatoes should be enough to
+    cook the cauliflowers.
+  - Remove the lid and increase the heat. Toss the cauliflower over high heat for
+    a minute or so. Sprinkle garam masala and chopped herbs, and serve
+ingredients:
+  group:
+  - ingredient:
+      measurement: g
+      name: tomatoes
+      preparation: medium
+      quantity: '500'
+    name: Tomatoes
+  - ingredient:
+    - measurement: Tbsp
+      name: ghee
+      preparation: or oil and butter mixture
+      quantity: '3'
+    - measurement: cm
+      name: ginger
+      preparation: peeled
+      quantity: '2.5'
+    - measurement: null
+      name: chilies
+      preparation: fresh
+      quantity: '2'
+    - measurement: tsp
+      name: cumin seeds
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: black mustard seeds
+      preparation: null
+      quantity: '0.5'
+    name: Spice mix
+  - ingredient:
+    - measurement: null
+      name: cauliflower
+      preparation: cut in florets
+      quantity: '1'
+    - measurement: Tbsp
+      name: ground coriander
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: turmeric
+      preparation: null
+      quantity: '0.5'
+    name: Cauliflower
+  - ingredient:
+    - measurement: Tbsp
+      name: coriander leaves
+      preparation: chopped
+      quantity: '3'
+    - measurement: tsp
+      name: garam masala
+      preparation: null
+      quantity: '1'
+    name: Serving
+  serves: null
+source: null
+tags:
+- with rice
+title: Cauliflower or Broccoli and Tomato curry

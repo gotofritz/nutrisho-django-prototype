@@ -1,0 +1,51 @@
+cuisine: null
+description: null
+directions:
+  step:
+  - Grease and line muffin tray
+  - Mix all dry ingredients in a bowl
+  - melt butter in microwave
+  - Beat buttermilk, melted butter, egg together
+  - Add blueberries
+  - spoon into muffin tray
+  - "bake for 20 mins at 205\xB0"
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '85'
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '190'
+    - measurement: tsp
+      name: baking powder
+      preparation: null
+      quantity: '2'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '50'
+    - measurement: pinch
+      name: salt
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: buttermilk
+      preparation: null
+      quantity: '215'
+    - measurement: null
+      name: egg
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: blueberries
+      preparation: null
+      quantity: '200'
+    name: null
+  serves: '12'
+source: Nigella goddess
+tags: []
+title: Blueberry Muffins

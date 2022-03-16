@@ -1,0 +1,56 @@
+cuisine: null
+description: Han Feng lightly flavors this silky, creamy soup with Ceylon tea, garnishing
+  it with a drizzle of roasted pumpkinseed oil. She always restocks her supply of
+  the lovely, nutty oil whenever she's in New York.
+directions:
+  step:
+  - 1. In a large enameled cast-iron casserole, cover the pumpkin with the stock and
+    bring to a boil. Simmer over moderate heat until the pumpkin is tender, about
+    35 minutes.
+  - 2. In a cup, steep the tea in the boiling water for 5 minutes. Strain the tea.
+  - 3. Working in batches, puree the soup in a blender and return it to the casserole.
+    Add the tea and bring to a simmer. Season the soup with salt and pepper.
+  - 4. In a small skillet, heat the vegetable oil. Add the scallion greens and cook
+    over high heat until softened, about 30 seconds. Season with salt.
+  - 5. Ladle the soup into small bowls and drizzle lightly with pumpkinseed oil. Garnish
+    with the scallion greens and serve.
+ingredients:
+  group:
+    ingredient:
+    - measurement: (3 lb)
+      name: sweet pumpkin
+      preparation: seeded
+      quantity: '1'
+    - measurement: cups
+      name: chicken stock
+      preparation: null
+      quantity: '6'
+    - measurement: tsp
+      name: Ceylon tea
+      preparation: null
+      quantity: '1'
+    - measurement: cup
+      name: boiling water
+      preparation: null
+      quantity: 1/2
+    - measurement: null
+      name: Salt and freshly ground pepper
+      preparation: null
+      quantity: null
+    - measurement: tsp
+      name: vegetable oil
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: scallions
+      preparation: green part only
+      quantity: '2'
+    - measurement: null
+      name: Roasted pumpkinseed oil
+      preparation: for drizzling
+      quantity: null
+  serves: null
+source: null
+tags:
+- soup
+title: Tea-Scented Pumpkin Soup

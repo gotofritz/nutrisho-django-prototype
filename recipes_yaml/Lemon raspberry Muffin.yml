@@ -1,0 +1,59 @@
+cuisine: .british
+description: null
+directions:
+  step:
+  - Grease and line muffin tray
+  - Melt butter in microwave and cool
+  - Flour, sugar, salt baking powder, zest stirred in large bowl
+  - Pour lemon juice into measuring cup, add milk till there is 1 cup
+  - Beat egg and add to lemon
+  - Add butter to lemon
+  - Mix flour mixture with milk/egg/butter concoction
+  - Add raspberries
+  - Spoon mixture into muffin cups
+  - "bake for 25 mins at 205\xB0"
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '57'
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '190'
+    - measurement: tsp
+      name: baking powder
+      preparation: null
+      quantity: '2'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '100'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '0.25'
+    - measurement: null
+      name: lemon
+      preparation: zested and juiced
+      quantity: '1'
+    - measurement: g
+      name: milk
+      preparation: null
+      quantity: '120'
+    - measurement: null
+      name: egg
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: raspberries
+      preparation: null
+      quantity: '150'
+    name: null
+  serves: '12'
+source: Nigella godess
+tags:
+- sweets
+title: Lemon raspberry Muffin

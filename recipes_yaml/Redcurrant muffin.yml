@@ -1,0 +1,55 @@
+cuisine: .america
+description: null
+directions:
+  step:
+  - Mix the sugar, egg yolks, oil, milk and lemon juice and zest together
+  - Sieve the flour into it
+  - Whisk the egg whites until stiff and fold into the cake mixture
+  - Stir in the redcurrants
+  - drop the mixture into greased bun or muffin tins
+  - "Bake for 15-20 minutes at 180\xB0"
+  - Cool on a wire rack, then dollop on a teaspoonful of creme fraiche and a few redcurrants
+  - Dust the cakes with icing sugar before serving
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '140'
+    - measurement: null
+      name: eggs
+      preparation: separated
+      quantity: '2'
+    - measurement: ml
+      name: veg oil
+      preparation: null
+      quantity: '120'
+    - measurement: ml
+      name: milk
+      preparation: null
+      quantity: '90'
+    - measurement: null
+      name: lemon
+      preparation: zested and juiced
+      quantity: '0.5'
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '170'
+    name: Muffin
+  - ingredient:
+    - measurement: dollops
+      name: "cr\xE8me fra\xEEche"
+      preparation: or quark
+      quantity: '10'
+    - measurement: null
+      name: icing sugar
+      preparation: null
+      quantity: null
+    name: Garnish
+  serves: '10'
+source: null
+tags:
+- sweets
+title: Redcurrant muffin

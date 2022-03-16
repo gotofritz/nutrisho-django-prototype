@@ -1,0 +1,101 @@
+cuisine: .chinese.sichuan
+description: Kipurou Ningmengjiang
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - cut chicken in strips and marinade at least 20 m, turning occasionally
+  - coat the chicken with first lot of cornstarch
+  - make batter with other cornstarch and remaining ingredients (use water if too
+    thick)
+  - coat chicken and deep fry in really hot oil, 5m
+  - remove oil, wipe wok, pour back 2 tbsp oil
+  - put sauce ingredients minus cornstarch into wok, bring to boil, then reduce, 30s
+  - add cornstarch, 30 s
+  - pour over chicken and serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: chicken breast
+      preparation: null
+      quantity: '350'
+    - measurement: tsp
+      name: rice wine
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: soy sauce
+      preparation: light
+      quantity: '2'
+    name: Meat marinade
+  - ingredient:
+    - measurement: Tbsp
+      name: cornstarch
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: cornstarch
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: flour
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: egg
+      preparation: beaten lightly
+      quantity: '1'
+    - measurement: cups
+      name: oil
+      preparation: frying
+      quantity: '2'
+    name: Batter
+  - ingredient:
+    - measurement: null
+      name: lemon
+      preparation: juiced
+      quantity: '1'
+    - measurement: null
+      name: lemon
+      preparation: sliced
+      quantity: '1'
+    - measurement: tsp
+      name: rice vinegar
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: sugar
+      preparation: null
+      quantity: '2'
+    - measurement: ml
+      name: stock
+      preparation: chicken
+      quantity: '60'
+    - measurement: tsp
+      name: oil
+      preparation: sesame
+      quantity: '1.5'
+    - measurement: tsp
+      name: cornstarch
+      preparation: dissolved in 1 tbs water
+      quantity: '1.5'
+    name: Sauce
+  serves: '4'
+source: null
+tags:
+- with rice
+title: Chicken Breast With Lemon Sauce

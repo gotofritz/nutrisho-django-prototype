@@ -1,0 +1,54 @@
+cuisine: .spain.murcia
+description: Patatas con Azafran. Great with fish, and a lemony alioli
+directions:
+  step:
+  - Cook onion in abundant olive oil for 5 mins on medium, then another 10 on low
+  - Add garlic and sweet paprika, bay and rosemary and cook another 5 mins
+  - Put the potatoes wedges in a bowl, salt, and pour saffron water over it. Leave
+    5 minutes
+  - Add potates to the pan, pepper, and cook for 30 mins, occasionally scraping from
+    bottom of the pan
+ingredients:
+  group:
+  - ingredient:
+    - measurement: threads
+      name: saffron
+      preparation: null
+      quantity: '25'
+    - measurement: tbsp
+      name: boiling water
+      preparation: null
+      quantity: '2'
+    name: Saffron infusion
+  - ingredient:
+    - measurement: null
+      name: onions
+      preparation: sliced thinly
+      quantity: '1'
+    - measurement: cloves
+      name: garlic
+      preparation: thinly sliced
+      quantity: '2'
+    - measurement: tsp
+      name: sweet paprika
+      preparation: null
+      quantity: '0.5'
+    - measurement: leaves
+      name: bay
+      preparation: null
+      quantity: '3'
+    - measurement: tbsp
+      name: rosemary
+      preparation: chopped
+      quantity: '0.5'
+    - measurement: g
+      name: potatoes
+      preparation: peeled and cut in wedges
+      quantity: '500'
+    name: Potatoes
+  serves: '2'
+source: Moro Cookbook 2
+tags:
+- tapa
+- side
+title: Potatoes with Saffron

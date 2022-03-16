@@ -1,0 +1,46 @@
+cuisine: .british
+description: null
+directions:
+  step:
+  - Preheat oven to 180c.
+  - Mix carrot, parsley, cheese and flour.
+  - In another bowl, whisk egg, buttermilk and oil.
+  - Add this to dry ingredients and mix.
+  - Spoon into muffin cases (makes 12) and bake for 20-25 mins.
+ingredients:
+  group:
+    ingredient:
+    - measurement: null
+      name: carrot
+      preparation: grated
+      quantity: '1'
+    - measurement: stalks
+      name: parsley
+      preparation: chopped
+      quantity: '15'
+    - measurement: g
+      name: cheddar
+      preparation: grated
+      quantity: '60'
+    - measurement: g
+      name: self raising flour
+      preparation: null
+      quantity: '220'
+    - measurement: null
+      name: egg
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: buttermilk
+      preparation: null
+      quantity: '180'
+    - measurement: ml
+      name: oil
+      preparation: null
+      quantity: '120'
+    name: null
+  serves: '12'
+source: null
+tags:
+- snack
+title: Savoury Carrot Muffin

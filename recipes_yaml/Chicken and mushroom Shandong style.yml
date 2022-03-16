@@ -1,0 +1,51 @@
+cuisine: null
+description: null
+directions:
+  step:
+  - combine chicken breast, egg white, cornstartch and let stand, 10m
+  - squeeze the ginger through a muslin into the ginger, rice wine. Keep 1 tsp of
+    the ginger
+  - Deep fry the chicken, then stir fry with the dried mushrooms, 20s
+  - Add hoisin sauce, yellow bean paste, stir until warm, serve.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: chicken breast
+      preparation: diced
+      quantity: '250'
+    - measurement: null
+      name: egg white
+      preparation: beaten until frothy
+      quantity: '1'
+    - measurement: tbsp
+      name: cornstartch
+      preparation: null
+      quantity: '1.5'
+    name: Batter
+  - ingredient:
+    - measurement: tbsp
+      name: ginger
+      preparation: grated
+      quantity: '1'
+    - measurement: tsp
+      name: rice wine
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: dried mushrooms
+      preparation: soaked 25m
+      quantity: '4'
+    - measurement: tbsp
+      name: hoisin sauce
+      preparation: null
+      quantity: '1.5'
+    - measurement: tbsp
+      name: yellow bean paste
+      preparation: null
+      quantity: '1.5'
+    name: Sauce
+  serves: null
+source: null
+tags: []
+title: Chicken and mushroom Shandong style

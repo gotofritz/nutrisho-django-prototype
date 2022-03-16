@@ -1,0 +1,84 @@
+cuisine: .mexican
+description: null
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - grill tomatoes, chilies, about 10 cm away from a hot grill until blistered, then
+    turn, about 6m
+  - Cool the vegetables, then coarsely chop them in a food processor with their juices
+  - "saut\xE9 onion in oil on medium heat until brown, about 10m"
+  - Increase heat, when hot add tomato chili mixture, until it sizzles, about 5m
+  - Add chicken stock, gently simmer until thick (but not too thick), about 15m
+  - Season
+  - Meanwhile prepare or reheat the tortillas, and fry the eggs sunny side up eggs
+    in oil
+  - Place two of the tortillas on each plate, then slide the eggs on them.
+  - Spoon the sauce over the eggs, garnish with coriander, onion, mexican cheese
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: tomatoes
+      preparation: null
+      quantity: '8'
+    - measurement: g
+      name: chilies
+      preparation: stemmed
+      quantity: '20'
+    - measurement: null
+      name: onion
+      preparation: sliced thin
+      quantity: '0.5'
+    - measurement: tbps
+      name: oil
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: stock
+      preparation: chicken
+      quantity: '350'
+    name: Salsa de jitomate cocida
+  - ingredient:
+    - measurement: null
+      name: eggs
+      preparation: null
+      quantity: '4'
+    - measurement: Tbsp
+      name: oil
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: tortillas
+      preparation: null
+      quantity: '4'
+    name: Eggs
+  - ingredient:
+    - measurement: Tbsp
+      name: coriander
+      preparation: chopped
+      quantity: '1'
+    - measurement: null
+      name: onion
+      preparation: sliced thin
+      quantity: '0.25'
+    - measurement: lump
+      name: cheese
+      preparation: mexican
+      quantity: '1'
+    name: Garnish
+  serves: '2'
+source: null
+tags:
+- with tortillas
+title: Huevos Rancheros

@@ -1,0 +1,54 @@
+cuisine: null
+description: Can add 50g dried figs soaked in water. Discard the water and add to
+  brownies in step 6
+directions:
+  step:
+  - non stick baking tray - grease and line with paper
+  - Preheat oven 180 C or 160 C on fan
+  - Chop almonds roughly and toast in oven on baking sheet for 8 mins exactly
+  - Melt chocolate and butter in bowl over a saucepan of boiling water
+  - Sift flour, baking powder and salt together
+  - Add flour mixture, beaten eggs, toasted almonds and sugar stir mixture till all
+    combined
+  - Pour mixture into cake tin
+  - Bake in oven for 15-20 mins
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: chocolate
+      preparation: null
+      quantity: '50'
+    - measurement: g
+      name: almonds
+      preparation: with skins
+      quantity: '50'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '110'
+    - measurement: "\xE8ggs"
+      name: beaten
+      preparation: null
+      quantity: '2'
+    - measurement: g
+      name: sugar, brown
+      preparation: null
+      quantity: '180'
+    - measurement: g
+      name: flour, plain
+      preparation: null
+      quantity: '50'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '0.25'
+    - measurement: tsp
+      name: baking powder
+      preparation: null
+      quantity: '1'
+    name: null
+  serves: '15'
+source: Delia Smith
+tags: []
+title: Brownies

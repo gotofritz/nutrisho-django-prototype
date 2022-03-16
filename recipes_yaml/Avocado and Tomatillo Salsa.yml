@@ -1,0 +1,41 @@
+cuisine: .mexican
+description: This salsa makes for a great alternative to more common tomato salsas
+  and is wonderful served with crab cakes, fish tacos or just as a dip for tortilla
+  chips. It is also great tucked into flour tortillas with fried eggs and a few shavings
+  of Manchego for breakfast.
+directions:
+  step:
+  - Place the tomatillos in a food processor and pulse until coarsely chopped. You
+    are looking for a textured salsa rather than a smooth puree. Remove the tomatillos
+    to a bowl and stir in the onion, garlic and coriander.
+  - Cut the avocados in half and scoop out the flesh with a tablespoon. Mash the avocados
+    roughly with a fork so that they are still chunky and fold them through the tomatillo
+    mixture. Taste and season generously with salt.
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: tomatillos
+      preparation: husked and rinsed well
+      quantity: '400'
+    - measurement: null
+      name: onions
+      preparation: finely chopped
+      quantity: '0.5'
+    - measurement: cloves
+      name: garlic
+      preparation: minced
+      quantity: '2'
+    - measurement: bunch
+      name: coriander leaves
+      preparation: coarsely chopped
+      quantity: '1'
+    - measurement: null
+      name: avocados
+      preparation: null
+      quantity: '2'
+  serves: null
+source: null
+tags:
+- dip
+title: Avocado and Tomatillo Salsa

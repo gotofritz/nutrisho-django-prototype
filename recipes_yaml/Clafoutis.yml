@@ -1,0 +1,55 @@
+cuisine: .french.classic
+description: Classic French Cherry Dessert
+directions:
+  step:
+  - Wash and rinse the cherries. In theory, they shouldn't be pitted.
+  - Beat the egg as for an omlette, add a pinch of salt and then the sugar
+  - Sift the flour over the mixture, mix until smooth
+  - Melt the butter, let it cool a little, and add to the mixture. Thin with the milk.
+  - Butter a baking dish, scatter the cheeries in it, and pour the mix over it. Sprinkle
+    a few knob of butter on top
+  - "Bake 210\xB0 for 20 mins until it begins to brown"
+  - Sprinkle vanilla sugar and serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: eggs
+      preparation: null
+      quantity: '4'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '125'
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '80'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '60'
+    - measurement: ml
+      name: milk
+      preparation: null
+      quantity: '250'
+    name: Dough
+  - ingredient:
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '20'
+    - measurement: g
+      name: black cherries
+      preparation: null
+      quantity: '500'
+    - measurement: packet
+      name: vanilla sugar
+      preparation: null
+      quantity: '1'
+    name: Misc
+  serves: '6'
+source: http://cuisine.larousse.fr/recettes/detail/clafoutis
+tags:
+- sweet
+title: Clafoutis

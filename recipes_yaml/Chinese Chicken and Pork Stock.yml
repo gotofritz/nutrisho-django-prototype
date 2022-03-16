@@ -1,0 +1,59 @@
+cuisine: .chinese
+description: Keeps for 3 days fresh, 2 months frozen
+directions:
+  '#text': '>'
+  step:
+  - null
+  - Blanch the chicken and pork pieces by pouring boiling water over them to cover,
+    bringing back to boil, then discarding the water
+  - Cover meat again with cold water, bring to boil, skimming as it cooks.
+  - Lower heat, add remaining ingredients, simmer on low heat for 1.5 hours
+  - Remove chicken bones, add remaining ingredients, simmer for 2 hrs
+  - cool, and remove the fat from the top.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: kg
+      name: chicken neck
+      preparation: wings
+      quantity: '1'
+    - measurement: g
+      name: pork hock
+      preparation: with skin
+      quantity: '750'
+    - measurement: l
+      name: water
+      preparation: null
+      quantity: '4'
+    name: Meat
+  - ingredient:
+    - measurement: cm
+      name: ginger
+      preparation: unpeeld
+      quantity: '2.5'
+    - measurement: null
+      name: spring onion
+      preparation: chunks
+      quantity: '2'
+    - measurement: null
+      name: star aniseed
+      preparation: null
+      quantity: '0.5'
+    - measurement: cm
+      name: cassia bark
+      preparation: null
+      quantity: '2.5'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: peppercorns
+      preparation: white
+      quantity: '0.5'
+    name: Flavouring
+  serves: null
+source: null
+tags:
+- basics
+title: Chinese Chicken/Pork Stock 1

@@ -1,0 +1,92 @@
+cuisine: .italian.neaples
+description: null
+directions:
+  step:
+  - DOUGH. Make the dough by mixing the butter, sugar, half the eggs, pinch of salt
+    dissolved in water.
+  - Add flour and remaining eggs. Let dough rest overnight in fridge.
+  - FILLING. Cook milk, wheat, butter, pinch of salt for 10 mins on low
+  - Sieve ricotta and mix with sugar, then add to wheat mixture
+  - Add eggs and flavourings
+  - CAKE. Roll dough at 0.5 cm, and cover a cake tin bottom and sides. Put filling
+    in, and make a grid with 6 strips of dough
+  - "Bake 55 min at 180\xB0"
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '1250'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '500'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '170'
+    - measurement: g
+      name: egg
+      preparation: null
+      quantity: '250'
+    - measurement: null
+      name: lemon
+      preparation: zested
+      quantity: '1'
+    - measurement: null
+      name: orange
+      preparation: zested
+      quantity: '1'
+    name: Dough
+  - ingredient:
+    - measurement: g
+      name: cooked wheat
+      preparation: null
+      quantity: '200'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '100'
+    - measurement: ml
+      name: milk
+      preparation: null
+      quantity: '250'
+    - measurement: g
+      name: ricotta
+      preparation: null
+      quantity: '250'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '170'
+    - measurement: g
+      name: eggs
+      preparation: null
+      quantity: '75'
+    - measurement: g
+      name: egg yolks
+      preparation: null
+      quantity: '75'
+    - measurement: g
+      name: candied fruit
+      preparation: null
+      quantity: '75'
+    - measurement: pod
+      name: vanilla
+      preparation: null
+      quantity: '0.5'
+    - measurement: drops
+      name: orange blossom water
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: cinnamon
+      preparation: powder
+      quantity: '1'
+    name: Filling
+  serves: '6'
+source: null
+tags:
+- dessert
+title: Pastiera 2

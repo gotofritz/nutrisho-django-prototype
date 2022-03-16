@@ -1,0 +1,63 @@
+cuisine: .chinese.yunnan
+description: Dandan mian
+directions:
+  '#text': '>'
+  step:
+  - cook noodles 3/4 m until barely tender, then drain, rinse under hot water, and
+    leave to drain
+  - meanwhile deep fry peanuts 1m, then let cool and chop
+  - chop the spring onion and chili
+  - mix the sauce ingredients in a bowl, then add the noodles and stir
+  - divide into individual portions,  sprinkle the peanuts and spring onions on top
+ingredients:
+  group:
+  - ingredient:
+      measurement: g
+      name: noodles
+      preparation: flat
+      quantity: '220'
+  - ingredient:
+    - measurement: g
+      name: sesame paste
+      preparation: null
+      quantity: '75'
+    - measurement: ml
+      name: oil
+      preparation: null
+      quantity: '60'
+    - measurement: Tbsp
+      name: chilli oil
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: oil
+      preparation: sesame
+      quantity: '2'
+    - measurement: Tbsp
+      name: soy sauce
+      preparation: light
+      quantity: '2'
+    name: Sauce
+  - ingredient:
+    - measurement: g
+      name: peanuts
+      preparation: null
+      quantity: '60'
+    - measurement: ml
+      name: oil
+      preparation: deep frying
+      quantity: '250'
+    - measurement: g
+      name: spring onions
+      preparation: whole
+      quantity: '45'
+    - measurement: null
+      name: chillies
+      preparation: fresh
+      quantity: '1'
+    name: Garnish
+  serves: '4'
+source: null
+tags:
+- noodles
+title: Spicy Sesame Noodles

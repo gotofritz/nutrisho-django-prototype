@@ -1,0 +1,81 @@
+cuisine: .italian.sardinian
+description: The original is made with pasta - fregola o ditaloni.
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - soak chickpeas in water overnight in the fridge, to prevent fermenting
+  - after soaking, change the chickpeas water, add pinch bicarbonate, and cook for
+    1h, then drain
+  - peel the tomatoes
+  - chop onion, garlic clove, parsley
+  - "saut\xE8 gently in oil 1m, covered"
+  - dice (1cm) potato and add, 3m
+  - slice fennel thinly and add, 3m
+  - chop the peeled tomatoes
+  - add the tomaotes, stir a bit
+  - add the fregola / quinoa, stir fry to coat with oil
+  - add the chickpeas and water / stock, salt and pepper
+  - cook until pasta / quinoa cooked, 10-15 mins
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: chickpeas
+      preparation: dried
+      quantity: '60.0'
+    - measurement: pinch
+      name: bicarbonate
+      preparation: null
+      quantity: null
+    name: Chickpeas
+  - ingredient:
+    - measurement: null
+      name: onions
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: garlic
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: parsley
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: potatoes
+      preparation: null
+      quantity: '200'
+    - measurement: g
+      name: fennel
+      preparation: null
+      quantity: '200'
+    name: Saut\U00e8 base
+  - ingredient:
+    - measurement: g
+      name: tomatoes
+      preparation: null
+      quantity: '120'
+    - measurement: g
+      name: fregola pasta
+      preparation: or orzo
+      quantity: '200.0'
+    name: Step 2
+  serves: '2'
+source: null
+tags:
+- soup
+title: Chickpeas, fennel, and fregola (or quinoa) soup

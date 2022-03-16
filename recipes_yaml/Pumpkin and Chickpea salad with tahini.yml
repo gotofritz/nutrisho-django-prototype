@@ -1,0 +1,69 @@
+cuisine: .fusion.middle east
+description: null
+directions:
+  step:
+  - Cook the chickpeas for an hour or two with some onion and garlic, then drain and
+    discard the vegetable
+  - "Mix the salad ingredients in a bowl, then spread on a paper lined baking tray\
+    \ and bake 15-25 mins at 220\xB0"
+  - Mix the dressing ingredients in a bowl, thinning with water as required.
+  - Put the baked ingredients in a bowl, season, and pour the dressing on top
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: chickpeas, dried
+      preparation: soaked overnigh
+      quantity: '250'
+    - measurement: clove
+      name: garlic
+      preparation: crushed
+      quantity: '1'
+    - measurement: null
+      name: onion
+      preparation: chopped finely
+      quantity: '0.5'
+    - measurement: tbsp
+      name: coriander leaves
+      preparation: chopped
+      quantity: '4'
+    - measurement: g
+      name: pumpkin
+      preparation: cubed, 3cm, prepared weight
+      quantity: '800'
+    - measurement: tsp
+      name: allspice
+      preparation: null
+      quantity: '0.5'
+    - measurement: tbsp
+      name: olive oil
+      preparation: null
+      quantity: '2'
+    name: Salad
+  - ingredient:
+    - measurement: clove
+      name: garlic
+      preparation: crushed into a paste with salt
+      quantity: '1'
+    - measurement: tbsp
+      name: lemon juice
+      preparation: null
+      quantity: '3.5'
+    - measurement: tbsp
+      name: tahini
+      preparation: null
+      quantity: '3'
+    - measurement: tbsp
+      name: water
+      preparation: null
+      quantity: '3'
+    - measurement: tbsp
+      name: oil, olive
+      preparation: null
+      quantity: '2'
+    name: Dressing
+  serves: '4'
+source: Moro
+tags:
+- salad
+title: Pumpkin and Chickpea salad with tahini

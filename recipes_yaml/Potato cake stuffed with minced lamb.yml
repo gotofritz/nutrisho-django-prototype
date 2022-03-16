@@ -1,0 +1,99 @@
+cuisine: .iran
+description: The patties can be kept in the fridge uncooked for up to two days, if
+  coered in flour.
+directions:
+  step:
+  - Boil the potatoes whole in salted water until soft but not mushy, then drain for
+    10 mins and dry
+  - Peel and mash while they are still warm
+  - Mix in the flour and season
+  - "Saut\xE9 the onions in butter, then add the spices for 1 min"
+  - Add the lamb, stirring every so often, for 5 - 6 mins.
+  - Mix in the pine nuts, tomatoes, parsley, water, and season, then let cool.
+  - With dry hands covered in flour, split the dough into 4 balls. Ladle the filling
+    over each, and fold over to create a patty which encloses the filling
+  - Shallow fry carefully until brown, then dry on paper towels
+  - Serve with a salad and a yogurt and crushed garlic mixture.
+  - The uncooked patties can be kept in the fridge for up to two days if covered in
+    flour
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: potatoes
+      preparation: with peel
+      quantity: '700'
+    - measurement: tbsp
+      name: flour
+      preparation: null
+      quantity: '2'
+    name: Dough
+  - ingredient:
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '25'
+    - measurement: tbsp
+      name: olive oil
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: onion
+      preparation: chopped
+      quantity: '1'
+    - measurement: tsp
+      name: cinnamon
+      preparation: ground
+      quantity: '1'
+    - measurement: tsp
+      name: pepper
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: nutmeg
+      preparation: null
+      quantity: '0.5'
+    - measurement: pods
+      name: cardamom
+      preparation: seeds ground to a fine power
+      quantity: '3'
+    - measurement: null
+      name: cloves
+      preparation: ground to powder with a pinch of salt
+      quantity: '3'
+    - measurement: g
+      name: lamb shoulder
+      preparation: minced
+      quantity: '200'
+    - measurement: g
+      name: pine nuts
+      preparation: lightly toasted
+      quantity: '50'
+    - measurement: tbsp
+      name: "tomato pur\xE9"
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: parsley
+      preparation: chopped
+      quantity: '3'
+    name: Filling
+  - ingredient:
+    - measurement: g
+      name: yogurt
+      preparation: null
+      quantity: '200'
+    - measurement: clove
+      name: garlic
+      preparation: mashed into a paste with salt
+      quantity: '1'
+    - measurement: tbsp
+      name: milk
+      preparation: null
+      quantity: '2'
+    name: Serve with
+  serves: '4'
+source: Moro
+tags:
+- snack
+title: Potato cake stuffed with minced lamb

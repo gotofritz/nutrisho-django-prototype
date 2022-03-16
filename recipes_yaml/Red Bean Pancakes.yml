@@ -1,0 +1,88 @@
+cuisine: .chinese.shanghai
+description: Hong Dou Sa Biang
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - Soak the beans overnight, change the water and bring to violent boil, 10 mins.
+    Change the water and cook with bicarbonate 45 mins to 75 mins
+  - Force through a sieve, then put beans and liquid through muslin and squeeze out
+    water
+  - cook with sugar until mixed in and glossy. when done add a pinch of salt and mix
+    well
+  - Whiz egg and water in food processor. Add flour, cornstarch, and oil and whizz
+    until you get a thin batter. Let stand for 10 mins
+  - Mix the frying oils, and smear 1/5 over a hot pan, rubbing with paper towel. Pour
+    1/5 of batter in and swirl to make a pancake
+  - After 30 secs spread 1/5 bean paste over centre of pancake, fold sides over it,
+    flatten with spatulla, and cook another 20 secs, turn over and cook another 30
+    s
+  - Repeat for remaining 4 pancakes
+  - Slice, dust sugar over the top, and serve hot or cold. You can also dust sesame
+    seeds over it or kinako
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: beans
+      preparation: aduki
+      quantity: '70'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '50'
+    - measurement: pinch
+      name: bicarbonate
+      preparation: null
+      quantity: '1'
+    - measurement: pinch
+      name: salt
+      preparation: null
+      quantity: '1'
+    name: Red beans paste
+  - ingredient:
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '250'
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '75'
+    - measurement: Tbsp
+      name: cornstarch
+      preparation: null
+      quantity: '3'
+    - measurement: null
+      name: egg
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: oil
+      preparation: null
+      quantity: '2'
+    name: Batter
+  - ingredient:
+    - measurement: tsp
+      name: oil
+      preparation: sesame
+      quantity: '2'
+    - measurement: tsp
+      name: oil
+      preparation: null
+      quantity: '3'
+    name: Frying oil
+  serves: '8'
+source: null
+tags:
+- desserts
+title: Red Bean Pancakes

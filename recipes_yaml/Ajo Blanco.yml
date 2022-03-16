@@ -1,0 +1,51 @@
+cuisine: .spain.andalusia
+description: The classic chilled soup from Malaga. Sometimes served with raisins or
+  melon instead of grapes
+directions:
+  step:
+  - Grind the almonds in a food processor as fine as possible.
+  - Add 5 tbsp of the water and run again until you get a smooth paste
+  - "Squeeze water off the bread and add, along with the garlic.\xF7"
+  - Add the olive oil, and then the rest of the water slowly until you have a soup
+    the consistency of single cream.
+  - Remove from food processor, add vinegar and season with salt and pepper
+  - Chill for at least an hour
+  - Share the grapes among the bowls when you serve
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: almonds, whole
+      preparation: blanched
+      quantity: '225'
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '750'
+    - measurement: g
+      name: bread, white
+      preparation: stale, crustless, soaked in water
+      quantity: '75'
+    - measurement: cloves
+      name: garlic
+      preparation: crushed to a paste with salt
+      quantity: '3'
+    - measurement: tbsp
+      name: oil, olive
+      preparation: null
+      quantity: '3'
+    - measurement: tbsp
+      name: vinegar, sweet
+      preparation: null
+      quantity: '3'
+    - measurement: g
+      name: grapes, white
+      preparation: null
+      quantity: '200'
+  serves: '4'
+source: Moro 1
+tags:
+- soup
+- snack
+- cold
+title: Ajo Blanco

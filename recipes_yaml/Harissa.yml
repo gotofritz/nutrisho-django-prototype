@@ -1,0 +1,41 @@
+cuisine: null
+description: null
+directions:
+  '#text': '>'
+  step:
+  - soak chillies in warm water 40 mins
+  - drain and squeeze out water
+  - whizz everything, store in hars with a thin layer of olive oil on top up to 1
+    month in the fridge
+ingredients:
+  group:
+    ingredient:
+    - measurement: null
+      name: dried chillies
+      preparation: deseeded
+      quantity: '8'
+    - measurement: null
+      name: garlic cloves
+      preparation: crushed
+      quantity: '2'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: ground cumin
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: ground coriander
+      preparation: null
+      quantity: '0.5'
+    - measurement: ml
+      name: olive oil
+      preparation: null
+      quantity: '120'
+  serves: null
+source: null
+tags:
+- dip
+title: Harissa

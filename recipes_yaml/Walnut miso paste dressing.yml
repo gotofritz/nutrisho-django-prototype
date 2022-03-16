@@ -1,0 +1,35 @@
+cuisine: .japanese
+description: Just mix a little bit with boiled vegetables
+directions:
+  step:
+  - Dry roast the walnuts until you can smell them
+  - 'OPTIONAL: put them in a paper towel and rub them to remove most of the skin'
+  - Whizz in a food processor until fine
+  - Mix in the remaining ingredients
+  - Store in fridge for up to a week
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: walnuts
+      preparation: null
+      quantity: '35'
+    - measurement: tbsp
+      name: miso
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: mirin
+      preparation: or sake and more sugar
+      quantity: '1'
+    - measurement: tsp
+      name: sugar
+      preparation: null
+      quantity: '1'
+    name: null
+  serves: '8'
+source: http://justbento.com/handbook/johbisai/bento-filler-staple-walnut-miso-paste-blanched-vegetables
+tags:
+- bento
+- dressing
+title: Walnut miso paste dressing

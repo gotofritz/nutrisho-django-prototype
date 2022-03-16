@@ -1,0 +1,68 @@
+cuisine: .chinese.cantonese
+description: Do shi pau gu
+directions:
+  '#text': '>'
+  step:
+  - Marinate pork in shallow dish in fridge up to 4 hours
+  - braise in oven, turning occasionally, 1.5 hr at 160C, covered
+  - uncover, raise heat to 190C, another 20m
+  - skim fat and serve
+  - 'optional: to make a thicker sauce, pour juices into hot wok, add half cornstarch
+    mixture, bring to boil, cook 2m adding remaining half as required'
+ingredients:
+  group:
+    ingredient:
+    - measurement: kg
+      name: pork
+      preparation: belly on bone or meaty ribs
+      quantity: '1'
+    - measurement: g
+      name: spring onions
+      preparation: whole
+      quantity: '90'
+    - measurement: Tbsp
+      name: ginger
+      preparation: peeled
+      quantity: '2'
+    - measurement: Tbsp
+      name: garlic cloves
+      preparation: chopped
+      quantity: '1.5'
+    - measurement: Tbsp
+      name: fresh chili
+      preparation: deseeded
+      quantity: '1'
+    - measurement: Tbsp
+      name: black bean sauce
+      preparation: or 45g salted black beans
+      quantity: '2'
+    - measurement: Tbsp
+      name: sugar
+      preparation: brown
+      quantity: '1'
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '180'
+    - measurement: ml
+      name: rice wine
+      preparation: null
+      quantity: '80'
+    - measurement: ml
+      name: soy sauce
+      preparation: light
+      quantity: '60'
+    - measurement: Tbsp
+      name: coriander leaves
+      preparation: chopped
+      quantity: '1'
+    - measurement: Tbsp
+      name: cornstarch
+      preparation: dissolved in 1.5 tbsp water (optional)
+      quantity: '1'
+    name: Pork marinade
+  serves: '4'
+source: null
+tags:
+- with rice
+title: Pork ribs / tofu in black beans and chili

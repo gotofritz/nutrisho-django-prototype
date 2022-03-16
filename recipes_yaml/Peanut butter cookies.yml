@@ -1,0 +1,44 @@
+cuisine: .american
+description: Easy
+directions:
+  step:
+  - Mix all ingredients together and knead into a smooth dough
+  - Form into individual walnut sized balls
+  - Place on a baking tray lined with greaseproof paper and lightly flatten with a
+    fork
+  - "Bake 10 mins at 180\xB0"
+  - Cool on a wire rack for 10 mins
+  - Dust with icing sugar
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '70'
+    - measurement: tbsp
+      name: sugar
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: crunchy peanut butter
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: egg yolk
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: butter
+      preparation: room temperature
+      quantity: '50'
+    - measurement: null
+      name: icing sugar
+      preparation: for dusting
+      quantity: null
+    name: null
+  serves: '1'
+source: Paul Ranking
+tags:
+- biscuits
+title: Peanut butter cookies

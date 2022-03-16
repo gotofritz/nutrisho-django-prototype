@@ -1,0 +1,74 @@
+cuisine: .italy.sicily.traditional
+description: null
+directions:
+  step:
+  - Mix salt with aubergines, put them in a colander with a weight on it for an hour
+  - Dissolve the sugar in vinegar
+  - Remove filaments from celery stalks and cut them in 1cm pieces
+  - Pit the olives and cut in half
+  - "Saut\xE8 onion, add tomato and pur\xE8, cook on medium 10m"
+  - Season with salt and pepper, add celery, capers, olives, pine nuts, vinegar
+  - Cook until well mixed and dense, 10m
+  - Rinse the aubergines and fry with zucchini and peppers in a separate pot for 20m,
+    with a couple of tbs water and seasoning
+  - Mix with the sauce, cook another 5 mins
+  - Let cool and mix basil
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: onion, red
+      preparation: chopped
+      quantity: '1'
+    - measurement: stalk
+      name: celery
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: cherry tomatoes
+      preparation: null
+      quantity: '350'
+    - measurement: tbsp
+      name: "tomato pur\xE8e"
+      preparation: null
+      quantity: '1'
+    - measurement: tbso
+      name: pine nuts
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: olives
+      preparation: null
+      quantity: '10'
+    - measurement: tbsp
+      name: capers
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: sugar
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: cider vinegar
+      preparation: null
+      quantity: '100'
+    name: Sauce
+  - ingredient:
+    - measurement: large
+      name: aubergine
+      preparation: unpeeled, 1cm cube
+      quantity: '1'
+    - measurement: small
+      name: zucchini
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: peppers
+      preparation: null
+      quantity: '2'
+    name: Vegetables
+  serves: '4'
+source: http://aisapori.blogspot.de/search/label/Caponata
+tags:
+- starter
+title: Caponata

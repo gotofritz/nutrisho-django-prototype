@@ -1,0 +1,50 @@
+cuisine: .chinese
+description: Zhiima Lianzi Qiu, typical Moon Festival
+directions:
+  '#text': '>
+
+
+
+
+
+
+    >'
+  step:
+  - Make a dough on slightly oiled surface, and knead into a 40 cm long log, and then
+    into 15 balls 2.5 cm large
+  - Roll out into 6 cm disks.
+  - Divide lotus paste into 15  and rol into little balls, and place on center of
+    disk. Draw dough around lotus paste to form a ball.
+  - Spread sesame sees on a plate and roll the balls over them to coat them
+  - "Deep fry the balls 165\xB0 for 2.5 mins"
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      preparation: glutinous rice
+      quantity: '250'
+    - measurement: Tbsp
+      name: sugar
+      preparation: null
+      quantity: '3'
+    - measurement: mls
+      name: water
+      preparation: null
+      quantity: '180'
+    name: Dough
+  - ingredient:
+    - measurement: g
+      name: sweetened louts paste
+      preparation: null
+      quantity: '315'
+    - measurement: g
+      name: sesame seeds
+      preparation: null
+      quantity: '60'
+    name: Garnish
+  serves: null
+source: null
+tags:
+- desserts
+title: Sesame Lotus Balls

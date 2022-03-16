@@ -1,0 +1,59 @@
+cuisine: .moroccan
+description: null
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - put cous cous in a shallow bowl
+  - mix salt, water into the cous cous with your finger until all dissolved
+  - mix in olive oil
+  - steam over water, or the dish you are serving it with, for 20m
+  - pour back in the bowl
+  - mix water into the cous cous with a wooden spoon until all dissolved
+  - mix in butter and leave to rest, covered with a cloth for 15m
+  - put back in steamer for final 10-15 mins of main dish cooking time, then shape
+    into a mound. Pour main in the middle and serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: cous cous
+      preparation: null
+      quantity: '500'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '160'
+    - measurement: Tbsp
+      name: olive oil
+      preparation: null
+      quantity: '1'
+    name: For the First round
+  - ingredient:
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '160'
+    - measurement: Tbsp
+      name: butter
+      preparation: null
+      quantity: '2'
+    name: For the Second round
+  serves: null
+source: null
+tags:
+- cous cous
+title: Cous Cous

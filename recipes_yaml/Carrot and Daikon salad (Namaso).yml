@@ -1,0 +1,59 @@
+cuisine: .japanese
+description: Traditional new year salad (red and white symbolize luck)
+directions:
+  step:
+  - Rub the vegetables with salt, and let drain for a short while
+  - Squeeze all the water out firmly, and put vegetables in a bowl
+  - If you are using an optional fruit, add it to the squeezed vegetables
+  - Add the vinegar, lemon juice, and sugar, and mix.
+  - Add the julienned lemon peel
+  - Let it rest in the fridge overnight
+  - Keeps for at least a week
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: carrot, large
+      preparation: julienned
+      quantity: '1'
+    - measurement: chunk
+      name: daikon
+      preparation: julienned; 3 times the amount of carrots
+      quantity: '1'
+    - measurement: small
+      name: persimmon
+      preparation: julienned (optional)
+      quantity: '1'
+    - measurement: null
+      name: dates
+      preparation: chopped finely (optional)
+      quantity: '4'
+    - measurement: tbsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    name: Salad
+  - ingredient:
+    - measurement: tbsp
+      name: sugar
+      preparation: (if using optional fruit use less sugar)
+      quantity: '1'
+    - measurement: tbsp
+      name: rice vinegar
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: lemon
+      preparation: juiced
+      quantity: '2'
+    - measurement: null
+      name: lemon peel
+      preparation: julienned
+      quantity: '0.25'
+    name: Dressing
+  serves: '4'
+source: http://justbento.com/handbook/johbisai/two-color-namasu-make-ahead-daikon-radish-salad
+tags:
+- salad
+- bento
+title: Carrot and Daikon salad (Namaso)

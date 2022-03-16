@@ -1,0 +1,50 @@
+cuisine: .middle east.lebanon.traditional
+description: This is a parsely salad, which should be prepared by chopping with a
+  knife and not with a food processor
+directions:
+  step:
+  - Wash the bulgur under the tap, then pour into a bowl
+  - Dice the tomatoes 0.5 cm and add to the bulgur with the juices
+  - Add the remaining ingredients, season and mix
+  - Serve at room temperature
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: bulgur
+      preparation: null
+      quantity: '90'
+    - measurement: null
+      name: tomates
+      preparation: null
+      quantity: '4'
+    - measurement: null
+      name: shallots
+      preparation: chopped finely
+      quantity: '2'
+    - measurement: bunches
+      name: parsley
+      preparation: 160 g, chopped finely
+      quantity: '4'
+    - measurement: bunches
+      name: mint
+      preparation: chopped finely
+      quantity: '2'
+    - measurement: tsp
+      name: allspice
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: lemon juice
+      preparation: null
+      quantity: '3'
+    - measurement: ml
+      name: oilve oil
+      preparation: null
+      quantity: '120'
+    name: null
+  serves: '4'
+source: Ottolenghi
+tags:
+- starters
+title: Tabouleh Ottolenghi style

@@ -1,0 +1,93 @@
+cuisine: .chinese.sizchuan
+description: A little like a Szechuan style spaghetti bolognese, dan dan noodles are
+  made with a thick, spicy pork sauce full of tongue-numbing Szechuan peppercorns
+  and tangy, pickled vegetables.
+directions:
+  step:
+  - Wet the peppercorns in your hands, then shake off any excess water. Place the
+    peppercorns on a chopping boards and holding your cleaver in both hands, chop
+    the peppercorns using a back and forth sawing motion. Do this repeatedly until
+    the peppercorns are coarsely ground. It will probably take approximately 3-5 minutes
+    to do this step. Remove the peppercorns to a mixing bowl.
+  - Place the pork on a chopping boards and chop it finely using a series of quick
+    pummeling motions with your cleaver, bringing it back and forth across the pork
+    until it appears finely minced. Place the pork in the bowl with the peppercorns
+    and add the preserved vegetables and soy sauce and mix well. Set aside to marinade
+    for 5 minutes.
+  - Bring a pot of water to the boil on the stove and add the Chinese noodles and
+    salt. Cook the noodles for 2-3 minutes or until cooked through and drain.
+  - "Heat the oil up in a wok or wide saut\xE9 pan on high heat. Add the pork and\
+    \ stir fry it until it is thoroughly cooked and browned. While it is cooking,\
+    \ mash the pork with your wok ladle or wooden spoon to prevent it clumping up.\
+    \ Remove the pork and set aside."
+  - Add the garlic, ginger and spring onions to the wok and stir fry for 30 seconds.
+    Add the sesame paste, soy sauce, chili paste and stock and simmer for 2-3 minutes.
+  - Divide the noodles between four bowls and ladle the sauce overtop. Add a generous
+    amount of the pork mixture on top and serve hot.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: cloves
+      name: garlic
+      preparation: finely minced
+      quantity: '2'
+    - measurement: mcm
+      name: ginger
+      preparation: peeled and finely minced
+      quantity: '5'
+    - measurement: null
+      name: spring onions
+      preparation: finely chopped
+      quantity: '4'
+    - measurement: Tbsp
+      name: Chinese sesame paste or dark tahini
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: soy sauce
+      preparation: light
+      quantity: '2'
+    - measurement: tsp
+      name: chili paste
+      preparation: null
+      quantity: '2'
+    - measurement: ml
+      name: stock
+      preparation: chicken
+      quantity: '180'
+    - measurement: g
+      name: noodles
+      preparation: null
+      quantity: '450'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    name: Noodles
+  - ingredient:
+    - measurement: Tbsp
+      name: Szechuan peppercorns
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: pork
+      preparation: minced
+      quantity: '350'
+    - measurement: g
+      name: preserved vegetables
+      preparation: rinsed and finely chopped
+      quantity: '50'
+    - measurement: tsp
+      name: soy sauce
+      preparation: light
+      quantity: '2'
+    - measurement: tsp
+      name: oil
+      preparation: null
+      quantity: '2'
+    name: Spicy Pork Topping
+  serves: '4'
+source: null
+tags:
+- noodles
+title: Szechuan Dan Dan Noodles

@@ -1,0 +1,74 @@
+cuisine: .vegetarian
+description: This sustaining meal-on-a-plate is a little bit like hummus, though much
+  easier and quicker to prepare. With warm flatbread, I could eat this every day.
+  Serves two as a main, or four as a starter.
+directions:
+  step:
+  - Cook the lentils for 15 - 20 mins in boiling water
+  - "Saut\xE9 garlic and cumin in a butter and oil mixture, on medium high, for a\
+    \ minute or so"
+  - Add tomatoes, coriander, and the cooked lentils. Cook, stirring, for 2 mins
+  - Add tahini, lemon juice, water, salt and a good grind of black pepper. Turn down
+    the heat to medium and cook gently, stirring, for a few minutes more, until hot
+    and thickened.
+  - Roughly mash the lentils with a potato masher, so that some are broken up and
+    you get a thick, porridge consistency.
+  - Spread out the lentils on a flat platter, scatter on the sliced onion, the remaining
+    coriander and a final drizzle of olive oil. Serve warm with poached eggs on top.
+ingredients:
+  group:
+  - ingredient:
+      measurement: g
+      name: puy lentils
+      preparation: null
+      quantity: '200'
+    name: Lentils
+  - ingredient:
+    - measurement: clobes
+      name: garlic
+      preparation: crushed
+      quantity: '3'
+    - measurement: tsp
+      name: cumin, ground
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: tomates
+      preparation: peeled and cubed (1 cm)
+      quantity: '3'
+    - measurement: g
+      name: coriander leaves
+      preparation: chopped
+      quantity: '20'
+    - measurement: tbsp
+      name: tahini
+      preparation: null
+      quantity: '4'
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '70'
+    - measurement: tbsp
+      name: lemon
+      preparation: juiced
+      quantity: '2'
+    name: Stew
+  - ingredient:
+    - measurement: g
+      name: coriander leaves
+      preparation: chopped
+      quantity: '5'
+    - measurement: null
+      name: red onion
+      preparation: thinly sliced
+      quantity: '0.5'
+    - measurement: null
+      name: eggs
+      preparation: poached
+      quantity: '2'
+    name: Garnish
+  serves: '2'
+source: http://www.theguardian.com/lifeandstyle/2014/jan/03/lentil-recipes-yotam-ottolenghi
+tags:
+- one pot
+title: Lentils with tahini and cumin

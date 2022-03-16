@@ -1,0 +1,61 @@
+cuisine: null
+description: It might be worth buying an extra Chocolate Orange to use for this particularly
+  Christmassy recipe, as Xanthe says that in her experience people tend to be rather
+  territorial with theirs during the festive season. The cookies in these photos have
+  spread a bit, giving them a square appearance - in this case it was because the
+  butter was softer than usual.
+directions:
+  '#text': '>'
+  step: Preheat the oven to 180C/gas mark 4. Mix the flour, cocoa powder, bicarbonate
+    of soda and salt in a small bowl. In a large bowl, cream the butter and sugars
+    together, add the eggs and vanilla extract; fold in flour mixture. Take spoonfuls
+    of it, push a segment of Chocolate Orange into each, roll in a ball and place
+    each one 2 inches apart on an un-greased baking sheet; bake for 10-12 minutes.
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: plain flour
+      preparation: null
+      quantity: '270'
+    - measurement: g
+      name: cocoa powder
+      preparation: null
+      quantity: '30'
+    - measurement: tsp
+      name: bicarbonate of soda
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: null
+    - measurement: g
+      name: butter
+      preparation: softened
+      quantity: '120'
+    - measurement: g
+      name: granulated sugar
+      preparation: null
+      quantity: '180'
+    - measurement: g
+      name: soft brown sugar
+      preparation: null
+      quantity: '180'
+    - measurement: tsp
+      name: vanilla extract
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: eggs
+      preparation: lightly beaten
+      quantity: '2'
+    - measurement: null
+      name: Terry's Chocolate Orange
+      preparation: null
+      quantity: '1'
+  serves: '24'
+source: null
+tags:
+- desserts
+title: Chocolate Orange cookies

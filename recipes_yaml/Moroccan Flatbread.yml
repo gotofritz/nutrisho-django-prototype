@@ -1,0 +1,62 @@
+cuisine: .moroccan
+description: Lovely smell
+directions:
+  step:
+  - Mix the fennel seeds, salt and flour in a bowl
+  - Dissolve the yeast into the water, then add the honey
+  - Add the yeast to the flour
+  - Add the nilk, slowly
+  - Knead into a dough, for about 5 minutes. It should be slightly tacky but smooth
+    and elastic.
+  - Rest covered with a cloth for 1 hour
+  - Divide into 4 balls, rool into 1.5 mm thick flatbreads
+  - Place on an oiled oven tray, pinch 12 times with your fingers, and brush with
+    egg glaze mix
+  - "Bake at 230\xB0 for 15-20 mins"
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      preparation: strong
+      quantity: '300'
+    - measurement: tsp
+      name: fennel seeds
+      preparation: null
+      quantity: '1'
+    - measurement: big pinch
+      name: salt
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: dried yeast
+      preparation: null
+      quantity: '0.5'
+    - measurement: tbsp
+      name: water
+      preparation: lukewarm
+      quantity: '1'
+    - measurement: tsp
+      name: honey
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: milk
+      preparation: null
+      quantity: '225'
+    name: Bread
+  - ingredient:
+    - measurement: null
+      name: egg white
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: milk
+      preparation: null
+      quantity: '1'
+    name: Glaze
+  serves: '4'
+source: Moro
+tags:
+- bread
+title: Moroccan Flatbread

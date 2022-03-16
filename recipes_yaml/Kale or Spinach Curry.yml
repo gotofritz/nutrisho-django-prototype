@@ -1,0 +1,84 @@
+cuisine: .indian
+description: Sak
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+    >'
+  step:
+  - blanch the spinach, then cool and dry, squuezing out excess water, and chop corasely
+  - crush the spices
+  - melt the ghee, fry the chillies, ginger and crushed spices (2) for a few mins
+  - add the spinach for a few minutes, and salt
+  - 'prepare the chaunk: melt the ghee, fry the cashew nuts, then add currants until
+    plump, then remove from fire and add garam masale'
+  - mix with cooked spinach (4) and add lemon juice
+ingredients:
+  group:
+  - ingredient:
+    - measurement: kg
+      name: fresh spinach
+      preparation: or kale
+      quantity: '1'
+    - measurement: Tbsp
+      name: ghee
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: fresh chillies
+      preparation: deseeded
+      quantity: '1'
+    - measurement: Tbsp
+      name: ginger
+      preparation: peeled
+      quantity: '1'
+  - ingredient:
+    - measurement: null
+      name: cloves
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: fennel seeds
+      preparation: null
+      quantity: '0.25'
+    - measurement: tsp
+      name: black mustard seeds
+      preparation: null
+      quantity: '0.25'
+    - measurement: tsp
+      name: cumin seeds
+      preparation: null
+      quantity: '0.25'
+    name: Spice mix
+  - ingredient:
+    - measurement: g
+      name: cashew nuts
+      preparation: crushed
+      quantity: '35'
+    - measurement: g
+      name: currants
+      preparation: null
+      quantity: '45'
+    - measurement: tsp
+      name: garam masala
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: lemon juice
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: ghee
+      preparation: null
+      quantity: '3'
+    name: Chaunk
+  serves: '4'
+source: null
+tags:
+- vegetable side
+title: Kale / Spinach Curry

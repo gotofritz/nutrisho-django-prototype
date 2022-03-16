@@ -1,0 +1,97 @@
+cuisine: .iranian
+description: null
+directions:
+  step:
+  - 'Place the onion into the bowl of a food processor and process until finely chopped.
+    Add the lamb and thyme leaves and pulse until well blended. Add the egg, salt
+    and pepper to taste and pulse again until well mixed together. Note: If you don''t
+    have a food processor, you can do this by hand in a mixing bowl, just mince the
+    onion finely before mixing it with the other ingredients.'
+  - Place the flour in a shallow bowl. With your hands, take some of the lamb mixture
+    and roll it between your palms to form a golf ball-sized ball. Roll the ball in
+    the flour and tap off the excess. Place the floured ball on a large, clean plate.
+    Repeat until you have used up all the lamb mince mixture.
+  - Cover with cling film and place in the fridge to firm up for 30 minutes before
+    frying.
+  - In a large, wide frying pan, heat the olive oil on medium-high heat. When the
+    oil is hot but not smoking, add the meatballs and fry until well browned on all
+    sides. Remove the meatballs with tongs or a slotted spoon and place on a clean
+    plate.
+  - Make the sauce by adding the 2 tablespoons of oil to the pan. Add the garlic and
+    saute briefly. Add the tomatoes and stir with a wooden spoon to break up. Adjust
+    heat so that tomatoes reach a gentle simmer. Add the meatballs to the tomatoes
+    and stir once gently so that they are nestled and coated in the tomato mixture.
+    Leave to simmer gently for 25 minutes.
+  - In the bowl of a food processor, place the cinnamon, parsley, and almonds. Using
+    the side of a spoon, crush the saffron threads against the side of the cup and
+    then add the saffron and water. Pulse briefly until the almonds are coarsely ground.
+    Be careful not to overprocess or you'll have almond 'peanut butter'. If you do
+    not have a food processor, chop the almonds finely and stir in the cinnamon, parsley
+    and saffron.
+  - Add the almond mixture to the simmering meatballs and stir gently to mix through.
+    Continue to simmer gently for 5 minutes. The sauce should be thick and cling to
+    the meatballs.
+  - Spoon meatballs and sauce into a bowl and serve.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: onion
+      preparation: null
+      quantity: '1'
+    - measurement: handful
+      name: parsley
+      preparation: minced
+      quantity: '1'
+    - measurement: g
+      name: lamb
+      preparation: minced
+      quantity: '500'
+    - measurement: null
+      name: egg
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: flour
+      preparation: plain
+      quantity: '55'
+    - measurement: Tbsp
+      name: olive oil
+      preparation: null
+      quantity: '4'
+    name: For the Meatballs
+  - ingredient:
+    - measurement: Tbsp
+      name: olive oil
+      preparation: null
+      quantity: '2'
+    - measurement: cloves
+      name: garlic
+      preparation: minced
+      quantity: '2'
+    - measurement: tin
+      name: tomatoes
+      preparation: peeled
+      quantity: '1'
+    - measurement: tsp
+      name: cinnamon
+      preparation: ground
+      quantity: '1'
+    - measurement: handful
+      name: parsley
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: almonds
+      preparation: blanched
+      quantity: '100'
+    - measurement: pinch
+      name: saffron threads
+      preparation: null
+      quantity: '1'
+    name: For the Sauce
+  serves: null
+source: null
+tags:
+- with bread
+title: Lamb Meatballs with Saffron, Cinnamon and Almond Sauce

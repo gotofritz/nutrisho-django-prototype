@@ -1,0 +1,53 @@
+cuisine: null
+description: null
+directions:
+  step:
+  - Place the sake or plum wine in a small saucepan and simmer gently over medium
+    head until reduced by half. Combine with the lemon juice and zest, vinegar, and
+    olive oil and whisk to combine.
+  - Meanwhile, place the hazelnuts in a dry frying pan over low-medium heat and toast,
+    shaking the pan occasionally for 4-5 minutes or until fragrant and nutty smelling.
+ingredients:
+  group:
+    ingredient:
+    - measurement: ml
+      name: sweet sake
+      preparation: or plum wine
+      quantity: '250'
+    - measurement: null
+      name: nashi pear
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: pomegranate
+      preparation: kernels
+      quantity: '1'
+    - measurement: null
+      name: lemon
+      preparation: zested
+      quantity: '1'
+    - measurement: Tbsp
+      name: vinegar
+      preparation: rice
+      quantity: '2'
+    - measurement: Tbsp
+      name: oil
+      preparation: olive
+      quantity: '6'
+    - measurement: handful
+      name: lamb's lettuce
+      preparation: or baby spinach
+      quantity: '1'
+    - measurement: null
+      name: chicory
+      preparation: null
+      quantity: '1'
+    - measurement: handful
+      name: hazelnuts
+      preparation: null
+      quantity: '1'
+  serves: '2'
+source: null
+tags:
+- salad
+title: Salad of Nashi Pear, Pomegranate, Chicory and Hazelnuts

@@ -1,0 +1,92 @@
+cuisine: .modern british
+description: null
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - Boil water, honey, sugar until dissolved, then cool
+  - Blend fruit, alcohol with syrup, then freeze in air tight container
+  - Whisk together eggs, sugar
+  - Melt together olive oil, butter, then add to the egg and sugar
+  - Grind the hazelnuts in a food processor until fine then add to the mixture
+  - Add baking powder, flour, polenta to the mixture
+  - Add vanilla pods to the mixture
+  - "Put mixture in oiled 23 cm and bake 175\xB0 for 25 m"
+  - Let cool in the tin, then dust with icing sugar and serve with sorbet
+ingredients:
+  group:
+  - ingredient:
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '180'
+    - measurement: ml
+      name: honey
+      preparation: null
+      quantity: '60'
+    - measurement: ml
+      name: sugar
+      preparation: null
+      quantity: '240'
+    - measurement: ml
+      name: fruit
+      preparation: null
+      quantity: '350'
+    - measurement: tsp
+      name: alcohol
+      preparation: null
+      quantity: '0.5'
+    name: Sorbet
+  - ingredient:
+    - measurement: null
+      name: eggs
+      preparation: null
+      quantity: '3'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '170'
+    - measurement: ml
+      name: oil
+      preparation: olive
+      quantity: '125'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '100'
+    - measurement: g
+      name: hazelnuts
+      preparation: peeled and toasted
+      quantity: '200'
+    - measurement: tsp
+      name: baking powder
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '50'
+    - measurement: g
+      name: polenta
+      preparation: null
+      quantity: '50'
+    - measurement: null
+      name: vanilla pods
+      preparation: seeds extracted
+      quantity: '2'
+    name: Cake
+  serves: '10'
+source: null
+tags:
+- dessert
+title: Polenta and Hazelnut Cake with Sorbet

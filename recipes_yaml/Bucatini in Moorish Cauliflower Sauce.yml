@@ -1,0 +1,78 @@
+cuisine: .italian.sicilian
+description: Pasta coi Vruocculi arriminati (pasta con i broccoli in tegame)
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - soak 100 g sultana in water (cold) for 15 m; drain
+  - boil 500 g cauliflower in water (salted) on high heat until al dente, about  4m;
+    chill   in water (cold)
+  - chop (thinly) 200 g onion; stir fry   in oil (olive) on medium heat until wilted,
+    about  4m
+  - add and fry 100 g pine nuts until browned, about  2m
+  - cut (chunks) the cooked cauliflower; add to the pine nuts and fry for 20s
+  - add 30 g achovies / blue cheese
+  - soak a pinch of saffron in 1 tbsp of cauliflower water; add to the sauce and cook  for
+    20s
+  - add water as needed  as sauce cooks on low heat until pasta ready
+  - cook 500 g bucatini / spaghetti, thick / maccheroni in cauliflower water on high
+    heat until al dente, about  10m
+  - toast 50 g bread crumbs
+  - add over   cooked pasta and sauce
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: sultana
+      preparation: null
+      quantity: '100'
+    - measurement: g
+      name: onions
+      preparation: null
+      quantity: '200'
+    - measurement: g
+      name: pine nuts
+      preparation: null
+      quantity: '100'
+    - measurement: g
+      name: anchovies
+      preparation: or blue cheese
+      quantity: '30'
+    name: Saute base
+  - ingredient:
+    - measurement: g
+      name: cauliflower
+      preparation: null
+      quantity: '500'
+    - measurement: null
+      name: saffron
+      preparation: null
+      quantity: pinch
+    name: Sauce
+  - ingredient:
+    - measurement: g
+      name: bucatini
+      preparation: or maccaroni
+      quantity: '500'
+    - measurement: g
+      name: bread crumbs
+      preparation: null
+      quantity: '50'
+    name: Pasta
+  serves: '4'
+source: null
+tags:
+- pasta
+title: Bucatini in Moorish Cauliflower Sauce

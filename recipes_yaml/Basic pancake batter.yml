@@ -1,0 +1,52 @@
+cuisine: .english
+description: null
+directions:
+  step:
+  - 250ml milk
+  - 120g flour
+  - 1 large egg
+  - 1tsp caster sugar
+  - Pinch of salt
+  - Vegetable oil for frying
+  - "Whisk all the ingredients together with one third of the milk until smooth. Whisk\
+    \ in the remaining milk, then strain if necessary. Heat a good non-stick frying\
+    \ pan, rub with a little vegetable oil, then pour in a little pancake mix, and\
+    \ immediately tilt the pan so that the mixture spreads evenly. Turn after one\
+    \ minute with a spatula or palette knife - or if you\u2019re feeling confident,\
+    \ flip it!"
+  - "If you need to make a large quantity of pancakes, make them in advance and stack\
+    \ them up between squares of greaseproof paper. When you\u2019re ready to serve\
+    \ them, re-heat in the oven for a minute or so."
+  - Batter keeps in the fridge for up to two days; just re-whisk it before using.
+ingredients:
+  group:
+    ingredient:
+    - measurement: null
+      name: ml milk
+      preparation: null
+      quantity: '50'
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '120'
+    - measurement: large
+      name: egg
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: caster sugar
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: Pinch of salt
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: Vegetable oil for frying
+      preparation: null
+      quantity: null
+  serves: Makes 8-10 pancakes
+source: null
+tags:
+- batter
+title: Basic pancake batter

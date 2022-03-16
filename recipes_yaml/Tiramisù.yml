@@ -1,0 +1,53 @@
+cuisine: .italian.class
+description: null
+directions:
+  step:
+  - Beat the yolks with the sugar. Add the mascarpone, smoothed with a wooden spoon
+  - Whisk the egg whites with a pinch salt to soft peaks
+  - Mix the coffee with the liquor and water
+  - Dip the biscuits in the coffee quickly before they break, make a layer at bottom
+    of tray
+  - Alternate a layer of mascarpone mixture
+  - Another layer of biscuits and one of mascarpone
+  - Sprinkle bitter chocolate on top and cool a few hours before serving
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: mascarpone
+      preparation: null
+      quantity: '500'
+    - measurement: null
+      name: eggs
+      preparation: separate whites and yolks
+      quantity: '4'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '80'
+    name: Mascarpone mixture
+  - ingredient:
+    - measurement: g
+      name: savoiardi
+      preparation: null
+      quantity: '250'
+    - measurement: cup
+      name: coffee
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: liquor
+      preparation: marsala, kalhua, brandy, etc
+      quantity: '2'
+    name: Biscuits
+  - ingredient:
+      measurement: g
+      name: bitter chocolate powder
+      preparation: null
+      quantity: '30'
+    name: Garnish
+  serves: '4'
+source: http://www.cookaround.com/ricetta/tiramisu-classico.html
+tags:
+- sweet
+title: "Tiramis\xF9 classico"

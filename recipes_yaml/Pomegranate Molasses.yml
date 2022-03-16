@@ -1,0 +1,35 @@
+cuisine: null
+description: null
+directions:
+  step: '1. seeds pomegranade
+
+    2. slow cook in a little water, then sieve and put back in pot
+
+    3. add sugar and lemon juice
+
+    4, to a boil, reduce the heat and simmer until it has reduces to a quarter, about
+    40-50 minutes. (At this point it should have the consistency of a thick syrup.)'
+ingredients:
+  group:
+    ingredient:
+    - measurement: cups
+      name: pomegranate juice
+      preparation: null
+      quantity: '2'
+    - measurement: cup
+      name: sugar
+      preparation: null
+      quantity: 1/4
+    - measurement: tsp
+      name: lemon juice
+      preparation: null
+      quantity: '0.25'
+    - measurement: null
+      name: pomegranate
+      preparation: null
+      quantity: '4'
+  serves: 1/2 cup
+source: null
+tags:
+- basics
+title: Pomegranate Molasses

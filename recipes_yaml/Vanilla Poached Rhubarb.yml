@@ -1,0 +1,38 @@
+cuisine: null
+description: the rhubarb collapses into a pulpy mass which is delicious spooned over
+  yoghurt, served with porridge or spooned into a champagne glass and topped up with
+  a little prosecco or cava.
+directions:
+  '#text': '>'
+  step:
+  - Place the sugar and rhubarb in a saucepan. Scrape the seeds from the vanilla bean
+    into the sugar and add the water and the empty vanilla bean pod.
+  - Bring the mixture to the boil and simmer gently for 25 minutes until the rhubarb
+    is soft and pulpy. If there is still a lot of water in the pot, increase the heat
+    slightly and cook for another 5-10 minutes until thickened. Remove the pot from
+    the heat and allow to cool until just above room temperature.
+  - Remove the empty vanilla pod halves and serve as desired.
+ingredients:
+  group:
+    ingredient:
+    - measurement: kg
+      name: rhubarb
+      preparation: cut into 2 inch slices
+      quantity: '1'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '100'
+    - measurement: null
+      name: vanilla pod
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '400'
+  serves: null
+source: null
+tags:
+- desserts
+title: Vanilla Poached Rhubarb

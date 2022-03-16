@@ -1,0 +1,88 @@
+cuisine: .modern.europe
+description: null
+directions:
+  step:
+  - "Oven: 200\xB0"
+  - Mix olive oil, thyme and chilli in a bowl and rub all over pumpkin, including
+    peel
+  - Put pumpkin halves in oven face down, roast half an hour or so, then turn
+  - "Saut\xE9 onions and leeks in butter, slowly, for at least 20 mins"
+  - Take pumpkin out of oven, scoop out flesh and add to onions
+  - Add stock, salt and pepper, and remaining ingredients. Bring to boil and simmer
+    10 mins
+  - Pour into food processor. Add lemon
+  - Melt butter until brown; add thyme then add to food processor
+  - Sieve and serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: kg
+      name: pumpkin
+      preparation: halved, deseeded
+      quantity: '1'
+    - measurement: cup
+      name: olive oil
+      preparation: null
+      quantity: '0.25'
+    - measurement: tsp
+      name: chilli powder
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: dried thyme
+      preparation: null
+      quantity: '1'
+    name: Pumpkin roast
+  - ingredient:
+    - measurement: small
+      name: onion
+      preparation: thinly sliced
+      quantity: '1'
+    - measurement: small
+      name: leek
+      preparation: thinly sliced (or more onions)
+      quantity: '1'
+    - measurement: l
+      name: light stock
+      preparation: or water
+      quantity: '1'
+    - measurement: tsp
+      name: chilli powder
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: cinnamon powder
+      preparation: or a stick
+      quantity: '0.5'
+    - measurement: leaves
+      name: bay
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: maple syrup
+      preparation: or honey
+      quantity: '2'
+    - measurement: tsp
+      name: soy sayce
+      preparation: null
+      quantity: '2'
+    name: Soup
+  - ingredient:
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '10'
+    - measurement: tsp
+      name: dried thyme
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: lemon juice
+      preparation: null
+      quantity: '1'
+    name: Garnish
+  serves: '4'
+source: https://www.seriouseats.com/recipes/2012/12/roasted-pumpkin-soup-brown-butter-thyme-recipe.html
+tags:
+- soup
+title: Pumpkin Soup With Thyme

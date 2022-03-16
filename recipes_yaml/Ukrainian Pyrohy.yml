@@ -1,0 +1,100 @@
+cuisine: .ukrainian
+description: Pyrohy are generally made in large batches so that extras can be tied
+  into bags and stored in the freezer.
+directions:
+  step:
+  - In a large mixing bowl, combine the flour, salt, egg yolks, butter and potatoes
+    and stir to mix. Slowly stir in the warm water until the mixture comes together
+    as a dough. On a lightly floured work surface, knead the dough for 2 minutes or
+    until smooth, adding only enough flour to keep it from sticking.
+  - Gather the dough into a ball and place an overturned bowl over the dough. Leave
+    the dough to rest for 10 minutes.
+  - Start making the onion topping by melting the butter in a frying pan over medium
+    heat. Add the onions and fry stirring occasionally for 10-15 minutes or until
+    the onions are deep brown and crisp.
+  - Meanwhile, make the filling by mixing together the mashed potato with the cheeses
+    and sea salt. Taste the filling and add more salt if necessary. The filling should
+    taste slightly too salty.
+  - On a floured work surface, begin to roll out the dough. Turn the dough frequently
+    as you roll it, sprinkling it with a little flour as needed to keep it form sticking.
+    Continue rolling out the dough until it is around 1/4 inch thick.
+  - Using a glass, teacup or special fluted cookie cutter, cut the dough into round
+    shapes. Place a spoonful of filling in the centre of each dough circle and fold
+    the dough in half over the filling, squashing the filling down gently with your
+    fingers as you fold the dough overtop. With your fingers, press down on the dough
+    edges as they line up to create a firm seal. Repeat with the remaining circles
+    and gather up the remaining scraps of dough, reroll and cut again until you have
+    used up all the dough.
+  - Bring a large pot of water to the boil and add the pyrohy. Cook the dumplings
+    for 5 minutes or until the dough is tender and the pyrohy look slightly 'puffed
+    up'. Remove them with a slotted spoon and divide between plates.
+  - Serve the pyrohy hot with the fried onion and butter mixture spooned overtop.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      preparation: plain
+      quantity: '240'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: egg yolks
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: butter
+      preparation: melted
+      quantity: '1'
+    - measurement: g
+      name: potatoes
+      preparation: mashed
+      quantity: '100'
+    - measurement: null
+      name: ;
+      preparation: water
+      quantity: '130'
+    - measurement: handful
+      name: flour
+      preparation: plain
+      quantity: '1'
+    - measurement: tsp
+      name: salt
+      preparation: for cooking
+      quantity: '1'
+    name: Dough
+  - ingredient:
+    - measurement: g
+      name: potatoes
+      preparation: mashed (3 small potatoes)
+      quantity: '275'
+    - measurement: g
+      name: cheese
+      preparation: null
+      quantity: '150'
+    - measurement: g
+      name: cheese
+      preparation: cheddar
+      quantity: '75'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    name: Filling
+  - ingredient:
+    - measurement: null
+      name: onion
+      preparation: finely chopped
+      quantity: '1'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '75'
+    name: Fried Onion Topping
+  serves: '40'
+source: null
+tags:
+- pasta
+title: Ukrainian Pyrohy

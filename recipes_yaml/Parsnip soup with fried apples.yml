@@ -1,0 +1,86 @@
+cuisine: null
+description: The sweetness of the fried apples combines wonderfully with the spicy
+  parsnips in this easy soup. Serves four.
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - dry roast cumin and mustard seeds, 1 min, then grind and combine with  the turmeric
+    and garam masala.
+  - "Melt 25g butter and saut\xE9 onionsm about 10 minutes. Then add the ginger for\
+    \ one more  minute."
+  - "Tip in the parsnips, saut\xE9 for another 5 minutes, then stir in the spices,\
+    \ ensuring everything is well coated, 1/2 mins"
+  - Pour over the stock, bring to a simmer, partially cover and cook until the parsnips
+    are tender, about 20 minutes
+  - Blitz in a food processor or with a stick blender until smooth
+  - return to the pan and season with salt and pepper. If it's too thick, thin with
+    a little more stock or water. Keep warm while you prepare the apples.
+  - "Melt the knob of butter in a frying pan over a medium-high heat until it starts\
+    \ to sizzle. Add the apple slices and saut\xE9 until they take on some colour.\
+    \ Ladle soup into warmed bowls and serve with apple slices on top."
+ingredients:
+  group:
+  - ingredient:
+    - measurement: tsp
+      name: cumin seeds
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: mustard seeds
+      preparation: null
+      quantity: '0.5'
+    - measurement: pinch
+      name: turmeric
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: garam masala
+      preparation: null
+      quantity: '2'
+    name: Dry spices
+  - ingredient:
+    - measurement: g
+      name: butter
+      preparation: plus 1 large knob extra
+      quantity: '25'
+    - measurement: medium
+      name: onion
+      preparation: peeled and finely chopped
+      quantity: '1'
+    - measurement: tsp
+      name: ginger
+      preparation: freshly grated
+      quantity: '1'
+    - measurement: g
+      name: parsnips
+      preparation: peeled and cubed
+      quantity: '500'
+    - measurement: ml
+      name: stock
+      preparation: null
+      quantity: '800'
+    name: Soup
+  - ingredient:
+    - measurement: knob
+      name: butter
+      preparation: null
+      quantity: '1'
+    - measurement: small
+      name: apple
+      preparation: peeled
+      quantity: '1'
+    name: Garnish
+  serves: null
+source: null
+tags:
+- soup
+title: Parsnip soup with fried apples

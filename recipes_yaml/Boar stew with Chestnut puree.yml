@@ -1,0 +1,108 @@
+cuisine: .italian.modern
+description: Expensive but apparently lovely meat stew
+directions:
+  step:
+  - Wrap the meat in lard, add the remaining ingredients, and marinate for a couple
+    of days, turning every now and then
+  - Remove the lard, onion and thyme from the marinade, keeping the wine. Dry the
+    meat.
+  - Blanch the orange zest julienne a couple of mins
+  - Sear the meat in a saucepot with little or no oil, remove and place in a casserole
+    pot
+  - "Add more oil and butter, then saut\xE9 the onion, carrots, and celery, salt and\
+    \ pepper for 5 mins"
+  - Add the wine from the marinade and reduce 20 mins or so
+  - Pour over the meat, add lemon and orange juice, sugar, stock, liquor, salt and
+    pepper
+  - "Bake 20 mins at 200\xB0, rotating every so often"
+  - "Meanwhile bring to boil the pur\xE9 ingredients, then simmer for 20 mins and\
+    \ mash"
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: boar fillet
+      preparation: null
+      quantity: '400'
+    - measurement: g
+      name: lard
+      preparation: sliced
+      quantity: '30'
+    - measurement: sprigs
+      name: thyme
+      preparation: null
+      quantity: '3'
+    - measurement: leaf
+      name: bay
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: onions
+      preparation: sliced
+      quantity: '0.5'
+    - measurement: l
+      name: red wine
+      preparation: barolo
+      quantity: '0.4'
+    name: Marinade
+  - ingredient:
+    - measurement: null
+      name: oranges
+      preparation: zest, julienned
+      quantity: '0.5'
+    - measurement: null
+      name: oranges
+      preparation: juiced
+      quantity: '1'
+    - measurement: null
+      name: lemons
+      preparation: juiced
+      quantity: '0.3'
+    - measurement: ml
+      name: stock
+      preparation: null
+      quantity: '80'
+    - measurement: ml
+      name: brandy
+      preparation: or other liquor
+      quantity: '40'
+    - measurement: small
+      name: shallots
+      preparation: chopped finely
+      quantity: '2'
+    - measurement: null
+      name: carrot
+      preparation: chopped finely
+      quantity: '1'
+    - measurement: stick
+      name: celery
+      preparation: chopped finely
+      quantity: '1'
+    - measurement: g
+      name: icing sugar
+      preparation: null
+      quantity: '30'
+    name: Stew
+  - ingredient:
+    - measurement: g
+      name: chestnuts
+      preparation: cooked
+      quantity: '200'
+    - measurement: ml
+      name: brandy
+      preparation: null
+      quantity: '50'
+    - measurement: ml
+      name: milk
+      preparation: null
+      quantity: '150'
+    - measurement: ml
+      name: cream
+      preparation: null
+      quantity: '100'
+    name: "Chestnut pur\xE9e"
+  serves: '4'
+source: null
+tags:
+- meat
+title: Boar stew with Chestnut puree

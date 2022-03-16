@@ -1,0 +1,57 @@
+cuisine: .spanish.modern
+description: null
+directions:
+  step:
+  - Put the beetroot in salted cold water and pressure cook 15m to 45m depending on
+    size
+  - Put in cold water and rub off the skin, then cut in wedges
+  - Boil the potatoes, when ready cut in 2cm wedges too
+  - Mix beetroot and potato in a bowl, add parsley, mint and spring onions
+  - Mix all the dressing ingredients and dress the salad
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: beetroot
+      preparation: null
+      quantity: '400'
+    - measurement: g
+      name: potatoes
+      preparation: peeled
+      quantity: '300'
+    - measurement: tbsp
+      name: parsley
+      preparation: chopped roughly
+      quantity: '1'
+    - measurement: tbsp
+      name: mint
+      preparation: chopped fine
+      quantity: '3'
+    - measurement: null
+      name: spring onions
+      preparation: sliced thinly
+      quantity: '5'
+    name: Salad
+  - ingredient:
+    - measurement: tbsp
+      name: wine vinegar
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: lemon juice
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: olive oil
+      preparation: null
+      quantity: '4'
+    - measurement: null
+      name: salt and pepper
+      preparation: null
+      quantity: null
+    name: Dressing
+  serves: '4'
+source: Moro 2
+tags:
+- salad
+title: Beetroot and Potato Salad

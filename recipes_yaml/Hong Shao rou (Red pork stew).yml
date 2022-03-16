@@ -1,0 +1,76 @@
+cuisine: .chinese.beijing
+description: null
+directions:
+  step:
+  - Soak the mushrooms in water, 25 mins
+  - Heat some veg oil in a pot, add sugar, cook until reddish
+  - Add pork and stir well, 4 mins
+  - Add ginger, soy sauce, rice wine, bring to a simmer
+  - Drain the mushrooms, but keep the water. If you used button mushrooms, roughly
+    cut them in 0.5 cm slices
+  - Add the mushrooms and the remaining ingredients (cinnamon, aniseeds, chestnuts,
+    mushrooms, spring onions) to the stew, and mix well
+  - Add the mushroom water, enough to just about cover the meat, and season with salt
+  - Lower the heat and cover, or start building up pressure if using a pressure cooker
+  - 'If using a normal pot: cook slowly, adding water every 15 mins or so, for 1 to
+    1.5 hours, or 2 to 2.5 hours if you have kept the skin'
+  - 'If using a pressure cooker: 1 to 1.5 hours if with the skin, 40 mins without.
+    Then release the pressure'
+  - Meanwhile soak the noodles in boiling hot water for 20 mins, then dip into cold
+    water
+  - Add the noodles to the stew, cook for another 10 mins, without pressure
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: pork belly
+      preparation: cut in marshmallow sized chunks, with or without skin
+      quantity: '280'
+    - measurement: tsp
+      name: brown sugar
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: spring onions
+      preparation: white and green part, coarsely chopped
+      quantity: '2'
+    - measurement: cm
+      name: ginger
+      preparation: cut into 2mm disks
+      quantity: '2'
+    - measurement: tbsp
+      name: dark soy sauce
+      preparation: null
+      quantity: '3'
+    - measurement: tsp
+      name: rice wine
+      preparation: null
+      quantity: '0.5'
+    - measurement: sticks
+      name: cinnamon
+      preparation: null
+      quantity: '4'
+    - measurement: handful
+      name: boiled chestnuts
+      preparation: null
+      quantity: '1'
+    - measurement: handful
+      name: dried mushrooms
+      preparation: (button and / or ear)
+      quantity: '1'
+    - measurement: null
+      name: star aniseed
+      preparation: null
+      quantity: '6'
+    name: Main
+  - ingredient:
+      measurement: g
+      name: mung noodles (fen si or fen tiao)
+      preparation: or any other starch noodle
+      quantity: '150'
+    name: Noodles
+  serves: '2'
+source: null
+tags:
+- noodles
+title: Hong Shao rou (Red pork stew)

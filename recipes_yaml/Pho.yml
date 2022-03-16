@@ -1,0 +1,116 @@
+cuisine: .vietnam
+description: Vietnamese Beef Noodle Soup
+directions:
+  step:
+  - Halve the onion and ginger, brush with oil, and broil under a hot grill until
+    charred, 10-15 mins
+  - Boil bones vigorusly for 10 mins, discard water, clean pot, and bring to boil
+    again.
+  - Add charred veg, meat, and stock ingredients, and simmer for 1.5 hours skimming.
+  - Sieve and adjust seasoning. Shred the meat if using.
+  - Cook the rice noodles according to instruction, then split among bowls
+  - Slice the raw meat, and place in bowl
+  - Ladle the hot stock over them
+  - Add the garnish ingredients.
+  - Serve with hoisin and chilli sauce on the side
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: onions
+      preparation: halved
+      quantity: '2'
+    - measurement: cm
+      name: ginger
+      preparation: unpeeled, halved lengthwise
+      quantity: '10'
+    - measurement: kg
+      name: beef bones
+      preparation: null
+      quantity: '2'
+    - measurement: g
+      name: beef, rump
+      preparation: chunks
+      quantity: '500'
+    - measurement: l
+      name: water
+      preparation: null
+      quantity: '5'
+    - measurement: ml
+      name: fish sauce
+      preparation: null
+      quantity: '230'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '25'
+    - measurement: tbsp
+      name: salt
+      preparation: null
+      quantity: '1.5'
+    - measurement: stick
+      name: cinnamon
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: star aniseed
+      preparation: null
+      quantity: '5'
+    - measurement: tbsp
+      name: coriander seeds
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: fennel seeds
+      preparation: null
+      quantity: '1'
+    - measurement: pod
+      name: cardamom
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: cloves
+      preparation: null
+      quantity: '6'
+    name: Stock
+  - ingredient:
+    - measurement: g
+      name: rice noodles
+      preparation: null
+      quantity: '1000'
+    - measurement: g
+      name: beef
+      preparation: carpaccio thin
+      quantity: '250'
+    - measurement: null
+      name: chillies
+      preparation: sliced
+      quantity: '3'
+    - measurement: bunch
+      name: coriander leaves
+      preparation: null
+      quantity: '1'
+    - measurement: bunch
+      name: mint
+      preparation: null
+      quantity: '1'
+    - measurement: bunch
+      name: basil
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: limes
+      preparation: wedges
+      quantity: '2'
+    - measurement: handful
+      name: bean sprouts
+      preparation: null
+      quantity: '2'
+    name:
+    - Main
+    - Garnish
+  serves: '8'
+source: Into the Vietnamese Kitchen
+tags:
+- soup
+title: Pho

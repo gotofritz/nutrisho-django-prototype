@@ -1,0 +1,36 @@
+cuisine: null
+description: null
+directions:
+  step:
+  - Peel the potatoes and place them in a bowl of water until you have done them all.
+  - Put the potatoes, water, salt, and vinegar in a pot and bring to boil. Boil high
+    for 5 m
+  - Drain for 5 minutes
+  - "Deep fry in small batches at 200\xB0C for 50 secs, then leave to drain for 30m"
+  - When cold freeze, at least overnight
+  - "Deep fry immediatly from frozen at 200\xB0C for 3.5 m"
+  - "Salt. You can keep warm in wire mesh in oven at 90\xB0C"
+ingredients:
+  group:
+    ingredient:
+    - measurement: kg
+      name: potatoes
+      preparation: russet
+      quantity: '1'
+    - measurement: Tsp
+      name: vinegar
+      preparation: white vine
+      quantity: '2'
+    - measurement: Tbsp
+      name: salt
+      preparation: null
+      quantity: '2'
+    - measurement: l
+      name: water
+      preparation: cold
+      quantity: '1.8'
+  serves: '4'
+source: null
+tags:
+- side dish
+title: French fries McDonald's style

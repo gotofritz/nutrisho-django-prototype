@@ -1,0 +1,33 @@
+cuisine: null
+description: I know that it's traditionally eaten with turkey, but cranberry sauce
+  goes equally well with goose or suckling pig, as well as cold pies. It will keep
+  for a week or so in the fridge in a sealed container.
+directions:
+  '#text': '>'
+  step:
+  - Put the cranberries in a pan with the orange juice and zest and the sugar. Heat
+    on a low heat, stirring every so often until the sugar has melted, then continue
+    cooking for about 15 minutes until the cranberries have softened.
+  - Taste the cranberry sauce for sweetness; add more sugar if necessary. Leave to
+    cool; store in the fridge until required and heat gently in a pan, or just serve
+    at room temperature.
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: cranberries
+      preparation: null
+      quantity: '500'
+    - measurement: null
+      name: The juice and grated zest of 3 oranges
+      preparation: null
+      quantity: null
+    - measurement: g
+      name: sugar
+      preparation: plus a little extra if required
+      quantity: '200'
+  serves: Serves 8-10
+source: null
+tags:
+- sauce
+title: Cranberry and orange sauce

@@ -1,0 +1,64 @@
+cuisine: .italian.sicilian
+description: null
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - soak breadcrumbs in milk for 15m
+  - add ground beef, egg, parsley, pecorino cheese and orm into croquettes the size
+    of lipstick
+  - sear the meatballs (dip in a deep frier if you have one) on high heat until seared,
+    about 1m
+  - lower heat and cook gently
+  - saute onion in olive oil until translucent, about 6m
+  - add passata and onions to meatballs, cook on medium heat for 10m
+  - process almonds to a coarse powder
+  - add to meatballs and increase heat to high, until it starts boiling, about 1m
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: breadcrumbs
+      preparation: null
+      quantity: '40'
+    - measurement: g
+      name: beef
+      preparation: grouund
+      quantity: '600'
+    - measurement: null
+      name: egg
+      preparation: beaten
+      quantity: '1'
+    - measurement: mls
+      name: cheese
+      preparation: pecorino
+      quantity: '40'
+    name: Meatballs
+  - ingredient:
+    - measurement: null
+      name: onion
+      preparation: sliced
+      quantity: '1'
+    - measurement: g
+      name: almonds
+      preparation: blanched
+      quantity: '180'
+    - measurement: ml
+      name: passata
+      preparation: null
+      quantity: '150'
+    name: Sauce
+  serves: '4'
+source: null
+tags:
+- meatballs
+title: Polpette Con Mandorle

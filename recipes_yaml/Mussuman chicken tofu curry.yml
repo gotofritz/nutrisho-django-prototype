@@ -1,0 +1,85 @@
+cuisine: .thai
+description: null
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - deep fry chicken / tofu, potatoes, and shallots separately, pat dry
+  - put the chicken / tofu in a pan and just cover with coconut milk, and bring to
+    boil
+  - add cardamom pods, peanuts, bay leaves, 10 mins
+  - add the potatoes an onions
+  - in another pot cook coconut cream and curry paste, low heat, 10 m. use juice from
+    (4) if it gets too dry
+  - when dry, add sugar until caramelized
+  - add fish sauce and tamarind water
+  - add (7)  to (4), add the pinea[[le / apple juice, and serve
+ingredients:
+  group:
+    ingredient:
+    - measurement: null
+      name: chicken legs
+      preparation: or 250 g of tofu
+      quantity: '3'
+    - measurement: null
+      name: potatoes
+      preparation: medium
+      quantity: '4'
+    - measurement: null
+      name: shallots
+      preparation: small
+      quantity: '8'
+    - measurement: l
+      name: coconut milk
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: cardamom pods
+      preparation: roasted
+      quantity: '5'
+    - measurement: ml
+      name: coconut cream
+      preparation: null
+      quantity: '750'
+    - measurement: Tbsp
+      name: sugar
+      preparation: palm
+      quantity: '2'
+    - measurement: Tbsp
+      name: fish sauce
+      preparation: null
+      quantity: '3'
+    - measurement: lump
+      name: tamarind pulp
+      preparation: turned intoo 3-5 tbsp tamarind water
+      quantity: '1'
+    - measurement: null
+      name: bay leaves
+      preparation: roasted
+      quantity: '4'
+    - measurement: null
+      name: peanuts
+      preparation: roasted
+      quantity: '75'
+    - measurement: null
+      name: pineapple juice
+      preparation: or apple
+      quantity: '250'
+    - measurement: Tbsp
+      name: mussuman curry paste
+      preparation: see eparate recipe - or any other curry paste
+      quantity: '4'
+  serves: null
+source: null
+tags:
+- with rice
+title: Mussuman chicken / tofu curry

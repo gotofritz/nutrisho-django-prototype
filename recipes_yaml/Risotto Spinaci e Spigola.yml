@@ -1,0 +1,87 @@
+cuisine: .italian
+description: The Mediterranean sea bass (spigola) is related to but slightly different
+  from the Atlantic one, but any mild fish will do
+directions:
+  step:
+  - "STOCK: Saut\xE9 carrot, parsley in olive oil, high heat, 3m. Add fish heads and\
+    \ frame, stir a few more mins"
+  - Cover with water, bring to boil, then simmer on low 20m. Sieve and keep warm for
+    the risotto
+  - "SPINACH: Saut\xE9 garlic in olive oil, high heat, 1m. Add spinach (no liquid,\
+    \ moisture from washing is enough) until wilted"
+  - Remove from stove and discard garlic. Chop coarsely and set aside, keeping the
+    oil
+  - "RISOTTO: Saut\xE9 shallot in olive oil on high heat, 3m. Add rice, and keep stirring\
+    \ for about 1m"
+  - Sweat with white wine until evaporated, about 3m
+  - When the mixture is dry and beginning to toast turn heat to medium and stir in
+    a couple of ladefuls of fish stock and salt
+  - 'From now on the cycle goes: when liquid is almost all absorbed stir rice vigorously
+    for a few seconds; then stir in a small ladelful of stock, mix well and leave
+    it to be absorbed'
+  - After 10 minutes stir the fish pieces
+  - After another 5-10 mins the rice should be soft but still chewy. Turn off fire,
+    add the spinach with their oil, pepper, lemon juice and sweet paprika. Stir in
+    vigorously
+  - Cover and stand a couple of minutes before serving
+ingredients:
+  group:
+  - ingredient:
+    - measurement: small
+      name: carrot
+      preparation: cut in 3 or 4
+      quantity: '1'
+    - measurement: small
+      name: onion
+      preparation: quartered
+      quantity: '1'
+    - measurement: leaves
+      name: parsley
+      preparation: null
+      quantity: '10'
+    - measurement: null
+      name: sea bass
+      preparation: head and carcass
+      quantity: '1'
+    name: Stock
+  - ingredient:
+    - measurement: g
+      name: spinach
+      preparation: null
+      quantity: '250'
+    - measurement: clove
+      name: garlic
+      preparation: halved lenghtways
+      quantity: '1'
+    name: Spinach
+  - ingredient:
+    - measurement: g
+      name: rice
+      preparation: carnaroli or aborio
+      quantity: '160'
+    - measurement: g
+      name: sea bass
+      preparation: filet
+      quantity: '250'
+    - measurement: null
+      name: shallots
+      preparation: chopped finely
+      quantity: '1'
+    - measurement: ml
+      name: white wine
+      preparation: null
+      quantity: '100'
+    - measurement: to taste
+      name: paprika
+      preparation: sweet
+      quantity: null
+    - measurement: generous
+      name: lemon
+      preparation: squeezed
+      quantity: '1'
+    name: Risotto
+  serves: '2'
+source: null
+tags:
+- rice
+title: Risotto Spinaci e Spigola (Sea Bass)

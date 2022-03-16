@@ -1,0 +1,60 @@
+cuisine: .spain.asturias
+description: Tarta De Manzans from the Asturias
+directions:
+  step:
+  - Mix the dough ingredients in a food processor. Knead into a ball and leave to
+    rest in the fridge, covered, 30 mins.
+  - Roll the dough on a buttered 30 cm loose bottom tart tin. Prick with a fork.
+  - Slice the apples into thin rings. Arrange on the pastry.
+  - "Pour over the lemon juice and bake 200\xB0 for 30 mins or so."
+  - Let cool slightly then grate cinnamon.
+  - Warm some apricot jam in a pot, and when it's gone a bit fluid glaze the cake
+    with it, using a brush.
+  - Leave to cool.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour, spelt
+      preparation: or normal wheat
+      quantity: '300'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '100'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '200'
+    - measurement: null
+      name: egg
+      preparation: null
+      quantity: '1'
+    - measurement: pinch
+      name: salt
+      preparation: null
+      quantity: null
+    name: Dough
+  - ingredient:
+    - measurement: g
+      name: apples
+      preparation: peeled, cored
+      quantity: '750'
+    - measurement: null
+      name: lemon
+      preparation: squeezed
+      quantity: '1'
+    - measurement: tsp
+      name: cinnamon, ground
+      preparation: null
+      quantity: '1'
+    - measurement: dollop
+      name: apricot jam
+      preparation: null
+      quantity: '1'
+    name: Topping
+  serves: '1'
+source: Culinaria Spain
+tags:
+- cake
+title: Apple Tart from Spain

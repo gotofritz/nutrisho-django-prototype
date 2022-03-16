@@ -1,0 +1,57 @@
+cuisine: null
+description: Frijoles de la olla are sinmply cooked beans, and Frijoles Refritos are
+  fried and used as acoompanyment
+directions:
+  step:
+  - "To cook the beans: saut\xE9 onions fro 10 m on medium"
+  - Add beans, 2L water, epazote and boil vigorously for 10 mins, then on medium for
+    50. Or use a pressure cooker
+  - Add salt, and cook another 15 m
+  - "To refry the beans: saut\xE9 onion, 10 mins, then add the garlic for 2 mins"
+  - Add 1/4 of the beans, drained, and mash them. Repeat until the beans are all mashed
+    up
+  - Add 1 cup of the beans liquid
+  - Serve with cheese crumbled on top
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: beans
+      preparation: dry
+      quantity: '500'
+    - measurement: Tbsp
+      name: oil
+      preparation: or lard
+      quantity: '3'
+    - measurement: null
+      name: onions
+      preparation: white
+      quantity: '1'
+    - measurement: sprigs
+      name: epazote
+      preparation: null
+      quantity: '1'
+    name: Frijoles de la olla
+  - ingredient:
+    - measurement: cloves
+      name: garlic
+      preparation: chopped
+      quantity: '1'
+    - measurement: Tbsp
+      name: oil
+      preparation: or lard
+      quantity: '2'
+    - measurement: null
+      name: onions
+      preparation: white
+      quantity: '1'
+    - measurement: g
+      name: cheese
+      preparation: feta
+      quantity: '60'
+    name: Frijoles Refritos
+  serves: null
+source: null
+tags:
+- with tortillas
+title: Frijoles de la olla y Frijoles Refritos

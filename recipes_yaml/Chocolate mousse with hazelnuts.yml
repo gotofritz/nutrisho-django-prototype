@@ -1,0 +1,56 @@
+cuisine: null
+description: In between Eataly and a lunch at our hotel we squeezed in a visit to
+  Guido Gobino's chocolate shop. Well, it's a bit more than a chocolate shop - more
+  a temple to the stuff. Chocolate makers can create flavours for the sake of it but
+  here the fillings and flavours are well thought out. One of the most impressive
+  of the chocolates at Guido's was a one-kilo slab of chocolate with lightly roasted
+  whole hazelnuts in it.
+directions:
+  '#text': '>'
+  step:
+  - Put the chocolate in a heat-proof bowl over a pan of simmering water, stirring
+    every so often until melted. Make sure you don't get any water near the chocolate.
+    Remove from the heat and beat the butter into the chocolate with a whisk, or spoon
+    until smooth.
+  - In a really clean bowl - preferably washed in boiling water to remove any grease,
+    and dried - whisk the egg whites until frothy but not stiff, using a mixer or
+    an electric whisk on a medium high speed. Add half the sugar to the egg white
+    and continue whisking on a low setting until the egg whites are stiff. Add the
+    rest of the sugar and continue beating until the egg whites    stiffen up even
+    more, then mix in the egg yolks with a metal spoon.
+  - Carefully stir half the egg mixture into the chocolate mixture - a whisk helps
+    - then stir the hazelnuts and the rest of the egg mixture with a large spoon until
+    well mixed in. Pour into a large serving dish and leave to set for a couple of
+    hours, or overnight. Serve in glasses, coffee cups or just a large bowl.
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: good quality dark chocolate
+      preparation: broken into small pieces
+      quantity: '250'
+    - measurement: g
+      name: shelled hazelnuts
+      preparation: lightly roasted
+      quantity: '80'
+    - measurement: g
+      name: unsalted butter
+      preparation: softened
+      quantity: '50'
+    - measurement: null
+      name: very fresh egg whites
+      preparation: null
+      quantity: '9'
+    - measurement: null
+      name: egg yolks
+      preparation: beaten
+      quantity: '6'
+    - measurement: g
+      name: caster sugar
+      preparation: null
+      quantity: '125'
+  serves: Serves 4
+source: null
+tags:
+- desserts
+title: Chocolate mousse with hazelnuts

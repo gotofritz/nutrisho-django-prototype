@@ -1,0 +1,81 @@
+cuisine: .chinese.nw
+description: mengu zhima yangrou
+directions:
+  '#text': '>'
+  step:
+  - mix all the marinade ingredients, then mix in the lamb, (2) leave overnight in
+    fridge
+  - stir fry the onion 3 mins, in mixed oils, then remove (4) stir fry marinated lamb,
+    1m, then remove (5) add stock, cornstartch mix to empty wok, 1m (6) add lamb and
+    onions back in, then pepper (7) serve with sesame seeds and chili on top
+ingredients:
+  group:
+  - ingredient:
+    - measurement: ml
+      name: soy sauce
+      preparation: light
+      quantity: '60'
+    - measurement: Tbsp
+      name: hoisin
+      preparation: null
+      quantity: '1.5'
+    - measurement: Tbsp
+      name: oil
+      preparation: sesame
+      quantity: '1'
+    - measurement: Tbsp
+      name: rice wine
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: cornstarch
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: sugar
+      preparation: icing
+      quantity: '1.5'
+    - measurement: tsp
+      name: allspice
+      preparation: ground
+      quantity: '0.5'
+    name: Marinade
+  - ingredient:
+    - measurement: g
+      name: lamb
+      preparation: lean
+      quantity: '500'
+    - measurement: Tbsp
+      name: sesame seeds
+      preparation: dry roasted in wok
+      quantity: '1'
+    - measurement: Tbsp
+      name: oil
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: oil
+      preparation: sesame
+      quantity: '1'
+    - measurement: null
+      name: onions
+      preparation: large
+      quantity: '1'
+    - measurement: ml
+      name: lamb stock
+      preparation: or chicken stock or water
+      quantity: '80'
+    - measurement: tsp
+      name: cornstarch
+      preparation: dissolved in 1 tbls water
+      quantity: '1'
+    - measurement: null
+      name: chilies
+      preparation: fresh
+      quantity: '3'
+    name: Lamb
+  serves: null
+source: null
+tags:
+- savoring china
+title: Mongolian sesame lamb

@@ -1,0 +1,96 @@
+cuisine: .american
+description: Rich and oozing with caramel
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - Mix sugar, sugar syrup, milk, coarse salt in a bowl.
+  - Melt the butter, then add the sugar and milk mixture. Keep stirring constantly
+    on high heat until the caramel is thick and light brown.
+  - Off the heat carefully add the double cream to the caramel
+  - Line a baking pan with buttered foil, and pour the caramel in. Let cool until
+    until firm enough to cut. Put in the fridge if not hard enough, about  3-4 hr
+  - Put the dark chocolate, butter in a bowl and put the bowl over a pot with boiling
+    water. Melt until smooth
+  - Beat together sugar, eggs, egg yolks in a bowl until thick
+  - Add the butter and chocolate mixture
+  - Add the flour, pinch of salt, and vanilla seeds and beat until well mixed and
+    solid flour, vanilla pod
+  - Cut the solid caramel into 8 cubes. Split the cake mixture into 8 ramekins, and
+    wedge a caramel cube in the middle of each
+  - "Bake for 14-16m at 180\xB0. Let cool for 4 mins before tipping on a plate and\
+    \ sprinkle icing sugar over the brownies."
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '200'
+    - measurement: ml
+      name: sugar syrup
+      preparation: null
+      quantity: '250'
+    - measurement: ml
+      name: milk
+      preparation: null
+      quantity: '250'
+    - measurement: tbsp
+      name: salt
+      preparation: coarse
+      quantity: '2'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '200'
+    - measurement: ml
+      name: cream
+      preparation: double
+      quantity: '200'
+    name: Caramel
+  - ingredient:
+    - measurement: g
+      name: chocolate
+      preparation: dark
+      quantity: '175'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '175'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '100'
+    - measurement: null
+      name: eggs
+      preparation: null
+      quantity: '3'
+    - measurement: null
+      name: egg yolks
+      preparation: null
+      quantity: '3'
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '75'
+    - measurement: null
+      name: vanilla pod
+      preparation: cut lengthwsie and seeds scraped
+      quantity: '1'
+    name: Cakes
+  serves: '8'
+source: null
+tags:
+- dessert
+title: Salty Caramel Brownie

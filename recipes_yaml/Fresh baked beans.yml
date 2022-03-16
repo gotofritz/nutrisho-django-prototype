@@ -1,0 +1,41 @@
+cuisine: .british.modern
+description: null
+directions:
+  step:
+  - "Mix all the ingredients minus the ham and bake in a baking dish loosely covered\
+    \ with foil at 200\xB0 for 30 mins"
+  - "Saut\xE9 the ham until crisp and drain on paper towels"
+  - Mix together and serve
+ingredients:
+  group:
+    ingredient:
+    - measurement: tbsp
+      name: oil, olive
+      preparation: null
+      quantity: '2'
+    - measurement: g
+      name: cannellini beans
+      preparation: cooked (200 g dried)
+      quantity: '400'
+    - measurement: tsp
+      name: chili flakes
+      preparation: null
+      quantity: '0.5'
+    - measurement: null
+      name: red onion
+      preparation: small, sliced coarsely
+      quantity: '1'
+    - measurement: g
+      name: cherry tomatoes
+      preparation: null
+      quantity: '250'
+    - measurement: slices
+      name: ham
+      preparation: null
+      quantity: '8'
+    name: null
+  serves: '4'
+source: That ozzie chap
+tags:
+- beans
+title: Fresh baked beans

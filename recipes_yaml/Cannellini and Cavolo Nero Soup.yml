@@ -1,0 +1,44 @@
+cuisine: .italian
+description: null
+directions:
+  step:
+  - Soak the beans overnight, and cook 30 mins
+  - "Saut\xE9 garlic and chili, then add the cooked beans"
+  - Add the cavolo nero leaves
+  - Slowly add in the stock, cook on low for 45 mins
+  - Toast two slices of bread, rub garlic on them, and place them at the bottom of
+    the bowls
+  - Pour the soup over the bread
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: cannellini, dried
+      preparation: null
+      quantity: '200'
+    - measurement: null
+      name: cavolo nero
+      preparation: null
+      quantity: '1'
+    - measurement: cloves
+      name: garlic
+      preparation: null
+      quantity: '3'
+    - measurement: null
+      name: chilies, fresh
+      preparation: null
+      quantity: '3'
+    - measurement: L
+      name: stock, veg
+      preparation: null
+      quantity: '1'
+    - measurement: '4'
+      name: slices
+      preparation: bread
+      quantity: null
+    name: null
+  serves: null
+source: http://www.piciecastagne.it/?p=246
+tags:
+- soup
+title: Cannellini and Cavolo Nero Soup

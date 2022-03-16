@@ -1,0 +1,105 @@
+cuisine: .asian
+description: Run of the mill Asian style fried rice
+directions:
+  step:
+  - 'THE DAY BEFORE: cook the rice as normal, but when still hot spread it on a tray
+    to let it dry'
+  - Put oil in a wok, high temperature
+  - 'If using meat: cut into strips, soak in soy sauce 10 mins. Fry on high heat before
+    everything else, or in separate pan while you are doing the rice to be faster'
+  - If using omelette, beat the eggs and add cook the omelette in the oil. Remove,
+    roll up and cut up in stripes, then cut the stripes into 3 or so
+  - If using hard ingredients, add them and fry for 1 min or so. Add 1tsp soy sauce,
+    stir, then 4 or 5 tbsp of water. The water should coat all the ingredients but
+    evaporate in 4/5 mins. Then add more oil
+  - Add garlic and ginger, and chili if using. Stir fry for 20 seconds, then add 1
+    tbsp soy sauce and fry 1 min
+  - Add the rice. Break up and fry for 1 mins
+  - Add all the other ingredients, cut up omelette if using, and the white pepper
+ingredients:
+  group:
+  - ingredient:
+    - measurement: cups
+      name: cooked rice
+      preparation: null
+      quantity: '3'
+    - measurement: tbs
+      name: soy sauce
+      preparation: null
+      quantity: '1'
+    - measurement: clove
+      name: garlic
+      preparation: chopped
+      quantity: '1'
+    - measurement: tbsp
+      name: giner
+      preparation: grated
+      quantity: '1'
+    - measurement: tsp
+      name: white pepper
+      preparation: null
+      quantity: '1'
+    name: Basic
+  - ingredient:
+    - measurement: null
+      name: carrot
+      preparation: 3mm dice
+      quantity: '1'
+    - measurement: cup
+      name: broccoli
+      preparation: small florets
+      quantity: '1'
+    - measurement: cup
+      name: pepper
+      preparation: 5mm dice
+      quantity: '0.5'
+    - measurement: cup
+      name: zucchini
+      preparation: 8mm dice
+      quantity: '0.5'
+    - measurement: tbsp
+      name: soy sayce
+      preparation: null
+      quantity: '1'
+    name: Optional hard ingredients
+  - ingredient:
+    - measurement: cup
+      name: chicken
+      preparation: torn
+      quantity: '1'
+    - measurement: cup
+      name: ham
+      preparation: or wurst, diced
+      quantity: '0.5'
+    - measurement: cup
+      name: shrimp
+      preparation: null
+      quantity: '0.5'
+    - measurement: null
+      name: eggs
+      preparation: beaten
+      quantity: '2'
+    - measurement: cup
+      name: meat
+      preparation: thin stripes
+      quantity: '1'
+    name: Other ingredients
+  - ingredient:
+    - measurement: dash
+      name: fish sauce
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: oyster sauce
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: sesame oil
+      preparation: null
+      quantity: '0.5'
+    name: Possible Seasonigs
+  serves: '2'
+source: null
+tags:
+- rice
+title: Fried Rice

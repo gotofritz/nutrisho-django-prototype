@@ -1,0 +1,40 @@
+cuisine: null
+description: null
+directions:
+  step:
+  - Preheat an oven to 70 C.
+  - Place the cut sweet potatoes in a bowl and cover with cold water. Leave the potatoes
+    to soak for 15 minutes, then drain and rinse several times to remove all excess
+    starch. Dry the potatoes with kitchen roll or in a salad spinner until they are
+    completely dry.
+  - Meanwhile, make the parsley salt by laying the parsley leaves on a baking tray.
+    Place the parsley in the oven and roast it for about 20 minutes or until the leaves
+    are dry and crumbly. Place the parsley leaves in a suribachi or mortar and pestle
+    and grind thoroughly until the parsley flakes are a powder. Add salt to approximately
+    half the quantity of the parsley powder and grind again until the parsley is completely
+    mixed with the salt. Set aside.
+  - Heat the vegetable oil to 165C in a deep pot or wok. Deep fry the potatoes in
+    small batches for 1 1/2 minutes, then remove and drain on a rack lined with kitchen
+    roll.
+  - Increase the heat of the oil to 190C and fry the potatoes a second time in batches
+    for a further 1 1/2 minutes until crisp and golden. Drain the potatoes on clean
+    kitchen roll, then place the fries in a bowl and sprinkle generously with the
+    parsley salt. (You will not use all the salt. Save the rest to use for something
+    else.)
+  - Toss the fries with the salt and serve right away.
+ingredients:
+  group:
+    ingredient:
+    - measurement: null
+      name: sweet potatoes
+      preparation: peeled and cut 'shoestring' style with a mandoline
+      quantity: '2'
+    - measurement: bunch
+      name: parsley
+      preparation: leaves only
+      quantity: '1'
+  serves: null
+source: null
+tags:
+- snack
+title: Sweet Potato Fries with Parsley Salt

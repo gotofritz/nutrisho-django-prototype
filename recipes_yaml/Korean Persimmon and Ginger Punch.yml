@@ -1,0 +1,51 @@
+cuisine: .korean
+description: 'Known as ''sujeonggwa'' in Korea, this punch can be served hot or cold
+  and is highly praised in Korea as an immune-system booster. The scent of the cinnamon
+  and ginger simmering away will make your kitchen smell a bit like Christmas.
+
+
+  Dried persimmons can be purchased at Asian and Middle Eastern Stores.'
+directions:
+  step:
+  - Place the water, ginger and cinnamon in a pot and bring it to a boil. Simmer for
+    45 minutes or until the liquid is reduced by almost half and has a strong ginger
+    and cinnamon flavour.
+  - Strain out the ginger and cinnamon and stir in the honey until well dissolved.
+    Add the persimmons and set aside to cool. Place the mixture in the fridge and
+    chill well.
+  - Toast the pine nuts in a dry frying pan on medium-low heat until the pine nuts
+    are golden. Pour the punch into glasses and top each glass with a scattering of
+    pine nuts. Serve cold.
+  - 'Note: This punch is also delicious served hot as a kind of tea.'
+ingredients:
+  group:
+    ingredient:
+    - measurement: l
+      name: water
+      preparation: null
+      quantity: '2'
+    - measurement: cm
+      name: ginger
+      preparation: peeled and thinly sliced
+      quantity: '10'
+    - measurement: pieces
+      name: cinnamon
+      preparation: 7 cm long
+      quantity: '6'
+    - measurement: Tbsp
+      name: honey
+      preparation: null
+      quantity: '6'
+    - measurement: handful
+      name: persimmons
+      preparation: dried
+      quantity: '1'
+    - measurement: handful
+      name: pine nuts
+      preparation: null
+      quantity: '1'
+  serves: null
+source: null
+tags:
+- drink
+title: Korean Persimmon and Ginger Punch

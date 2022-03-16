@@ -1,0 +1,45 @@
+cuisine: .chinese
+description: Keeps 3 days fresh, 2 months frozen
+directions:
+  '#text': '>
+
+
+
+
+    >'
+  step:
+  - "Saut\xE9 the ingredients in oil over medium heat for 5 mins"
+  - Add water and seasonings and bring to boil
+  - Cook 30 mins on low, then sieve
+ingredients:
+  group:
+    ingredient:
+    - measurement: null
+      name: daikon
+      preparation: peeled
+      quantity: '1'
+    - measurement: g
+      name: cabbage
+      preparation: or bok choi
+      quantity: '185'
+    - measurement: null
+      name: onion
+      preparation: yellow
+      quantity: '1'
+    - measurement: l
+      name: water
+      preparation: null
+      quantity: '1.5'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: peppercorns
+      preparation: white
+      quantity: '0.5'
+  serves: null
+source: null
+tags:
+- basics
+title: Chinese Vegetable Stock 1

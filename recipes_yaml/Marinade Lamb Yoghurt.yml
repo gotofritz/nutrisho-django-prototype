@@ -1,0 +1,76 @@
+cuisine: .modern
+description: The lactic acid in yoghurt tenderises meat
+directions:
+  step:
+  - Wash the meat and pat dry
+  - Crush cardamom and cumin in mortar
+  - Put the dry marinade ingredients in a jar and shake well, then rub generously
+    over the meat. Use more than seems necessary - it won't be
+  - Let it rest for up to 1 hr in a high dish
+  - Mix wet marinade ingredients in food processor
+  - For the lemon, zest it with a light peeler, chop the zest finely and add to mixer.
+    Cut top and bottom of lemon and discard. Trim away skin and pith so that there
+    is no white left on lemon. Hold the lemon over a sieve over the food processor
+    to catch the juice, and cut away each segment making sure the membrane is left
+    behind, dropping the segments in the mixer. At the end you should be left with
+    all the membranes in between the segments connected at the center. Squeeze and
+    discard
+  - Process until smooth, then pour over ribs and mix thoroughly to make sure all
+    meat is covered
+  - Chill covered overnight
+  - "Cook at 150\xB0, turning once, for 30 mins or so"
+  - "Turn up heat to 220\xB0 and put meat close to grill for the last 5 mins"
+ingredients:
+  group:
+  - ingredient:
+      measurement: kg
+      name: lamb chops
+      preparation: null
+      quantity: '1'
+    name: Meat
+  - ingredient:
+    - measurement: tsp
+      name: cumin
+      preparation: null
+      quantity: '2.5'
+    - measurement: pods
+      name: cardamom
+      preparation: null
+      quantity: '12'
+    - measurement: tbsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: chilli
+      preparation: null
+      quantity: '2'
+    name: Dry Marinade
+  - ingredient:
+    - measurement: g
+      name: yoghurt
+      preparation: null
+      quantity: '240'
+    - measurement: tbsp
+      name: olive oil
+      preparation: null
+      quantity: '3'
+    - measurement: cloves
+      name: garlic
+      preparation: null
+      quantity: '8'
+    - measurement: lemon
+      name: juiced, zested
+      preparation: null
+      quantity: '1'
+    - measurement: cm
+      name: ginger
+      preparation: grated
+      quantity: '1'
+    name: Wet Marinade
+  serves: '4'
+source: http://www.saveur.com/article/recipes/grilled-yogurt-marinated-lamb-shoulder-chops
+tags:
+- marinade
+- grill
+title: 'Marinade: Lamb Yoghurt'

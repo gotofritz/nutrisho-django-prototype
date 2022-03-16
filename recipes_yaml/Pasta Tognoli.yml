@@ -1,0 +1,50 @@
+cuisine: .indian.uttar pradesh
+description: This is what passes for "carbonara" in the UK. Nothing to do with the
+  real thing, but a simple studenty dish that has its uses. Named after a TV caricature
+  of an Italian.
+directions:
+  step:
+  - Boil a large pot of salted water and cook pasta in it as per packet instructions
+  - "While the pasta is cooking, saut\xE9 the bacon or ham in butter, 4 or 5 minutes\
+    \ until fairly crisp"
+  - Stir in the flour, it will stick to the bacon. Let it cook that way a couple of
+    minutes, stirring well
+  - Add the milk, season with salt and pepper to taste, bring it to a simmer
+  - Add the frozen peas if using
+  - Keep cooking on a medium simmer until thickened
+  - when the pasta is ready, pour the sauce over it, mix it well, and serve
+ingredients:
+  group:
+  - ingredient:
+      measurement: g
+      name: short pasta
+      preparation: maccheroni, penne, fusilli, etc
+      quantity: '220'
+    name: Pasta
+  - ingredient:
+    - measurement: g
+      name: bacon, or ham
+      preparation: diced
+      quantity: '100'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '30'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '15'
+    - measurement: ml
+      name: milk
+      preparation: null
+      quantity: '300'
+    - measurement: g
+      name: peas
+      preparation: frozen (optional)
+      quantity: '50'
+    name: Sauce
+  serves: '2'
+source: null
+tags:
+- dal
+title: Pasta Tognoli

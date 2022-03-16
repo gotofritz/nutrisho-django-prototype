@@ -1,0 +1,62 @@
+cuisine: null
+description: This is a great way to introduce beetroot to children without them knowing
+  - it's worked on mine!
+directions:
+  '#text': '>'
+  step: "Preheat the oven to 180C/350F/Gas4. Place all of the ingredients in the food\
+    \ processor in the order above and whizz until smooth. Place in a greased 20cm\
+    \ cake tin and bake for 45-50 minutes until a skewer inserted comes out clean.\
+    \ Allow to cool, then sprinkle with icing sugar and serve with cr\xE8me fra\xEE\
+    che. '"
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: caster sugar
+      preparation: null
+      quantity: '125'
+    - measurement: medium
+      name: free-range eggs
+      preparation: null
+      quantity: '2'
+    - measurement: g
+      name: Greek yoghurt
+      preparation: null
+      quantity: '100'
+    - measurement: g
+      name: cocoa powder
+      preparation: null
+      quantity: '35'
+    - measurement: g
+      name: soft unsalted butter
+      preparation: null
+      quantity: '75'
+    - measurement: tsp
+      name: baking soda
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: 1/4
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '200'
+    - measurement: tsp
+      name: baking powder
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: strong
+      preparation: black coffee (hot)
+      quantity: '100'
+    - measurement: g
+      name: grated raw beetroot
+      preparation: null
+      quantity: '150'
+  serves: Makes one medium-sized cake
+source: null
+tags:
+- cake
+title: Dense beetroot and chocolate cake

@@ -1,0 +1,73 @@
+cuisine: .fusion.british
+description: null
+directions:
+  step:
+  - Steam the sweet potato then drain in a colander for one hour
+  - Whisk the sauce ingredients until smooth then set aside
+  - Mix all the fritter ingredients by hand in a bowl
+  - With we hands, knead into walnut sized balls, then flatten into 5 cm to 1 cm cakes
+  - Fry in butter, carefully until you get a nice crust, 6 minutes, turning as necessary
+  - Dry on paper towels and serve hot or cold with the sauce
+ingredients:
+  group:
+  - ingredient:
+    - measurement: kg
+      name: sweet potatoes
+      preparation: cut into large chunks
+      quantity: '1'
+    - measurement: tsp
+      name: soy sauce
+      preparation: null
+      quantity: '2'
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '100'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: sugar
+      preparation: null
+      quantity: '0.5'
+    - measurement: tbsp
+      name: spring onions
+      preparation: chopped
+      quantity: '3'
+    - measurement: tbsp
+      name: chillies
+      preparation: deseeded and chopped
+      quantity: '1'
+    - measurement: g
+      name: butter
+      preparation: or as needed
+      quantity: '50'
+    name: Fritters
+  - ingredient:
+    - measurement: g
+      name: yogurt
+      preparation: null
+      quantity: '50'
+    - measurement: g
+      name: sour cream
+      preparation: null
+      quantity: '50'
+    - measurement: tbsp
+      name: olive oil
+      preparation: null
+      quantity: '2'
+    - measurement: tbso
+      name: lemon juice
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: coriander leaves
+      preparation: chopped
+      quantity: '1'
+    name: Sauce
+  serves: '2'
+source: Ottolenghi
+tags:
+- snacks
+title: Sweet Potato Cake

@@ -1,0 +1,78 @@
+cuisine: .burmese
+description: This delicious snack is prepared in the streets of Burma where it is
+  cooked in shallow terracotta pots over a charcoal fire and eaten with tamarind sauce.
+  Rice flour is easily available in Asian and Indian grocery stores and is a great
+  alternative to wheat flour for people with gluten allergies. Just be sure to buy
+  plain rice flour and not 'sticky' or glutinous rice flour
+directions:
+  '#text': '>'
+  step:
+  - To make the tamarind sauce, place the tamarind pulp in a small bowl and pour over
+    the boiling water. Set aside for 20 minutes, then rub the pulp between your fingers
+    until the texture of the water is thick - similar to ketchup.
+  - Pour the tamarind and water through a fine mesh strainer with a bowl underneath
+    to catch the liquid. Press down on the tamarind fibres to extract as much flavour
+    and liquid as possible, then discard the tamarind pulp.
+  - Combine the tamarind water, palm sugar and fish sauce in a small, heavy based
+    saucepan on medium heat. Bring to a gentle simmer, stirring occasionally until
+    all the palm sugar has dissolved. Continue to simmer for a further 3-5 minutes
+    or until the sauce has thickened slightly. Remove from the heat, stir in the coriander
+    and set aside.
+  - Combine the rice flour and salt in a bowl and add just enough water to make a
+    thick batter. Whisk well so that there are no lumps.
+  - Heat the oil in a small, non-stick or cast-iron frying pan on medium heat. When
+    the oil is hot, ladle some of the batter into the frying pan. Cook until bubbles
+    appear on the top. Scatter some chickpeas across the surface, pressing them gently
+    into the pancake, then flip over and cook for another 2-3 minutes on the other
+    side. Repeat with the remaining batter, keeping the pancakes warm in the oven.
+  - Serve on a large platter with the tamarind sauce on the side for dipping.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      preparation: rice
+      quantity: '400'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '0.25'
+    - measurement: null
+      name: water
+      preparation: null
+      quantity: null
+    - measurement: tsp
+      name: oil
+      preparation: null
+      quantity: '2'
+    - measurement: handful
+      name: chickpeas
+      preparation: cooked
+      quantity: '1'
+  - ingredient:
+    - measurement: g
+      name: tamarind pulp
+      preparation: null
+      quantity: '60'
+    - measurement: ml
+      name: water
+      preparation: boiling
+      quantity: '250'
+    - measurement: Tbsp
+      name: sugar
+      preparation: palm
+      quantity: '6'
+    - measurement: Tbsp
+      name: fish sauce
+      preparation: null
+      quantity: '4'
+    - measurement: handful
+      name: coriander leaves
+      preparation: finely chopped
+      quantity: '1'
+    name: Tamarind Sauce
+  serves: null
+source: null
+tags:
+- snack
+title: Rice Flour and Chickpea Pancakes with Tamarind Sauce

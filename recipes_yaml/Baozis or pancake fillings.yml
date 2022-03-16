@@ -1,0 +1,142 @@
+cuisine: .chinese
+description: Jiaozi
+directions:
+  '#text': '>'
+  step:
+  - process meat
+  - add ginger, oil, soy sauce
+  - add water slowly
+  - add rest but do not blend too much
+  - marinate pork in soy sauce
+  - steam sausages 5 m then chopped
+  - dissolve starch in stock
+  - stir fry pork, celery ginger garlic, 1m
+  - add sausage, bamboo shots, mushrooms, hoisin sauce, dark soy sauce, spring onion,
+    cornstarch mixture, 20 sec
+  - move to bowl and add coriander
+  - dice pork
+  - cook with other ingredients over medium heat for 1 m, then let stand
+  - 'make baozis: line steamer with cabbage leaves, steam 7 m'
+  - make pancakes
+  - serve with soy sauce
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: pork
+      preparation: lean
+      quantity: '220'
+    - measurement: tsp
+      name: ginger
+      preparation: peeled
+      quantity: '1.5'
+    - measurement: Tbsp
+      name: oil
+      preparation: groundnut
+      quantity: '1.5'
+    - measurement: Tbsp
+      name: soy sauce
+      preparation: light
+      quantity: '2'
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '125'
+    - measurement: g
+      name: cabbage
+      preparation: napa
+      quantity: '60'
+    - measurement: null
+      name: spring onions
+      preparation: chopped fine
+      quantity: '2'
+    - measurement: Tbsp
+      name: oil
+      preparation: sesame
+      quantity: '1'
+    - measurement: null
+      name: baozi dough
+      preparation: balls (separate recipe)
+      quantity: '20'
+    name: Filling 1
+  - ingredient:
+    - measurement: g
+      name: pork
+      preparation: fat
+      quantity: '280'
+    - measurement: Tbsp
+      name: soy sauce
+      preparation: light
+      quantity: '1'
+    - measurement: null
+      name: sausage
+      preparation: chinese
+      quantity: '3'
+    - measurement: Tbsp
+      name: oil
+      preparation: groundnut
+      quantity: '2'
+    - measurement: null
+      name: celery
+      preparation: chopped finely
+      quantity: '0.5'
+    - measurement: tsp
+      name: ginger
+      preparation: peeled
+      quantity: '2'
+    - measurement: tsp
+      name: garlic cloves
+      preparation: chopped finely
+      quantity: '0.5'
+    - measurement: g
+      name: bamboo shots
+      preparation: chopped finely
+      quantity: '75'
+    - measurement: g
+      name: mushrooms
+      preparation: chopped finely
+      quantity: '80'
+    - measurement: Tbsp
+      name: hoisin sauce
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: soy sauce
+      preparation: dark
+      quantity: '1'
+    - measurement: null
+      name: spring onions
+      preparation: whole
+      quantity: '3'
+    - measurement: tsp
+      name: cornstarch
+      preparation: null
+      quantity: '2'
+    - measurement: ml
+      name: stock
+      preparation: or water
+      quantity: '125'
+    - measurement: Tbsp
+      name: coriander
+      preparation: chopped finely
+      quantity: '1.5'
+    name: Filling 2
+  - ingredient:
+    - measurement: g
+      name: red roast pork
+      preparation: separate recipe
+      quantity: '315'
+    - measurement: Tbsp
+      name: hoisin sauce
+      preparation: null
+      quantity: '1.5'
+    - measurement: Tbsp
+      name: cornstarch
+      preparation: dissolved in 3 tbsp water
+      quantity: '1'
+    name: Filling 3 - Cha shao bao (spongy)
+  serves: '20'
+source: null
+tags:
+- snacks
+title: Baozis or pancake fillings

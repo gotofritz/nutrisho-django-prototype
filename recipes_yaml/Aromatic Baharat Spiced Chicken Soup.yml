@@ -1,0 +1,106 @@
+cuisine: .middle east
+description: 'To really appreciate this soup allow it to soak into the flatbreads
+  for a few minutes before eating.
+
+
+  For this recipe a beautiful Arabian spice mixture called baharat is made by grinding
+  up spices and rosepetals and then adding them to a soup.'
+directions:
+  step:
+  - dry roast and grind black peppercorns, cardamom, cumin seeds, coriander seeds,
+    cloves, cinnamon medium low
+  - add nutmeg, ground ginger, dried rose petals
+  - "saut\xE9 garlic, onions, potatoes, squash medium for 5m"
+  - add spice mix for 4m
+  - add and simmer chicken stock, chicken legs, lemon until tender, about 45m
+  - pour over bread slices
+ingredients:
+  group:
+  - ingredient:
+    - measurement: Tbsp
+      name: oil
+      preparation: null
+      quantity: '6'
+    - measurement: cloves
+      name: garlic
+      preparation: peeled but left whole
+      quantity: '8'
+    - measurement: null
+      name: onions
+      preparation: large peeled and quartered
+      quantity: '2'
+    - measurement: null
+      name: potatoes
+      preparation: large peeled and cut into large chunks
+      quantity: '2'
+    - measurement: null
+      name: butternut squash
+      preparation: peeled and but into large chunks
+      quantity: '0.5'
+    - measurement: l
+      name: stock
+      preparation: chicken
+      quantity: '1'
+    - measurement: null
+      name: chicken legs
+      preparation: or thighs or a mixture of both
+      quantity: '4'
+    - measurement: null
+      name: lemon
+      preparation: cut into quarters
+      quantity: '1'
+    - measurement: null
+      name: flatbred
+      preparation: spongy flatbread like Turkish pide
+      quantity: '1'
+  - ingredient:
+    - measurement: tsp
+      name: black peppercorns
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: cardamom pods
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: cumin seeds
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: coriander seeds
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: cloves
+      preparation: null
+      quantity: '3'
+    - measurement: cm
+      name: cinnamon
+      preparation: null
+      quantity: '3'
+    - measurement: null
+      name: whole cloves
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: chillies
+      preparation: dried
+      quantity: '1'
+    - measurement: tsp
+      name: dried rose petals
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: a few shavings of nutmeg
+      preparation: null
+      quantity: null
+    - measurement: tsp
+      name: ground ginger
+      preparation: null
+      quantity: '1'
+    name: Baharat (An Iraqi Spice Mixture)
+  serves: '4'
+source: null
+tags:
+- soup
+title: Aromatic Baharat Spiced Chicken Soup

@@ -1,0 +1,59 @@
+cuisine: .chinese
+description: Gao Tang Yu Jiao
+directions:
+  '#text': '>'
+  step: process fish and all other fish ball ingredients (2) make balls out of them
+    (3) heat the stock, cook the fishballs 40 s in them (4) ladle out fish balls,
+    split into soup bowls adding coriander and tomates (5) add salt and pepper to
+    stock, sieve into bowls
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: fish fillet
+      preparation: white
+      quantity: '220'
+    - measurement: null
+      name: spring onions
+      preparation: white only
+      quantity: '3'
+    - measurement: tea
+      name: spring onion
+      preparation: grated
+      quantity: '1'
+    - measurement: Tbsp
+      name: water
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: rice wine
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: egg whites
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: baking powder
+      preparation: null
+      quantity: '0.25'
+    name: Fish balls
+  - ingredient:
+    - measurement: null
+      name: tomatoes
+      preparation: cherry
+      quantity: '4'
+    - measurement: bunch
+      name: coriander
+      preparation: broken in small stalks
+      quantity: '1'
+    - measurement: l
+      name: fish stock
+      preparation: null
+      quantity: '1.5'
+    name: Soup
+  serves: null
+source: null
+tags:
+- savoring china
+title: Fish balls in soup

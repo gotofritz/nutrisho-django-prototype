@@ -1,0 +1,84 @@
+cuisine: .fusion.british
+description: null
+directions:
+  step:
+  - Peel stripes off the aubergines, then cut into 2.5 cm slices and quarter each
+    slice. Deep fry, then sprinkle with salt and leave to rest.
+  - Cut the cucumber into 2 mm strips, and the spring onions in thin julienne, put
+    in a bowl of cold water and chill
+  - Make dashi by boiling kombu in 150 ml water for 5 mins
+  - "Saut\xE9 the shallots over low heat for 2 mins, then add ginger and garlic and\
+    \ cook for 5 mins"
+  - Mix in the walnuts and aubergines and set aside
+  - Mix the dashi and the sauce ingredients, then add to the aubergine mix
+  - Cook the noodles, and meanwhile reheat the sauce and thicken it slightly
+  - Drain and dry the cucumber and spring onions
+  - Pour the sauce over the noodles, and sprinkle spring onions and cucumber over
+    them
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: aubergines
+      preparation: small
+      quantity: '2'
+    - measurement: tbsp
+      name: ginger
+      preparation: chopped
+      quantity: '1'
+    - measurement: cloves
+      name: garlic
+      preparation: crushed
+      quantity: '2'
+    - measurement: g
+      name: walnuts
+      preparation: toasted lightly and crushed
+      quantity: '120'
+    name: Sauce base
+  - ingredient:
+    - measurement: stick
+      name: kombu
+      preparation: for the dashi
+      quantity: '1'
+    - measurement: tbsp
+      name: mirin
+      preparation: null
+      quantity: '3'
+    - measurement: tbsp
+      name: miso paste
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: soy sauce
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: sugar
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: sake
+      preparation: null
+      quantity: '1'
+    name: Sauce
+  - ingredient:
+      measurement: ml
+      name: udon noodles
+      preparation: null
+      quantity: '250'
+    name: Noodles
+  - ingredient:
+    - measurement: null
+      name: cucumber
+      preparation: medium
+      quantity: '0.5'
+    - measurement: null
+      name: spring onions
+      preparation: null
+      quantity: '3'
+    name: Garnish
+  serves: '4'
+source: Ottolenghi
+tags:
+- noodles
+title: Udon noodles With Miso And Walnuts

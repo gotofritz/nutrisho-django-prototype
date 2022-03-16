@@ -1,0 +1,57 @@
+cuisine: .chinese
+description: Keeps for 3 days fresh, 2 months frozen
+directions:
+  '#text': '>
+
+
+
+
+
+
+    >'
+  step:
+  - Blanch the pork by pouring boiling water over them to cover, bringing back to
+    boil, then discarding the water
+  - Cover pork again with cold water, bring to boil, skimming as it cooks.
+  - Lower heat, simmer on low heat for 1 hours
+  - Add remaining ingredients, simmer for 2 hours
+  - Sieve, cool, and remove the fat from the top
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: pork hock
+      preparation: with skin
+      quantity: '750'
+    - measurement: l
+      name: water
+      preparation: null
+      quantity: '3'
+    name: Pork
+  - ingredient:
+    - measurement: cm
+      name: ginger
+      preparation: peeled
+      quantity: '2.5'
+    - measurement: null
+      name: spring onions
+      preparation: white only
+      quantity: '1'
+    - measurement: cm
+      name: dried tangerine peel
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: peppercorns
+      preparation: white
+      quantity: '0.5'
+    name: Flavourings
+  serves: null
+source: null
+tags:
+- basics
+title: Chinese Pork Stock 1

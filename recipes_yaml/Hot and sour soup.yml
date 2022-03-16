@@ -1,0 +1,101 @@
+cuisine: .chinese.sichuan
+description: Suan La Tang
+directions:
+  '#text': '>'
+  step:
+  - marinate meat 10 m
+  - cover bean curd in water 10 m
+  - drain mushrooms, keep 250 ml of water, sieved and julienne mushrooms and add to
+    it
+  - add stock, bamboo shots, ginger, marinated meat, dark soy sauce, vinegar, chili
+    oil, salt , pepper
+  - bring to boil and simmer 2 m
+  - stir in cornstartch mixture 2 m
+  - stir in drained bean curd and squid, 1 m
+  - add egg in thin stream, then remove from fire and let stand 20 s, then stir lightly
+  - add garnish and serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: chicken breast
+      preparation: or pork
+      quantity: '125'
+    - measurement: tsp
+      name: soy sauce
+      preparation: light
+      quantity: '2'
+    - measurement: Tbsp
+      name: ginger
+      preparation: peeled
+      quantity: '1'
+    name: For the marinade
+  - ingredient:
+    - measurement: g
+      name: tofu
+      preparation: soft
+      quantity: '220'
+    - measurement: null
+      name: dried mushrooms
+      preparation: soaked 25m
+      quantity: '5'
+    - measurement: cm
+      name: black fungus
+      preparation: soaked 25m
+      quantity: '5'
+    - measurement: ml
+      name: stock
+      preparation: null
+      quantity: '750'
+    - measurement: g
+      name: bamboo shots
+      preparation: julienned thinly
+      quantity: '30'
+    - measurement: tsp
+      name: ginger
+      preparation: peeled
+      quantity: '1'
+    - measurement: Tbsp
+      name: soy sauce
+      preparation: dark
+      quantity: '1'
+    - measurement: Tbsp
+      name: rice vinegar
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: chili oil
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: cornstarch
+      preparation: dissolved in 80 ml water
+      quantity: '2'
+    - measurement: g
+      name: squid
+      preparation: julienned thinly
+      quantity: '60'
+    - measurement: null
+      name: egg
+      preparation: beaten lightly
+      quantity: '1'
+    name: For the soup
+  - ingredient:
+    - measurement: tsp
+      name: oil
+      preparation: sesame
+      quantity: '2'
+    - measurement: Tbsp
+      name: spring onions
+      preparation: green bits only
+      quantity: '2'
+    - measurement: Tbsp
+      name: coriander
+      preparation: chopped
+      quantity: '1'
+    name: Garnish
+  serves: '4'
+source: null
+tags:
+- soup
+title: Hot and sour soup

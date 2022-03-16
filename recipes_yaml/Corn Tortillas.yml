@@ -1,0 +1,52 @@
+cuisine: .mexican
+description: null
+directions:
+  step:
+  - Place the masa harina, flour and salt in a medium bowl and stir in the hot water
+    until a dough forms. Knead the dough briefly adding a little more water if necessary
+    until the dough has the consistency of modelling clay. Cover with cling film and
+    let rest for 15 minutes.
+  - Check the dough by taking a small piece and rolling it into a ball. Flatten the
+    ball against your palm. If it feels stiff and the edges of the dough crack (which
+    it probably will) begin to knead in some additional hot tap water a few spoonfuls
+    at a time until the dough feels soft. Retest it against your palm until the dough
+    no longer cracks when flattened.
+  - Heat a dry frying pan over medium-high heat until hot but not smoking.
+  - Divide dough into 12 pieces and roll each piece into a ball shape. Cut small squares
+    out of a sheet of parchment paper approximately the same size as your tortilla
+    press and use them to line both sides of your press.
+  - Place one ball of dough in center of press and pat it gently a few times to flatten
+    it. Close the tortilla press and flatten the dough into a disc. Open the press
+    and carefully peel the parchment away from the top of the tortilla. Slide your
+    hand under the bottom sheet of parchment and pick up the parchment with the tortilla
+    on top.
+  - With the parchment still sticking to the tortilla, place the tortilla dough side
+    down into the hot pan. Leave it for 15-20 seconds, then peel the parchment off
+    the top of the tortilla and use it to reline your tortilla press.
+  - Cook the tortilla until the sides begin to lift away from the pan and the underside
+    is blistered and charred in spots. Flip and cook for approximately 1-2 minutes
+    per side. As tortillas are cooked, wrap in a clean dish towel to keep warm.
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: masa harina
+      preparation: null
+      quantity: '235'
+    - measurement: tsp
+      name: flour
+      preparation: plain
+      quantity: '2'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: water
+      preparation: hot tap
+      quantity: '315'
+  serves: null
+source: null
+tags:
+- with tortillas
+title: Corn Tortillas

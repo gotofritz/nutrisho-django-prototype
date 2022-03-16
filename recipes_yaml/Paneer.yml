@@ -1,0 +1,35 @@
+cuisine: .indian
+description: null
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+    >'
+  step:
+  - bring milk to vigorous boil, stirring constantly to prevent scorching
+  - lower heat, and when it settles add lemon juice
+  - stir slowly, 15/20 secs
+  - remove from fire, shake pan gently for a bit
+  - set aside covered for 10 mins
+  - drain in cheesecloth, keep pressed for a few hours
+ingredients:
+  group:
+    ingredient:
+    - measurement: l
+      name: milk
+      preparation: full fat
+      quantity: '2'
+    - measurement: Tbsp
+      name: lemon juice
+      preparation: null
+      quantity: '2'
+  serves: null
+source: null
+tags:
+- basics
+title: Paneer

@@ -1,0 +1,58 @@
+cuisine: .chinese
+description: Ma La Gao. A Dim Sum classic
+directions:
+  '#text': '>
+
+
+
+
+
+    >'
+  step:
+  - Combine the initial dough ingredients in blender and mix until smooth
+  - Add the remaining ingredients and finish off
+  - Line a steamer with heavily greased parchment paper, and pour mix inside
+  - Steam for 30 mins over simmering pot, then cool for 5 mins and serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '100'
+    - measurement: g
+      name: honey
+      preparation: null
+      quantity: '185'
+    - measurement: null
+      name: egg
+      preparation: null
+      quantity: '4'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '125'
+    - measurement: tsp
+      name: vanilla extract
+      preparation: null
+      quantity: '1'
+    name: Initial mix
+  - ingredient:
+    - measurement: tsp
+      name: baking powder
+      preparation: null
+      quantity: '2.5'
+    - measurement: g
+      name: flour
+      preparation: plain
+      quantity: '235'
+    - measurement: ml
+      name: milk
+      preparation: null
+      quantity: '125'
+    name: Dough
+  serves: 6 servings
+source: null
+tags:
+- desserts
+title: Steamed Sponge Cake

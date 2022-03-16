@@ -1,0 +1,90 @@
+cuisine: null
+description: WORK IN PROGRESS
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - "melt the butter in olive oil, saut\xE8 the onions in it for a few mintes"
+  - when they begin to wilt add the blueberries, wine, star anise, and sugar, mashing
+    up with a fork, and reduce
+  - beat the eggs, add the other ingredients
+  - when the fruity thing is ready, remove to fire for cooling, then add to egg mixture
+  - meanwhile bring the water and oil to a boil, add the buckwheat, lower heat and
+    cover
+  - when the buckwheat is ready, fluff up with a fork, then set aside to cool
+  - when cool, add to the egg mixture
+  - heat some oil, when very hot pour the egg mixture in and make the omelet
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: buckwheat
+      preparation: null
+      quantity: '40'
+    - measurement: volume
+      name: water
+      preparation: null
+      quantity: twice
+    - measurement: tsp
+      name: oil
+      preparation: oilve
+      quantity: '1'
+    name: For the bucwheat
+  - ingredient:
+    - measurement: ml
+      name: port
+      preparation: null
+      quantity: '250'
+    - measurement: g
+      name: sugar (caster or granulated)
+      preparation: null
+      quantity: '100'
+    - measurement: null
+      name: cinnamon stick
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: star anise
+      preparation: null
+      quantity: '3'
+    - measurement: null
+      name: cardamom pods
+      preparation: null
+      quantity: '3'
+    - measurement: tsp
+      name: allspice
+      preparation: ground
+      quantity: '0.25'
+    - measurement: tsp
+      name: pepper
+      preparation: ground
+      quantity: '0.5'
+    - measurement: null
+      name: fresh chilies
+      preparation: small
+      quantity: '10'
+    name: For the fruity bit
+  - ingredient:
+    - measurement: null
+      name: eggs
+      preparation: null
+      quantity: '5'
+    - measurement: Tbsp
+      name: coriander leaves
+      preparation: chopped finely
+      quantity: '1'
+    name: For the omelette
+  serves: '4'
+source: null
+tags:
+- egg
+title: Tortilla Saracena

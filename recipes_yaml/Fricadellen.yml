@@ -1,0 +1,111 @@
+cuisine: .german.classic
+description: Classic German meatballs, almost burgers
+directions:
+  step:
+  - Soak breadcrumbs in milk, 10 mins. You should get a thick mixture. If too runny,
+    drain before using
+  - Whiz the tomatoes and remaining sauce base ingredients in food processor, then
+    put in large pot over low heat
+  - Rinse food processor and whiz the onion, and the rest of the 1st bach ingredients
+    until you get an evenly mixed sludge
+  - Add one by one the meat, breadcrumbs, salt and pepper, egg
+  - To shape the meatballs, use a measuring cup (1/4 cup seems a good size) to scoop
+    out the meat. Have a bowl of warm water to rinse the measuring cup between each
+    meatballs
+  - Sear them 2m on each side in large pan (no oil if using non stick), then drop
+    into pot with sauce
+  - Raise heat and simmer fricadellen between 10m and 30m. Put serving dish in warm
+    oven
+  - Remove the meatballs from sauce and keep them warm
+  - Sieve sauce, wipe pot quickly, put back on fire and melt butter
+  - Add sugar and flour, stir until melted 3m. Add vinegar 1m
+  - Add part of the sieved sauce, cook until thickened
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: breadcrumbs
+      preparation: null
+      quantity: '50'
+    - measurement: g
+      name: milk
+      preparation: null
+      quantity: '170'
+    name: Breadcrumb
+  - ingredient:
+    - measurement: small
+      name: tomatoes
+      preparation: peeled
+      quantity: '2'
+    - measurement: small
+      name: onion
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: stock
+      preparation: or water + cube
+      quantity: '300'
+    - measurement: tsp
+      name: soy sauce
+      preparation: null
+      quantity: '1'
+    name: Sauce base
+  - ingredient:
+    - measurement: null
+      name: onion
+      preparation: small
+      quantity: '1'
+    - measurement: tbsp
+      name: mustard
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: bacon
+      preparation: diced
+      quantity: '20'
+    - measurement: stem
+      name: celery
+      preparation: (optional)
+      quantity: '0.5'
+    - measurement: null
+      name: gherkin
+      preparation: null
+      quantity: '1'
+    - measurement: handful
+      name: parsley
+      preparation: null
+      quantity: '1'
+    name: Meatballs batch 1
+  - ingredient:
+    - measurement: g
+      name: beef
+      preparation: minced
+      quantity: '500'
+    - measurement: null
+      name: egg
+      preparation: null
+      quantity: '1'
+    name: Meatballs batch 2
+  - ingredient:
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '20'
+    - measurement: g
+      name: chickpea flour
+      preparation: null
+      quantity: '10'
+    - measurement: tsp
+      name: vinegar
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: sugar
+      preparation: null
+      quantity: '1'
+    name: Sauce reduction
+  serves: '6'
+source: null
+tags:
+- meat
+title: Fricadellen

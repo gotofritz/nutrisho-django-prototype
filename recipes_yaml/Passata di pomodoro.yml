@@ -1,0 +1,58 @@
+cuisine: .italian
+description: null
+directions:
+  '#text': '>
+
+
+
+
+
+
+    >'
+  step:
+  - "saut\xE8 the onions at medium high temperature until well wilted"
+  - add the tomatoes and cook for a minute or so
+  - add the peeled tomatoes, pour some water in the tin to wash it and add the tomatoey
+    water to the pot too
+  - add all the other ingredients, and cook on medium fire for 40m / 1 hour .
+  - pass through a food mill
+ingredients:
+  group:
+    ingredient:
+    - measurement: kg
+      name: tomatoes
+      preparation: quartered
+      quantity: '1'
+    - measurement: large
+      name: onions
+      preparation: sliced coarsely
+      quantity: '1'
+    - measurement: tins
+      name: peeled tomatoes
+      preparation: broken up with a fork
+      quantity: '2'
+    - measurement: a few
+      name: basil leaves
+      preparation: null
+      quantity: null
+    - measurement: pinch
+      name: sugar
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: salt
+      preparation: coarse
+      quantity: '1'
+    - measurement: Tbsp
+      name: olive oil
+      preparation: null
+      quantity: '1'
+    - measurement: pinch
+      name: stock cube / marmite
+      preparation: (optional)
+      quantity: '1'
+  serves: null
+source: null
+tags:
+- basics
+title: Passata di pomodoro

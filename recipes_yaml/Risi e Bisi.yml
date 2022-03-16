@@ -1,0 +1,81 @@
+cuisine: .italian.veneto
+description: "Risi e bisi era un piatto che tradizionalmente veniva  offerto al Doge\
+  \ per la festa dei 5. Marco ai tempi della \"Serenissima\", fin da quando il riso\
+  \ giunse dall'oriente. Ma l'eccellente qualit\xE0 del vialone nano coltivato, In\
+  \ seguito, nelle nostre risaie e la dolcezza caratteristica dei nostri piselli permettono\
+  \ a questo piatto di essere una vera specialit\xE0 vicentina."
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - Shell the peas, keeping a handful of pods.
+  - Boil the shells in salted water for 30-45 mins
+  - "Saut\xE9 the onion and\_pancetta (if using), until golden, 5 mins."
+  - Add the peas the first lot of parsley, and a ladleful of hot broth. Cook 10 mins.
+  - Meanwhile whiz the pods and their water, then mix well with the stock and add
+    to peas.
+  - Add the rice, and cook until done mixing every so often.
+  - When cooked add in a ladleful of broth, the butter, the second lot of parsley,
+    and the cheese
+ingredients:
+  group:
+  - ingredient:
+      measurement: kg
+      name: green peas
+      preparation: with pods
+      quantity: '1'
+  - ingredient:
+    - measurement: l
+      name: stock
+      preparation: veg
+      quantity: '1'
+    - measurement: g
+      name: rice
+      preparation: vialone nano
+      quantity: '200'
+    name: Saut\U00e9
+  - ingredient:
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '15'
+    - measurement: g
+      name: pancetta
+      preparation: null
+      quantity: '50'
+    - measurement: '5'
+      name: null
+      preparation: onions
+      quantity: '0'
+    - measurement: handful
+      name: parsley
+      preparation: null
+      quantity: '1'
+    name: Risotto
+  - ingredient:
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '10'
+    - measurement: Tbsp
+      name: parmesan
+      preparation: grated
+      quantity: '1'
+    - measurement: handful
+      name: parsley
+      preparation: chopped fine
+      quantity: '1'
+    name: Mantecazione
+  serves: 4-6
+source: null
+tags:
+- risotto
+title: Risi e Bisi

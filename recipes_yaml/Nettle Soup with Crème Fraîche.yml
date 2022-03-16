@@ -1,0 +1,59 @@
+cuisine: null
+description: Nettles are available very cheaply at some farmer's markets, or better
+  still, bring a carrier bag and a pair of scissors along on your next rural walk
+  and snip the small tops off of some nettle plants as you go.
+directions:
+  step:
+  - Rinse the nettles well under running water in a colander. Shake the colander a
+    few times and then place the nettles in a large pot on medium heat. Toss the nettles
+    with tongs occasionally over the heat until they have wilted. Remove the nettles
+    and set aside.
+  - "Wipe out the pot with some kitchen towel until it is dry and then return it to\
+    \ a gentle heat and warm up the olive oil. Add the shallot and saut\xE9 until\
+    \ soft, approximately 4-5 minutes. Add the garlic and saut\xE9 for another 30\
+    \ seconds, then add the potato and the stock and bring to a gentle simmer. Cook\
+    \ until the potatoes are tender, about 8-10 minutes. Add the nettles and cook\
+    \ just until the soup returns to a simmer."
+  - "In a blender or food processor, puree the soup in small batches until smooth.\
+    \ Return the soup to the pot and stir in the cr\xE8me fra\xEEche and nutmeg and\
+    \ season to taste with the salt and pepper. Gently warm the soup through and serve."
+ingredients:
+  group:
+    ingredient:
+    - measurement: null
+      name: plastic carrier bag of nettle leaves
+      preparation: null
+      quantity: '0.5'
+    - measurement: Tbsp
+      name: oil
+      preparation: olive
+      quantity: '2'
+    - measurement: null
+      name: shallots
+      preparation: minced
+      quantity: '2'
+    - measurement: cloves
+      name: garlic
+      preparation: minced
+      quantity: '1'
+    - measurement: null
+      name: potato
+      preparation: medium
+      quantity: '1'
+    - measurement: ml
+      name: stock
+      preparation: chicken
+      quantity: '750'
+    - measurement: ml
+      name: creme fraiche
+      preparation: null
+      quantity: '100'
+    - measurement: pinch
+      name: nutmeg
+      preparation: null
+      quantity: null
+  serves: null
+source: null
+tags:
+- soup
+title: "Nettle Soup with Cr\xE8me Fra\xEEche"

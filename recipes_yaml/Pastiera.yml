@@ -1,0 +1,113 @@
+cuisine: .italian.neaples
+description: null
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - soak wheat berries for 8 days, changing water daily
+  - Drain and cook for 15 mins, barely covered in water, then drain on low heat
+  - Boil wheat in milk, cinnamon, lemon zest, pinch of salt on low heat until all
+    liquid is absorbed, 2h
+  - Discard the lemon zest and spread on a plate to cool
+  - Mix ricotta, sugar, cinnamon powder, lemon zest, orange blossom water, candied
+    peels in a bowl
+  - Add the egg yolks one at the time, and add the wheat
+  - Beat the egg whites to snowy peaks and add
+  - Sieve the flour, dry yeast, then make a well
+  - Add butter, egg yolks, sugar one at the time and mix, with cold hands as quickly
+    as possible. Leave to raise for 30m
+  - Roll out in two discs - one to line a 24cm baking tray, which you'll then fill
+    with the filling, and from the other obtain 7 1cm strips which you'll criss cross
+    on top
+  - "Bake 1.5 hours at 180\xB0"
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: wheat berries
+      preparation: or kamut
+      quantity: '220'
+    - measurement: l
+      name: milk
+      preparation: boiling
+      quantity: '0.5'
+    - measurement: tsp
+      name: cinnamon powder
+      preparation: null
+      quantity: '0.5'
+    - measurement: null
+      name: lemon zest
+      preparation: while
+      quantity: '0.5'
+    - measurement: g
+      name: ricotta
+      preparation: sieved
+      quantity: '500'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '200'
+    - measurement: tsp
+      name: cinnamon powder
+      preparation: null
+      quantity: '0.5'
+    - measurement: null
+      name: lemon zest
+      preparation: grated
+      quantity: '0.5'
+    - measurement: ml
+      name: orange blossom water
+      preparation: null
+      quantity: '100'
+    - measurement: g
+      name: candied peels
+      preparation: null
+      quantity: '80'
+    - measurement: null
+      name: egg yolks
+      preparation: null
+      quantity: '6'
+    - measurement: null
+      name: egg whites
+      preparation: null
+      quantity: '6'
+    name: Filling
+  - ingredient:
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '300'
+    - measurement: g
+      name: yeast
+      preparation: dry
+      quantity: '8'
+    - measurement: g
+      name: butter
+      preparation: room temperature
+      quantity: '150'
+    - measurement: null
+      name: egg yolks
+      preparation: null
+      quantity: '4'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '150'
+    name: Shortcrust pastry
+  serves: '6'
+source: null
+tags:
+- dessert
+title: Pastiera

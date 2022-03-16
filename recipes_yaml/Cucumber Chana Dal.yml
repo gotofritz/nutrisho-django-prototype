@@ -1,0 +1,52 @@
+cuisine: .india
+description: null
+directions:
+  step:
+  - Pressure cook dal 25 mins.
+  - Add salt and whisk well
+  - Make a paste with ginger and chilies
+  - "Saut\xE8 cumin seeds in ghee 2m, add spice paste, turmeric, chili powder and\
+    \ cook 2 /3 mins"
+  - Add the dal, and the chopped cucumber.
+  - Simmer 5 mins and garnish with chopped coriander
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: chana dal
+      preparation: null
+      quantity: '95'
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '500'
+    name: Dal
+  - ingredient:
+    - measurement: cm
+      name: ginger
+      preparation: null
+      quantity: '0.5'
+    - measurement: null
+      name: chilies
+      preparation: deseeded
+      quantity: '2'
+    name: Spice paste
+  - ingredient:
+    - measurement: tsp
+      name: cumin seeds
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: chili powder
+      preparation: null
+      quantity: '0.5'
+    - measurement: null
+      name: turmeric
+      preparation: null
+      quantity: '0.25'
+    name: Spices
+  serves: '2'
+source: Tarla Dalal
+tags:
+- dal
+title: Cucumber Chana Dal

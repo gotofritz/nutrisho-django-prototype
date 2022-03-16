@@ -1,0 +1,93 @@
+cuisine: .russian
+description: I added the garlic and tarragon, which I love with cabbage, thinking
+  that the seasoning in the original was a bit subtle for my taste. Others add dill
+  instead, and a layer of cream cheese at the bottom. Even with these additions, this
+  pie benefits from being served with a sharpish sauce, or something pickled. I served
+  it with a sourcream/horseradish mixture; something mustardy would also be good.
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+
+    >'
+  step:
+  - Whisk yeast into water, then add flour, salt and butter. Mix slow for 2 mins,
+    then rest covered 10 mins
+  - Mix medium speed 3/4 mins. Put in buttered bowl, ensuring it gets covered in butter
+    all over. Rise 1 hr
+  - Toss the cabbage with salt, and wring it out to dry as possble.
+  - "Saut\xE8 cabbage, tarragon, garlic and sugar in butter on low, stirring, until\
+    \ cabbage is wilted and reduced, and fairly soft. Cool and fold in eggs"
+  - Divide the dough in half. On a floured surface, roll to a 25cm disk, handling
+    as little as possible. Transfer dough to parchment covered cake tray, and spread
+    filling over it, leaving an outside border of one inch. Season with pepper
+  - roll out the 2nd half of the dough as you did the first and put on top of filling.
+    Brush the outer rim of the bottom crust with water. Press around the edges firmly,
+    and roll both crusts in toward the center 1/2". Squash the edges together with
+    a fork, to seal.
+  - Cut several vent holes in top crust. Brush all over with water, and bake about
+    30 minutes. Serve at room temperature
+ingredients:
+  group:
+  - ingredient:
+    - measurement: tsp
+      name: yeast
+      preparation: dry
+      quantity: '2.5'
+    - measurement: g
+      name: flour
+      preparation: plain
+      quantity: '400'
+    - measurement: Tbsp
+      name: butter
+      preparation: melted and cooled 3
+      quantity: '3'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '240'
+    name: Raised Crust
+  - ingredient:
+    - measurement: g
+      name: cabbage
+      preparation: finely shredded
+      quantity: '600'
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '20'
+    - measurement: cloves
+      name: garlic
+      preparation: minced
+      quantity: '1'
+    - measurement: tsp
+      name: sugar
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: eggs
+      preparation: hard boiled and chopped
+      quantity: '2'
+    - measurement: null
+      name: tarragon
+      preparation: or dill
+      quantity: null
+    - measurement: null
+      name: cream cheese
+      preparation: layered on bottom of pie
+      quantity: null
+    name: Filling
+  serves: null
+source: null
+tags:
+- pie
+title: Raised Cabbage Pie

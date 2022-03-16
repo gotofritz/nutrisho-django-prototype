@@ -1,0 +1,74 @@
+cuisine: .chinese
+description: Babo sucai tang
+directions:
+  '#text': '>'
+  step:
+  - heat the stock
+  - put all ingredients except for corn starch, spring onion and fresh tofu in a pot,
+    and pour hot stock over them
+  - cook 15 m
+  - add salt + pepper, starch, spring onion, tofu and cook
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: winter melon
+      preparation: peeled cubed (weight is peeled)
+      quantity: '280'
+    - measurement: g
+      name: carrots
+      preparation: cubed
+      quantity: '45'
+    - measurement: g
+      name: bamboo shots
+      preparation: cubed
+      quantity: '40'
+    - measurement: g
+      name: peanuts
+      preparation: raw
+      quantity: '45'
+    - measurement: g
+      name: zucchini
+      preparation: cubed
+      quantity: '60'
+    - measurement: g
+      name: mushrooms
+      preparation: null
+      quantity: '75'
+    - measurement: null
+      name: dried lily flowers
+      preparation: chopped
+      quantity: '10'
+    - measurement: cm
+      name: dried bean curd stick
+      preparation: soaked in hot water 2m then coarsely chopped
+      quantity: '10'
+    - measurement: tsp
+      name: ginger
+      preparation: peeled
+      quantity: '1'
+    - measurement: Tbsp
+      name: soy sauce
+      preparation: light
+      quantity: '1'
+    - measurement: l
+      name: stock
+      preparation: or water
+      quantity: '1.5'
+    - measurement: g
+      name: tofu
+      preparation: cubed
+      quantity: '100'
+    - measurement: null
+      name: spring onions
+      preparation: whole
+      quantity: '3'
+    - measurement: Tbsp
+      name: cornstarch
+      preparation: dissolvedin 1 tbsp water
+      quantity: '1'
+  serves: '4'
+source: null
+tags:
+- savoring china
+title: Eight Treasure Vegetarian soup

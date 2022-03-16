@@ -1,0 +1,86 @@
+cuisine: .chinese.yangzhou
+description: Shizi Tou
+directions:
+  '#text': '>'
+  step:
+  - mince meat, then add remaining ingredients and process
+  - form into 4 meatballs
+  - make a paste with cornstarch and soy sauce, a bit water if required, and coat
+    meatballs with it - keep rest
+  - deep fry meatballs 2/3 m, then remove
+  - fry pak choi in same oil until wilted
+  - place in pirex dish, put meatballs on top, pour remaining ingredients, cover in
+    foil
+  - steam 40 miuntes, turning meatballs over halfway - alternatively cook normally
+    on stove
+  - when cooked, pour stock in heated wok with remaining paste (3), and reudce, 2m
+  - season with salt and pepper and pour over meatballs
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: pork
+      preparation: fat (such as butt)
+      quantity: '500'
+    - measurement: g
+      name: pork
+      preparation: lean or beef
+      quantity: '500'
+    - measurement: null
+      name: spring onions
+      preparation: whites only
+      quantity: '10'
+    - measurement: g
+      name: water chestnuts
+      preparation: chopped
+      quantity: '60'
+    - measurement: Tbsp
+      name: ginger
+      preparation: peeled
+      quantity: '1.5'
+    - measurement: Tbsp
+      name: garlic cloves
+      preparation: chopped
+      quantity: '1'
+    - measurement: Tbsp
+      name: cornstarch
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: soy sauce
+      preparation: light
+      quantity: '4'
+    name: Meatballs
+  - ingredient:
+    - measurement: Tbsp
+      name: soy sauce
+      preparation: light
+      quantity: '2'
+    - measurement: Tbsp
+      name: cornstarch
+      preparation: null
+      quantity: '3'
+    name: Paste
+  - ingredient:
+    - measurement: g
+      name: bak choi
+      preparation: roughly chopped
+      quantity: '500'
+    - measurement: cup
+      name: oil
+      preparation: frying
+      quantity: '1'
+    - measurement: ml
+      name: stock
+      preparation: chicken or pork
+      quantity: '500'
+    - measurement: ml
+      name: rice wine
+      preparation: null
+      quantity: '60'
+    name: Sauce
+  serves: '4'
+source: null
+tags:
+- savoring china
+title: Lion's head meatballs

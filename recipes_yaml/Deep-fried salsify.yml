@@ -1,0 +1,56 @@
+cuisine: null
+description: Salsify is one of those old-fashioned ingredients that you don't see
+  on menus any more. It is not the easiest of veg to prepare - which is one possible
+  reason why it's out of vogue.
+directions:
+  '#text': '>'
+  step:
+  - Pre-heat about 8cm of oil to 160-180C in a large, thick-bottomed saucepan or electric
+    deep-fat fryer. Top and tail the salsify and peel thoroughly with a swivel peeler,
+    ensuring all of the black skin is removed.
+  - Squeeze the lemon juice into a pan of salted water and add the salsify (you may
+    need to cut them in half).
+  - Bring to the boil and simmer for 5-6 minutes, or until just tender, then drain
+    and leave to cool, or run under the cold tap to cool down quicker. Cut the salsify
+    into 2-3cm lengths and halve the pieces lengthways if they are thick.
+  - Have three bowls ready, one with flour, seasoned, one with the egg, and the third
+    with the breadcrumbs mixed with the Parmesan. Flour the salsify, shaking off any
+    excess, then pass them through the egg and then through the breadcrumb mixture.
+  - Deep-fry the salsify a handful or so at a time until nicely coloured and crisp
+    and serve with your choice of sauce.
+ingredients:
+  group:
+    ingredient:
+    - measurement: null
+      name: sticks of salsify
+      preparation: washed
+      quantity: 4-5
+    - measurement: null
+      name: Half a lemon
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: egg beaten
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: plain flour
+      preparation: null
+      quantity: 2-3
+    - measurement: g
+      name: fresh white breadcrumbs
+      preparation: null
+      quantity: 50-60
+    - measurement: Tbsp
+      name: freshly grated Parmesan
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: Vegetable or corn oil for deep frying
+      preparation: null
+      quantity: null
+  serves: Serves about 10
+source: null
+tags:
+- vegetable side
+title: Deep-fried salsify

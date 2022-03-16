@@ -1,0 +1,77 @@
+cuisine: null
+description: null
+directions:
+  '#text': '>'
+  step:
+  - Preheat the oven to 200 C. Wash and dry the beets leaving them unpeeled.
+  - Wrap each beet in foil and place in the oven to roast for about 1 hour or until
+    tender when pierced with a skewer. Allow the beets to cool for about 20 minutes
+    before handling. When cool enough to handle, unwrap the beetroot and peel off
+    the skins. Slice the beetroot into thick slices or quarter any very small ones.
+    Set aside.
+  - To make the candied pumpkin seeds, place the pumpkin seeds in a dry frying pan
+    over medium heat. Toast the pumpkin seeds for 5-8 minutes, shaking the pan frequently
+    until the seeds have all 'popped' and are puffed up and smell nutty. Sprinkle
+    over the sugar and salt and continue to toast, stirring constantly until all the
+    sugar has melted and the seeds have a light coating of sugar. Tip the seeds out
+    of the pan and spread on a sheet of parchment or foil to cool.
+  - Make the dressing by whisking together the egg yolk, mustard, oil and salt until
+    the dressing is thickened and creamy in texture. Add lemon juice to taste or until
+    the desired consistency is reached - the dressing should be just pourable rather
+    than too runny.
+  - To make the salad, scatter the rocket or dandelion on a serving plate and top
+    with the slices of roasted beets. Sprinkle with a good pinch of the salt flakes
+    and drizzle with the dressing. Breakup the pumpkin seeds with your fingers and
+    scatter over the salad. Serve.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: beetroot
+      preparation: baby
+      quantity: '10'
+    - measurement: handful
+      name: dandelion
+      preparation: or rocket leaves
+      quantity: '1'
+    - measurement: null
+      name: flaky sea salt for garnishing
+      preparation: fleur de sel or other
+      quantity: null
+  - ingredient:
+    - measurement: handful
+      name: pumpkin seeds
+      preparation: null
+      quantity: '1'
+    - measurement: Tbsp
+      name: sugar
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    name: Candied Pumpkin Seeds
+  - ingredient:
+    - measurement: null
+      name: egg yolks
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: mustard
+      preparation: dijon
+      quantity: '1'
+    - measurement: Tbsp
+      name: oil
+      preparation: deep frying
+      quantity: '6'
+    - measurement: Tbsp
+      name: lemon juice
+      preparation: null
+      quantity: '2'
+    name: Dijon Dressing
+  serves: '4'
+source: null
+tags:
+- salad
+title: Roast Beetroot Salad with Candied Pumpkin Seeds

@@ -1,0 +1,61 @@
+cuisine: .moroccan
+description: can be served warm or cooled
+directions:
+  '#text': '>
+
+
+
+
+
+
+    >'
+  step:
+  - "saut\xE8 the onion in the oil until soft, 10 m"
+  - add tomatoes, cumin, turmeric, qa couple of minutes
+  - add lentils, toss, then add stock or water and bring to boil
+  - reduce heat and cook until ready and liquid reduced
+  - fry the garlic separately, add to lentils with coriander and seasoning
+ingredients:
+  group:
+    ingredient:
+    - measurement: Tbsp
+      name: oil
+      preparation: oilve
+      quantity: '3'
+    - measurement: null
+      name: onions
+      preparation: red
+      quantity: '2'
+    - measurement: tsp
+      name: ground cumin
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: ground turmeric
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: tomatoes
+      preparation: peeled
+      quantity: '2'
+    - measurement: g
+      name: lentils puy / green / pardina / etc
+      preparation: null
+      quantity: '175'
+    - measurement: ml
+      name: stock or water
+      preparation: null
+      quantity: '900'
+    - measurement: null
+      name: garlic cloves
+      preparation: crushed
+      quantity: '4'
+    - measurement: Tbsp
+      name: coriander leaves
+      preparation: chopped
+      quantity: '1'
+  serves: null
+source: null
+tags:
+- cold
+title: Moroccan lentil salad

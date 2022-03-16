@@ -1,0 +1,61 @@
+cuisine: .chinese
+description: null
+directions:
+  '#text': '>
+
+
+
+
+
+
+    >'
+  step:
+  - Blanch the beef bones by pouring boiling water over them to cover, bringing back
+    to boil, then discarding the water
+  - Cover bones again with cold water, bring to boil, skimming as it cooks.
+  - Lower heat, add remaining ingredients, simmer on low heat for three hours
+  - sieve and cook another hour
+  - cool, and remove the fat from the top
+ingredients:
+  group:
+  - ingredient:
+    - measurement: kg
+      name: beef soup bones
+      preparation: e.g. shank
+      quantity: '1.5'
+    - measurement: l
+      name: water
+      preparation: null
+      quantity: '2.5'
+    name: Beef
+  - ingredient:
+    - measurement: cm
+      name: ginger
+      preparation: peeled
+      quantity: '5'
+    - measurement: null
+      name: onion
+      preparation: yellow
+      quantity: '1'
+    - measurement: null
+      name: star anise
+      preparation: null
+      quantity: '2'
+    - measurement: null
+      name: cinnamon stick
+      preparation: or cassia
+      quantity: '1'
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: peppercorns
+      preparation: white
+      quantity: '0.5'
+    name: Flavourings
+  serves: null
+source: null
+tags:
+- basics
+title: Chinese Beef Stock 1

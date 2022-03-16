@@ -1,0 +1,59 @@
+cuisine: .british
+description: Steak sauce from Gordon Ramsay
+directions:
+  step:
+  - "Saut\xE9 the mushrooms, garlic and thyme, stirring"
+  - Pour in 100 ml sherry and reduce, 3 minutes
+  - Add the vinegar and reduce a few seconds more
+  - Add 50 ml sherry and stock, bring to boil, simmer for 3 minuts
+  - "Renove garlic and thyme, and mix in cr\xE8me fra\xEEche and mustard"
+  - Add parsley and steak juices before ladling over a steak
+ingredients:
+  group:
+    ingredient:
+    - measurement: tbsp
+      name: oil, olive
+      preparation: null
+      quantity: '3'
+    - measurement: g
+      name: mushrooms
+      preparation: quartere
+      quantity: '200'
+    - measurement: clove
+      name: garlic
+      preparation: lightly squashed
+      quantity: '1'
+    - measurement: sprig
+      name: thyme
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: sherry
+      preparation: or chinese rice wine
+      quantity: '150'
+    - measurement: tbsp
+      name: vinegar
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: stock
+      preparation: null
+      quantity: '150'
+    - measurement: tbsp
+      name: "cr\xE8me fra\xEEche"
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: grain mustard
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: parsley
+      preparation: chopped finely
+      quantity: '2'
+    name: null
+  serves: '4'
+source: Gordon Ramsay
+tags:
+- sauce
+title: Mushroom, sherry and grain mustard sauce

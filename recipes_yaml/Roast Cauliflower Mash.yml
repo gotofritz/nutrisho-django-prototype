@@ -1,0 +1,38 @@
+cuisine: null
+description: I love roast cauliflower and have had the idea of this recipe floating
+  in my mind for months. I finally got around to making it and it tastes just as nutty
+  and delicious as I'd hoped.
+directions:
+  step:
+  - Place the cauliflower pieces in a baking dish in a single layer and drizzle over
+    the olive oil and sprinkle generously with salt and pepper. Toss a few times to
+    coat the cauliflower in the oil and seasonings and place the tray in the oven.
+    Roast for 25-35 minutes, until the cauliflower is tender when pierced with a knife
+    and the edges of the cauliflower have turned golden and slightly crispy.
+  - Place the cauliflower in a food processor and puree until smooth. If you don't
+    have a food processor, try using a potato ricer or else a vigorous session with
+    a potato masher should yield reasonably good results.
+  - With the motor of your food processor running, slowly pour in the melted butter
+    until it is all incorporated. Alternatively, if mashing by hand, whip the melted
+    butter through the mash with a spoon.
+  - Taste and season to taste with more salt and pepper. Serve hot.
+ingredients:
+  group:
+    ingredient:
+    - measurement: null
+      name: cauliflower
+      preparation: broken into small florets
+      quantity: '1'
+    - measurement: Tbsp
+      name: oil
+      preparation: olive
+      quantity: '1'
+    - measurement: Tbsp
+      name: butter
+      preparation: melted
+      quantity: 6-8
+  serves: '4'
+source: null
+tags:
+- vegetable side
+title: Roast Cauliflower Mash

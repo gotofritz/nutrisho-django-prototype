@@ -1,0 +1,51 @@
+cuisine: .fusion.british
+description: null
+directions:
+  step:
+  - Cook the meat to your liking, rare or medium, the let it rest.
+  - Cook greens in salted boiling water until just tender
+  - Dress with the sauce ingredients while still hot and divide into bowls
+  - Thinly slice the steak and place on the greens
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: steak, sirloin
+      preparation: rubbed with oil and seasoned with salt and pepper
+      quantity: '225'
+    - measurement: null
+      name: pak choi
+      preparation: or any other green
+      quantity: '2'
+    name: Meat
+  - ingredient:
+    - measurement: tbsp
+      name: soy sauce
+      preparation: null
+      quantity: '8'
+    - measurement: cm
+      name: ginger
+      preparation: peeled, grated
+      quantity: '2'
+    - measurement: null
+      name: chilli
+      preparation: deseeded and chopped
+      quantity: '1'
+    - measurement: clove
+      name: garlic
+      preparation: chopped
+      quantity: '0.5'
+    - measurement: null
+      name: lime
+      preparation: juiced
+      quantity: '1'
+    - measurement: tbsp
+      name: oil, olive
+      preparation: or to taste
+      quantity: '1'
+    name: Dressing
+  serves: null
+source: Jamie Oliver NAked chef 2
+tags:
+- main
+title: Beef with Soy Sauce and Ginger

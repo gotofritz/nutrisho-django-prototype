@@ -1,0 +1,73 @@
+cuisine: null
+description: A creamy cauliflower soup makes a great winter warmer and a strongly
+  flavoured, crumbly white cheese, such as a Lancashire, gives it that nice savoury
+  finishing edge. I've added some crispy croutons here to give extra texture to this
+  silky-smooth soup.
+directions:
+  step:
+  - Cook the onion and leeks on high, for 4-5 minutes, until they are soft.
+  - Add the cauliflower for a couple of minutes.
+  - Add the stock and milk, season with salt and pepper, bring to the boil.
+  - Simmer on medium for 35 minutes, or until the cauliflower is soft.
+  - Meanwhile put the grated cheese in the bowl.
+  - Blend the soup in a liquidiser. Strain through a fine-meshed sieve over the grated
+    cheese in the bowl. Season again if necessary.
+  - Meanwhile, heat the olive oil in a heavy-based frying pan and cook the croutons
+    on a medium heat for 3-4 minutes, turning every so often until golden.
+  - Transfer to some kitchen paper, season and toss the rest of the cheese with them
+    while they are still hot.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: medium
+      name: onion
+      preparation: roughly chopped
+      quantity: '1'
+    - measurement: null
+      name: leek
+      preparation: thinly sliced
+      quantity: '1'
+    - measurement: knobs
+      name: butter
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: olive oil
+      preparation: null
+      quantity: '1'
+    - measurement: medium
+      name: cauliflower
+      preparation: broken in florets
+      quantity: '1'
+    - measurement: ml
+      name: vegetable stock
+      preparation: or stock tube
+      quantity: '750'
+    - measurement: ml
+      name: milk
+      preparation: null
+      quantity: '500'
+    - measurement: Tbsp
+      name: Lancashire cheese
+      preparation: grated
+      quantity: '2'
+    name: Soup
+  - ingredient:
+    - measurement: Tbsp
+      name: Lancashire cheese
+      preparation: grated
+      quantity: '1'
+    - measurement: slices
+      name: bread
+      preparation: crusts removed and cut into rough 1 cm dice
+      quantity: '2'
+    - measurement: Tbsp
+      name: olive oil
+      preparation: null
+      quantity: '2'
+    name: Croutons
+  serves: Serves 4-6
+source: null
+tags:
+- soup
+title: Cauliflower and Lancashire cheese soup

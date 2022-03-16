@@ -1,0 +1,41 @@
+cuisine: .italian
+description: null
+directions:
+  step:
+  - Soak the beans overnight then cook 30 mins
+  - Prepare the polenta as per packet instructions
+  - "Saut\xE9 onions, rosemary, and cavolo nero."
+  - Add the cooked beans and passata, cook on low for 30 mins, then season
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: polenta
+      preparation: null
+      quantity: '150'
+    - measurement: null
+      name: onion
+      preparation: chopped
+      quantity: '1'
+    - measurement: leaves
+      name: cavolo nere
+      preparation: thinly cut
+      quantity: '3'
+    - measurement: tbsp
+      name: passata
+      preparation: null
+      quantity: '4'
+    - measurement: branch
+      name: rosemary
+      preparation: null
+      quantity: '1'
+    - measurement: g
+      name: cannellini
+      preparation: null
+      quantity: '200'
+    name: null
+  serves: '2'
+source: http://www.goccedaria.it/item/cannellini-e-cavolo-nero.html
+tags:
+- polenta
+title: Cannellini and Cavolo Nero with Polenta

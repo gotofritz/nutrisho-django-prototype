@@ -1,0 +1,64 @@
+cuisine: .fusion.australia
+description: null
+directions:
+  step:
+  - Melt the honey ingredients in a small pot, then simmer for 2m
+  - Cool, then add lemon juice and oil
+  - Mix in the onions and tofu
+  - Break the nori and scatter over tofu mix
+  - Cook the soba noodles for 4-5 mins in unsalted boiling water then cool under the
+    tap.
+  - Mix in with the tofu and serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: tsp
+      name: honey
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: ginger
+      preparation: grated
+      quantity: '2'
+    - measurement: tsp
+      name: chilli flakes
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: soy sauce
+      preparation: null
+      quantity: '2'
+    name: Honey mix
+  - ingredient:
+    - measurement: tbsp
+      name: lemon juice
+      preparation: null
+      quantity: '1'
+    - measurement: tbsp
+      name: sesame oil
+      preparation: null
+      quantity: '3'
+    - measurement: g
+      name: nori
+      preparation: toasted
+      quantity: '7.5'
+    name: Dressing
+  - ingredient:
+    - measurement: null
+      name: spring onions
+      preparation: chopped, finely
+      quantity: '6'
+    - measurement: g
+      name: tofu
+      preparation: drained and diced
+      quantity: '200'
+    - measurement: g
+      name: soba noodles
+      preparation: null
+      quantity: '170'
+    name: Salad
+  serves: '2'
+source: That ozzie chap
+tags:
+- noodles
+title: Soba noodles with soy-honey dressing

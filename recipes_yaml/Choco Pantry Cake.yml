@@ -1,0 +1,52 @@
+cuisine: .british
+description: Super easy
+directions:
+  step:
+  - Grease and line a 20cm cake tin
+  - Melt butter and chocolate for 30 secs in microwave
+  - Add jam, sugar, salt, and eggs
+  - Soft flour and baking powder
+  - Mix all the above together
+  - "Bake at 180\xB0 for 40-50 mins"
+  - Take out and cool
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: butter
+      preparation: null
+      quantity: '110'
+    - measurement: g
+      name: chocolate
+      preparation: bar or powder
+      quantity: '110'
+    - measurement: g
+      name: jam
+      preparation: null
+      quantity: '130'
+    - measurement: g
+      name: sugar
+      preparation: null
+      quantity: '100'
+    - measurement: pinch
+      name: salt
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: eggs
+      preparation: null
+      quantity: '2'
+    - measurement: tbsp
+      name: baking powder
+      preparation: null
+      quantity: '1.5'
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '125'
+    name: null
+  serves: '8'
+source: Nigella
+tags:
+- cake
+title: Choco Pantry Cake

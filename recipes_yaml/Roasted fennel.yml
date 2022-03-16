@@ -1,0 +1,49 @@
+cuisine: null
+description: If you're not serving this with the pork, it's also a perfect marriage
+  with any white fish, chicken, or - because it's at its best at room temperature
+  - simply chopped and tossed in a salad with olives and tomatoes. And I'd be just
+  as happy to eat it on its own.
+directions:
+  step: Heat the oven to 200C/400F/Gas6. Remove the tough outer layers of the fennel
+    and cut into quarters lengthwise. Place the fennel in a bowl and crumble over
+    the chilli, season with salt and pepper and toss through the fennel seeds. Squeeze
+    over the lemon juice and zest and dress with the olive oil - toss well to combine.
+    Place in a baking tray, cover with foil and place on the middle shelf of the oven;
+    roast for 30 minutes then remove the foil and return to the oven for a further
+    15 minutes. Remove and serve.
+ingredients:
+  group:
+    ingredient:
+    - measurement: null
+      name: fennel bulbs
+      preparation: null
+      quantity: '4'
+    - measurement: null
+      name: dried red chilli
+      preparation: finely sliced
+      quantity: '1'
+    - measurement: tsp
+      name: fennel seeds
+      preparation: null
+      quantity: 1/2
+    - measurement: null
+      name: lemon
+      preparation: zested
+      quantity: '1'
+    - measurement: ml
+      name: extra-virgin olive oil
+      preparation: null
+      quantity: '60'
+    - measurement: null
+      name: salt
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: pepper
+      preparation: null
+      quantity: null
+  serves: null
+source: null
+tags:
+- vegetable side
+title: Roasted fennel

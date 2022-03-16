@@ -1,0 +1,59 @@
+cuisine: .chinese
+description: null
+directions:
+  '#text': '>
+
+
+
+
+
+    >'
+  step:
+  - Remove gills from fish head. Wash all the fish bits.
+  - "Saut\xE9 the ingredients in oil over medium heat for 5 mins then sweat with rice\
+    \ wine."
+  - Add water and seasonings and bring to boil, skimming every so often.
+  - Cook 20 mins on low, then sieve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: fish heads and bones
+      preparation: null
+      quantity: '750'
+    - measurement: cm
+      name: ginger
+      preparation: unpeeled
+      quantity: '1'
+    - measurement: null
+      name: onion
+      preparation: yellow
+      quantity: '1'
+    - measurement: cloves
+      name: garlic
+      preparation: unpeeled
+      quantity: '1'
+    - measurement: Tbsp
+      name: wine
+      preparation: rice
+      quantity: '1'
+    name: Base
+  - ingredient:
+    - measurement: tsp
+      name: salt
+      preparation: null
+      quantity: '0.5'
+    - measurement: tsp
+      name: peppercorns
+      preparation: white
+      quantity: '0.5'
+    - measurement: l
+      name: water
+      preparation: null
+      quantity: '1.5'
+    name: Seasonings
+  serves: null
+source: null
+tags:
+- basics
+title: Chinese Fish Stock 1

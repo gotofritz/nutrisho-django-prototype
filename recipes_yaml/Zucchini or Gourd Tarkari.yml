@@ -1,0 +1,92 @@
+cuisine: .indian
+description: Louki Tamatar Tarkari
+directions:
+  '#text': '>
+
+
+
+
+
+
+
+    >'
+  step:
+  - In the mortar, make a paste with chopped green chilies, grated ginger, crushed
+    nuts, coriander seeds, cumin seeds, fennel seeds. When crushed, dilute with water.
+    Or just use a food processor.
+  - Make a cross cut at the bottom of the tomatoes, soak in boiling water a couple
+    of minutes, then rinse in fresh water and peel.
+  - Fry the spice paste in ghee or oil / butter mixture over medium high heat until
+    it dries out a bit.
+  - Chop the tomatoes and add them to the spices. Cook 3-4 mins
+  - Add the zucchini, turmeric, salt, and first lot of chopped coriander and lower
+    heat. Cook on low heat 10 - 15 mins, stirring occasionally and adding water if
+    it gets too dry.
+  - Add remaining chopped herbs and serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: chilies
+      preparation: fresh
+      quantity: '3'
+    - measurement: cm
+      name: ginger
+      preparation: peeled
+      quantity: '2'
+    - measurement: g
+      name: cashew nuts
+      preparation: or almonds
+      quantity: '50'
+    - measurement: Tbsp
+      name: coriander seeds
+      preparation: null
+      quantity: '1.5'
+    - measurement: tsp
+      name: cumin seeds
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: fennel seeds
+      preparation: null
+      quantity: '0.25'
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '60'
+    - measurement: Tbsp
+      name: ghee
+      preparation: or oil and butter mixture
+      quantity: '3'
+    name: Spice paste
+  - ingredient:
+      measurement: g
+      name: tomatoes
+      preparation: null
+      quantity: '300'
+    name: Tomatoes
+  - ingredient:
+    - measurement: g
+      name: zucchini
+      preparation: or bottle gourd
+      quantity: '650'
+    - measurement: tsp
+      name: turmeric
+      preparation: null
+      quantity: '0.5'
+    - measurement: Tbsp
+      name: coriander leaves
+      preparation: chopped fine
+      quantity: '2'
+    name: Gourd
+  - ingredient:
+      measurement: Tbsp
+      name: coriander leaves
+      preparation: chopped fine
+      quantity: '1'
+    name: Serving
+  serves: null
+source: null
+tags:
+- with rice
+title: Zucchini or Gourd Tarkari

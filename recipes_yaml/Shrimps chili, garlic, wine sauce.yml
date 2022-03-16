@@ -1,0 +1,76 @@
+cuisine: .chinese.beijing
+description: Jiu Suan La Jiao xiaren
+directions:
+  '#text': '>'
+  step:
+  - sprinkle salt on shrimps and stand 10 m (2) make batter by beating eggs well then
+    adding starch (3) dip shrimps in batter and deep fry
+  - remove oil, wipe wok, return 1 tbsp of oil in it. very hot (5) stir fry garlic
+    and chili 20s (6) add rice wine, sugar, soy sauce, reduce 40 s (7) add cornstarch
+    mix, 90 s (8) salt to taste and cooked shrimps
+  - serve with chili oil and chopped spring onion greens
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: shrimp
+      preparation: peeled
+      quantity: '220'
+    - measurement: Tbsp
+      name: salt
+      preparation: null
+      quantity: '1'
+    name: Marinade
+  - ingredient:
+    - measurement: null
+      name: egg whites
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: cornstarch
+      preparation: null
+      quantity: '4'
+    - measurement: cups
+      name: oil
+      preparation: frying
+      quantity: '2'
+    name: Batter
+  - ingredient:
+    - measurement: null
+      name: garlic cloves
+      preparation: sliced
+      quantity: '3'
+    - measurement: null
+      name: chili
+      preparation: fresh
+      quantity: '3'
+    - measurement: ml
+      name: rice wine
+      preparation: null
+      quantity: '180'
+    - measurement: tsp
+      name: sugar
+      preparation: null
+      quantity: '1.5'
+    - measurement: tsp
+      name: soy sauce. light
+      preparation: null
+      quantity: '2'
+    - measurement: tsp
+      name: cornstarch
+      preparation: dissolved in 125 ml fish stock or chicken stock
+      quantity: '2'
+    - measurement: to taste
+      name: chili oil
+      preparation: null
+      quantity: null
+    - measurement: Tbsp
+      name: spring onions
+      preparation: greens
+      quantity: '1.5'
+    name: Stir Fry
+  serves: '4'
+source: null
+tags:
+- with rice
+title: Shrimps chili, garlic, wine sauce

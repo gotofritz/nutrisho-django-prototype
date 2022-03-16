@@ -1,0 +1,73 @@
+cuisine: .italian
+description: null
+directions:
+  step:
+  - "Grill the whole peppers in the oven at 180\xB0/200\xB0, until skins are charred\
+    \ (some 10 mins or so)"
+  - Take out of the oven and put in a plastic bag, then tie it shut. The steam build
+    up will help with peeling
+  - Warm up the stock and keep in a pot on low fire
+  - "Saut\xE9 shallots in olive oil on high heat, 3m"
+  - Add rice, and keep stirring for about 1m
+  - Add apple pieces, and sweat with white wine until evaporated, about 3m
+  - When the mixture is dry and beginning to toast turn heat to medium and stir in
+    a couple of ladefuls of stock and salt
+  - 'From now on the cycle goes: when liquid is almost all absorbed stir rice vigorously
+    for a few seconds; then stir in a small ladelful of stock, mix well and leave
+    it to be absorbed. Repeat for roughly 20 mins'
+  - Meanwhile peel the peppers under running water, and chop together with the other
+    ingredients
+  - When the rice is be soft but still chewy, turn off fire, add the chopped olives,
+    peppers, coriander, olive oil and pepper. Stir in vigorously
+  - Cover and stand a couple of minutes before serving
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: shallots
+      preparation: chopped finely
+      quantity: '2'
+    - measurement: g
+      name: rice
+      preparation: carnaroli or aborio
+      quantity: '160'
+    - measurement: small
+      name: apple
+      preparation: peeled and cubed, 1cm
+      quantity: '1'
+    - measurement: ml
+      name: white wine
+      preparation: null
+      quantity: '100'
+    - measurement: ml
+      name: light stock
+      preparation: null
+      quantity: '600'
+    name: Risotto
+  - ingredient:
+    - measurement: null
+      name: peppers
+      preparation: null
+      quantity: '2'
+    - measurement: g
+      name: black olives
+      preparation: null
+      quantity: '50'
+    - measurement: g
+      name: coriander leaves
+      preparation: null
+      quantity: '20'
+    - measurement: tbs
+      name: olive oil
+      preparation: null
+      quantity: '1'
+    - measurement: to taste
+      name: pepper
+      preparation: ground
+      quantity: null
+    name: Toppings
+  serves: '2'
+source: null
+tags:
+- rice
+title: Risotto Lefkosia

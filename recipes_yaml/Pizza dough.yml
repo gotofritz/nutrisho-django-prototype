@@ -1,0 +1,42 @@
+cuisine: .italian.classic
+description: From Nigella
+directions:
+  step:
+  - Mix flour, yeast, salt in  bowl.
+  - Mix olive oil and water
+  - Add water mix to flour mix. Make a dough
+  - Cover bowl with cling film, leave 1hr to rise
+  - Punch down and leave to rest 10 mins
+  - Press out and leave to rise 25 mins
+  - Bake for 10 mins with no topping
+  - Add topping and bake another 10 mins
+ingredients:
+  group:
+  - ingredient:
+    - measurement: cups
+      name: flour
+      preparation: null
+      quantity: '3.5'
+    - measurement: pack
+      name: yeast
+      preparation: null
+      quantity: '1'
+    - measurement: tbs
+      name: salt
+      preparation: null
+      quantity: '1'
+    name: Dry ingredients
+  - ingredient:
+    - measurement: ml
+      name: water
+      preparation: null
+      quantity: '240'
+    - measurement: tbsp
+      name: olive oil
+      preparation: null
+      quantity: '5'
+    name: Wet ingredients
+  serves: '4'
+source: Nigella
+tags: []
+title: Pizza Dough

@@ -1,0 +1,71 @@
+cuisine: .european.modern
+description: Serve as a light supper with a salad of sliced cucumber, mint, sugar,
+  vinegar and rapeseed oil.
+directions:
+  step:
+  - Boil the cauliflower florets for 15 mins in salted water, then plunge in cold
+    water and cool for a few minutes
+  - "Meanwhile saut\xE9 the onion and rosemary for 8 mins on low heat, then remove\
+    \ and let cool"
+  - Beat the eggs as per an omelette, adding the onions and basil
+  - Mix the dry batter ingredients with salt and pepper in a bowl
+  - Add the eggs to the dry batter mixture, then the cauliflower and mix in slowly
+    to coat them
+  - Line the bottom of a loaf tin with parchment paper. Rub the sides with butter
+    and sprinkle sesame seeds so that they stick to it.
+  - "Tip in the cauliflower mix and bake at 180\xB0 for 30 mins."
+  - Serve warm or room temperature. Chutney, salad dressing, mexican salsa all work
+    well.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: cauliflower
+      preparation: cut into florets
+      quantity: '400'
+    - measurement: tbsp
+      name: sesame seeds
+      preparation: null
+      quantity: '2'
+    name: Misc
+  - ingredient:
+    - measurement: null
+      name: eggs
+      preparation: null
+      quantity: '5'
+    - measurement: g
+      name: basil
+      preparation: chopped
+      quantity: '20'
+    - measurement: null
+      name: onion, red
+      preparation: medium, chopped coarsely
+      quantity: '1'
+    - measurement: tsp
+      name: rosemary
+      preparation: chopped, fine (or sage, or thyne)
+      quantity: '0.5'
+    name: Egg mixture
+  - ingredient:
+    - measurement: g
+      name: flour
+      preparation: null
+      quantity: '90'
+    - measurement: tsp
+      name: baking powder
+      preparation: null
+      quantity: 1 1/4
+    - measurement: tsp
+      name: turmeric
+      preparation: null
+      quantity: '0.5'
+    - measurement: g
+      name: parmesan
+      preparation: grated, or crumbled feta
+      quantity: '110'
+    name: Dry batter mixture
+  serves: '2'
+source: Ottolenghi
+tags:
+- light meals
+title: Cauliflower cake

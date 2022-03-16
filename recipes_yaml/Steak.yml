@@ -1,0 +1,49 @@
+cuisine: .european
+description: Steak. Glorious steak.
+directions:
+  step:
+  - Sprinkle generous salt and pepper on the steaks and rub it in
+  - Let the steaks rest outside the fridge for up to one hour
+  - "Heat oven 260\xB0 / gas mark 10 or as hot as it will get"
+  - Rub a little olive oil all over the steaks
+  - Heat a thick bottomed pan (no teflon!) until it extremely hot
+  - Sear both sides of the steaks in the pan, turning only once, 1m or thereabout
+    You are not trying to cook them here, just scorching them. As soon as you get
+    those tasty dark brown marks on both sides you are done. If they sticks to the
+    pan use a spatula to detach it
+  - Put the steaks in a baking ray and bake 4 mins (you'll have to find the perfect
+    time by trial and error, it depends on the tickness of the steak and the actual
+    temperature of the oven)
+  - Meanwhile put the pan back on medium heat without washing it first. Melt the butter
+    in it and scrape any meat residues attached to the bottom
+  - Add the lemon pieces and herbs, and keep cooking pressing the lemons pieces every
+    so often so that they release juice
+  - OPTIONAL Add some wine and let it simmer a bit
+  - When the meat is ready put a small knob of butter on it and leave the steaks on
+    a rack to rest 10 mins
+  - Pour the sauce on top and serve
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: rump steak
+      preparation: null
+      quantity: '400'
+    - measurement: lemon
+      name: top and tailed and halved
+      preparation: null
+      quantity: '1'
+    - measurement: sprig
+      name: thyme
+      preparation: or rosemary or tarragon
+      quantity: '1'
+    - measurement: dollop
+      name: butter
+      preparation: null
+      quantity: '1'
+  serves: '1'
+source: '1'
+tags:
+- meat
+- mean
+title: Steak

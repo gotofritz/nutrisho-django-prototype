@@ -1,0 +1,49 @@
+cuisine: .french
+description: Classic French steak sauce
+directions:
+  step:
+  - "Saut\xE9 the shallots on high for 3 mins, stirring, and season."
+  - Add garlic and rosemary, 3 more minutes
+  - Pour in vinegar and cook until syrupy
+  - Pour in wine until reduced by two thirds
+  - Add stock and bring to boil, then lower heat and reduce by two thirds to around
+    250 ml
+  - Season, remove garlic and rosemary, and whisky in a knob of butter
+  - Add steak juices before serving and pour over steak
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: shallots
+      preparation: sliced
+      quantity: '250'
+    - measurement: tbsp
+      name: oil, olive
+      preparation: null
+      quantity: '4'
+    - measurement: clove
+      name: garlic
+      preparation: lightly crushed
+      quantity: '1'
+    - measurement: spring rosemary
+      name: null
+      preparation: null
+      quantity: '1'
+    - measurement: ml
+      name: red wine
+      preparation: null
+      quantity: '400'
+    - measurement: ml
+      name: stock
+      preparation: null
+      quantity: '400'
+    - measurement: knob
+      name: butter
+      preparation: null
+      quantity: '1'
+    name: null
+  serves: '4'
+source: Gordon Ramsay
+tags:
+- sauce
+title: Shallot and Red Wine Sauce

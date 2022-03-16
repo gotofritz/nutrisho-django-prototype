@@ -1,0 +1,46 @@
+cuisine: .vegetarian
+description: A simple one pot dish
+directions:
+  step:
+  - "Saut\xE8 the onion for a couple of minutes, then add salt and the veg and carry\
+    \ on saut\xE9ing for 7-8 mins"
+  - Add the quinoa, lemon zest, stock
+  - Cook until the water has been absorbed and the quinoa is cooked
+  - 'OPTIONAL: cook some mince in oil on the side, and add it to the cooked dish'
+ingredients:
+  group:
+    ingredient:
+    - measurement: g
+      name: quinoa
+      preparation: null
+      quantity: '160'
+    - measurement: ml
+      name: stock
+      preparation: or water + stock cube
+      quantity: '600'
+    - measurement: null
+      name: zucchini, diced small
+      preparation: optional
+      quantity: '0.5'
+    - measurement: null
+      name: aubergine, diced medium
+      preparation: optional
+      quantity: '0.5'
+    - measurement: null
+      name: onions
+      preparation: chopped
+      quantity: '0.5'
+    - measurement: null
+      name: lemon
+      preparation: zested
+      quantity: '0.5'
+    - measurement: g
+      name: pork, minced (optional)
+      preparation: null
+      quantity: '150'
+    name: null
+  serves: '2'
+source: null
+tags:
+- one pot
+title: Quinoa and veg stew

@@ -1,0 +1,22 @@
+from django.db import models
+
+from .cuisine import Cuisine
+from .source import Source
+
+
+class Recipe(models.Model):
+    name = models.CharField("Recipe main name", max_length=200, unique=True)
+    short_description = models.CharField(
+        "A short blurb about the recipe", max_length=200, null=True
+    )
+    source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True)
+    source_instance = models.CharField(
+        "For example, the page if source is a book, or URL if source is a website",
+        max_length=200,
+        null=True,
+    )
+    cuisine = models.ForeignKey(Cuisine, on_delete=models.SET_NULL, null=True)
+    created_date = models.DateTimeField("date created", auto_now_add=True)
+
+    def natural_key(self):
+        return self.name

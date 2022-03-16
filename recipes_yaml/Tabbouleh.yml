@@ -1,0 +1,57 @@
+cuisine: .middle east
+description: null
+directions:
+  step: Mix lemon juice and bulgur and leage in fridge while you prepare the remaining
+    ingredients. Add all the other ingredients in order.
+ingredients:
+  group:
+    ingredient:
+    - measurement: Tbsp
+      name: lemon juice
+      preparation: null
+      quantity: '2'
+    - measurement: Tbsp
+      name: bulgur
+      preparation: null
+      quantity: '2'
+    - measurement: bunches
+      name: parsley
+      preparation: chopped finely
+      quantity: '4'
+    - measurement: null
+      name: tomatoes
+      preparation: peeled
+      quantity: '4'
+    - measurement: null
+      name: onion
+      preparation: onion
+      quantity: '1'
+    - measurement: tsp
+      name: allspice
+      preparation: crushed
+      quantity: '1'
+    - measurement: tsp
+      name: sumac
+      preparation: null
+      quantity: '1'
+    - measurement: tsp
+      name: cinnamon
+      preparation: null
+      quantity: '1'
+    - measurement: null
+      name: fresh chillies
+      preparation: deseeded
+      quantity: '2'
+    - measurement: cl
+      name: oil
+      preparation: oilve
+      quantity: '20'
+    - measurement: Tbsp
+      name: mint
+      preparation: ripped
+      quantity: '1'
+  serves: null
+source: null
+tags:
+- salad
+title: Tabbouleh
