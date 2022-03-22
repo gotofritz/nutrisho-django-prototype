@@ -1,73 +1,65 @@
 cuisine: .chinese
 description: At least 1500 years old
 directions:
-  '#text': '>
-
-
-
-
-
-
-    >'
   step:
-  - Cute apples in 1cm wedges, then soak in slightly salted water for 10m. Pat dry
-    and leave on a tray.
-  - Make batter by beating eagg, adding flour, then corn starch and water
-  - dip apple into batter, deep fry 1.5m then set aside
-  - Make toffee by melting sugar with ol, adding water carefully, then mixing in apple
-  - Serve with a bowl of iced water - people dip them in to solidify toffee
+    - Cute apples in 1cm wedges, then soak in slightly salted water for 10m. Pat dry
+      and leave on a tray.
+    - Make batter by beating eagg, adding flour, then corn starch and water
+    - dip apple into batter, deep fry 1.5m then set aside
+    - Make toffee by melting sugar with ol, adding water carefully, then mixing in apple
+    - Serve with a bowl of iced water - people dip them in to solidify toffee
 ingredients:
   group:
-  - ingredient:
-    - measurement: null
-      name: apple
-      preparation: cored
-      quantity: '2'
-    - measurement: g
-      name: flour
-      preparation: plain
-      quantity: '50'
-    name: Apples
-  - ingredient:
-    - measurement: null
-      name: egg
-      preparation: null
-      quantity: '1'
-    - measurement: g
-      name: flour
-      preparation: null
-      quantity: '50'
-    - measurement: g
-      name: cornstarch
-      preparation: null
-      quantity: '45'
-    - measurement: mls
-      name: water
-      preparation: null
-      quantity: '125'
-    name: Batter
-  - ingredient:
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '75'
-    - measurement: tsp
-      name: oil
-      preparation: sesame
-      quantity: '2'
-    - measurement: '5'
-      name: tsp
-      preparation: water
-      quantity: '1'
-    name: Toffee
-  - ingredient:
-      measurement: null
-      name: iced water
-      preparation: with ice cubes
-      quantity: null
-    name: Serve
+    - ingredient:
+        - measurement: null
+          name: apple
+          preparation: cored
+          quantity: "2"
+        - measurement: g
+          name: flour
+          preparation: plain
+          quantity: "50"
+      name: Apples
+    - ingredient:
+        - measurement: null
+          name: egg
+          preparation: null
+          quantity: "1"
+        - measurement: g
+          name: flour
+          preparation: null
+          quantity: "50"
+        - measurement: g
+          name: cornstarch
+          preparation: null
+          quantity: "45"
+        - measurement: mls
+          name: water
+          preparation: null
+          quantity: "125"
+      name: Batter
+    - ingredient:
+        - measurement: g
+          name: sugar
+          preparation: null
+          quantity: "75"
+        - measurement: tsp
+          name: oil
+          preparation: sesame
+          quantity: "2"
+        - measurement: "5"
+          name: tsp
+          preparation: water
+          quantity: "1"
+      name: Toffee
+    - ingredient:
+        measurement: null
+        name: iced water
+        preparation: with ice cubes
+        quantity: null
+      name: Serve
   serves: 6 servings
 source: null
 tags:
-- desserts
+  - desserts
 title: Candied Apples / Basi Pingguo

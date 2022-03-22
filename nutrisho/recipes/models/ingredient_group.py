@@ -4,10 +4,7 @@ from .recipe import Recipe
 
 
 class IngredientGroup(models.Model):
-    name = models.CharField(
-        "Label for group",
-        max_length=64,
-    )
+    name = models.CharField("Label for group", max_length=64, null=True)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     index_in_sequence = models.SmallIntegerField(
         "Where to show this group, for a given recipe?"

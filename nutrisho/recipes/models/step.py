@@ -13,6 +13,9 @@ class Step(models.Model):
         "What step is this, for a given recipe?"
     )
     duration = models.DurationField("How long the step should take", null=True)
+    extra_info = models.CharField(
+        "extra information, for example how to peel tomatoes", max_length=512, null=True
+    )
 
     def natural_key(self):
         return (self.index_in_sequence, self.step[:32])

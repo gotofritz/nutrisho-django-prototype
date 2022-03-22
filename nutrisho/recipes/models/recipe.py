@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 from .cuisine import Cuisine
 from .source import Source
@@ -9,6 +10,7 @@ class Recipe(models.Model):
     short_description = models.CharField(
         "A short blurb about the recipe", max_length=200, null=True
     )
+    owner = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=2, null=False)
     source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True)
     source_instance = models.CharField(
         "For example, the page if source is a book, or URL if source is a website",

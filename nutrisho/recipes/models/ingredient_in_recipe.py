@@ -9,14 +9,13 @@ class IngredientInRecipe(models.Model):
         Ingredient, on_delete=models.DO_NOTHING, related_name="+"
     )
     substitute = models.ForeignKey(
-        Ingredient, on_delete=models.DO_NOTHING, related_name="+"
+        Ingredient, on_delete=models.DO_NOTHING, related_name="+", null=True
     )
     measurement = models.CharField("the unit", max_length=32, null=True)
-    preparation = models.CharField(
-        "chopped, blanched...",
-        max_length=128,
+    preparation = models.CharField("chopped, blanched...", max_length=128, null=True)
+    quantity = models.DecimalField(
+        "how many", decimal_places=2, max_digits=7, null=True
     )
-    quantity = models.DecimalField("how many", decimal_places=2, max_digits=7)
     ingredient_group = models.ForeignKey(IngredientGroup, on_delete=models.CASCADE)
     index_in_sequence = models.SmallIntegerField(
         "Where to show this ingredient, for a given group?"

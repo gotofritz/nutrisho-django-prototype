@@ -35,6 +35,7 @@ class Ingredient(models.Model):
         "Anything that will let you find the source: ISDN, url...",
         max_length=32,
         choices=GROUP_CHOICES,
+        null=True,
     )
 
     def natural_key(self):

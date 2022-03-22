@@ -52,10 +52,6 @@ ingredients:
           name: maple syrup
           preparation: null
           quantity: "2"
-        - measurement: null
-          name: null
-          preparation: null
-          quantity: null
       name: Pumpkin dice
     - ingredient:
         - measurement: tsp
