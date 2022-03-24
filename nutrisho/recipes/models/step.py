@@ -4,7 +4,7 @@ from .recipe import Recipe
 
 
 class Step(models.Model):
-    step = models.CharField(
+    step_text = models.CharField(
         "The description of a step",
         max_length=512,
     )

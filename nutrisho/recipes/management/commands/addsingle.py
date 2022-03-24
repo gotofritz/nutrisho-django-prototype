@@ -68,7 +68,7 @@ class Command(BaseCommand):
 
                 for i, step_raw in enumerate(recipe_dict["directions"]["step"]):
                     step, _ = Step.objects.get_or_create(
-                        step=step_raw,
+                        step_text=Command.clean(step_raw),
                         index_in_sequence=i + 1,
                         recipe=recipe,
                     )

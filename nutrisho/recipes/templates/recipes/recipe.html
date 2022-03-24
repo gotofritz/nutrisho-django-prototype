@@ -1,26 +1,49 @@
 {% extends "./base.html" %}
 
 
-
 {% block title %}{{ recipe.name }}{% endblock %}
 
 {% block content %}
-<h1>{{ recipe.name }}</h1>
-<ol>
-  {% for step in recipe.step.all %}
-  <li>{{ step.step }}</li>
-  {% endfor %}
-</ol>
 
+<div id="measured_height_container">
+  <div id="recipe_title">{{ recipe.name }}</div>
 
-{% for group in recipe.ingredients_group.all %}
-<div>{{ group.name }}</div>
-<ul>
-  {% for ingredient in group.ingredient.all %}
-  <li>{{ingredient.quantity.normalize|default:""}} {{ingredient.measurement|default:""}} {{ingredient.ingredient.name}} {{ingredient.preparation|default:""}}</li>
-  {% endfor %}
-</ul>
-{% endfor %}
-<div>{{recipe.short_description}}</div>
-{% endblock %}
-
+  <div id="recipe_contents">
+    <div id="recipe_directions">
+      <ol>
+        {% for step in recipe.step.all %}
+        <li>{{ step.step_text }}</li>
+        {% endfor %}
+      </ol>
+    </div>
+    <div id="sidebar">
+      <div id="recipe_ingredients">
+        <h3>Serves 1</h3>
+        {% for group in recipe.ingredients_group.all %}
+        {% if group.name %}
+        <h4>{{ group.name }}</h4>
+        {% endif %}
+        <dl>
+          {% for ingredient in group.ingredient.all %}
+          <dt>
+            <span class="ingredient_quantity">{{ingredient.quantity.normalize|default:""}}
+            </span>
+            <span class="ingredient_measurement"> {{ingredient.measurement|default:""}}
+            </span>
+          </dt>
+          <dd>
+            <span class="ingredient_name">{{ingredient.ingredient.name}}{% if ingredient.preparation %}, {% endif %}
+            </span>
+            <span class="ingredient_preparation">
+              {{ingredient.preparation|default:""}}
+            </span>
+          </dd>
+          {% endfor %}
+        </dl>
+        {% endfor %}
+      </div>
+      <div id="recipe_description">{{recipe.short_description}}</div>
+      {% endblock %}
+    </div>
+  </div>
+</div>
