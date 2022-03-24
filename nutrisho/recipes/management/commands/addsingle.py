@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 import yaml
 import json
+import re
 from pathlib import Path
 
 from recipes.models.ingredient import Ingredient
@@ -15,6 +16,14 @@ from recipes.models.tag import Tag
 
 class Command(BaseCommand):
     help = "Adds a single recipe (pass it as arg)"
+
+    @classmethod
+    def clean(cls, s):
+        if s is None:
+            return None
+        tmp = re.sub(r"\n", " ", s)
+        tmp = re.sub(r" {2,}", " ", tmp)
+        return tmp.strip()
 
     def add_arguments(self, parser):
         parser.add_argument("paths", nargs="+", type=str, help="Path to recipe")
@@ -49,8 +58,8 @@ class Command(BaseCommand):
                     cuisine = None
 
                 recipe, _ = Recipe.objects.get_or_create(
-                    name=recipe_dict["title"],
-                    short_description=recipe_dict["title"],
+                    name=Command.clean(recipe_dict["title"]),
+                    short_description=Command.clean(recipe_dict["description"]),
                     source_instance=recipe_dict["source"],
                     owner=user,
                     cuisine=cuisine,
@@ -73,7 +82,7 @@ class Command(BaseCommand):
                     ]
                 for i, group_dict in enumerate(recipe_dict["ingredients"]["group"]):
                     group, _ = IngredientGroup.objects.get_or_create(
-                        name=group_dict.get("name", None),
+                        name=Command.clean(group_dict.get("name")),
                         index_in_sequence=i + 1,
                         recipe=recipe,
                     )
@@ -83,7 +92,7 @@ class Command(BaseCommand):
                         group_dict["ingredient"] = [group_dict["ingredient"]]
                     for j, ingredient_raw in enumerate(group_dict["ingredient"]):
                         ingredient, _ = Ingredient.objects.get_or_create(
-                            name=ingredient_raw.get("name", None),
+                            name=Command.clean(ingredient_raw.get("name")),
                         )
                         ingredient.save()
 
@@ -103,12 +112,8 @@ class Command(BaseCommand):
                         ingredient_in_recipe.save()
 
                 for tag_raw in recipe_dict["tags"]:
-                    tag, _ = Tag.objects.get_or_create(tag=tag_raw)
+                    tag, _ = Tag.objects.get_or_create(tag=tag_raw.strip())
                     tag.save()
                     tag.recipe.set([recipe])
-
-                # pricing_plan, _ = PricingPlan.objects.get_or_create(cuisine=plan["name"])
-                # pricing_plan.amount = plan["amount"]
-                # pricing_plan.save()
 
         self.stdout.write(self.style.SUCCESS("Successfully created plans"))

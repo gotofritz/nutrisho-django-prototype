@@ -8,7 +8,7 @@ class Step(models.Model):
         "The description of a step",
         max_length=512,
     )
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="step")
     index_in_sequence = models.SmallIntegerField(
         "What step is this, for a given recipe?"
     )
@@ -20,6 +20,9 @@ class Step(models.Model):
     def natural_key(self):
         return (self.index_in_sequence, self.step[:32])
 
+    # def __str__:
+    #     related_name='recipe'
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -27,3 +30,4 @@ class Step(models.Model):
                 name="unique Step in sequence",
             )
         ]
+        ordering = ["index_in_sequence"]

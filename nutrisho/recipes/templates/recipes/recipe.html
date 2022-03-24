@@ -1,0 +1,26 @@
+{% extends "./base.html" %}
+
+
+
+{% block title %}{{ recipe.name }}{% endblock %}
+
+{% block content %}
+<h1>{{ recipe.name }}</h1>
+<ol>
+  {% for step in recipe.step.all %}
+  <li>{{ step.step }}</li>
+  {% endfor %}
+</ol>
+
+
+{% for group in recipe.ingredients_group.all %}
+<div>{{ group.name }}</div>
+<ul>
+  {% for ingredient in group.ingredient.all %}
+  <li>{{ingredient.quantity.normalize|default:""}} {{ingredient.measurement|default:""}} {{ingredient.ingredient.name}} {{ingredient.preparation|default:""}}</li>
+  {% endfor %}
+</ul>
+{% endfor %}
+<div>{{recipe.short_description}}</div>
+{% endblock %}
+

@@ -16,7 +16,9 @@ class IngredientInRecipe(models.Model):
     quantity = models.DecimalField(
         "how many", decimal_places=2, max_digits=7, null=True
     )
-    ingredient_group = models.ForeignKey(IngredientGroup, on_delete=models.CASCADE)
+    ingredient_group = models.ForeignKey(
+        IngredientGroup, on_delete=models.CASCADE, related_name="ingredient"
+    )
     index_in_sequence = models.SmallIntegerField(
         "Where to show this ingredient, for a given group?"
     )
@@ -36,3 +38,4 @@ class IngredientInRecipe(models.Model):
                 name="unique IngredientInRecipe step in sequence",
             )
         ]
+        ordering = ["index_in_sequence"]
