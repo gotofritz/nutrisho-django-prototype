@@ -1,2 +1,2 @@
 from .home import home
-from .recipe import recipe
+from .recipe import recipe, recipe_edit
