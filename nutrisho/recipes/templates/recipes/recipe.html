@@ -5,45 +5,47 @@
 
 {% block content %}
 
-<div id="measured_height_container">
-  <div id="recipe_title">{{ recipe.name }}</div>
+<div class="recipe_contents">
 
-  <div id="recipe_contents">
-    <div id="recipe_directions">
-      <ol>
-        {% for step in recipe.step.all %}
-        <li>{{ step.step_text }}</li>
-        {% endfor %}
-      </ol>
-    </div>
-    <div id="sidebar">
-      <div id="recipe_ingredients">
-        <h3>Serves 1</h3>
-        {% for group in recipe.ingredients_group.all %}
+  <div class="recipe_directions">
+    <div class="recipe_title">{{ recipe.name }}</div>
+    <ol>
+      {% for step in recipe.step.all %}
+      <li>{{ step.step_text }}</li>
+      {% endfor %}
+    </ol>
+  </div>
+
+  <div class="sidebar">
+    <h3 class="serves">Serves 1</h3>
+    <div class="recipe_ingredients">
+      {% for group in recipe.ingredients_group.all %}
+
+      <div class="ingredient_group">
+
         {% if group.name %}
-        <h4>{{ group.name }}</h4>
+        <h4 class="group_name">{{ group.name }}</h4>
         {% endif %}
-        <dl>
+
+        <div class="ingredients-list">
           {% for ingredient in group.ingredient.all %}
-          <dt>
+          <div class="ingredient-in-group">
             <span class="ingredient_quantity">{{ingredient.quantity.normalize|default:""}}
             </span>
-            <span class="ingredient_unit"> {{ingredient.unit|default:""}}
-            </span>
-          </dt>
-          <dd>
+            <span class="ingredient_unit"> {{ingredient.unit|default:""}}</span>
             <span class="ingredient_name">{{ingredient.ingredient.name}}{% if ingredient.preparation %}, {% endif %}
             </span>
             <span class="ingredient_preparation">
               {{ingredient.preparation|default:""}}
             </span>
-          </dd>
+          </div>
           {% endfor %}
-        </dl>
-        {% endfor %}
+        </div>
       </div>
-      <div id="recipe_description">{{recipe.short_description}}</div>
+
+      {% endfor %}
     </div>
+    <div class="recipe_description">{{recipe.short_description}}</div>
   </div>
 </div>
 <div class="no-print" id="control">

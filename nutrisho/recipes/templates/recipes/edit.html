@@ -3,8 +3,6 @@
 {% block title %}{{ recipe.name }} | Edit{% endblock %}
 
 {% block content %}
-<pre>{{ debug | pprint }}</pre>
-<pre>{{ request.POST | pprint }}</pre>
 <form action="{% url 'recipes:edit' recipe.id %}" method="post">
   {% csrf_token %}
   <div id="measured_height_container">
@@ -62,4 +60,6 @@
     <a href="./">Cancel</a>
   </div>
 </form>
+<pre>{{ debug | pprint }}</pre>
+<pre>{{ request.POST | pprint }}</pre>
 {% endblock %}
