@@ -107,7 +107,7 @@ class Command(BaseCommand):
                             _,
                         ) = IngredientInRecipe.objects.get_or_create(
                             ingredient=ingredient,
-                            measurement=ingredient_raw["measurement"],
+                            unit=ingredient_raw["measurement"],
                             preparation=ingredient_raw["preparation"],
                             quantity=eval(ingredient_raw["quantity"]) / serves
                             if ingredient_raw["quantity"] is not None

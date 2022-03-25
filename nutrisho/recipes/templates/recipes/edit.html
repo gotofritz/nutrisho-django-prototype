@@ -32,9 +32,9 @@
                 <input type="text" name="ingredient.{{ ingredient.id }}.quantity"
                   value="{{ ingredient.quantity.normalize|default:"" }}" placeholder="quantity" />
               </span>
-              <span class="ingredient_measurement">
-                <input type="text" name="ingredient.{{ ingredient.id }}.measurement"
-                  value="{{ ingredient.measurement|default:"" }}" placeholder="unit" />
+              <span class="ingredient_unit">
+                <input type="text" name="ingredient.{{ ingredient.id }}.unit" value="{{ ingredient.unit|default:"" }}"
+                  placeholder="unit" />
               </span>
             </dt>
             <dd>

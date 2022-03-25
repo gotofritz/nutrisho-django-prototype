@@ -100,10 +100,10 @@ metric {
   margin: 0 0 0.5em 0;
 }
 .ingredient_name,
-.ingredient_measurement,
+.ingredient_unit,
 .ingredient_quantity {
 }
-.ingredient_measurement {
+.ingredient_unit {
   text-transform: lowercase;
 }
 .ingredient_quantity {

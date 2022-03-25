@@ -8,8 +8,8 @@ venv:
 .PHONY: venv
 
 clean:
-	@[[ -f ./db.sqlite3 ]] && rm ./db.sqlite3 || true
-	@[[ ! -z "$(ls -A ./recipes/migrations/0*)" ]] && rm ./recipes/migrations/0* || true
+	rm ./db.sqlite3 || true
+	rm ./recipes/migrations/0* || true
 .PHONY: clean
 
 filldb: venv clean

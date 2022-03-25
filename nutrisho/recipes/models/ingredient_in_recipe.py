@@ -11,7 +11,7 @@ class IngredientInRecipe(models.Model):
     substitute = models.ForeignKey(
         Ingredient, on_delete=models.DO_NOTHING, related_name="+", null=True
     )
-    measurement = models.CharField("the unit", max_length=32, null=True)
+    unit = models.CharField("the unit", max_length=32, null=True)
     preparation = models.CharField("chopped, blanched...", max_length=128, null=True)
     quantity = models.DecimalField(
         "how many", decimal_places=2, max_digits=7, null=True
@@ -29,7 +29,7 @@ class IngredientInRecipe(models.Model):
     )
 
     def natural_key(self):
-        return (self.ingredient_group, self.quantity, self.measurement, self.name)
+        return (self.ingredient_group, self.quantity, self.unit, self.name)
 
     class Meta:
         constraints = [
