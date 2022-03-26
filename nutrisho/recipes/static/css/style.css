@@ -13,7 +13,7 @@ body * {
   box-sizing: border-box;
 }
 
-.recipe_contents {
+.recipe-contents {
   box-shadow: #a3a0a0 2px 0px 7px;
   display: flex;
   gap: 20px;
@@ -34,21 +34,21 @@ input[type="text"] {
   width: 100%;
 }
 
-.ingredient_group {
+.ingredient-group {
   display: block;
   margin: 1em 0 -8px 0;
   padding-bottom: 2px;
   padding-left: 0;
 }
 
-.group_name {
+.group-name {
   font-size: 16px;
   font-weight: normal;
   margin: 0 0 3px 0;
   text-align: end;
 }
 
-.recipe_title {
+.recipe-title {
   font-size: 44px;
   font-family: "Lobster", "Trebuchet MS";
   line-height: 37px;
@@ -56,7 +56,7 @@ input[type="text"] {
   width: 100%;
 }
 
-.recipe_title input[type="text"] {
+.recipe-title input[type="text"] {
   line-height: 62px;
   height: 62px;
   margin-top: -10px;
@@ -68,7 +68,7 @@ input[type="text"] {
   width: 250px;
 }
 
-.recipe_description {
+.recipe-description {
   border-top: var(--hbar);
   font-size: 14px;
   line-height: 1.2;
@@ -76,19 +76,19 @@ input[type="text"] {
   padding: 1em 0 0;
 }
 
-.recipe_directions {
+.recipe-directions {
   width: 720px;
 }
 
-.recipe_directions p,
-.recipe_directions li {
+.recipe-directions p,
+.recipe-directions li {
   margin: 0 0 0.5em 0;
 }
 
-.ingredient_name {
+.ingredient-name {
 }
 
-.ingredient_unit {
+.ingredient-unit {
   text-transform: lowercase;
 }
 
@@ -97,7 +97,7 @@ ol {
   margin: 0 0 0 2.2em;
 }
 
-.recipe_ingredients {
+.recipe-ingredients {
   border-top: var(--hbar);
 }
 
@@ -119,11 +119,11 @@ ol {
   text-indent: -36px;
   padding-left: 36px;
 }
-.ingredient_group:last-of-type .ingredient-in-group:last-of-type {
+.ingredient-group:last-of-type .ingredient-in-group:last-of-type {
   border-bottom: none;
 }
 
-.recipe_directions textarea {
+.recipe-directions textarea {
   height: 150px;
   vertical-align: text-top;
 }
@@ -132,7 +132,7 @@ ol {
   .no-print {
     display: none;
   }
-  .recipe_contents {
+  .recipe-contents {
     box-shadow: none;
   }
 }
