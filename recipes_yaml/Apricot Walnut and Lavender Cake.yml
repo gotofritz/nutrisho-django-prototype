@@ -1,0 +1,91 @@
+cuisine: .western
+description: Lovely nutty + fruity
+directions:
+    step:
+    - Line the base and side of a 23cm cake tin.
+    - 'If using vanilla pod: cut in half lengthways, scrape middle into milk, drop
+        the pod in the milk, and simmer for a few minutes.'
+    - 'If using whole almonds: blanch a few minutes in boiling water, cool, then peel.'
+    - Put in food processor with walnuts, and grind.
+    - Add sugar, walnut oil, butter, and mix on slow
+    - Add egg one at the time, slowly
+    - Add remaining dry ingredients and vanilla milk (minus the pod) to the mixture
+    - Pour mixture in cake tin. Push in the apricot halves, skin down
+    - Bake 70-80 mins at 170°
+    - Sieve icing sugar into lemon juice, beat, and when cake is ready brush over
+        cake.
+    - Sprinkle lavender flowers and leave to cool
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: butter
+            preparation: at room temperature
+            quantity: '46.25'
+        -   measurement: tbsp
+            name: walnut oil
+            preparation: null
+            quantity: '0.50'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '45.00'
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '1.00'
+        -   measurement: g
+            name: walnuts
+            preparation: null
+            quantity: '30.00'
+        -   measurement: g
+            name: almonds
+            preparation: ground or whole
+            quantity: '30.00'
+        name: Wet ingredients
+    -   ingredient:
+        -   measurement: g
+            name: white flour
+            preparation: null
+            quantity: '22.50'
+        -   measurement: zest
+            name: lemon
+            preparation: grated
+            quantity: '0.25'
+        -   measurement: tsp
+            name: lavender flowers
+            preparation: null
+            quantity: '0.38'
+        -   measurement: pod
+            name: vanilla
+            preparation: null
+            quantity: '0.12'
+        -   measurement: pinch
+            name: salt
+            preparation: null
+            quantity: '0.25'
+        -   measurement: ml
+            name: milk
+            preparation: null
+            quantity: '25.00'
+        name: Dry ingredients
+    -   ingredient:
+        -   measurement: g
+            name: apricots
+            preparation: halved and pitted
+            quantity: '150.00'
+        name: Stuffing
+    -   ingredient:
+        -   measurement: g
+            name: icing sugar
+            preparation: null
+            quantity: '12.50'
+        -   measurement: null
+            name: lemon
+            preparation: juiced
+            quantity: '0.25'
+        name: Icing
+    serves: 1
+source: Yotam Ottolenghi, http://www.guardian.co.uk/lifeandstyle/2013/jul/05/plum-greengage-apricot-cake-recipes
+tags: []
+title: Apricot Walnut and Lavender Cake

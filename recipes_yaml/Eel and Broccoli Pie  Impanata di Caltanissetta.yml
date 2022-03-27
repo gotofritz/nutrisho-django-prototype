@@ -1,104 +1,86 @@
 cuisine: .italian.sicilian
 description: A Christmas dish. The original is made with two (or three) impanatas
-  layered inside each other.
+    layered inside each other.
 directions:
-  '#text': '>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    >'
-  step:
-  - dissolve fresh yeast in warm water for 5m
-  - add flour bit by bit and knead for 10m
-  - rest in greased bowl, covered in kitchen towel until doubled in size, about 2h
-  - "saut\xE9 onion in olive oil med for 10m. Add eel, tomatoes on low heat for 10m"
-  - put anchovy fillets in a skillet
-  - add onion, caciocavallo cheese, half the black olives
-  - lay broccoli on top
-  - drizzle olive oil on top
-  - add black olives on top
-  - add salt
-  - drizzle red wine on top
-  - cover and simmer without stirring on low heat for 12m
-  - Drain and mix with the tomatoes
-  - Roll out the dough in a disk, ladle out the drained fillings, fold like a calzone,
-    and puncture.
-  - "Bake until ready 190\xB0 for 35m"
+    step:
+    - dissolve fresh yeast in warm water for 5m
+    - add flour bit by bit and knead for 10m
+    - rest in greased bowl, covered in kitchen towel until doubled in size, about
+        2h
+    - sauté onion in olive oil med for 10m. Add eel, tomatoes on low heat for 10m
+    - put anchovy fillets in a skillet
+    - add onion, caciocavallo cheese, half the black olives
+    - lay broccoli on top
+    - drizzle olive oil on top
+    - add black olives on top
+    - add salt
+    - drizzle red wine on top
+    - cover and simmer without stirring on low heat for 12m
+    - Drain and mix with the tomatoes
+    - Roll out the dough in a disk, ladle out the drained fillings, fold like a calzone,
+        and puncture.
+    - Bake until ready 190° for 35m
 ingredients:
-  group:
-  - ingredient:
-    - measurement: tsp
-      name: yeast
-      preparation: fresh
-      quantity: '3'
-    - measurement: ml
-      name: water
-      preparation: warm
-      quantity: '320'
-    - measurement: g
-      name: flour
-      preparation: null
-      quantity: '480'
-    name: Dough
-  - ingredient:
-    - measurement: null
-      name: onions
-      preparation: sliced
-      quantity: '1'
-    - measurement: g
-      name: eel
-      preparation: cleaned
-      quantity: '300'
-    - measurement: null
-      name: tomatoes
-      preparation: peeled
-      quantity: '2'
-    name: Eel
-  - ingredient:
-    - measurement: null
-      name: onion
-      preparation: sliced
-      quantity: '0.5'
-    - measurement: null
-      name: achovy fillets
-      preparation: null
-      quantity: '2'
-    - measurement: Tbsp
-      name: cheese
-      preparation: caciocavallo
-      quantity: '1'
-    - measurement: Tbsp
-      name: olives
-      preparation: black
-      quantity: '2'
-    - measurement: g
-      name: broccoli
-      preparation: broken in florets
-      quantity: '400'
-    - measurement: Tbsp
-      name: oil
-      preparation: oilve
-      quantity: '4'
-    - measurement: ml
-      name: wine
-      preparation: red
-      quantity: '60'
-    name: Broccoli
-  serves: '6'
-source: null
-tags:
-- pie
+    group:
+    -   ingredient:
+        -   measurement: tsp
+            name: yeast
+            preparation: fresh
+            quantity: '0.75'
+        -   measurement: ml
+            name: water
+            preparation: warm
+            quantity: '80.00'
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '120.00'
+        name: Dough
+    -   ingredient:
+        -   measurement: null
+            name: onions
+            preparation: sliced
+            quantity: '0.25'
+        -   measurement: g
+            name: eel
+            preparation: cleaned
+            quantity: '75.00'
+        -   measurement: null
+            name: tomatoes
+            preparation: peeled
+            quantity: '0.50'
+        name: Eel
+    -   ingredient:
+        -   measurement: null
+            name: onion
+            preparation: sliced
+            quantity: '0.12'
+        -   measurement: null
+            name: achovy fillets
+            preparation: null
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: cheese
+            preparation: caciocavallo
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: olives
+            preparation: black
+            quantity: '0.50'
+        -   measurement: g
+            name: broccoli
+            preparation: broken in florets
+            quantity: '100.00'
+        -   measurement: Tbsp
+            name: oil
+            preparation: oilve
+            quantity: '1.00'
+        -   measurement: ml
+            name: wine
+            preparation: red
+            quantity: '15.00'
+        name: Broccoli
+    serves: 1
+source: ''
+tags: []
 title: Eel and Broccoli Pie / Impanata di Caltanissetta

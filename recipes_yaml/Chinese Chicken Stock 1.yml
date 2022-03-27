@@ -1,44 +1,43 @@
 cuisine: .chinese
 description: null
 directions:
-  step:
+    step:
     - Blanch the chicken pieces by pouring boiling water over them to cover, bringing
-      back to boil, then discarding the water
+        back to boil, then discarding the water
     - Cover chicken again with cold water, bring to boil, skimming as it cooks.
     - Lower heat, add remaining ingredients, simmer on low heat for 1.5 hours
     - cool, and remove the fat from the top. You can use fat for frying if you want
 ingredients:
-  group:
-    - ingredient:
-        - measurement: kg
-          name: chicken neck
-          preparation: wings
-          quantity: "1"
-        - measurement: l
-          name: water
-          preparation: null
-          quantity: "3"
-      name: Chicken
-    - ingredient:
-        - measurement: cm
-          name: ginger
-          preparation: unpeeld
-          quantity: "2.5"
-        - measurement: null
-          name: spring onion
-          preparation: chunks
-          quantity: "1"
-        - measurement: tsp
-          name: salt
-          preparation: null
-          quantity: "0.5"
-        - measurement: tsp
-          name: peppercorns
-          preparation: white
-          quantity: "0.5"
-      name: Flavouring
-  serves: null
-source: null
-tags:
-  - basics
+    group:
+    -   ingredient:
+        -   measurement: kg
+            name: chicken neck
+            preparation: wings
+            quantity: '0.25'
+        -   measurement: l
+            name: water
+            preparation: null
+            quantity: '0.75'
+        name: Chicken
+    -   ingredient:
+        -   measurement: cm
+            name: ginger
+            preparation: unpeeld
+            quantity: '0.62'
+        -   measurement: null
+            name: spring onion
+            preparation: chunks
+            quantity: '0.25'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: peppercorns
+            preparation: white
+            quantity: '0.12'
+        name: Flavouring
+    serves: 1
+source: ''
+tags: []
 title: Chinese Chicken Stock 1

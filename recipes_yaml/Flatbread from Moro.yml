@@ -1,41 +1,40 @@
 cuisine: .middle east
 description: null
 directions:
-  step:
-  - Dissolve the yeast into water, then pour the oil in.
-  - Mix the flour and salt, and slowly add the water.
-  - Knead into a dough, for about 5 minutes. It should be slightly tacky but smooth
-    and elastic.
-  - Rest covered with a cloth for 45 minutes.
-  - Divide into 4 balls, rool into 3 to 5 mm thick flatbreads
-  - Place on an oiled oven tray, pierce with a fork, and sprinkle nigella seeds
-  - "Bake at 230\xB0 for 5-10 mins"
+    step:
+    - Dissolve the yeast into water, then pour the oil in.
+    - Mix the flour and salt, and slowly add the water.
+    - Knead into a dough, for about 5 minutes. It should be slightly tacky but smooth
+        and elastic.
+    - Rest covered with a cloth for 45 minutes.
+    - Divide into 4 balls, rool into 3 to 5 mm thick flatbreads
+    - Place on an oiled oven tray, pierce with a fork, and sprinkle nigella seeds
+    - Bake at 230° for 5-10 mins
 ingredients:
-  group:
-    ingredient:
-    - measurement: g
-      name: flour
-      preparation: null
-      quantity: '200'
-    - measurement: tsp
-      name: salt
-      preparation: null
-      quantity: '0.5'
-    - measurement: tsp
-      name: yeast
-      preparation: null
-      quantity: '0.3'
-    - measurement: ml
-      name: water
-      preparation: lukewarm
-      quantity: '170'
-    - measurement: tbsp
-      name: "olive oil\u221A"
-      preparation: null
-      quantity: '1'
-    name: Bread
-  serves: '4'
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '50.00'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: yeast
+            preparation: null
+            quantity: '0.08'
+        -   measurement: ml
+            name: water
+            preparation: lukewarm
+            quantity: '42.50'
+        -   measurement: tbsp
+            name: olive oil√
+            preparation: null
+            quantity: '0.25'
+        name: Bread
+    serves: 1
 source: Moro
-tags:
-- bread
+tags: []
 title: Flatbread from Moro

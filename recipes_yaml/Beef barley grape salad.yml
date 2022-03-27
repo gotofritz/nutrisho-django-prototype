@@ -1,0 +1,95 @@
+cuisine: .lebanese
+description: null
+directions:
+    step:
+    - 'optional: soak barley 4h'
+    - simmer 50g barley 1hr in 1L of water (less if pre-soaked)
+    - when tender, drain and cool
+    - mix marinade ingredients and rub it on beef. Leave 2hr
+    - make dressing by mixing ingredients and seasoning with salt and pepper
+    - rub olive oil over beef and cook on very hot dry griddle until medium rare
+    - set aside 1m to cool
+    - cut into thin slices against the grain
+    - mix everything in a bowl
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: barley
+            preparation: dried
+            quantity: '12.50'
+        -   measurement: l
+            name: water
+            preparation: null
+            quantity: '0.25'
+        name: Barley
+    -   ingredient:
+        -   measurement: g
+            name: beef
+            preparation: sirloin
+            quantity: '125.00'
+        -   measurement: null
+            name: onions
+            preparation: grated
+            quantity: '0.12'
+        -   measurement: Tbsp
+            name: vinegar
+            preparation: wine
+            quantity: '0.25'
+        -   measurement: tsp
+            name: sumac
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: coriander seeds
+            preparation: ground
+            quantity: '0.25'
+        -   measurement: pinch
+            name: allspice
+            preparation: ground
+            quantity: '0.25'
+        -   measurement: pinch
+            name: peppercorns
+            preparation: black
+            quantity: '0.25'
+        name: Beef and marinade
+    -   ingredient:
+        -   measurement: cloves
+            name: garlic
+            preparation: crushed with salt
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: vinegar
+            preparation: wine
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: oil
+            preparation: olive
+            quantity: '1.00'
+        -   measurement: tsp
+            name: sumac
+            preparation: null
+            quantity: '0.50'
+        -   measurement: pinch
+            name: allspice
+            preparation: ground
+            quantity: '0.25'
+        -   measurement: pinch
+            name: coriander seeds
+            preparation: ground
+            quantity: '0.25'
+        name: Dressing
+    -   ingredient:
+        -   measurement: handful
+            name: parsley
+            preparation: leaves
+            quantity: '0.25'
+        -   measurement: g
+            name: grapes
+            preparation: cut in half and seeded; or small sultanas
+            quantity: '87.50'
+        name: Remaining salad ingredients
+    serves: 1
+source: ''
+tags: []
+title: Beef, barley, grape salad

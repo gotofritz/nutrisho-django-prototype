@@ -1,66 +1,64 @@
 cuisine: .thai
-description: 'This is a very typical Thai salad known as ''laap'' which is a finely
-  chopped salad usually made with chicken or pork. It is also delicious made with
-  grilled aubergines which are perfect for soaking up the sour and salty dressing.
-
-
-  Long Chinese aubergines are perfect for this, but the larger Mediterranean aubergines
-  will also work fine. You just need to slice them into rounds before grilling.'
+description: This is a very typical Thai salad known as 'laap' which is a finely chopped
+    salad usually made with chicken or pork. It is also delicious made with grilled
+    aubergines which are perfect for soaking up the sour and salty dressing. Long
+    Chinese aubergines are perfect for this, but the larger Mediterranean aubergines
+    will also work fine. You just need to slice them into rounds before grilling.
 directions:
-  step:
-  - Preheat a barbecue or your oven grill. Prick the aubergines all over with a fork
-    and place them on a grill tray in the oven about 5 inches from the heat. Alternatively
-    place them on your barbecue. Turn the aubergines over occasionally and grill until
-    they are well softened and browned, approximately 10-15 minutes. Set aside to
-    cool slightly.
-  - Meanwhile, place the rice in a wok or dry frying pan over medium heat. Toast the
-    rice until golden, then grind in a good processor or a mortar and pestle until
-    coarse.
-  - Slice the aubergines in half and scrape out the flesh, discarding the charred
-    skins. Place the aubergine pulp in a bowl and mash lightly with a fork. Stir in
-    the remaining ingredients except for the toasted, ground rice and mix well. Sprinkle
-    with the ground rice and serve.
+    step:
+    - Preheat a barbecue or your oven grill. Prick the aubergines all over with a
+        fork and place them on a grill tray in the oven about 5 inches from the heat.
+        Alternatively place them on your barbecue. Turn the aubergines over occasionally
+        and grill until they are well softened and browned, approximately 10-15 minutes.
+        Set aside to cool slightly.
+    - Meanwhile, place the rice in a wok or dry frying pan over medium heat. Toast
+        the rice until golden, then grind in a good processor or a mortar and pestle
+        until coarse.
+    - Slice the aubergines in half and scrape out the flesh, discarding the charred
+        skins. Place the aubergine pulp in a bowl and mash lightly with a fork. Stir
+        in the remaining ingredients except for the toasted, ground rice and mix well.
+        Sprinkle with the ground rice and serve.
 ingredients:
-  group:
-    ingredient:
-    - measurement: Tbsp
-      name: rice
-      preparation: null
-      quantity: '2'
-    - measurement: null
-      name: aubergines
-      preparation: asian or not
-      quantity: '3'
-    - measurement: null
-      name: limes
-      preparation: juiced
-      quantity: '0.5'
-    - measurement: Tbsp
-      name: fish sauce
-      preparation: null
-      quantity: '3'
-    - measurement: null
-      name: chillies
-      preparation: fresh
-      quantity: '1'
-    - measurement: null
-      name: shallot
-      preparation: finely sliced
-      quantity: '1'
-    - measurement: null
-      name: spring onions
-      preparation: finely sliced
-      quantity: '2'
-    - measurement: handful
-      name: coriander leaves
-      preparation: finely chopped
-      quantity: '1'
-    - measurement: handful
-      name: mint
-      preparation: finely chopped
-      quantity: '1'
-  serves: '4'
-source: null
-tags:
-- salad
+    group:
+    -   ingredient:
+        -   measurement: Tbsp
+            name: rice
+            preparation: null
+            quantity: '0.50'
+        -   measurement: null
+            name: aubergines
+            preparation: asian or not
+            quantity: '0.75'
+        -   measurement: null
+            name: limes
+            preparation: juiced
+            quantity: '0.12'
+        -   measurement: Tbsp
+            name: fish sauce
+            preparation: null
+            quantity: '0.75'
+        -   measurement: null
+            name: chillies
+            preparation: fresh
+            quantity: '0.25'
+        -   measurement: null
+            name: shallot
+            preparation: finely sliced
+            quantity: '0.25'
+        -   measurement: null
+            name: spring onions
+            preparation: finely sliced
+            quantity: '0.50'
+        -   measurement: handful
+            name: coriander leaves
+            preparation: finely chopped
+            quantity: '0.25'
+        -   measurement: handful
+            name: mint
+            preparation: finely chopped
+            quantity: '0.25'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Thai Grilled Aubergine Salad

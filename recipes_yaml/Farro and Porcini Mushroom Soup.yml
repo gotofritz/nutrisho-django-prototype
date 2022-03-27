@@ -1,64 +1,56 @@
 cuisine: .italian
 description: You can use spelt, emmer, korn, kamut, etc
 directions:
-  '#text': '>
-
-
-
-
-
-
-    >'
-  step:
-  - drain farro, cook covered in stock, on medium heat, for 45m
-  - saute garlic, carrots, pancetta in olive oil, on medium high heat, until soft,
-    about 8m
-  - add sage, tomatoes, dried porcini, and simmer, diluting with stock as necessary,
-    for 15m
-  - Blend the tomato mixture in food processor, and add to farro. Keep cooking for
-    10m
-  - Serve garnished with chopped parsley and olive oil
+    step:
+    - drain farro, cook covered in stock, on medium heat, for 45m
+    - saute garlic, carrots, pancetta in olive oil, on medium high heat, until soft,
+        about 8m
+    - add sage, tomatoes, dried porcini, and simmer, diluting with stock as necessary,
+        for 15m
+    - Blend the tomato mixture in food processor, and add to farro. Keep cooking for
+        10m
+    - Serve garnished with chopped parsley and olive oil
 ingredients:
-  group:
-    ingredient:
-    - measurement: g
-      name: farro
-      preparation: soaked 2hrs or overnight
-      quantity: '225'
-    - measurement: ml
-      name: stock
-      preparation: null
-      quantity: '800'
-    - measurement: cloves
-      name: garlic
-      preparation: chopped fine
-      quantity: '2'
-    - measurement: null
-      name: carrots
-      preparation: diced fine
-      quantity: '2'
-    - measurement: g
-      name: pancetta
-      preparation: or bacon
-      quantity: '100'
-    - measurement: Tbsp
-      name: oil
-      preparation: olive
-      quantity: '4'
-    - measurement: leaves
-      name: sage
-      preparation: ripped
-      quantity: '6'
-    - measurement: null
-      name: tomatoes
-      preparation: peeled
-      quantity: '4'
-    - measurement: handful
-      name: dried porcini
-      preparation: or a mixture of porcini and fresh mushrooms
-      quantity: '1'
-  serves: '4'
-source: null
-tags:
-- soup
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: farro
+            preparation: soaked 2hrs or overnight
+            quantity: '56.25'
+        -   measurement: ml
+            name: stock
+            preparation: null
+            quantity: '200.00'
+        -   measurement: cloves
+            name: garlic
+            preparation: chopped fine
+            quantity: '0.50'
+        -   measurement: null
+            name: carrots
+            preparation: diced fine
+            quantity: '0.50'
+        -   measurement: g
+            name: pancetta
+            preparation: or bacon
+            quantity: '25.00'
+        -   measurement: Tbsp
+            name: oil
+            preparation: olive
+            quantity: '1.00'
+        -   measurement: leaves
+            name: sage
+            preparation: ripped
+            quantity: '1.50'
+        -   measurement: null
+            name: tomatoes
+            preparation: peeled
+            quantity: '1.00'
+        -   measurement: handful
+            name: dried porcini
+            preparation: or a mixture of porcini and fresh mushrooms
+            quantity: '0.25'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Farro and Porcini Mushroom Soup

@@ -1,65 +1,66 @@
 cuisine: .indian
 description: null
 directions:
-  step:
-  - Cut the squash in half lengthwise, peel it, and scrape out the seeds. Cut into
-    bite-sized chunks.
-  - Heat the oil in a large wok or frying pan over medium-high. Add ginger, and cook,
-    stirring, for 1 minute. Add chilli, spices and curry leaves and cook for 1 minute.
-    Add the squash, and stir until it is coated with the oil and spices. Season to
-    taste with salt and sugar. Reduce heat to medium. Cover, and cook until squash
-    is tender, about 25 minutes. You want the squash to caramelise slightly but be
-    careful that the spices don't scorch and burn. Place in a serving dish, and squeeze
-    the lime juice over. Sprinkle with sea salt and serve.
+    step:
+    - Cut the squash in half lengthwise, peel it, and scrape out the seeds. Cut into
+        bite-sized chunks.
+    - Heat the oil in a large wok or frying pan over medium-high. Add ginger, and
+        cook, stirring, for 1 minute. Add chilli, spices and curry leaves and cook
+        for 1 minute. Add the squash, and stir until it is coated with the oil and
+        spices. Season to taste with salt and sugar. Reduce heat to medium. Cover,
+        and cook until squash is tender, about 25 minutes. You want the squash to
+        caramelise slightly but be careful that the spices don't scorch and burn.
+        Place in a serving dish, and squeeze the lime juice over. Sprinkle with sea
+        salt and serve.
 ingredients:
-  group:
-    ingredient:
-    - measurement: null
-      name: butternut squash
-      preparation: null
-      quantity: '1'
-    - measurement: Tbsp
-      name: oil
-      preparation: null
-      quantity: '3'
-    - measurement: cm
-      name: ginger
-      preparation: peeled and minced
-      quantity: '2'
-    - measurement: null
-      name: chillies
-      preparation: fresh
-      quantity: '1'
-    - measurement: tsp
-      name: cumin seeds
-      preparation: null
-      quantity: '0.5'
-    - measurement: tsp
-      name: garam masala
-      preparation: null
-      quantity: '0.5'
-    - measurement: tsp
-      name: black pepper
-      preparation: ground
-      quantity: '0.5'
-    - measurement: leaves
-      name: curry
-      preparation: null
-      quantity: '10'
-    - measurement: tsp
-      name: salt
-      preparation: or to taste
-      quantity: '1.25'
-    - measurement: tsp
-      name: sugar
-      preparation: null
-      quantity: '1.25'
-    - measurement: null
-      name: limes
-      preparation: juiced
-      quantity: '0.5'
-  serves: '4'
-source: null
-tags:
-- vegetable side
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: butternut squash
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: oil
+            preparation: null
+            quantity: '0.75'
+        -   measurement: cm
+            name: ginger
+            preparation: peeled and minced
+            quantity: '0.50'
+        -   measurement: null
+            name: chillies
+            preparation: fresh
+            quantity: '0.25'
+        -   measurement: tsp
+            name: cumin seeds
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: garam masala
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: black pepper
+            preparation: ground
+            quantity: '0.12'
+        -   measurement: leaves
+            name: curry
+            preparation: null
+            quantity: '2.50'
+        -   measurement: tsp
+            name: salt
+            preparation: or to taste
+            quantity: '0.31'
+        -   measurement: tsp
+            name: sugar
+            preparation: null
+            quantity: '0.31'
+        -   measurement: null
+            name: limes
+            preparation: juiced
+            quantity: '0.12'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Stir-fried Butternut Squash with Curry Leaves

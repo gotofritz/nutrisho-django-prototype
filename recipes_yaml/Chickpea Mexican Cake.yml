@@ -1,56 +1,56 @@
 cuisine: .mexico.traditional
 description: A mexican lent recipe. Original seem to include cream / condensed milk
 directions:
-  step:
-  - "Oven 180\xB0"
-  - 'If using dried chickpeas, soak overnight (optional if using pressure cooker)
-    and boil: 1hr in normal pot if soaked or pressure cooker unsoaked, 30mins pressure
-    cooker if soaked'
-  - Drain chickpeas, rub them in colander to remove skin
-  - Whiz in food processor
-  - Beat eggs in a bowl, mix in remaining ingredients and chickpea paste
-  - "Pour into a greased and lined baking tin, bake 1.5h at 180\xB0"
-  - Cool 10 minutes in tin, then remove and sprinkle cinnamon sugar and let cool completely
+    step:
+    - Oven 180°
+    - 'If using dried chickpeas, soak overnight (optional if using pressure cooker)
+        and boil: 1hr in normal pot if soaked or pressure cooker unsoaked, 30mins
+        pressure cooker if soaked'
+    - Drain chickpeas, rub them in colander to remove skin
+    - Whiz in food processor
+    - Beat eggs in a bowl, mix in remaining ingredients and chickpea paste
+    - Pour into a greased and lined baking tin, bake 1.5h at 180°
+    - Cool 10 minutes in tin, then remove and sprinkle cinnamon sugar and let cool
+        completely
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: dried chickpeas
-      preparation: or 2 cans
-      quantity: '230'
-    - measurement: null
-      name: eggs
-      preparation: null
-      quantity: '4'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '160'
-    - measurement: tsp
-      name: baking powder
-      preparation: null
-      quantity: '1'
-    - measurement: null
-      name: orange
-      preparation: juiced
-      quantity: '1'
-    - measurement: null
-      name: orange
-      preparation: zested
-      quantity: '1'
-    name: Cake
-  - ingredient:
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '50'
-    - measurement: tsp
-      name: ground cinnamon
-      preparation: null
-      quantity: '1'
-    name: Garnish
-  serves: '6'
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: dried chickpeas
+            preparation: or 2 cans
+            quantity: '57.50'
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '1.00'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '40.00'
+        -   measurement: tsp
+            name: baking powder
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: orange
+            preparation: juiced
+            quantity: '0.25'
+        -   measurement: null
+            name: orange
+            preparation: zested
+            quantity: '0.25'
+        name: Cake
+    -   ingredient:
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '12.50'
+        -   measurement: tsp
+            name: ground cinnamon
+            preparation: null
+            quantity: '0.25'
+        name: Garnish
+    serves: 1
 source: Jane Milton's Mexico
-tags:
-- dessert
+tags: []
 title: Chickpea Mexican Cake

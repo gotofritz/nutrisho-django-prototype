@@ -1,106 +1,106 @@
 cuisine: .indian
 description: Parathas - flatbreads that have been stuffed with a savoury filling -
-  are like India's answer to the sandwich. These parathas contain a nutty, spiced
-  roast cauliflower filling and are one of my favourite kind of parathas to make.
+    are like India's answer to the sandwich. These parathas contain a nutty, spiced
+    roast cauliflower filling and are one of my favourite kind of parathas to make.
 directions:
-  step:
-  - Preheat the oven to 190 C
-  - Toast the spices for the stuffing by placing them in a dry frying pan over medium-low
-    heat. Shaking the pan frequently, toast the spices for 3-4 minutes or until fragrant.
-    Grind the spices to a fine powder in a spice grinder or a mortar and pestle.
-  - Place the spices, cauliflower, garlic, honey, oil and salt in a roasting tin and
-    toss well to mix. Place in the oven and roast for 20-30 minutes, stirring occasionally
-    until the cauliflower is nutty and browned. Remove from the oven and leave to
-    cool, then stir in the amchoor powder and coriander.
-  - While the cauliflower is roasting, make the dough by combining the flour, milk,
-    yoghurt, butter and salt in a large mixing bowl. Stir it with a wooden spoon until
-    it comes together as a dough, then turn the dough out onto a lightly floured worksurface
-    and knead for 10 minutes until the dough is smooth and elastic. Divide the dough
-    into 6 balls of equal size, cover them in cling film and set them aside to rest
-    in the fridge for 30 minutes.
-  - Working with one ball of dough at a time, take a ball of dough and flatten it
-    out to a thickness of about 1/2 an inch using either your hands or a rolling pin.
-    Spread 2-3 tablespoons of the filling onto the dough leaving a margin of about
-    an inch on all sides.
-  - Gather the edges of the dough towards the centre and press down gently but firmly
-    with your hands to seal in the filling and reseal the edges of the dough. Flatten
-    the dough out gently with your hands being careful not to break the dough and
-    spill the filling, until it is approximately 1/2 inch thick. Repeat with all the
-    dough balls, layering them between sheets of parchment paper to keep them from
-    sticking to each other until you are ready to cook them.
-  - Heat a large frying pan on medium high heat and add approximately 1 tbsp of oil.
-    Swirl the oil around to coat the base. Add one of the parathas and cook it for
-    approximately 4-5 minutes per side until it is nice and golden and crisp on both
-    sides and the filling is heated through.
-  - Cut each paratha into quarters and serve immediately.
+    step:
+    - Preheat the oven to 190 C
+    - Toast the spices for the stuffing by placing them in a dry frying pan over medium-low
+        heat. Shaking the pan frequently, toast the spices for 3-4 minutes or until
+        fragrant. Grind the spices to a fine powder in a spice grinder or a mortar
+        and pestle.
+    - Place the spices, cauliflower, garlic, honey, oil and salt in a roasting tin
+        and toss well to mix. Place in the oven and roast for 20-30 minutes, stirring
+        occasionally until the cauliflower is nutty and browned. Remove from the oven
+        and leave to cool, then stir in the amchoor powder and coriander.
+    - While the cauliflower is roasting, make the dough by combining the flour, milk,
+        yoghurt, butter and salt in a large mixing bowl. Stir it with a wooden spoon
+        until it comes together as a dough, then turn the dough out onto a lightly
+        floured worksurface and knead for 10 minutes until the dough is smooth and
+        elastic. Divide the dough into 6 balls of equal size, cover them in cling
+        film and set them aside to rest in the fridge for 30 minutes.
+    - Working with one ball of dough at a time, take a ball of dough and flatten it
+        out to a thickness of about 1/2 an inch using either your hands or a rolling
+        pin. Spread 2-3 tablespoons of the filling onto the dough leaving a margin
+        of about an inch on all sides.
+    - Gather the edges of the dough towards the centre and press down gently but firmly
+        with your hands to seal in the filling and reseal the edges of the dough.
+        Flatten the dough out gently with your hands being careful not to break the
+        dough and spill the filling, until it is approximately 1/2 inch thick. Repeat
+        with all the dough balls, layering them between sheets of parchment paper
+        to keep them from sticking to each other until you are ready to cook them.
+    - Heat a large frying pan on medium high heat and add approximately 1 tbsp of
+        oil. Swirl the oil around to coat the base. Add one of the parathas and cook
+        it for approximately 4-5 minutes per side until it is nice and golden and
+        crisp on both sides and the filling is heated through.
+    - Cut each paratha into quarters and serve immediately.
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: flour
-      preparation: plain
-      quantity: '250'
-    - measurement: ml
-      name: milk
-      preparation: null
-      quantity: '70'
-    - measurement: ml
-      name: yogurt
-      preparation: null
-      quantity: '125'
-    - measurement: Tbsp
-      name: butter
-      preparation: salted
-      quantity: '1'
-    name: Bread
-  - ingredient:
-    - measurement: Tbsp
-      name: coriander seeds
-      preparation: null
-      quantity: '1'
-    - measurement: Tbsp
-      name: cumin seeds
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: fenugreek seeds
-      preparation: null
-      quantity: '1'
-    - measurement: null
-      name: black peppercorns
-      preparation: null
-      quantity: '6'
-    - measurement: null
-      name: cauliflower
-      preparation: broken into small florets and finely chopped
-      quantity: '1'
-    - measurement: cloves
-      name: garlic
-      preparation: minced
-      quantity: '3'
-    - measurement: tsp
-      name: honey
-      preparation: null
-      quantity: '2'
-    - measurement: Tbsp
-      name: vegetable oil
-      preparation: null
-      quantity: '3'
-    - measurement: Tbsp
-      name: salt
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: amchoor
-      preparation: null
-      quantity: '1'
-    - measurement: handful
-      name: coriander leaves
-      preparation: finely chopped
-      quantity: '1'
-    name: Stuffing
-  serves: 4-6
-source: null
-tags:
-- bread
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: flour
+            preparation: plain
+            quantity: '62.50'
+        -   measurement: ml
+            name: milk
+            preparation: null
+            quantity: '17.50'
+        -   measurement: ml
+            name: yogurt
+            preparation: null
+            quantity: '31.25'
+        -   measurement: Tbsp
+            name: butter
+            preparation: salted
+            quantity: '0.25'
+        name: Bread
+    -   ingredient:
+        -   measurement: Tbsp
+            name: coriander seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: cumin seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: fenugreek seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: black peppercorns
+            preparation: null
+            quantity: '1.50'
+        -   measurement: null
+            name: cauliflower
+            preparation: broken into small florets and finely chopped
+            quantity: '0.25'
+        -   measurement: cloves
+            name: garlic
+            preparation: minced
+            quantity: '0.75'
+        -   measurement: tsp
+            name: honey
+            preparation: null
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: vegetable oil
+            preparation: null
+            quantity: '0.75'
+        -   measurement: Tbsp
+            name: salt
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: amchoor
+            preparation: null
+            quantity: '0.25'
+        -   measurement: handful
+            name: coriander leaves
+            preparation: finely chopped
+            quantity: '0.25'
+        name: Stuffing
+    serves: 1
+source: ''
+tags: []
 title: Parathas Stuffed with Roast Cauliflower

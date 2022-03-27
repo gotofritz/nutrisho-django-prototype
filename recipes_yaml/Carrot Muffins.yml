@@ -1,58 +1,57 @@
 cuisine: .us.modern
 description: null
 directions:
-  step:
-  - "Heat the oven to 160\xB0C fan (180\xB0C/gas 4). Grease muffin tin."
-  - Beat the eggs in a large bowl, then add the carrots, oil, sugar, and walnuts.
-    Mix well.
-  - In a separate bowl, combine the flours, baking powder with the cinnamon.
-  - Gently stir the two mixtures together until half combined.
-  - Heat milk (40 seconds in Microwave) Add to cake mix Do not overmix.
-  - Pour the mixture into the cake tin and bake for 15-20 minutes.
+    step:
+    - Heat the oven to 160°C fan (180°C/gas 4). Grease muffin tin.
+    - Beat the eggs in a large bowl, then add the carrots, oil, sugar, and walnuts.
+        Mix well.
+    - In a separate bowl, combine the flours, baking powder with the cinnamon.
+    - Gently stir the two mixtures together until half combined.
+    - Heat milk (40 seconds in Microwave) Add to cake mix Do not overmix.
+    - Pour the mixture into the cake tin and bake for 15-20 minutes.
 ingredients:
-  group:
-  - ingredient:
-    - measurement: medium
-      name: eggs
-      preparation: null
-      quantity: '3'
-    - measurement: g
-      name: carrots
-      preparation: peeled, grated
-      quantity: '300'
-    - measurement: tbsp
-      name: oil, veg
-      preparation: null
-      quantity: '4'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '125'
-    - measurement: g
-      name: walnuts
-      preparation: chopped
-      quantity: '50'
-    name: Wet ingredients
-  - ingredient:
-    - measurement: g
-      name: flour
-      preparation: null
-      quantity: '175'
-    - measurement: g
-      name: flour, wholemeal
-      preparation: null
-      quantity: '75'
-    - measurement: tbsp
-      name: cinnamon
-      preparation: ground
-      quantity: '1'
-    - measurement: tsp
-      name: baking power
-      preparation: null
-      quantity: '2'
-    name: Dry ingredients
-  serves: '4'
+    group:
+    -   ingredient:
+        -   measurement: medium
+            name: eggs
+            preparation: null
+            quantity: '0.75'
+        -   measurement: g
+            name: carrots
+            preparation: peeled, grated
+            quantity: '75.00'
+        -   measurement: tbsp
+            name: oil, veg
+            preparation: null
+            quantity: '1.00'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '31.25'
+        -   measurement: g
+            name: walnuts
+            preparation: chopped
+            quantity: '12.50'
+        name: Wet ingredients
+    -   ingredient:
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '43.75'
+        -   measurement: g
+            name: flour, wholemeal
+            preparation: null
+            quantity: '18.75'
+        -   measurement: tbsp
+            name: cinnamon
+            preparation: ground
+            quantity: '0.25'
+        -   measurement: tsp
+            name: baking power
+            preparation: null
+            quantity: '0.50'
+        name: Dry ingredients
+    serves: 1
 source: Nigella
-tags:
-- sweet
+tags: []
 title: Carrot Muffins

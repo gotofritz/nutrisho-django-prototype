@@ -1,113 +1,112 @@
 cuisine: .german.kalingrad.traditional
 description: East Prussian (=Kalingrad) dish of medieval origin
 directions:
-  step:
-  - Put the broth ingredients in a dutch oven and simmer without boiling
-  - Mix the meatball ingredients in a food processor with salt and pepper
-  - Form into delicate meatballs the size of golf balls
-  - Roll the balls in some flour, then drop into the broth without crowding them
-  - Cook 15 mins without boiling, then take out with a slotted spoon and keep warm.
-    Remove bay leaf
-  - Meanwhile boil the potatoes, they should keep their shape but be soft enough to
-    mash with a fork
-  - Add the sauce ingredients to the soup, heat through but do not boil. The sauce
-    is soupy
-  - Serve Klopse with potatoes and generous sauce, covered in chopped parsley. Normally
-    you mash the potatoes with a fork to soak up the sauce
+    step:
+    - Put the broth ingredients in a dutch oven and simmer without boiling
+    - Mix the meatball ingredients in a food processor with salt and pepper
+    - Form into delicate meatballs the size of golf balls
+    - Roll the balls in some flour, then drop into the broth without crowding them
+    - Cook 15 mins without boiling, then take out with a slotted spoon and keep warm.
+        Remove bay leaf
+    - Meanwhile boil the potatoes, they should keep their shape but be soft enough
+        to mash with a fork
+    - Add the sauce ingredients to the soup, heat through but do not boil. The sauce
+        is soupy
+    - Serve Klopse with potatoes and generous sauce, covered in chopped parsley. Normally
+        you mash the potatoes with a fork to soak up the sauce
 ingredients:
-  group:
-  - ingredient:
-    - measurement: L
-      name: chicken stock
-      preparation: null
-      quantity: '1'
-    - measurement: leaf
-      name: bay
-      preparation: null
-      quantity: '1'
-    - measurement: ml
-      name: cider vinegar
-      preparation: null
-      quantity: '60'
-    - measurement: ml
-      name: dry white wine
-      preparation: null
-      quantity: '120'
-    - measurement: null
-      name: black peppercorns
-      preparation: null
-      quantity: '10'
-    - measurement: tbsp
-      name: capers
-      preparation: null
-      quantity: '2'
-    name: Broth
-  - ingredient:
-    - measurement: g
-      name: ground beef
-      preparation: null
-      quantity: '150'
-    - measurement: g
-      name: ground pork
-      preparation: null
-      quantity: '150'
-    - measurement: g
-      name: ground veal
-      preparation: null
-      quantity: '150'
-    - measurement: null
-      name: egg
-      preparation: beaten
-      quantity: '1'
-    - measurement: cups
-      name: breadcrumbs
-      preparation: null
-      quantity: '0.5'
-    - measurement: medium
-      name: onion
-      preparation: chopped fine
-      quantity: '1'
-    - measurement: ml
-      name: milk
-      preparation: null
-      quantity: '40'
-    - measurement: null
-      name: lemon
-      preparation: zested, chopped
-      quantity: '0.5'
-    - measurement: null
-      name: lemon
-      preparation: juiced
-      quantity: '0.5'
-    - measurement: tbsp
-      name: capers
-      preparation: chopped
-      quantity: '1'
-    - measurement: tbsp
-      name: anchovies
-      preparation: null
-      quantity: '1'
-    - measurement: cups
-      name: butter
-      preparation: melted
-      quantity: '0.15'
-    name: Meatballs
-  - ingredient:
-    - measurement: null
-      name: lemon
-      preparation: zested, chopped
-      quantity: '1'
-    - measurement: null
-      name: lemon
-      preparation: juiced
-      quantity: '1'
-    - measurement: ml
-      name: sour cream
-      preparation: null
-      quantity: '250'
-    name: Sauce
-  serves: '4'
+    group:
+    -   ingredient:
+        -   measurement: L
+            name: chicken stock
+            preparation: null
+            quantity: '0.25'
+        -   measurement: leaf
+            name: bay
+            preparation: null
+            quantity: '0.25'
+        -   measurement: ml
+            name: cider vinegar
+            preparation: null
+            quantity: '15.00'
+        -   measurement: ml
+            name: dry white wine
+            preparation: null
+            quantity: '30.00'
+        -   measurement: null
+            name: black peppercorns
+            preparation: null
+            quantity: '2.50'
+        -   measurement: tbsp
+            name: capers
+            preparation: null
+            quantity: '0.50'
+        name: Broth
+    -   ingredient:
+        -   measurement: g
+            name: ground beef
+            preparation: null
+            quantity: '37.50'
+        -   measurement: g
+            name: ground pork
+            preparation: null
+            quantity: '37.50'
+        -   measurement: g
+            name: ground veal
+            preparation: null
+            quantity: '37.50'
+        -   measurement: null
+            name: egg
+            preparation: beaten
+            quantity: '0.25'
+        -   measurement: cups
+            name: breadcrumbs
+            preparation: null
+            quantity: '0.12'
+        -   measurement: medium
+            name: onion
+            preparation: chopped fine
+            quantity: '0.25'
+        -   measurement: ml
+            name: milk
+            preparation: null
+            quantity: '10.00'
+        -   measurement: null
+            name: lemon
+            preparation: zested, chopped
+            quantity: '0.12'
+        -   measurement: null
+            name: lemon
+            preparation: juiced
+            quantity: '0.12'
+        -   measurement: tbsp
+            name: capers
+            preparation: chopped
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: anchovies
+            preparation: null
+            quantity: '0.25'
+        -   measurement: cups
+            name: butter
+            preparation: melted
+            quantity: '0.04'
+        name: Meatballs
+    -   ingredient:
+        -   measurement: null
+            name: lemon
+            preparation: zested, chopped
+            quantity: '0.25'
+        -   measurement: null
+            name: lemon
+            preparation: juiced
+            quantity: '0.25'
+        -   measurement: ml
+            name: sour cream
+            preparation: null
+            quantity: '62.50'
+        name: Sauce
+    serves: 1
 source: http://www.food.com/recipe/konigsberger-klopse-german-meatballs-in-creamy-caper-sauce-106298
-tags:
-- meat
+tags: []
 title: Konigsberger Klopse

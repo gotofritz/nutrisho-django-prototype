@@ -1,84 +1,83 @@
 cuisine: .chinese.beijing
 description: A combination of winter vegetables suitable for filling baozis, or eaten
-  on their own
+    on their own
 directions:
-  step:
-  - Soak the dried ingredients for an hour, then remove all lumps from wood ears,
-    hard end of lily flowers, and mushrooms stems. Chop the mushrooms finely
-  - Beat the egg with half the spring onion and salt, then cook in very hot oil breaking
-    up to make a plain omelette. Set aside and cut into ribbons
-  - "Saut\xE9 the remaining spring onion, soaked veg and other chopped vegetables,\
-    \ and season with salt."
-  - 'Add eggs and still stirring: soy sauce, sugar, rice wine, garlic, sesame seed
-    oil.'
+    step:
+    - Soak the dried ingredients for an hour, then remove all lumps from wood ears,
+        hard end of lily flowers, and mushrooms stems. Chop the mushrooms finely
+    - Beat the egg with half the spring onion and salt, then cook in very hot oil
+        breaking up to make a plain omelette. Set aside and cut into ribbons
+    - Sauté the remaining spring onion, soaked veg and other chopped vegetables, and
+        season with salt.
+    - 'Add eggs and still stirring: soy sauce, sugar, rice wine, garlic, sesame seed
+        oil.'
 ingredients:
-  group:
-  - ingredient:
-    - measurement: handful
-      name: dried chinese mushrooms
-      preparation: null
-      quantity: '1'
-    - measurement: handful
-      name: wood ears
-      preparation: null
-      quantity: '1'
-    - measurement: handful
-      name: dried lily flowers
-      preparation: null
-      quantity: '1'
-    name: Dried ingredients
-  - ingredient:
-    - measurement: null
-      name: eggs
-      preparation: null
-      quantity: '2'
-    - measurement: null
-      name: spring onion
-      preparation: chopped finely
-      quantity: '0.5'
-    name: Egg
-  - ingredient:
-    - measurement: null
-      name: spring onion
-      preparation: chopped finely
-      quantity: '0.5'
-    - measurement: g
-      name: bamboo shots
-      preparation: chopped finely
-      quantity: '220'
-    - measurement: null
-      name: potato
-      preparation: large, julienned
-      quantity: '1'
-    - measurement: null
-      name: pak choi
-      preparation: chopped finely
-      quantity: '1'
-    name: Veg
-  - ingredient:
-    - measurement: tbsp
-      name: soy sauce
-      preparation: null
-      quantity: '2'
-    - measurement: tsp
-      name: sugar
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: rice wine
-      preparation: null
-      quantity: '2'
-    - measurement: clove
-      name: garlic
-      preparation: chopped finelt
-      quantity: '1'
-    - measurement: tsp
-      name: sesame oil
-      preparation: null
-      quantity: '0.5'
-    name: Dressing
-  serves: '4'
+    group:
+    -   ingredient:
+        -   measurement: handful
+            name: dried chinese mushrooms
+            preparation: null
+            quantity: '0.25'
+        -   measurement: handful
+            name: wood ears
+            preparation: null
+            quantity: '0.25'
+        -   measurement: handful
+            name: dried lily flowers
+            preparation: null
+            quantity: '0.25'
+        name: Dried ingredients
+    -   ingredient:
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '0.50'
+        -   measurement: null
+            name: spring onion
+            preparation: chopped finely
+            quantity: '0.12'
+        name: Egg
+    -   ingredient:
+        -   measurement: null
+            name: spring onion
+            preparation: chopped finely
+            quantity: '0.12'
+        -   measurement: g
+            name: bamboo shots
+            preparation: chopped finely
+            quantity: '55.00'
+        -   measurement: null
+            name: potato
+            preparation: large, julienned
+            quantity: '0.25'
+        -   measurement: null
+            name: pak choi
+            preparation: chopped finely
+            quantity: '0.25'
+        name: Veg
+    -   ingredient:
+        -   measurement: tbsp
+            name: soy sauce
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: sugar
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: rice wine
+            preparation: null
+            quantity: '0.50'
+        -   measurement: clove
+            name: garlic
+            preparation: chopped finelt
+            quantity: '0.25'
+        -   measurement: tsp
+            name: sesame oil
+            preparation: null
+            quantity: '0.12'
+        name: Dressing
+    serves: 1
 source: Guo Yue course
-tags:
-- starters
+tags: []
 title: Baozi winter veg filling

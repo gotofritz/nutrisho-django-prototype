@@ -1,61 +1,451 @@
 cuisine: null
 description: It might be worth buying an extra Chocolate Orange to use for this particularly
-  Christmassy recipe, as Xanthe says that in her experience people tend to be rather
-  territorial with theirs during the festive season. The cookies in these photos have
-  spread a bit, giving them a square appearance - in this case it was because the
-  butter was softer than usual.
+    Christmassy recipe, as Xanthe says that in her experience people tend to be rather
+    territorial with theirs during the festive season. The cookies in these photos
+    have spread a bit, giving them a square appearance - in this case it was because
+    the butter was softer than usual.
 directions:
-  '#text': '>'
-  step: Preheat the oven to 180C/gas mark 4. Mix the flour, cocoa powder, bicarbonate
-    of soda and salt in a small bowl. In a large bowl, cream the butter and sugars
-    together, add the eggs and vanilla extract; fold in flour mixture. Take spoonfuls
-    of it, push a segment of Chocolate Orange into each, roll in a ball and place
-    each one 2 inches apart on an un-greased baking sheet; bake for 10-12 minutes.
+    step:
+    - P
+    - r
+    - e
+    - h
+    - e
+    - a
+    - t
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - o
+    - v
+    - e
+    - n
+    - ''
+    - t
+    - o
+    - ''
+    - '1'
+    - '8'
+    - '0'
+    - C
+    - /
+    - g
+    - a
+    - s
+    - ''
+    - m
+    - a
+    - r
+    - k
+    - ''
+    - '4'
+    - .
+    - ''
+    - M
+    - i
+    - x
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - f
+    - l
+    - o
+    - u
+    - r
+    - ','
+    - ''
+    - c
+    - o
+    - c
+    - o
+    - a
+    - ''
+    - p
+    - o
+    - w
+    - d
+    - e
+    - r
+    - ','
+    - ''
+    - b
+    - i
+    - c
+    - a
+    - r
+    - b
+    - o
+    - n
+    - a
+    - t
+    - e
+    - ''
+    - o
+    - f
+    - ''
+    - s
+    - o
+    - d
+    - a
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - s
+    - a
+    - l
+    - t
+    - ''
+    - i
+    - n
+    - ''
+    - a
+    - ''
+    - s
+    - m
+    - a
+    - l
+    - l
+    - ''
+    - b
+    - o
+    - w
+    - l
+    - .
+    - ''
+    - I
+    - n
+    - ''
+    - a
+    - ''
+    - l
+    - a
+    - r
+    - g
+    - e
+    - ''
+    - b
+    - o
+    - w
+    - l
+    - ','
+    - ''
+    - c
+    - r
+    - e
+    - a
+    - m
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - b
+    - u
+    - t
+    - t
+    - e
+    - r
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - s
+    - u
+    - g
+    - a
+    - r
+    - s
+    - ''
+    - t
+    - o
+    - g
+    - e
+    - t
+    - h
+    - e
+    - r
+    - ','
+    - ''
+    - a
+    - d
+    - d
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - e
+    - g
+    - g
+    - s
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - v
+    - a
+    - n
+    - i
+    - l
+    - l
+    - a
+    - ''
+    - e
+    - x
+    - t
+    - r
+    - a
+    - c
+    - t
+    - ;
+    - ''
+    - f
+    - o
+    - l
+    - d
+    - ''
+    - i
+    - n
+    - ''
+    - f
+    - l
+    - o
+    - u
+    - r
+    - ''
+    - m
+    - i
+    - x
+    - t
+    - u
+    - r
+    - e
+    - .
+    - ''
+    - T
+    - a
+    - k
+    - e
+    - ''
+    - s
+    - p
+    - o
+    - o
+    - n
+    - f
+    - u
+    - l
+    - s
+    - ''
+    - o
+    - f
+    - ''
+    - i
+    - t
+    - ','
+    - ''
+    - p
+    - u
+    - s
+    - h
+    - ''
+    - a
+    - ''
+    - s
+    - e
+    - g
+    - m
+    - e
+    - n
+    - t
+    - ''
+    - o
+    - f
+    - ''
+    - C
+    - h
+    - o
+    - c
+    - o
+    - l
+    - a
+    - t
+    - e
+    - ''
+    - O
+    - r
+    - a
+    - n
+    - g
+    - e
+    - ''
+    - i
+    - n
+    - t
+    - o
+    - ''
+    - e
+    - a
+    - c
+    - h
+    - ','
+    - ''
+    - r
+    - o
+    - l
+    - l
+    - ''
+    - i
+    - n
+    - ''
+    - a
+    - ''
+    - b
+    - a
+    - l
+    - l
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - p
+    - l
+    - a
+    - c
+    - e
+    - ''
+    - e
+    - a
+    - c
+    - h
+    - ''
+    - o
+    - n
+    - e
+    - ''
+    - '2'
+    - ''
+    - i
+    - n
+    - c
+    - h
+    - e
+    - s
+    - ''
+    - a
+    - p
+    - a
+    - r
+    - t
+    - ''
+    - o
+    - n
+    - ''
+    - a
+    - n
+    - ''
+    - u
+    - n
+    - '-'
+    - g
+    - r
+    - e
+    - a
+    - s
+    - e
+    - d
+    - ''
+    - b
+    - a
+    - k
+    - i
+    - n
+    - g
+    - ''
+    - s
+    - h
+    - e
+    - e
+    - t
+    - ;
+    - ''
+    - b
+    - a
+    - k
+    - e
+    - ''
+    - f
+    - o
+    - r
+    - ''
+    - '1'
+    - '0'
+    - '-'
+    - '1'
+    - '2'
+    - ''
+    - m
+    - i
+    - n
+    - u
+    - t
+    - e
+    - s
+    - .
 ingredients:
-  group:
-    ingredient:
-    - measurement: g
-      name: plain flour
-      preparation: null
-      quantity: '270'
-    - measurement: g
-      name: cocoa powder
-      preparation: null
-      quantity: '30'
-    - measurement: tsp
-      name: bicarbonate of soda
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: salt
-      preparation: null
-      quantity: null
-    - measurement: g
-      name: butter
-      preparation: softened
-      quantity: '120'
-    - measurement: g
-      name: granulated sugar
-      preparation: null
-      quantity: '180'
-    - measurement: g
-      name: soft brown sugar
-      preparation: null
-      quantity: '180'
-    - measurement: tsp
-      name: vanilla extract
-      preparation: null
-      quantity: '1'
-    - measurement: null
-      name: eggs
-      preparation: lightly beaten
-      quantity: '2'
-    - measurement: null
-      name: Terry's Chocolate Orange
-      preparation: null
-      quantity: '1'
-  serves: '24'
-source: null
-tags:
-- desserts
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: plain flour
+            preparation: null
+            quantity: '67.50'
+        -   measurement: g
+            name: cocoa powder
+            preparation: null
+            quantity: '7.50'
+        -   measurement: tsp
+            name: bicarbonate of soda
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: null
+        -   measurement: g
+            name: butter
+            preparation: softened
+            quantity: '30.00'
+        -   measurement: g
+            name: granulated sugar
+            preparation: null
+            quantity: '45.00'
+        -   measurement: g
+            name: soft brown sugar
+            preparation: null
+            quantity: '45.00'
+        -   measurement: tsp
+            name: vanilla extract
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: eggs
+            preparation: lightly beaten
+            quantity: '0.50'
+        -   measurement: null
+            name: Terry's Chocolate Orange
+            preparation: null
+            quantity: '0.25'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Chocolate Orange cookies

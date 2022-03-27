@@ -1,62 +1,51 @@
 cuisine: .italian.sardinian
 description: null
 directions:
-  '#text': '>
-
-
-
-
-
-
-
-
-
-    >'
-  step:
-  - boil green lentils for 15m
-  - add broccoli for 5m
-  - whizz until smooth
-  - "saut\xE9 carrot, onions in olive oil medium high"
-  - sweat white wine until evaporated, about 2m
-  - "add the pur\xE9e, season and simmer on low heat"
-  - cook in abundant salted water linguine
-  - mix with sauce and serve
+    step:
+    - boil green lentils for 15m
+    - add broccoli for 5m
+    - whizz until smooth
+    - sauté carrot, onions in olive oil medium high
+    - sweat white wine until evaporated, about 2m
+    - add the purée, season and simmer on low heat
+    - cook in abundant salted water linguine
+    - mix with sauce and serve
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: broccoli
-      preparation: null
-      quantity: '450'
-    - measurement: g
-      name: lentils
-      preparation: green
-      quantity: '300'
-    - measurement: null
-      name: onions
-      preparation: chopped
-      quantity: '2'
-    - measurement: null
-      name: carrots
-      preparation: grated
-      quantity: '1'
-    - measurement: Tbsp
-      name: wine
-      preparation: white
-      quantity: '2'
-    - measurement: Tbsp
-      name: oil
-      preparation: olive
-      quantity: '3'
-    name: Sauce
-  - ingredient:
-      measurement: g
-      name: linguine
-      preparation: null
-      quantity: '500'
-    name: Pasta
-  serves: null
-source: null
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: broccoli
+            preparation: null
+            quantity: '112.50'
+        -   measurement: g
+            name: lentils
+            preparation: green
+            quantity: '75.00'
+        -   measurement: null
+            name: onions
+            preparation: chopped
+            quantity: '0.50'
+        -   measurement: null
+            name: carrots
+            preparation: grated
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: wine
+            preparation: white
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: oil
+            preparation: olive
+            quantity: '0.75'
+        name: Sauce
+    -   ingredient:
+        -   measurement: g
+            name: linguine
+            preparation: null
+            quantity: '125.00'
+        name: Pasta
+    serves: 1
+source: ''
 tags:
 - pasta
 title: Linguine Broccoli and Lentils sauce

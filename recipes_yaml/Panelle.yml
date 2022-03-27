@@ -1,41 +1,34 @@
 cuisine: .italian.sicilian
 description: null
 directions:
-  '#text': '>
-
-
-
-
-
-    >'
-  step:
-  - Slowly mix the flour and water, season with salt and pepper and add parsley /
-    fennel seeds if using. Whisk until mixed well
-  - Put on stove on high, bring to boil mixing continuosly, then lower heat and cook
-    20 mins mixing occasioanlly. It should have the consistency of polenta
-  - Pour in empty plastic bottle with top cut off, and leave in fridge overnight.
-  - "Cut in thin slices and deep fry at 180\xB0"
+    step:
+    - Slowly mix the flour and water, season with salt and pepper and add parsley
+        / fennel seeds if using. Whisk until mixed well
+    - Put on stove on high, bring to boil mixing continuosly, then lower heat and
+        cook 20 mins mixing occasioanlly. It should have the consistency of polenta
+    - Pour in empty plastic bottle with top cut off, and leave in fridge overnight.
+    - Cut in thin slices and deep fry at 180°
 ingredients:
-  group:
-    ingredient:
-    - measurement: ml
-      name: water
-      preparation: null
-      quantity: '600'
-    - measurement: g
-      name: flour
-      preparation: chickpea
-      quantity: '200'
-    - measurement: handful
-      name: parsley
-      preparation: chopped (optional)
-      quantity: '1'
-    - measurement: tsp
-      name: fennel seeds
-      preparation: (optional)
-      quantity: '0.5'
-  serves: null
-source: null
-tags:
-- snack
+    group:
+    -   ingredient:
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '150.00'
+        -   measurement: g
+            name: flour
+            preparation: chickpea
+            quantity: '50.00'
+        -   measurement: handful
+            name: parsley
+            preparation: chopped (optional)
+            quantity: '0.25'
+        -   measurement: tsp
+            name: fennel seeds
+            preparation: (optional)
+            quantity: '0.12'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Panelle

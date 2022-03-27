@@ -1,38 +1,37 @@
 cuisine: null
 description: These are perfect after dinner, and can be made a week ahead. They rely
-  on the best ingredients - freshly shelled walnuts, good dark chocolate and the best
-  cocoa powder.
+    on the best ingredients - freshly shelled walnuts, good dark chocolate and the
+    best cocoa powder.
 directions:
-  '#text': '>'
-  step:
-  - Shell the walnuts if you've bought them in their shells. Break the chocolate into
-    a heatproof bowl and place over a pan of simmering water until melted. Sift the
-    cocoa powder on to a shallow tray and have another tray ready.
-  - Dip the walnuts into the melted chocolate a few at a time, then remove with a
-    fork, tapping it on the side of the bowl to encourage the excess chocolate to
-    run back into the bowl.
-  - Now drop them into the cocoa, turning the walnuts with a clean fork and shaking
-    the tray so they are well coated, then place on the clean tray. Repeat with the
-    rest of the walnuts.
-  - Store the coated nuts in an airtight container in a cool place and eat within
-    a week.
+    step:
+    - Shell the walnuts if you've bought them in their shells. Break the chocolate
+        into a heatproof bowl and place over a pan of simmering water until melted.
+        Sift the cocoa powder on to a shallow tray and have another tray ready.
+    - Dip the walnuts into the melted chocolate a few at a time, then remove with
+        a fork, tapping it on the side of the bowl to encourage the excess chocolate
+        to run back into the bowl.
+    - Now drop them into the cocoa, turning the walnuts with a clean fork and shaking
+        the tray so they are well coated, then place on the clean tray. Repeat with
+        the rest of the walnuts.
+    - Store the coated nuts in an airtight container in a cool place and eat within
+        a week.
 ingredients:
-  group:
-    ingredient:
-    - measurement: null
-      name: walnuts in the shell or 150g good quality shelled walnuts
-      preparation: null
-      quantity: '24'
-    - measurement: g
-      name: good quality dark chocolate
-      preparation: null
-      quantity: '200'
-    - measurement: g
-      name: good quality cocoa powder
-      preparation: null
-      quantity: '60'
-  serves: null
-source: null
-tags:
-- desserts
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: walnuts in the shell or 150g good quality shelled walnuts
+            preparation: null
+            quantity: '6.00'
+        -   measurement: g
+            name: good quality dark chocolate
+            preparation: null
+            quantity: '50.00'
+        -   measurement: g
+            name: good quality cocoa powder
+            preparation: null
+            quantity: '15.00'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Chocolate-dipped walnuts

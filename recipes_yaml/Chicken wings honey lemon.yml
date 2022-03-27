@@ -1,0 +1,46 @@
+cuisine: .european.modern
+description: Served with Lentil Feta Salad
+directions:
+    step:
+    - Sprinkle the chicken wings on a baking dish, sprinkle with salt and roast 30
+        mins at 200°
+    - Mix the sauce ingredients in a bowl until the honey has dissolved
+    - Mix in the chicken wings, coat well
+    - Roast for another 20 mins
+    - Garnish with parsley and lemon wedges
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: chicken wings
+            preparation: tips removed and jointed
+            quantity: '4.00'
+        name: Chicken
+    -   ingredient:
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.38'
+        -   measurement: cloves
+            name: garlic
+            preparation: crushed into a paste
+            quantity: '1.25'
+        -   measurement: g
+            name: honey
+            preparation: null
+            quantity: '22.50'
+        name: Sauce
+    -   ingredient:
+        -   measurement: wedges
+            name: lemon
+            preparation: null
+            quantity: '1.00'
+        -   measurement: tbsp
+            name: parsely
+            preparation: coarsely chopped
+            quantity: '0.50'
+        name: Garnish
+    serves: 1
+source: That ozzie chap - Bill Granger
+tags: []
+title: Chicken wings, honey lemon

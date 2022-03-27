@@ -4,7 +4,9 @@ from .recipe import Recipe
 
 
 class IngredientGroup(models.Model):
-    name = models.CharField("Label for group", max_length=64, null=True)
+    group_name = models.CharField(
+        "Label for group", max_length=64, blank=True, null=True
+    )
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE, related_name="ingredients_group"
     )
@@ -13,13 +15,7 @@ class IngredientGroup(models.Model):
     )
 
     def natural_key(self):
-        return self.name
+        return self.group_name
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["index_in_sequence", "recipe"],
-                name="unique IngredientGroup step in sequence",
-            )
-        ]
         ordering = ["index_in_sequence"]

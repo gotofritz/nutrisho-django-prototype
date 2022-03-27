@@ -1,63 +1,65 @@
 cuisine: null
 description: The trick is to 'double-bake' them as you would for biscotti, baking
-  them first in a baking tin and then cutting them into slices and baking them a second
-  time at a lower temperature.
+    them first in a baking tin and then cutting them into slices and baking them a
+    second time at a lower temperature.
 directions:
-  step:
-  - Preheat the oven to 170 C and line an 8 inch round baking pan with parchment paper.
-  - With a hand-mixer, cream the butter and sugar together until they are light and
-    fluffy. Add the orange zest, juice and grated ginger and mix well, scraping down
-    the side of a bowl where necessary to incorporate all the ingredients.
-  - Sift the salt, flour and baking soda into a separate bowl. Mix half the dry mixture
-    into the dough on low speed until blended and then add the second half of the
-    flour mixture and blend briefly until the dough looks like wet porridge oats.
-  - With your hands, knead the dough in the bowl or on a worksurface for a few minutes
-    until the ingredients seem well mixed and the dough is consistent and smooth.
-    Press the dough into the baking pan and bake for 25 minutes.
-  - Remove the shortbread from the oven and allow to cool for 10-15 minutes or until
-    firm. Reduce the oven temperature to 150 C. Turn the shortbread out onto a chopping
-    board and slice it into wedges using a sharp knife. Line a baking tray with parchment
-    paper.
-  - Carefully transfer the shortbread slices to the baking sheet and bake for a further
-    20 - 25 minutes or until the biscuits feel firm and crumbly. Remove and allow
-    to cool slightly.
+    step:
+    - Preheat the oven to 170 C and line an 8 inch round baking pan with parchment
+        paper.
+    - With a hand-mixer, cream the butter and sugar together until they are light
+        and fluffy. Add the orange zest, juice and grated ginger and mix well, scraping
+        down the side of a bowl where necessary to incorporate all the ingredients.
+    - Sift the salt, flour and baking soda into a separate bowl. Mix half the dry
+        mixture into the dough on low speed until blended and then add the second
+        half of the flour mixture and blend briefly until the dough looks like wet
+        porridge oats.
+    - With your hands, knead the dough in the bowl or on a worksurface for a few minutes
+        until the ingredients seem well mixed and the dough is consistent and smooth.
+        Press the dough into the baking pan and bake for 25 minutes.
+    - Remove the shortbread from the oven and allow to cool for 10-15 minutes or until
+        firm. Reduce the oven temperature to 150 C. Turn the shortbread out onto a
+        chopping board and slice it into wedges using a sharp knife. Line a baking
+        tray with parchment paper.
+    - Carefully transfer the shortbread slices to the baking sheet and bake for a
+        further 20 - 25 minutes or until the biscuits feel firm and crumbly. Remove
+        and allow to cool slightly.
 ingredients:
-  group:
-    ingredient:
-    - measurement: g
-      name: butter
-      preparation: softened
-      quantity: '225'
-    - measurement: g
-      name: sugar
-      preparation: icing
-      quantity: '75'
-    - measurement: null
-      name: oranges
-      preparation: zested
-      quantity: '1'
-    - measurement: null
-      name: oranges
-      preparation: juiced
-      quantity: '0.5'
-    - measurement: cm
-      name: ginger
-      preparation: peeled and finely grated
-      quantity: '5'
-    - measurement: tsp
-      name: sea salt
-      preparation: null
-      quantity: '1'
-    - measurement: g
-      name: flour
-      preparation: plain
-      quantity: '180'
-    - measurement: tsp
-      name: baking soda
-      preparation: null
-      quantity: '0.5'
-  serves: null
-source: null
-tags:
-- desserts
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: butter
+            preparation: softened
+            quantity: '56.25'
+        -   measurement: g
+            name: sugar
+            preparation: icing
+            quantity: '18.75'
+        -   measurement: null
+            name: oranges
+            preparation: zested
+            quantity: '0.25'
+        -   measurement: null
+            name: oranges
+            preparation: juiced
+            quantity: '0.12'
+        -   measurement: cm
+            name: ginger
+            preparation: peeled and finely grated
+            quantity: '1.25'
+        -   measurement: tsp
+            name: sea salt
+            preparation: null
+            quantity: '0.25'
+        -   measurement: g
+            name: flour
+            preparation: plain
+            quantity: '45.00'
+        -   measurement: tsp
+            name: baking soda
+            preparation: null
+            quantity: '0.12'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Orange and Ginger Shortbread

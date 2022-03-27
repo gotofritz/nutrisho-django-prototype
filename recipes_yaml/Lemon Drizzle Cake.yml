@@ -1,75 +1,74 @@
 cuisine: .british
 description: Old fashioned, plain British cake
 directions:
-  step:
-  - Beat the butter with the caster sugar until light and creamy
-  - Add the eggs one by one, beating each in well
-  - Fold in your ground almonds, poppy seeds, the lemon zest and juice and the sifted
-    flour.
-  - Spoon the mix into the prepared cake tin
-  - "Bake at 180\xB0 40 minutes or until lightly golden"
-  - Make your lemon syrup by heating the sugar and lemon juice in a pan until the
-    sugar has dissolved.
-  - While your cake is still warm, make lots of little holes in the top with a cocktail
-    stick and pour your syrup over
-  - Sift the icing sugar into a bowl and add the lemon zest and juice, stirring until
-    smooth
-  - When your cake is almost cool, put it on a serving plate and pour the icing carefully
-    over the top
+    step:
+    - Beat the butter with the caster sugar until light and creamy
+    - Add the eggs one by one, beating each in well
+    - Fold in your ground almonds, poppy seeds, the lemon zest and juice and the sifted
+        flour.
+    - Spoon the mix into the prepared cake tin
+    - Bake at 180° 40 minutes or until lightly golden
+    - Make your lemon syrup by heating the sugar and lemon juice in a pan until the
+        sugar has dissolved.
+    - While your cake is still warm, make lots of little holes in the top with a cocktail
+        stick and pour your syrup over
+    - Sift the icing sugar into a bowl and add the lemon zest and juice, stirring
+        until smooth
+    - When your cake is almost cool, put it on a serving plate and pour the icing
+        carefully over the top
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: butter
-      preparation: null
-      quantity: '115'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '115'
-    - measurement: null
-      name: eggs
-      preparation: null
-      quantity: '4'
-    - measurement: g
-      name: ground almonds
-      preparation: null
-      quantity: '180'
-    - measurement: g
-      name: poppy seeds
-      preparation: null
-      quantity: '30'
-    - measurement: null
-      name: lemons
-      preparation: zested and juice
-      quantity: '2'
-    - measurement: g
-      name: self raising flour
-      preparation: null
-      quantity: '125'
-    name: Cake mix
-  - ingredient:
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '100'
-    - measurement: g
-      name: lemon juice
-      preparation: null
-      quantity: '90'
-    name: Lemon syrup
-  - ingredient:
-    - measurement: g
-      name: icing sugar
-      preparation: null
-      quantity: '225'
-    - measurement: null
-      name: lemon
-      preparation: juice and zest
-      quantity: '1'
-    name: Icing
-  serves: '8'
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '28.75'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '28.75'
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '1.00'
+        -   measurement: g
+            name: ground almonds
+            preparation: null
+            quantity: '45.00'
+        -   measurement: g
+            name: poppy seeds
+            preparation: null
+            quantity: '7.50'
+        -   measurement: null
+            name: lemons
+            preparation: zested and juice
+            quantity: '0.50'
+        -   measurement: g
+            name: self raising flour
+            preparation: null
+            quantity: '31.25'
+        name: Cake mix
+    -   ingredient:
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '25.00'
+        -   measurement: g
+            name: lemon juice
+            preparation: null
+            quantity: '22.50'
+        name: Lemon syrup
+    -   ingredient:
+        -   measurement: g
+            name: icing sugar
+            preparation: null
+            quantity: '56.25'
+        -   measurement: null
+            name: lemon
+            preparation: juice and zest
+            quantity: '0.25'
+        name: Icing
+    serves: 1
 source: Jamie Oliver
-tags:
-- cake
+tags: []
 title: Lemon Drizzle Cake

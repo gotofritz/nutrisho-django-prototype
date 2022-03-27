@@ -1,74 +1,74 @@
 cuisine: .british.modern
 description: null
 directions:
-  step:
-  - Lightly butter a rectangular loaf tin (20cm x 9cm x 7cm) then line the bottom
-    with baking paper
-  - Soft together flour, bicarbonate, baking powder, cinnamon
-  - Beat the oil an sugar in a food processor until well creamed, then introduce the
-    beaten egg yolks one by one, reserving the whites for later
-  - Fold the beetroot into the mixture, then add lemon juice, raisins, seeds
-  - Fold the flour and baking powder into the mixture
-  - Beat the egg whites until almost stiff, and fold into the mix
-  - "Pour the mixture into cake tin and bake for 50 - 55mins at 180\xB0. cover the\
-    \ top with foil after 30 mins"
-  - Mix the icing sugar with the liquid, brush over cake (it should dribble). Scatter
-    with poppy seeds
+    step:
+    - Lightly butter a rectangular loaf tin (20cm x 9cm x 7cm) then line the bottom
+        with baking paper
+    - Soft together flour, bicarbonate, baking powder, cinnamon
+    - Beat the oil an sugar in a food processor until well creamed, then introduce
+        the beaten egg yolks one by one, reserving the whites for later
+    - Fold the beetroot into the mixture, then add lemon juice, raisins, seeds
+    - Fold the flour and baking powder into the mixture
+    - Beat the egg whites until almost stiff, and fold into the mix
+    - Pour the mixture into cake tin and bake for 50 - 55mins at 180°. cover the top
+        with foil after 30 mins
+    - Mix the icing sugar with the liquid, brush over cake (it should dribble). Scatter
+        with poppy seeds
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: self raising flour
-      preparation: null
-      quantity: '225'
-    - measurement: tbsp
-      name: baking powder
-      preparation: null
-      quantity: '3'
-    - measurement: tsp
-      name: cinnamon
-      preparation: ground
-      quantity: '0.5'
-    - measurement: ml
-      name: sunflower oil
-      preparation: null
-      quantity: '180'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '200'
-    - measurement: null
-      name: eggs
-      preparation: separated
-      quantity: '3'
-    - measurement: g
-      name: beetroow, raw
-      preparation: grated
-      quantity: '150'
-    - measurement: null
-      name: lemons
-      preparation: juiced
-      quantity: '0.5'
-    - measurement: g
-      name: raisins
-      preparation: null
-      quantity: '75'
-    - measurement: g
-      name: seeds
-      preparation: sunflower, pumpkin, linseeds
-      quantity: '75'
-    name: Cake
-  - ingredient:
-    - measurement: tbs
-      name: lemon juice
-      preparation: or orange blossom water
-      quantity: '3'
-    - measurement: tbsp
-      name: poppy seeds
-      preparation: null
-      quantity: '1'
-    name: icing
-  serves: '8'
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: self raising flour
+            preparation: null
+            quantity: '56.25'
+        -   measurement: tbsp
+            name: baking powder
+            preparation: null
+            quantity: '0.75'
+        -   measurement: tsp
+            name: cinnamon
+            preparation: ground
+            quantity: '0.12'
+        -   measurement: ml
+            name: sunflower oil
+            preparation: null
+            quantity: '45.00'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '50.00'
+        -   measurement: null
+            name: eggs
+            preparation: separated
+            quantity: '0.75'
+        -   measurement: g
+            name: beetroow, raw
+            preparation: grated
+            quantity: '37.50'
+        -   measurement: null
+            name: lemons
+            preparation: juiced
+            quantity: '0.12'
+        -   measurement: g
+            name: raisins
+            preparation: null
+            quantity: '18.75'
+        -   measurement: g
+            name: seeds
+            preparation: sunflower, pumpkin, linseeds
+            quantity: '18.75'
+        name: Cake
+    -   ingredient:
+        -   measurement: tbs
+            name: lemon juice
+            preparation: or orange blossom water
+            quantity: '0.75'
+        -   measurement: tbsp
+            name: poppy seeds
+            preparation: null
+            quantity: '0.25'
+        name: icing
+    serves: 1
 source: Nigel slater
 tags:
 - cake

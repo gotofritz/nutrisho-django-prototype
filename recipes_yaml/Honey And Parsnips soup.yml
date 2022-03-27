@@ -1,70 +1,60 @@
 cuisine: .british
 description: The caramelising of the honey in this soup gives it a great honeyed flavour
-  without overpowering sweetness.
+    without overpowering sweetness.
 directions:
-  '#text': '>
-
-
-
-
-
-
-
-    >'
-  step:
-  - tie thyme, bay, cinnamon with a string
-  - heat honey in large saucepan on medium heat until it bubbles and turns golden
-  - add butter, parsnips and the bouquet garni low until parsnip is lightly browned,
-    about 4m
-  - add chicken stock, milk until until cooked, about 10 m
-  - Remove bouquet garni and blend in a food processor until smooth.
-  - Sieve, season, and crumble chestnuts over the top
+    step:
+    - tie thyme, bay, cinnamon with a string
+    - heat honey in large saucepan on medium heat until it bubbles and turns golden
+    - add butter, parsnips and the bouquet garni low until parsnip is lightly browned,
+        about 4m
+    - add chicken stock, milk until until cooked, about 10 m
+    - Remove bouquet garni and blend in a food processor until smooth.
+    - Sieve, season, and crumble chestnuts over the top
 ingredients:
-  group:
-  - ingredient:
-    - measurement: sprigs
-      name: thyme
-      preparation: null
-      quantity: '5'
-    - measurement: leaf
-      name: bay
-      preparation: null
-      quantity: '1'
-    - measurement: stick
-      name: cinnamon
-      preparation: null
-      quantity: '0'
-    name: For the bouquet garni
-  - ingredient:
-    - measurement: Tbsp
-      name: honey
-      preparation: null
-      quantity: '4'
-    - measurement: g
-      name: butter
-      preparation: null
-      quantity: '50'
-    - measurement: null
-      name: parsnips
-      preparation: null
-      quantity: '5'
-    - measurement: ml
-      name: chicken stock
-      preparation: null
-      quantity: '500'
-    - measurement: ml
-      name: milk
-      preparation: null
-      quantity: '500'
-    name: For the soup
-  - ingredient:
-      measurement: g
-      name: chestnuts
-      preparation: null
-      quantity: '50'
-    name: For the garnish
-  serves: '4'
-source: null
-tags:
-- soup
+    group:
+    -   ingredient:
+        -   measurement: sprigs
+            name: thyme
+            preparation: null
+            quantity: '1.25'
+        -   measurement: leaf
+            name: bay
+            preparation: null
+            quantity: '0.25'
+        -   measurement: stick
+            name: cinnamon
+            preparation: null
+            quantity: '0.00'
+        name: For the bouquet garni
+    -   ingredient:
+        -   measurement: Tbsp
+            name: honey
+            preparation: null
+            quantity: '1.00'
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '12.50'
+        -   measurement: null
+            name: parsnips
+            preparation: null
+            quantity: '1.25'
+        -   measurement: ml
+            name: chicken stock
+            preparation: null
+            quantity: '125.00'
+        -   measurement: ml
+            name: milk
+            preparation: null
+            quantity: '125.00'
+        name: For the soup
+    -   ingredient:
+        -   measurement: g
+            name: chestnuts
+            preparation: null
+            quantity: '12.50'
+        name: For the garnish
+    serves: 1
+source: ''
+tags: []
 title: Honey And Parsnips soup

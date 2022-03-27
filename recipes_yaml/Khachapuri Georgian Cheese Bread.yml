@@ -1,85 +1,86 @@
 cuisine: .georgian
 description: Khachapuri uses a specific kind of cheese called 'Sulguni' which I've
-  approximated here with a mix of mozzarella, havarti and feta.
+    approximated here with a mix of mozzarella, havarti and feta.
 directions:
-  '#text': '>'
-  step:
-  - To make the dough, mix the water and yeast together until dissolved and let stand
-    for 5 minutes.
-  - Place the water and dissolved yeast in a large mixing bowl and add the egg and
-    salt. Gradually mix the flour to and stir until the mixture comes together to
-    a dough. Remove to a work surface and knead for approximately 10 minutes incorporating
-    a little flour as needed until the dough is smooth, elastic and manageable.
-  - Pour a very small amount of oil into a bowl and rub the oil all around with your
-    fingers to coat the bottom and sides. Place the dough into the bowl and turn a
-    few times to coat it lightly with the oil. Cover with a damp tea towel and place
-    in a warm spot to rise for 1-2 hours until doubled in size.
-  - While the dough is rising, prepare the cheese filling by tearing the mozzarella
-    ball into small, thumb-sized pieces. Set aside on a sheet of kitchen roll to drain
-    away some of the water, then mix the three cheeses together and toss well. Keep
-    the mixture in the fridge until ready to use.
-  - Preheat your oven to 250C and place a flat baking sheet or tray in the oven to
-    heat up. Roll the dough out onto a sheet of baking parchment into a flat round
-    of approximately 7 inches in diameter.
-  - Take the cheese mixture in your hand and press it firmly into a round ball approximately
-    the size of a tennis ball. Place the ball in the centre of your dough and gather
-    up the edges of the dough so that they meet in the centre and envelope the ball
-    of cheese inside. Gently press on the gathered flaps of dough to make a seal,
-    then with slightly dampened hands press down on the top of the dough, squashing
-    the cheese and dough into a flat circle approximately 11 inches. Aim to push from
-    the centre outwards to distribute the cheese evenly throughout.
-  - Make a large 'x' slash across the top of the dough to expose the cheese underneath.
-    This will help steam escape and allow your cheese to become lightly caramelised
-    and bubbly as the bread bakes.
-  - Remove the hot baking tray from the oven and slide it under the parchment so that
-    both the bread and parchment are transferred to the tray.
-  - Place the tray in the oven and bake for 10 minutes or until lightly golden. Remove
-    and brush the surface generously with the melted butter. Return to the oven for
-    a further 4-5 minutes until the surface is golden and the dough is firm and cooked
-    through.
-  - Remove and allow to cool slightly, then either cut into wedges or simply tear
-    apart with your hands. (Highly recommended if there are only two of you.)
+    step:
+    - To make the dough, mix the water and yeast together until dissolved and let
+        stand for 5 minutes.
+    - Place the water and dissolved yeast in a large mixing bowl and add the egg and
+        salt. Gradually mix the flour to and stir until the mixture comes together
+        to a dough. Remove to a work surface and knead for approximately 10 minutes
+        incorporating a little flour as needed until the dough is smooth, elastic
+        and manageable.
+    - Pour a very small amount of oil into a bowl and rub the oil all around with
+        your fingers to coat the bottom and sides. Place the dough into the bowl and
+        turn a few times to coat it lightly with the oil. Cover with a damp tea towel
+        and place in a warm spot to rise for 1-2 hours until doubled in size.
+    - While the dough is rising, prepare the cheese filling by tearing the mozzarella
+        ball into small, thumb-sized pieces. Set aside on a sheet of kitchen roll
+        to drain away some of the water, then mix the three cheeses together and toss
+        well. Keep the mixture in the fridge until ready to use.
+    - Preheat your oven to 250C and place a flat baking sheet or tray in the oven
+        to heat up. Roll the dough out onto a sheet of baking parchment into a flat
+        round of approximately 7 inches in diameter.
+    - Take the cheese mixture in your hand and press it firmly into a round ball approximately
+        the size of a tennis ball. Place the ball in the centre of your dough and
+        gather up the edges of the dough so that they meet in the centre and envelope
+        the ball of cheese inside. Gently press on the gathered flaps of dough to
+        make a seal, then with slightly dampened hands press down on the top of the
+        dough, squashing the cheese and dough into a flat circle approximately 11
+        inches. Aim to push from the centre outwards to distribute the cheese evenly
+        throughout.
+    - Make a large 'x' slash across the top of the dough to expose the cheese underneath.
+        This will help steam escape and allow your cheese to become lightly caramelised
+        and bubbly as the bread bakes.
+    - Remove the hot baking tray from the oven and slide it under the parchment so
+        that both the bread and parchment are transferred to the tray.
+    - Place the tray in the oven and bake for 10 minutes or until lightly golden.
+        Remove and brush the surface generously with the melted butter. Return to
+        the oven for a further 4-5 minutes until the surface is golden and the dough
+        is firm and cooked through.
+    - Remove and allow to cool slightly, then either cut into wedges or simply tear
+        apart with your hands. (Highly recommended if there are only two of you.)
 ingredients:
-  group:
-    ingredient:
-    - measurement: Tbsp
-      name: yeast
-      preparation: fresh
-      quantity: '2'
-    - measurement: ml
-      name: water
-      preparation: warm
-      quantity: '125'
-    - measurement: null
-      name: egg
-      preparation: lightly beaten
-      quantity: '1'
-    - measurement: g
-      name: flour
-      preparation: plain
-      quantity: '130'
-    - measurement: null
-      name: oil
-      preparation: null
-      quantity: null
-    - measurement: null
-      name: mozzarella cheese
-      preparation: null
-      quantity: '1'
-    - measurement: g
-      name: cheese
-      preparation: mild creamy cow's milk cheese like Havarti
-      quantity: '75'
-    - measurement: g
-      name: cheese
-      preparation: feta
-      quantity: '40'
-    - measurement: null
-      name: a little melted butter for brushing
-      preparation: null
-      quantity: null
-  serves: null
-source: null
-tags:
-- bread
+    group:
+    -   ingredient:
+        -   measurement: Tbsp
+            name: yeast
+            preparation: fresh
+            quantity: '0.50'
+        -   measurement: ml
+            name: water
+            preparation: warm
+            quantity: '31.25'
+        -   measurement: null
+            name: egg
+            preparation: lightly beaten
+            quantity: '0.25'
+        -   measurement: g
+            name: flour
+            preparation: plain
+            quantity: '32.50'
+        -   measurement: null
+            name: oil
+            preparation: null
+            quantity: null
+        -   measurement: null
+            name: mozzarella cheese
+            preparation: null
+            quantity: '0.25'
+        -   measurement: g
+            name: cheese
+            preparation: mild creamy cow's milk cheese like Havarti
+            quantity: '18.75'
+        -   measurement: g
+            name: cheese
+            preparation: feta
+            quantity: '10.00'
+        -   measurement: null
+            name: a little melted butter for brushing
+            preparation: null
+            quantity: null
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Khachapuri Georgian Cheese Bread

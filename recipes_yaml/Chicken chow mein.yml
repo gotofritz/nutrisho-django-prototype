@@ -1,72 +1,71 @@
 cuisine: null
 description: null
 directions:
-  step:
-  - Cook the noodles according to packet instructions, then drain and cool.
-  - Drizzle with a dash of sesame oil and toss through to prevent the noodles from
-    sticking to each other.
-  - Place the chicken strips in a bowl and season with a dash of dark soy sauce, the
-    five-spice powder and chilli sauce. Mix well, then lightly dust the chicken strips
-    with the cornflour.
-  - Stir fry chicken on high 3-4 minutes
-  - Add the red pepper for 1 min, then bean sprouts and spring onion for 30 secs.
-  - Stir in the cooked noodles, season with the light soy sauce, a dash of sesame
-    oil and freshly ground black pepper.
-  - Pile the noodles onto a serving plate and serve immediately.
+    step:
+    - Cook the noodles according to packet instructions, then drain and cool.
+    - Drizzle with a dash of sesame oil and toss through to prevent the noodles from
+        sticking to each other.
+    - Place the chicken strips in a bowl and season with a dash of dark soy sauce,
+        the five-spice powder and chilli sauce. Mix well, then lightly dust the chicken
+        strips with the cornflour.
+    - Stir fry chicken on high 3-4 minutes
+    - Add the red pepper for 1 min, then bean sprouts and spring onion for 30 secs.
+    - Stir in the cooked noodles, season with the light soy sauce, a dash of sesame
+        oil and freshly ground black pepper.
+    - Pile the noodles onto a serving plate and serve immediately.
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: chicken breast
-      preparation: sliced into strips
-      quantity: '300'
-    - measurement: tsp
-      name: five spice
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: chilli sauce
-      preparation: null
-      quantity: '1'
-    - measurement: Tbsp
-      name: cornstarch
-      preparation: null
-      quantity: '1'
-    - measurement: Tbsp
-      name: soy sauce
-      preparation: dark
-      quantity: '0.5'
-    name: Marinade
-  - ingredient:
-      measurement: g
-      name: noodles
-      preparation: flat
-      quantity: '150'
-    name: Noodles
-  - ingredient:
-    - measurement: Tbsp
-      name: oil
-      preparation: groundnut
-      quantity: '2'
-    - measurement: null
-      name: bell peppers
-      preparation: deseeded and sliced thinly
-      quantity: '1'
-    - measurement: g
-      name: bean sprouts
-      preparation: null
-      quantity: '150'
-    - measurement: null
-      name: spring onions
-      preparation: julienned
-      quantity: '1'
-    - measurement: Tbsp
-      name: soy sauce
-      preparation: light
-      quantity: '2'
-    name: Stir fry
-  serves: '2'
-source: null
-tags:
-- noodles
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: chicken breast
+            preparation: sliced into strips
+            quantity: '75.00'
+        -   measurement: tsp
+            name: five spice
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: chilli sauce
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: cornstarch
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: dark
+            quantity: '0.12'
+        name: Marinade
+    -   ingredient:
+        -   measurement: g
+            name: noodles
+            preparation: flat
+            quantity: '37.50'
+        name: Noodles
+    -   ingredient:
+        -   measurement: Tbsp
+            name: oil
+            preparation: groundnut
+            quantity: '0.50'
+        -   measurement: null
+            name: bell peppers
+            preparation: deseeded and sliced thinly
+            quantity: '0.25'
+        -   measurement: g
+            name: bean sprouts
+            preparation: null
+            quantity: '37.50'
+        -   measurement: null
+            name: spring onions
+            preparation: julienned
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.50'
+        name: Stir fry
+    serves: 1
+source: ''
+tags: []
 title: Chicken chow mein

@@ -1,105 +1,93 @@
 cuisine: .indian
 description: Baigan Moong Dal
 directions:
-  '#text': '>
-
-
-
-
-
-
-
-
-
-
-    >'
-  step:
-  - sort the dal but do not wash it. dry roast it until reddish, then wash
-  - add to water and half the ghee, bring to boil, skimming
-  - when you got rid of most of the scum, add ginger and lower heat, cover, let run
-    for 40 m
-  - make a paste and rub it on the aubergines, and set aside,
-  - melt the ghee, then fry the seeds, chillies,
-  - when ready add the assafoetida and then the aubergines straight after
-  - fry for 7 minutes
-  - add the fried eggplant to the dal, so that by the time they are soft the dal is
-    ready
-  - beat with a whisk, add the serving ingrediens
+    step:
+    - sort the dal but do not wash it. dry roast it until reddish, then wash
+    - add to water and half the ghee, bring to boil, skimming
+    - when you got rid of most of the scum, add ginger and lower heat, cover, let
+        run for 40 m
+    - make a paste and rub it on the aubergines, and set aside,
+    - melt the ghee, then fry the seeds, chillies,
+    - when ready add the assafoetida and then the aubergines straight after
+    - fry for 7 minutes
+    - add the fried eggplant to the dal, so that by the time they are soft the dal
+        is ready
+    - beat with a whisk, add the serving ingrediens
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: dal
-      preparation: moong
-      quantity: '340'
-    - measurement: l
-      name: water
-      preparation: null
-      quantity: '1.5'
-    - measurement: Tbsp
-      name: ginger
-      preparation: peeled
-      quantity: '0.5'
-    - measurement: Tbsp
-      name: ghee
-      preparation: null
-      quantity: '7'
-  - ingredient:
-    - measurement: tsp
-      name: cayenne pepper
-      preparation: null
-      quantity: '0.5'
-    - measurement: tsp
-      name: turmeric
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: garam masala
-      preparation: null
-      quantity: '1.5'
-    - measurement: Tbsp
-      name: water
-      preparation: null
-      quantity: '3'
-    - measurement: null
-      name: salt
-      preparation: null
-      quantity: null
-    - measurement: g
-      name: aubergine
-      preparation: cubed
-      quantity: '250'
-    name: Aubergine paste
-  - ingredient:
-    - measurement: Tbsp
-      name: fresh chillies
-      preparation: deseeded
-      quantity: '1'
-    - measurement: tsp
-      name: cumin seeds
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: assafoetida
-      preparation: null
-      quantity: '0.5'
-    name: Chaunk
-  - ingredient:
-    - measurement: tsp
-      name: ground coriander
-      preparation: null
-      quantity: '1'
-    - measurement: Tbsp
-      name: coriander leaves
-      preparation: chopped finely
-      quantity: '2'
-    - measurement: tsp
-      name: lemon juice
-      preparation: null
-      quantity: '1'
-    name: To serve
-  serves: '4'
-source: null
-tags:
-- dal
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: dal
+            preparation: moong
+            quantity: '85.00'
+        -   measurement: l
+            name: water
+            preparation: null
+            quantity: '0.38'
+        -   measurement: Tbsp
+            name: ginger
+            preparation: peeled
+            quantity: '0.12'
+        -   measurement: Tbsp
+            name: ghee
+            preparation: null
+            quantity: '1.75'
+        name: null
+    -   ingredient:
+        -   measurement: tsp
+            name: cayenne pepper
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: turmeric
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: garam masala
+            preparation: null
+            quantity: '0.38'
+        -   measurement: Tbsp
+            name: water
+            preparation: null
+            quantity: '0.75'
+        -   measurement: null
+            name: salt
+            preparation: null
+            quantity: null
+        -   measurement: g
+            name: aubergine
+            preparation: cubed
+            quantity: '62.50'
+        name: Aubergine paste
+    -   ingredient:
+        -   measurement: Tbsp
+            name: fresh chillies
+            preparation: deseeded
+            quantity: '0.25'
+        -   measurement: tsp
+            name: cumin seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: assafoetida
+            preparation: null
+            quantity: '0.12'
+        name: Chaunk
+    -   ingredient:
+        -   measurement: tsp
+            name: ground coriander
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: coriander leaves
+            preparation: chopped finely
+            quantity: '0.50'
+        -   measurement: tsp
+            name: lemon juice
+            preparation: null
+            quantity: '0.25'
+        name: To serve
+    serves: 1
+source: ''
+tags: []
 title: Toasted mung dahl and aubergines

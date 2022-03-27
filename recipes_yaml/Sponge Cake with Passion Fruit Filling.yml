@@ -1,80 +1,71 @@
 cuisine: .british
 description: null
 directions:
-  '#text': '>
-
-
-
-
-
-
-    >'
-  step:
-  - Sift self-rising flour, baking powder into large bowl
-  - Mix together eggs, butter, sugar, vanilla estract well with a wooden spoon. It
-    should be runny, if not add some water
-  - "Split into two baking tins and bake for 30-35 mins at 170\xB0. Don't open before\
-    \ at least 30 mins. Let cool for 5 mins before turning on wire racks"
-  - 'Mix together all the filling ingredients: passion fruits, mascarpone, fromage
-    frais, sugar, vanilla extract'
-  - Spread the filling on top of one of the cakes and put the other on top. Sprinkle
-    icing sugar over the top
+    step:
+    - Sift self-rising flour, baking powder into large bowl
+    - Mix together eggs, butter, sugar, vanilla estract well with a wooden spoon.
+        It should be runny, if not add some water
+    - Split into two baking tins and bake for 30-35 mins at 170°. Don't open before
+        at least 30 mins. Let cool for 5 mins before turning on wire racks
+    - 'Mix together all the filling ingredients: passion fruits, mascarpone, fromage
+        frais, sugar, vanilla extract'
+    - Spread the filling on top of one of the cakes and put the other on top. Sprinkle
+        icing sugar over the top
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: flour
-      preparation: self-rising
-      quantity: '175'
-    - measurement: tsp
-      name: baking powder
-      preparation: null
-      quantity: '1.5'
-    - measurement: null
-      name: eggs
-      preparation: large
-      quantity: '3'
-    - measurement: g
-      name: butter
-      preparation: soft
-      quantity: '175'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '175'
-    - measurement: tsp
-      name: vanilla estract
-      preparation: heated until just about to boil
-      quantity: '0.5'
-    name: Cake
-  - ingredient:
-    - measurement: null
-      name: passion fruits
-      preparation: flesh scopped out
-      quantity: '6'
-    - measurement: g
-      name: mascarpone
-      preparation: null
-      quantity: '250'
-    - measurement: ml
-      name: fromage frais
-      preparation: null
-      quantity: '200'
-    - measurement: tsp
-      name: sugar
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: vanilla extract
-      preparation: null
-      quantity: '1'
-    - measurement: tbsp
-      name: sugar
-      preparation: icing
-      quantity: '1'
-    name: Filling
-  serves: '8'
-source: null
-tags:
-- dessert
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: flour
+            preparation: self-rising
+            quantity: '43.75'
+        -   measurement: tsp
+            name: baking powder
+            preparation: null
+            quantity: '0.38'
+        -   measurement: null
+            name: eggs
+            preparation: large
+            quantity: '0.75'
+        -   measurement: g
+            name: butter
+            preparation: soft
+            quantity: '43.75'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '43.75'
+        -   measurement: tsp
+            name: vanilla estract
+            preparation: heated until just about to boil
+            quantity: '0.12'
+        name: Cake
+    -   ingredient:
+        -   measurement: null
+            name: passion fruits
+            preparation: flesh scopped out
+            quantity: '1.50'
+        -   measurement: g
+            name: mascarpone
+            preparation: null
+            quantity: '62.50'
+        -   measurement: ml
+            name: fromage frais
+            preparation: null
+            quantity: '50.00'
+        -   measurement: tsp
+            name: sugar
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: vanilla extract
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: sugar
+            preparation: icing
+            quantity: '0.25'
+        name: Filling
+    serves: 1
+source: ''
+tags: []
 title: Sponge Cake with Passion Fruit Filling

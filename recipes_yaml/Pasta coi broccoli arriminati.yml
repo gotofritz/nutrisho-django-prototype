@@ -1,58 +1,58 @@
 cuisine: null
 description: null
 directions:
-  step:
-  - Boil cauliflower in salted water on high heat until al dente, 4m, then drain cool
-    in cold water. Cut in small florets.
-  - Start cooking the pasta, in the same water.
-  - Fry the onion in olive on medium heat until wilted, 4m
-  - Add pine nuts, and fry until slightly browned, 2m
-  - Add the raisings and cauliflower and fry, 30s
-  - Add saffron and lower heat. Keep on low simmer until pasta ready, adding water
-    from pasta if it gets too dry
-  - Heat some olive oil, add the anchovies (or blue cheese) and break with a fork
-  - Add the bread crumbs, stirring.
-  - When the pasta is ready drain, mix in the sauce, and sprinkle toasted breadcrums
-    on it.
+    step:
+    - Boil cauliflower in salted water on high heat until al dente, 4m, then drain
+        cool in cold water. Cut in small florets.
+    - Start cooking the pasta, in the same water.
+    - Fry the onion in olive on medium heat until wilted, 4m
+    - Add pine nuts, and fry until slightly browned, 2m
+    - Add the raisings and cauliflower and fry, 30s
+    - Add saffron and lower heat. Keep on low simmer until pasta ready, adding water
+        from pasta if it gets too dry
+    - Heat some olive oil, add the anchovies (or blue cheese) and break with a fork
+    - Add the bread crumbs, stirring.
+    - When the pasta is ready drain, mix in the sauce, and sprinkle toasted breadcrums
+        on it.
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: sultana
-      preparation: soaked in cold water for 15 mins and drained
-      quantity: '100'
-    - measurement: g
-      name: cauliflower
-      preparation: null
-      quantity: '500'
-    - measurement: g
-      name: onion
-      preparation: chopped thinly
-      quantity: '200'
-    - measurement: g
-      name: pine nuts
-      preparation: null
-      quantity: '100'
-    - measurement: pinch
-      name: saffron
-      preparation: soaked in 1tbsp cold water
-      quantity: null
-    - measurement: g
-      name: pasta, maccheroni or bucatini
-      preparation: null
-      quantity: '500'
-    name: Sauce
-  - ingredient:
-    - measurement: g
-      name: achovies / blue cheese
-      preparation: null
-      quantity: '30'
-    - measurement: g
-      name: bread crumbs
-      preparation: null
-      quantity: '50'
-    name: Garnish
-  serves: null
-source: null
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: sultana
+            preparation: soaked in cold water for 15 mins and drained
+            quantity: '25.00'
+        -   measurement: g
+            name: cauliflower
+            preparation: null
+            quantity: '125.00'
+        -   measurement: g
+            name: onion
+            preparation: chopped thinly
+            quantity: '50.00'
+        -   measurement: g
+            name: pine nuts
+            preparation: null
+            quantity: '25.00'
+        -   measurement: pinch
+            name: saffron
+            preparation: soaked in 1tbsp cold water
+            quantity: null
+        -   measurement: g
+            name: pasta, maccheroni or bucatini
+            preparation: null
+            quantity: '125.00'
+        name: Sauce
+    -   ingredient:
+        -   measurement: g
+            name: achovies / blue cheese
+            preparation: null
+            quantity: '7.50'
+        -   measurement: g
+            name: bread crumbs
+            preparation: null
+            quantity: '12.50'
+        name: Garnish
+    serves: 1
+source: ''
 tags: []
 title: pasta coi broccoli arriminati

@@ -1,84 +1,84 @@
 cuisine: .italy.molise
 description: 'Spellings for this fritter vary from town to town in Molise, depending
-  on the local dialect. The recipe can be known as caveciune, cauciuni, calcioni,
-  calciumi, calciuni, caucioni and/or who knows what else? However, the official spelling
-  for this style of Molisan treat on the world-wide web is (Well, seems to be): "Calcione"
-  (singular form) and "calcioni" (plural form). In other parts of this Italy this
-  style of fritter is sometimes known as "ravioli di San Giuseppe" as well as "ravioli
-  dolce," "sweet ravioli." N.B. In present-day Italy, "Calcioni Molisani" often refers
-  to unsweetened ricotta-stuffed fritters rather than chickpea-stuffed sweet fritters.
-  However, prior to World War II, most people living in the Molisan countryside thought
-  of "calconi" as sweet fritters made with chickpeas. Those Italians (and their children)
-  who immigrated to North America in the 1950s still think of "calcioni" as pastries
-  stuffed with chickpeas rather than with ricotta and/or chestnuts.'
+    on the local dialect. The recipe can be known as caveciune, cauciuni, calcioni,
+    calciumi, calciuni, caucioni and/or who knows what else? However, the official
+    spelling for this style of Molisan treat on the world-wide web is (Well, seems
+    to be): "Calcione" (singular form) and "calcioni" (plural form). In other parts
+    of this Italy this style of fritter is sometimes known as "ravioli di San Giuseppe"
+    as well as "ravioli dolce," "sweet ravioli." N.B. In present-day Italy, "Calcioni
+    Molisani" often refers to unsweetened ricotta-stuffed fritters rather than chickpea-stuffed
+    sweet fritters. However, prior to World War II, most people living in the Molisan
+    countryside thought of "calconi" as sweet fritters made with chickpeas. Those
+    Italians (and their children) who immigrated to North America in the 1950s still
+    think of "calcioni" as pastries stuffed with chickpeas rather than with ricotta
+    and/or chestnuts.'
 directions:
-  step:
-  - Knead the dough ingredients into a dough, not too hard. Wrap in cling film and
-    rest for 1 or 2 hrs at room temperatire
-  - Drain the chicpeas overnight, and cook until mashy. Then mash them.
-  - Mix in a bowl with the other filling ingredients
-  - Split the dough in two halves. Roll out each half to 3mm thick, and mark some
-    faint lines with a knife to create a chequered pattern of 4cm x 7cm rectangles
-    or thereabout
-  - Put a small dollop of filling in the middle of each square
-  - Run a wet finger on the dough along the lines, to make them sticky
-  - Carefully place the other half of the dough over the first one, and press along
-    the lines to make some ravioli like things
-  - Cut the cauciunialong the lines, then press down with a fork along each edge to
-    seal it
-  - "Deep fry at 190\xB0 for a couple of minutes, then drain and serve cool"
+    step:
+    - Knead the dough ingredients into a dough, not too hard. Wrap in cling film and
+        rest for 1 or 2 hrs at room temperatire
+    - Drain the chicpeas overnight, and cook until mashy. Then mash them.
+    - Mix in a bowl with the other filling ingredients
+    - Split the dough in two halves. Roll out each half to 3mm thick, and mark some
+        faint lines with a knife to create a chequered pattern of 4cm x 7cm rectangles
+        or thereabout
+    - Put a small dollop of filling in the middle of each square
+    - Run a wet finger on the dough along the lines, to make them sticky
+    - Carefully place the other half of the dough over the first one, and press along
+        the lines to make some ravioli like things
+    - Cut the cauciunialong the lines, then press down with a fork along each edge
+        to seal it
+    - Deep fry at 190° for a couple of minutes, then drain and serve cool
 ingredients:
-  group:
-  - ingredient:
-    - measurement: null
-      name: eggs
-      preparation: null
-      quantity: '2'
-    - measurement: tbsp
-      name: sugar
-      preparation: null
-      quantity: '2'
-    - measurement: tbsp
-      name: oil, veg
-      preparation: null
-      quantity: '2'
-    - measurement: g
-      name: flour
-      preparation: (adjust as necessary)
-      quantity: '250'
-    name: Dough
-  - ingredient:
-    - measurement: g
-      name: chickpeas, dried
-      preparation: or 1 can cooked
-      quantity: '200'
-    - measurement: tbsp
-      name: honey
-      preparation: null
-      quantity: '4'
-    - measurement: g
-      name: walnuts
-      preparation: crushed
-      quantity: '50'
-    - measurement: null
-      name: orange, zested
-      preparation: null
-      quantity: '1'
-    - measurement: tbsp
-      name: cinnamon
-      preparation: grated
-      quantity: '2'
-    - measurement: tsp
-      name: salt
-      preparation: null
-      quantity: '1'
-    - measurement: tbsp
-      name: mosto cotto
-      preparation: or marsala or sherry
-      quantity: '2'
-    name: Filling
-  serves: '4'
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tbsp
+            name: sugar
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tbsp
+            name: oil, veg
+            preparation: null
+            quantity: '0.50'
+        -   measurement: g
+            name: flour
+            preparation: (adjust as necessary)
+            quantity: '62.50'
+        name: Dough
+    -   ingredient:
+        -   measurement: g
+            name: chickpeas, dried
+            preparation: or 1 can cooked
+            quantity: '50.00'
+        -   measurement: tbsp
+            name: honey
+            preparation: null
+            quantity: '1.00'
+        -   measurement: g
+            name: walnuts
+            preparation: crushed
+            quantity: '12.50'
+        -   measurement: null
+            name: orange, zested
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: cinnamon
+            preparation: grated
+            quantity: '0.50'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: mosto cotto
+            preparation: or marsala or sherry
+            quantity: '0.50'
+        name: Filling
+    serves: 1
 source: http://www.italyrevisited.org/recipe/Calcioni/534
-tags:
-- sweet
+tags: []
 title: Cauciuni

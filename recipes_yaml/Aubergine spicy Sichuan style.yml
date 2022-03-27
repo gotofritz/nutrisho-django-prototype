@@ -1,0 +1,82 @@
+cuisine: .chinese
+description: null
+directions:
+    step:
+    - slice aubergines lengthways 2cm thick 4 cm long
+    - deep fry in oil 3m
+    - 'if using tofu: cut in 4cm sticks, optionaly roll in cornstarch, deep fry too'
+    - chop garlic, ginger, slice chillies in rings
+    - heat stock so it's warm
+    - discard oil, except for 1 tbsp, then stir fry garlic, ginger, chilies a fes
+        sc
+    - add the chilli bean paste and aubergines and tofu if using
+    - add host stock (5) and bring to boil; then heat down and 3m
+    - add soy sauce, vinegar, sugar, few secs
+    - add cornstarch to thicken sauce
+    - garnish with chopped spring onion
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: garlic
+            preparation: null
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: ginger
+            preparation: null
+            quantity: '0.50'
+        -   measurement: null
+            name: chillies
+            preparation: fresh
+            quantity: '0.25'
+        name: initial
+    -   ingredient:
+        -   measurement: cup
+            name: oil
+            preparation: frying
+            quantity: '0.25'
+        -   measurement: g
+            name: tofu
+            preparation: optional; cubed (optional coated in cornstarch)
+            quantity: '62.50'
+        -   measurement: null
+            name: aubergines
+            preparation: null
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: chilli bean paste
+            preparation: null
+            quantity: '0.50'
+        -   measurement: ml
+            name: stock
+            preparation: vegetable
+            quantity: '50.00'
+        name: Step 2
+    -   ingredient:
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: rice vinegar
+            preparation: Chinkiang black
+            quantity: '0.25'
+        -   measurement: tsp
+            name: sugar
+            preparation: brown
+            quantity: '0.06'
+        -   measurement: Tbsp
+            name: cornstarch
+            preparation: blended with 2 tbsp water
+            quantity: '0.25'
+        name: Step 3
+    -   ingredient:
+        -   measurement: null
+            name: spring onion
+            preparation: finely chopped
+            quantity: '0.25'
+        name: Garnish
+    serves: 1
+source: ''
+tags: []
+title: Aubergine, spicy Sichuan style

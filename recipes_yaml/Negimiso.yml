@@ -1,68 +1,67 @@
 cuisine: .japanese
-description: "This is one of those really useful and versatile sauces or pastes (the\
-  \ consistency just depends on how long you cook it down to evaporate the moisture)\
-  \ that is so easy to make that it\u2019s really barely a recipe. It\u2019s a basic\
-  \ standby in Japanese kitchens. As a loose sauce, it can be used in stir fries or\
-  \ as a sauce on meat dishes. As a stiffer paste, it makes a great onigiri filling.\
-  \ Cook it down more to make it quite dry (though it will still be clumpy, not totally\
-  \ dessicated like commercial furikake), and it becomes an interesting furikake.\
-  \ I\u2019ve given 3 variations for you to try here. The first is the most traditional,\
-  \ the second is low in sugar, and the third is alcohol-free."
+description: This is one of those really useful and versatile sauces or pastes (the
+    consistency just depends on how long you cook it down to evaporate the moisture)
+    that is so easy to make that it’s really barely a recipe. It’s a basic standby
+    in Japanese kitchens. As a loose sauce, it can be used in stir fries or as a sauce
+    on meat dishes. As a stiffer paste, it makes a great onigiri filling. Cook it
+    down more to make it quite dry (though it will still be clumpy, not totally dessicated
+    like commercial furikake), and it becomes an interesting furikake. I’ve given
+    3 variations for you to try here. The first is the most traditional, the second
+    is low in sugar, and the third is alcohol-free.
 directions:
-  step:
-  - "Saut\xE9 spring onion in oil until transliucent, 5m"
-  - 'FOR THE STOCK: soak the kombu (and optional shitake) in water overnight, in a
-    sealed container in the fridge'
-  - Put water in a pot and bring to simmer. Drain and use (you can cut up kombu and
-    shitake and use them in stews etc)
-  - 'CLASSIC NEGIMISO: combine dashi stock, miso, sugar, mirin in a bowl.'
-  - "Saut\xE8 the spring onions until soft"
-  - Add the liquid, and cook until thick and glossy. For onigiri you can cook it even
-    more until thick and hard
+    step:
+    - Sauté spring onion in oil until transliucent, 5m
+    - 'FOR THE STOCK: soak the kombu (and optional shitake) in water overnight, in
+        a sealed container in the fridge'
+    - Put water in a pot and bring to simmer. Drain and use (you can cut up kombu
+        and shitake and use them in stews etc)
+    - 'CLASSIC NEGIMISO: combine dashi stock, miso, sugar, mirin in a bowl.'
+    - Sautè the spring onions until soft
+    - Add the liquid, and cook until thick and glossy. For onigiri you can cook it
+        even more until thick and hard
 ingredients:
-  group:
-  - ingredient:
-    - measurement: cm
-      name: kombu
-      preparation: null
-      quantity: '30'
-    - measurement: L
-      name: water
-      preparation: null
-      quantity: '2'
-    - measurement: null
-      name: dried shitake
-      preparation: optional
-      quantity: '3'
-    name: Dashi Stock
-  - ingredient:
-    - measurement: tbsp
-      name: veg oil
-      preparation: null
-      quantity: '0.5'
-    - measurement: tbsp
-      name: spring onions
-      preparation: chopped
-      quantity: '4'
-    - measurement: ml
-      name: miso paste
-      preparation: null
-      quantity: '120'
-    - measurement: tbsp
-      name: sugar
-      preparation: null
-      quantity: '2'
-    - measurement: tbsp
-      name: mirin
-      preparation: null
-      quantity: '2'
-    - measurement: ml
-      name: dashi stock
-      preparation: null
-      quantity: '120'
-    name: Negimiso
-  serves: '10'
+    group:
+    -   ingredient:
+        -   measurement: cm
+            name: kombu
+            preparation: null
+            quantity: '7.50'
+        -   measurement: L
+            name: water
+            preparation: null
+            quantity: '0.50'
+        -   measurement: null
+            name: dried shitake
+            preparation: optional
+            quantity: '0.75'
+        name: Dashi Stock
+    -   ingredient:
+        -   measurement: tbsp
+            name: veg oil
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tbsp
+            name: spring onions
+            preparation: chopped
+            quantity: '1.00'
+        -   measurement: ml
+            name: miso paste
+            preparation: null
+            quantity: '30.00'
+        -   measurement: tbsp
+            name: sugar
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tbsp
+            name: mirin
+            preparation: null
+            quantity: '0.50'
+        -   measurement: ml
+            name: dashi stock
+            preparation: null
+            quantity: '30.00'
+        name: Negimiso
+    serves: 1
 source: http://justhungry.com/negimiso-or-misonegi-japanese-onion-miso-sauce-or-paste
-tags:
-- relish
+tags: []
 title: Negimiso

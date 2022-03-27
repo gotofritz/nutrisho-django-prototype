@@ -1,73 +1,73 @@
 cuisine: .american
 description: null
 directions:
-  step:
-  - In a mixing bowl, whisk together the flours and dry ingredients
-  - Beat in the wet ingredients and brown sugar/agave until smooth
-  - Add more apple juice a tablespoon at a time, as needed to make a smooth batter
-  - Stir in chopped fresh apple
-  - Spoon the batter into twelve muffin cups. Sprinkle with raw sugar, if desired,
-    for a crunchy top
-  - "Bake in the center of an  oven preheated to 180\xB0 until firm and golden - about\
-    \ 20 to 25 minutes or so"
-  - Test with a wooden pick if you need to. Remove the muffins from the pan and cool
-    on a wire rack
+    step:
+    - In a mixing bowl, whisk together the flours and dry ingredients
+    - Beat in the wet ingredients and brown sugar/agave until smooth
+    - Add more apple juice a tablespoon at a time, as needed to make a smooth batter
+    - Stir in chopped fresh apple
+    - Spoon the batter into twelve muffin cups. Sprinkle with raw sugar, if desired,
+        for a crunchy top
+    - Bake in the center of an oven preheated to 180° until firm and golden - about
+        20 to 25 minutes or so
+    - Test with a wooden pick if you need to. Remove the muffins from the pan and
+        cool on a wire rack
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: gluten free flour
-      preparation: null
-      quantity: '190'
-    - measurement: tsp
-      name: baking powder
-      preparation: null
-      quantity: '2'
-    - measurement: tsp
-      name: salt
-      preparation: null
-      quantity: '0.5'
-    - measurement: tsp
-      name: cinnamon
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: allspice
-      preparation: null
-      quantity: '0.5'
-    name: Dry ingredient
-  - ingredient:
-    - measurement: g
-      name: apple sauce
-      preparation: null
-      quantity: '340'
-    - measurement: g
-      name: olive oil
-      preparation: null
-      quantity: '110'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '220'
-    - measurement: null
-      name: eggs
-      preparation: null
-      quantity: '2'
-    - measurement: tbsp
-      name: apple juice
-      preparation: null
-      quantity: '4'
-    - measurement: tsp
-      name: vanilla
-      preparation: null
-      quantity: '2'
-    - measurement: null
-      name: apples
-      preparation: peeled and chopped
-      quantity: '2'
-    name: Wet ingredients
-  serves: '12'
-source: null
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: gluten free flour
+            preparation: null
+            quantity: '47.50'
+        -   measurement: tsp
+            name: baking powder
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: cinnamon
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: allspice
+            preparation: null
+            quantity: '0.12'
+        name: Dry ingredient
+    -   ingredient:
+        -   measurement: g
+            name: apple sauce
+            preparation: null
+            quantity: '85.00'
+        -   measurement: g
+            name: olive oil
+            preparation: null
+            quantity: '27.50'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '55.00'
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tbsp
+            name: apple juice
+            preparation: null
+            quantity: '1.00'
+        -   measurement: tsp
+            name: vanilla
+            preparation: null
+            quantity: '0.50'
+        -   measurement: null
+            name: apples
+            preparation: peeled and chopped
+            quantity: '0.50'
+        name: Wet ingredients
+    serves: 1
+source: ''
 tags:
 - sweets
 title: Apple Cinnamon Muffin

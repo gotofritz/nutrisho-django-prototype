@@ -1,0 +1,91 @@
+cuisine: .indian.uttar pradesh
+description: Louki Chana Dal. Can also be done with yellow split peas
+directions:
+    step:
+    - 'NORMAL POT: Soak dal 5 hours, then drain and rinse'
+    - 'NORMAL POT: bring to boil dal and water over high heat, and cook for 10 mins,
+        skimming'
+    - 'NORMAL POT: Lower heat and add ginger, coriander, turmeric, and ghee to water
+        and dal, and cook on low heat for 1.5 hrs with a tight fitting lid'
+    - 'PRESSURE COOKER: mix all dal ingredients in a pot and cook for 20 mins. Put
+        the steamer in the pot to stop dal from exploding'
+    - While the dal is cooking, sautè the zucchini chunks with added salt, on high
+        heat in oil and butter, in a covered pot, shaking vigorously for 8-10 mins,
+        until charred and cooked through
+    - Remove from heat and mix in garama masala and chopped chillies
+    - When the dal is cooked, add a bit more butter and reheat the zucchini. When
+        the butter is melted add the cumin seeds, and when they sizzle add assafoetida
+        and curry leaves.
+    - Pour after a couple of seconds into the dal
+    - Add lemon juice, salt, and chopped herbs, let stand a covered a couple of minutes,
+        and serve
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: dal
+            preparation: chana
+            quantity: '22.50'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '125.00'
+        -   measurement: tsp
+            name: turmeric
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: ground coriander
+            preparation: null
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: ginger
+            preparation: peeled
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: ghee
+            preparation: null
+            quantity: '0.25'
+        name: Dal
+    -   ingredient:
+        -   measurement: g
+            name: bottle gourd
+            preparation: or zucchini, 1.5 cm thick slices halved if too large
+            quantity: '45.00'
+        -   measurement: tsp
+            name: garam masala
+            preparation: null
+            quantity: '0.12'
+        name: Gourd
+    -   ingredient:
+        -   measurement: tbsp
+            name: lemon juice
+            preparation: null
+            quantity: '0.25'
+        name: Seasonings
+    -   ingredient:
+        -   measurement: tbsp
+            name: ghee
+            preparation: null
+            quantity: '0.75'
+        -   measurement: null
+            name: chilies
+            preparation: fresh
+            quantity: '0.75'
+        -   measurement: tsp
+            name: cumin seeds
+            preparation: null
+            quantity: '0.31'
+        -   measurement: null
+            name: curry leaves
+            preparation: fresh if possible
+            quantity: '2.00'
+        -   measurement: tsp
+            name: assafoetida
+            preparation: null
+            quantity: '0.12'
+        name: Spice mix
+    serves: 1
+source: ''
+tags: []
+title: Zucchini Chana Dal

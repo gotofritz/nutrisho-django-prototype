@@ -1,0 +1,43 @@
+cuisine: .italian
+description: null
+directions:
+    step:
+    - it's a salad. it's not rocket science.
+    - If using orange, add to citronette and add the segments
+    - either orange or tuna, not both
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: chicory
+            preparation: sliced
+            quantity: '0.25'
+        -   measurement: g
+            name: borlotti
+            preparation: cooked
+            quantity: '37.50'
+        -   measurement: null
+            name: celery
+            preparation: sliced
+            quantity: '0.75'
+        -   measurement: null
+            name: basil leaves
+            preparation: chopped
+            quantity: '1.00'
+        -   measurement: null
+            name: spring onions
+            preparation: optional
+            quantity: '0.50'
+        -   measurement: null
+            name: orange
+            preparation: optional
+            quantity: '0.25'
+        -   measurement: can
+            name: tuna
+            preparation: optional broken with a fork
+            quantity: '0.25'
+        name: null
+    serves: 1
+source: ''
+tags: []
+title: Insalata Borlotti, sedano e cicoria

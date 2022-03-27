@@ -1,64 +1,62 @@
 cuisine: .chinese
 description: Qing Tang Ji Bocai
 directions:
-  '#text': '>'
-  step:
-  - bring the stock ingredient to quick boil, then simmer 35 m
-  - combine the marinate ingredients leave until stock is ready
-  - fish out chicken legs from stock and re-use
-  - cook the marinated breasts a few minutes
-  - lift out meat from soup and split into bowls, together with spinach and ginger
-  - sieve the stock into the bowls, add salt and pepper
+    step:
+    - bring the stock ingredient to quick boil, then simmer 35 m
+    - combine the marinate ingredients leave until stock is ready
+    - fish out chicken legs from stock and re-use
+    - cook the marinated breasts a few minutes
+    - lift out meat from soup and split into bowls, together with spinach and ginger
+    - sieve the stock into the bowls, add salt and pepper
 ingredients:
-  group:
-  - ingredient:
-    - measurement: null
-      name: chicken legs
-      preparation: washed
-      quantity: '2'
-    - measurement: Tbsp
-      name: ginger
-      preparation: sliced in disks
-      quantity: '1'
-    - measurement: l
-      name: stock
-      preparation: null
-      quantity: '1.5'
-    name: Stock
-  - ingredient:
-    - measurement: g
-      name: chicken breast
-      preparation: sliced thinly or tofu
-      quantity: '60'
-    - measurement: tsp
-      name: soy sauce
-      preparation: light
-      quantity: '1'
-    - measurement: tsp
-      name: rice wine
-      preparation: null
-      quantity: '0.5'
-    name: Marinate
-  - ingredient:
-    - measurement: g
-      name: spinach
-      preparation: null
-      quantity: '45'
-    - measurement: Tbsp
-      name: ginger
-      preparation: peeled
-      quantity: '1'
-    - measurement: to taste
-      name: salt
-      preparation: null
-      quantity: null
-    - measurement: to taste
-      name: pepper
-      preparation: null
-      quantity: null
-    name: Soup
-  serves: null
-source: null
-tags:
-- soup
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: chicken legs
+            preparation: washed
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: ginger
+            preparation: sliced in disks
+            quantity: '0.25'
+        -   measurement: l
+            name: stock
+            preparation: null
+            quantity: '0.38'
+        name: Stock
+    -   ingredient:
+        -   measurement: g
+            name: chicken breast
+            preparation: sliced thinly or tofu
+            quantity: '15.00'
+        -   measurement: tsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.25'
+        -   measurement: tsp
+            name: rice wine
+            preparation: null
+            quantity: '0.12'
+        name: Marinate
+    -   ingredient:
+        -   measurement: g
+            name: spinach
+            preparation: null
+            quantity: '11.25'
+        -   measurement: Tbsp
+            name: ginger
+            preparation: peeled
+            quantity: '0.25'
+        -   measurement: to taste
+            name: salt
+            preparation: null
+            quantity: null
+        -   measurement: to taste
+            name: pepper
+            preparation: null
+            quantity: null
+        name: Soup
+    serves: 1
+source: ''
+tags: []
 title: Chicken and spinach soup

@@ -1,65 +1,64 @@
 cuisine: .jewish.thessaloniki
 description: From Thessaloniki, an area with large Jewish population
 directions:
-  step:
+    step:
     - Bring the water, salt, and oil to boil.
     - Remove from heat and work in the flour until you have a stiff dough.
-    - Knead on a floured surface for about 10 mins, then split into two balls and leave
-      to rest, covered, for 30 mins.
+    - Knead on a floured surface for about 10 mins, then split into two balls and
+        leave to rest, covered, for 30 mins.
     - Cook the pumpkin in water, in a pot or microwave.
     - In a pot add the remaining filling ingredients and a bit more water. Cook for
-      a short while until all amalgamated.
+        a short while until all amalgamated.
     - Grease two pastry tins with olive oil. Roll the pastry and line the tins with
-      it. Prick with a fork.
-    - "Spoon the filling into the pastry and bake 180\xB0 for 30 mins or so."
+        it. Prick with a fork.
+    - Spoon the filling into the pastry and bake 180° for 30 mins or so.
 ingredients:
-  group:
-    - ingredient:
-        - measurement: ml
-          name: olive oil
-          preparation: null
-          quantity: "85"
-        - measurement: ml
-          name: water
-          preparation: null
-          quantity: "85"
-        - measurement: g
-          name: flour
-          preparation: null
-          quantity: "300"
-        - measurement: pinch
-          name: salt
-          preparation: null
-          quantity: "1"
-      name: Dough
-    - ingredient:
-        - measurement: g
-          name: pumpkin flesh
-          preparation: diced
-          quantity: "450"
-        - measurement: ml
-          name: water
-          preparation: null
-          quantity: "85"
-        - measurement: g
-          name: honey
-          preparation: null
-          quantity: "250"
-        - measurement: g
-          name: walnuts
-          preparation: null
-          quantity: "100"
-        - measurement: tsp
-          name: cinnamon
-          preparation: grated
-          quantity: "1"
-        - measurement: tsp
-          name: olive oil
-          preparation: null
-          quantity: "1"
-      name: Filling
-  serves: "1"
+    group:
+    -   ingredient:
+        -   measurement: ml
+            name: olive oil
+            preparation: null
+            quantity: '21.25'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '21.25'
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '75.00'
+        -   measurement: pinch
+            name: salt
+            preparation: null
+            quantity: '0.25'
+        name: Dough
+    -   ingredient:
+        -   measurement: g
+            name: pumpkin flesh
+            preparation: diced
+            quantity: '112.50'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '21.25'
+        -   measurement: g
+            name: honey
+            preparation: null
+            quantity: '62.50'
+        -   measurement: g
+            name: walnuts
+            preparation: null
+            quantity: '25.00'
+        -   measurement: tsp
+            name: cinnamon
+            preparation: grated
+            quantity: '0.25'
+        -   measurement: tsp
+            name: olive oil
+            preparation: null
+            quantity: '0.25'
+        name: Filling
+    serves: 1
 source: Culinaria Greece
-tags:
-  - cake
+tags: []
 title: Pumpkin and Walnut Tart with Olive Oil Pastry

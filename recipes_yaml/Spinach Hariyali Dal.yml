@@ -1,81 +1,80 @@
 cuisine: .india
 description: null
 directions:
-  step:
-  - Pressure cook dal 8 mins with turmeric
-  - Add salt and whisk well
-  - Make the spice paste in mortar
-  - Fry onion and cumin seeds for a couple of mins
-  - Add paste, spices for a few seconds, then remaining veg for a couple of minutes
-  - Add dal and water, cook on low a few mins
+    step:
+    - Pressure cook dal 8 mins with turmeric
+    - Add salt and whisk well
+    - Make the spice paste in mortar
+    - Fry onion and cumin seeds for a couple of mins
+    - Add paste, spices for a few seconds, then remaining veg for a couple of minutes
+    - Add dal and water, cook on low a few mins
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: masoor dal
-      preparation: (split red lentils)
-      quantity: '95'
-    - measurement: tsp
-      name: turmeric
-      preparation: null
-      quantity: '0.5'
-    - measurement: ml
-      name: water
-      preparation: null
-      quantity: '350'
-    name: Dal
-  - ingredient:
-    - measurement: cloves
-      name: garlic
-      preparation: null
-      quantity: '3'
-    - measurement: null
-      name: chillies
-      preparation: deseeded
-      quantity: '3'
-    - measurement: cm
-      name: ginger
-      preparation: grated
-      quantity: '1'
-    name: Spice paste
-  - ingredient:
-    - measurement: null
-      name: onion
-      preparation: chopped
-      quantity: '1'
-    - measurement: tsp
-      name: cumin seeds
-      preparation: null
-      quantity: '1'
-    - measurement: g
-      name: spinach
-      preparation: chopped
-      quantity: '200'
-    - measurement: g
-      name: fenugreek leaves
-      preparation: chopped
-      quantity: '200'
-    - measurement: null
-      name: tomato
-      preparation: peeled, chopped
-      quantity: '1'
-    name: Veg
-  - ingredient:
-    - measurement: tsp
-      name: amchoor
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: turmeri
-      preparation: null
-      quantity: '0.5'
-    - measurement: tsp
-      name: chili
-      preparation: null
-      quantity: '0.5'
-    name: Spices
-  serves: '2'
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: masoor dal
+            preparation: (split red lentils)
+            quantity: '23.75'
+        -   measurement: tsp
+            name: turmeric
+            preparation: null
+            quantity: '0.12'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '87.50'
+        name: Dal
+    -   ingredient:
+        -   measurement: cloves
+            name: garlic
+            preparation: null
+            quantity: '0.75'
+        -   measurement: null
+            name: chillies
+            preparation: deseeded
+            quantity: '0.75'
+        -   measurement: cm
+            name: ginger
+            preparation: grated
+            quantity: '0.25'
+        name: Spice paste
+    -   ingredient:
+        -   measurement: null
+            name: onion
+            preparation: chopped
+            quantity: '0.25'
+        -   measurement: tsp
+            name: cumin seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: g
+            name: spinach
+            preparation: chopped
+            quantity: '50.00'
+        -   measurement: g
+            name: fenugreek leaves
+            preparation: chopped
+            quantity: '50.00'
+        -   measurement: null
+            name: tomato
+            preparation: peeled, chopped
+            quantity: '0.25'
+        name: Veg
+    -   ingredient:
+        -   measurement: tsp
+            name: amchoor
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: turmeri
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: chili
+            preparation: null
+            quantity: '0.12'
+        name: Spices
+    serves: 1
 source: Tarla Dalal
-tags:
-- dal
+tags: []
 title: Spinach Hariyali Dal

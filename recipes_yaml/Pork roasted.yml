@@ -1,0 +1,54 @@
+cuisine: .chinese.cantonese
+description: Cha shao Rou
+directions:
+    step:
+    - cut pork in half and then into long, carrot-like strips
+    - mix marinade ingredienst in bowl and dip meat in it
+    - stand from 2 hrs to overnight, mixing a couple of times
+    - prepare a rack for the portk, and a drip tray below it with 250 ml water in
+        a 200°C over
+    - put pork on top rack, roast 12 m, turn, then another 5 m or until surface is
+        charred around edges and slightly pink inside (6a) rest 6 mins then slice
+        as required (6b) alternatively, let cool, wrap in greaseproof paper and store
+        in fridge up to 4 days
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: pork tenderloin
+            preparation: null
+            quantity: '125.00'
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.50'
+        -   measurement: tsp
+            name: soy sauce
+            preparation: dark
+            quantity: '0.38'
+        -   measurement: '5'
+            name: Tbsp
+            preparation: sugar
+            quantity: '0.25'
+        -   measurement: tsp
+            name: five spice
+            preparation: ground
+            quantity: '0.38'
+        -   measurement: tsp
+            name: bicarbonate
+            preparation: null
+            quantity: '0.19'
+        -   measurement: tsp
+            name: garlic
+            preparation: crushed
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: oil
+            preparation: null
+            quantity: '0.38'
+        name: Marinade
+    serves: 1
+source: ''
+tags:
+- with rice
+title: Pork, roasted

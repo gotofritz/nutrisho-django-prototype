@@ -1,67 +1,67 @@
 cuisine: .korean
 description: null
 directions:
-  step:
-  - Mix all the marinade ingredients except honey in a food processor
-  - Marinade the meat and leave in fridge at least 4 hr
-  - Shake excess marinade from ribs and put them on a baking tray. Keep the marinade
-  - "Bake 2.5 to 3 hrs, 160\xB0"
-  - Mix the remaining marinade and honey in a pot, and reduce
-  - Pour over one side of ribs, broil 5-10 mins
-  - Cut individual ribs, arrange on plate, and sprinkle garnish on top
+    step:
+    - Mix all the marinade ingredients except honey in a food processor
+    - Marinade the meat and leave in fridge at least 4 hr
+    - Shake excess marinade from ribs and put them on a baking tray. Keep the marinade
+    - Bake 2.5 to 3 hrs, 160°
+    - Mix the remaining marinade and honey in a pot, and reduce
+    - Pour over one side of ribs, broil 5-10 mins
+    - Cut individual ribs, arrange on plate, and sprinkle garnish on top
 ingredients:
-  group:
-  - ingredient:
-      measurement: kg
-      name: baby pork ribs
-      preparation: null
-      quantity: 1.3/5
-    name: meat
-  - ingredient:
-    - measurement: ml
-      name: soy sauce
-      preparation: null
-      quantity: '120'
-    - measurement: ml
-      name: rice vinegar
-      preparation: null
-      quantity: '30'
-    - measurement: ml
-      name: sesame oil
-      preparation: null
-      quantity: '30'
-    - measurement: ml
-      name: paprika
-      preparation: null
-      quantity: '30'
-    - measurement: cloves
-      name: garlic
-      preparation: null
-      quantity: '8'
-    - measurement: cm
-      name: ginger
-      preparation: null
-      quantity: '2'
-    - measurement: medium
-      name: onion
-      preparation: null
-      quantity: '1'
-    - measurement: ml
-      name: honey
-      preparation: null
-      quantity: '60'
-    name: Marinade
-  - ingredient:
-    - measurement: tsp
-      name: sesame seeds
-      preparation: null
-      quantity: '1'
-    - measurement: tbsp
-      name: spring onions
-      preparation: green rings
-      quantity: '1'
-    name: garnish
-  serves: '4'
+    group:
+    -   ingredient:
+        -   measurement: kg
+            name: baby pork ribs
+            preparation: null
+            quantity: '0.06'
+        name: meat
+    -   ingredient:
+        -   measurement: ml
+            name: soy sauce
+            preparation: null
+            quantity: '30.00'
+        -   measurement: ml
+            name: rice vinegar
+            preparation: null
+            quantity: '7.50'
+        -   measurement: ml
+            name: sesame oil
+            preparation: null
+            quantity: '7.50'
+        -   measurement: ml
+            name: paprika
+            preparation: null
+            quantity: '7.50'
+        -   measurement: cloves
+            name: garlic
+            preparation: null
+            quantity: '2.00'
+        -   measurement: cm
+            name: ginger
+            preparation: null
+            quantity: '0.50'
+        -   measurement: medium
+            name: onion
+            preparation: null
+            quantity: '0.25'
+        -   measurement: ml
+            name: honey
+            preparation: null
+            quantity: '15.00'
+        name: Marinade
+    -   ingredient:
+        -   measurement: tsp
+            name: sesame seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: spring onions
+            preparation: green rings
+            quantity: '0.25'
+        name: garnish
+    serves: 1
 source: https://www.reddit.com/r/recipegifs/comments/5vvaq7/koreanstyle_ribs/
 tags:
 - meat

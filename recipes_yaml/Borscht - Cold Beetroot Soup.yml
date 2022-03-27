@@ -1,50 +1,49 @@
 cuisine: .jewish
 description: This is one the great Jewish standbys of the deli trade. If you are pressed
-  for time and do not want to boil raw beetroots, use two jars of the borscht available
-  in jars in supermarkets. That is what I often do.
+    for time and do not want to boil raw beetroots, use two jars of the borscht available
+    in jars in supermarkets. That is what I often do.
 directions:
-  '#text': '>'
-  step:
-  - Peel the beetroots and dice them. If they are young that is easy to do. (If they
-    are old and too hard to cut, simply cut them in half and when they have softened
-    with boiling, lift them out, cut them up and put them back in the pan). Put the
-    beetroots in a pan with 2 litres of water and salt and pepper and simmer for 1
-    1/2 hours. Let the soup cool then chill, covered, in the refrigerator. Add the
-    lemon and sugar to taste before serving (these could be added when the soup is
-    hot but it is more difficult to decide the intensity of the flavouring). Remove
-    some of the beetroot pieces with a slotted spoon if they seem too much and keep
-    them for a salad.
-  - Serve, if you like, with a boiled potato, putting one in each plate. Pass round
-    the sour cream for everyone to help themselves.
+    step:
+    - Peel the beetroots and dice them. If they are young that is easy to do. (If
+        they are old and too hard to cut, simply cut them in half and when they have
+        softened with boiling, lift them out, cut them up and put them back in the
+        pan). Put the beetroots in a pan with 2 litres of water and salt and pepper
+        and simmer for 1 1/2 hours. Let the soup cool then chill, covered, in the
+        refrigerator. Add the lemon and sugar to taste before serving (these could
+        be added when the soup is hot but it is more difficult to decide the intensity
+        of the flavouring). Remove some of the beetroot pieces with a slotted spoon
+        if they seem too much and keep them for a salad.
+    - Serve, if you like, with a boiled potato, putting one in each plate. Pass round
+        the sour cream for everyone to help themselves.
 ingredients:
-  group:
-    ingredient:
-    - measurement: kg
-      name: raw beetroots
-      preparation: null
-      quantity: '1'
-    - measurement: little
-      name: A little salt and pepper
-      preparation: null
-      quantity: null
-    - measurement: null
-      name: The juice of 1 lemon
-      preparation: null
-      quantity: '1'
-    - measurement: Tbsp
-      name: of sugar or to taste
-      preparation: null
-      quantity: '2'
-    - measurement: null
-      name: peeled boiled potatoes (optional)
-      preparation: null
-      quantity: '6'
-    - measurement: ml
-      name: sour cream to pass around
-      preparation: null
-      quantity: '300'
-  serves: Serves 6
-source: null
-tags:
-- cold
+    group:
+    -   ingredient:
+        -   measurement: kg
+            name: raw beetroots
+            preparation: null
+            quantity: '0.25'
+        -   measurement: little
+            name: A little salt and pepper
+            preparation: null
+            quantity: null
+        -   measurement: null
+            name: The juice of 1 lemon
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: of sugar or to taste
+            preparation: null
+            quantity: '0.50'
+        -   measurement: null
+            name: peeled boiled potatoes (optional)
+            preparation: null
+            quantity: '1.50'
+        -   measurement: ml
+            name: sour cream to pass around
+            preparation: null
+            quantity: '75.00'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Borscht - Cold Beetroot Soup

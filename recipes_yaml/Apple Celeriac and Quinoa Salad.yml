@@ -1,0 +1,66 @@
+cuisine: .european.modern
+description: null
+directions:
+    step:
+    - Cook the quinoa for 10 mins in water, then drain and cool in cold water
+    - Mix the vinegar, sugar and salt in a bowl, then add the onion and rub in the
+        liquid
+    - Add the oil and leave to marinade
+    - Mix the celeriac and apple julienne with the lemon juice
+    - Add the onion marinade, the quinoa, and seasonings to the celeriac and apple
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: tbsp
+            name: wine vinegar
+            preparation: null
+            quantity: '0.75'
+        -   measurement: tbsp
+            name: sugar
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: onion
+            preparation: sliced thinkly
+            quantity: '0.25'
+        -   measurement: ml
+            name: oil, rapeseed
+            preparation: null
+            quantity: '15.00'
+        name: Onion dressing
+    -   ingredient:
+        -   measurement: tsp
+            name: poppy seeds
+            preparation: null
+            quantity: '0.50'
+        -   measurement: null
+            name: chillies
+            preparation: deseeded and sliced
+            quantity: '0.50'
+        -   measurement: g
+            name: coriander leaves
+            preparation: chopped
+            quantity: '3.75'
+        name: Seasoning
+    -   ingredient:
+        -   measurement: g
+            name: quinoa
+            preparation: null
+            quantity: '30.00'
+        -   measurement: g
+            name: apple
+            preparation: (weight after coring)
+            quantity: '87.50'
+        -   measurement: g
+            name: celeriac
+            preparation: (weight after peeling)
+            quantity: '62.50'
+        name: Salad
+    serves: 1
+source: Ottolenghi
+tags: []
+title: Apple, Celeriac, and Quinoa Salad

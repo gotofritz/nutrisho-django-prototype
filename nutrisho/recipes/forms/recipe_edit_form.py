@@ -19,9 +19,9 @@ PREFIX_INGREDIENT = "ingredient"
 class RecipeEditForm(forms.ModelForm):
     class Meta:
         model = Recipe
-        fields = ["name", "short_description"]
+        fields = ["recipe_name", "short_description"]
 
-    name = forms.CharField(required=False, max_length=200)
+    recipe_name = forms.CharField(required=False, max_length=200)
     short_description = forms.CharField(
         required=False, max_length=512, widget=forms.Textarea
     )
@@ -69,7 +69,7 @@ class RecipeEditForm(forms.ModelForm):
         for i in range(len(groups)):
             group_field_name = f"{PREFIX_GROUP}-{i}"
             try:
-                field_text = groups[i].name
+                field_text = groups[i].group_name
             except IndexError:
                 field_text = ""
             extra_fields[group_field_name] = forms.CharField(required=False)
@@ -107,7 +107,7 @@ class RecipeEditForm(forms.ModelForm):
                 ingredient_field_name = (
                     f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-name"
                 )
-                field_text = ingredients[j].ingredient.name or ""
+                field_text = ingredients[j].ingredient.ingredient_name or ""
                 extra_fields[ingredient_field_name] = forms.CharField(
                     required=False,
                     widget=forms.TextInput(attrs={"class": "ingredient-name"}),

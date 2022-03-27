@@ -1,0 +1,61 @@
+cuisine: null
+description: null
+directions:
+    step:
+    - Boil potatoes in salted water, 15 mins
+    - Sauté the onion in 40g of the butter over a moderate to low heat, twenty to
+        twenty-five minutes to become thoroughly soft and sticky.
+    - Bring the milk to the boil and turn off the heat.
+    - Drain the potatoes, then tip them into the bowl of a food mixer fitted with
+        a beater attachment. Mix as you slowly add the milk and the remaining butter.
+        Beat to a smooth mash, stopping well before it becomes gluey.
+    - Set the oven at 200C/400F/Gas 6. Butter the base and sides of a heavy 28cm/11in
+        frying pan with a metal handle or a similar diameter baking dish - I use a
+        black, cast-iron frying pan. Spoon in half the mashed potato, smooth the potato
+        a little, then add the onions and a grinding of black pepper. Crumble the
+        Stilton over the onions. Pile the rest of the mashed potato over the top and
+        smooth lightly with the back of the spoon or a rubber spatula.
+    - Dust over the grated parmesan, then bake for twenty-five to thirty minutes,
+        by which time the top will be pale gold and the filling will be bubbling up
+        around the edges.
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: kg
+            name: potatoes
+            preparation: peeled, quartered
+            quantity: '0.38'
+        -   measurement: null
+            name: salt
+            preparation: null
+            quantity: null
+        -   measurement: medium
+            name: onions
+            preparation: halved and cut into 5 or 6 segments
+            quantity: '1.00'
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '20.00'
+        -   measurement: ml
+            name: milk
+            preparation: null
+            quantity: '37.50'
+        -   measurement: null
+            name: pepper
+            preparation: null
+            quantity: null
+        -   measurement: g
+            name: stilton
+            preparation: null
+            quantity: '56.25'
+        -   measurement: g
+            name: parmesan
+            preparation: grated
+            quantity: '6.25'
+        name: null
+    serves: 1
+source: ''
+tags:
+- pie
+title: Stilton, onion and potato pie

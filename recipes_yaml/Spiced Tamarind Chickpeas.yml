@@ -1,68 +1,66 @@
 cuisine: .fusion.australia
 description: null
 directions:
-  step:
-    - Soak the chickpeas overnight, then cook 10 mins vigorously and 40 on medium, or
-      in a pressure cooker
+    step:
+    - Soak the chickpeas overnight, then cook 10 mins vigorously and 40 on medium,
+        or in a pressure cooker
     - Soak the tamarind in 140 ml of the chickpea water, then sieve forcing as much
-      of the tamarind flesh through as you can
-    - "Saut\xE9 the onion for 4 mins, then add the garlic, ginger and chilli, for 3\
-      \ mins"
+        of the tamarind flesh through as you can
+    - Sauté the onion for 4 mins, then add the garlic, ginger and chilli, for 3 mins
     - Add the spices for another 2 mins
     - Add the tomatoes and coriander stalks and cook vigorously until dark
     - Mix the drained chickpeas with the tamarind liquid and the tomatoes, then cover
-      with some of the reserved liquid and cook on medium for 30 mins
+        with some of the reserved liquid and cook on medium for 30 mins
     - Serve garnished with coriander leaves
 ingredients:
-  group:
-    - ingredient:
-        - measurement: g
-          name: chickpeas, dried
-          preparation: null
-          quantity: "220"
-        - measurement: g
-          name: tamarind
-          preparation: null
-          quantity: "20"
-      name: Chickpeas
-    - ingredient:
-        - measurement: null
-          name: onion
-          preparation: sliced
-          quantity: "1"
-        - measurement: cloves
-          name: garlic
-          preparation: chopped finely
-          quantity: "2"
-        - measurement: tsp
-          name: ginger
-          preparation: grated
-          quantity: "2"
-        - measurement: null
-          name: chillies, fresh
-          preparation: deseeded and sliced
-          quantity: "3"
-        - measurement: g
-          name: tomatoes
-          preparation: peeked, chopped
-          quantity: "130"
-        - measurement: handful
-          name: coriander
-          preparation: stalks chopped finely, leaves for garnish
-          quantity: null
-      name: Sauce base
-    - ingredient:
-        - measurement: tsp
-          name: turmeric
-          preparation: null
-          quantity: "0.5"
-        - measurement: tso
-          name: garam masala
-          preparation: null
-          quantity: "1"
-      name: Spices
-  serves: "4"
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: chickpeas, dried
+            preparation: null
+            quantity: '55.00'
+        -   measurement: g
+            name: tamarind
+            preparation: null
+            quantity: '5.00'
+        name: Chickpeas
+    -   ingredient:
+        -   measurement: null
+            name: onion
+            preparation: sliced
+            quantity: '0.25'
+        -   measurement: cloves
+            name: garlic
+            preparation: chopped finely
+            quantity: '0.50'
+        -   measurement: tsp
+            name: ginger
+            preparation: grated
+            quantity: '0.50'
+        -   measurement: null
+            name: chillies, fresh
+            preparation: deseeded and sliced
+            quantity: '0.75'
+        -   measurement: g
+            name: tomatoes
+            preparation: peeked, chopped
+            quantity: '32.50'
+        -   measurement: handful
+            name: coriander
+            preparation: stalks chopped finely, leaves for garnish
+            quantity: null
+        name: Sauce base
+    -   ingredient:
+        -   measurement: tsp
+            name: turmeric
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tso
+            name: garam masala
+            preparation: null
+            quantity: '0.25'
+        name: Spices
+    serves: 1
 source: That ozzie chap
-tags:
-  - side
+tags: []
 title: Spiced Tamarind Chickpeas

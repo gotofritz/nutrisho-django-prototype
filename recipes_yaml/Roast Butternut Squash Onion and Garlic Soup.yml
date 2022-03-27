@@ -1,0 +1,64 @@
+cuisine: null
+description: I love to serve this soup quite thick and velvety but you can thin it
+    by simply adding more stock, milk or cream. If you happen to have some truffle
+    oil in your cupboard, a little drizzle on top would be a perfect finish.
+directions:
+    step:
+    - Preheat an oven to 200 C.
+    - Place the squash halves, onion and garlic in a roasting tin that fill fit all
+        the vegetables snugly in a single layer. Tuck the thyme sprigs amongst the
+        vegetables and drizzle with the olive oil. Scatter the chile flakes over top
+        and season generously with the salt and pepper
+    - Cover the baking dish tightly with foil and roast the vegetables for an hour
+        or until very soft. Allow to cool slightly, then scoop the squash and onion
+        flesh from their skins with a large spoon and place them into the bowl of
+        a food processor. Squeeze the head of garlic so that the cloves 'ooze' out
+        and add them to the squash and onion. Process in the food processor until
+        smooth.
+    - Place the squash purée in a soup pot and whisk in the stock, milk or cream until
+        it reaches your desired consistency. Warm the soup gently until heated through
+        and check the seasoning for salt and pepper.
+    - Serve ladelled into bowls with a dollop of crème fraîche and a scattering of
+        pine nuts on top.
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: squash
+            preparation: butternut
+            quantity: '0.25'
+        -   measurement: null
+            name: onion
+            preparation: halved with the skin left on
+            quantity: '0.25'
+        -   measurement: head
+            name: garlic
+            preparation: with just the pointy top sliced off
+            quantity: '0.25'
+        -   measurement: sprigs
+            name: thyme
+            preparation: null
+            quantity: '1.00'
+        -   measurement: Tbsp
+            name: oil
+            preparation: olive
+            quantity: '1.25'
+        -   measurement: tsp
+            name: chili flakes
+            preparation: null
+            quantity: '0.25'
+        name: null
+    -   ingredient:
+        -   measurement: null
+            name: stock
+            preparation: milk and/or cream to thin
+            quantity: null
+        -   measurement: null
+            name: cr\U00e8me fra\U00eeche and toasted pine nuts to serve
+            preparation: null
+            quantity: null
+        name: Optional
+    serves: 1
+source: ''
+tags: []
+title: Roast Butternut Squash, Onion and Garlic Soup

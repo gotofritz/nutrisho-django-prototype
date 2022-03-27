@@ -1,108 +1,107 @@
 cuisine: .india.gujarat
 description: null
 directions:
-  step:
-  - Pressure cook dal 8 mins with yam, peanuts, dates
-  - Remove potato, add salt and whisk well
-  - Dice potato
-  - Fry the spices in ghee until the mustard seeds pop, 3/4 mins
-  - Add the veg and simmer 10 mins
-  - Mix with cooked dal and potato, simmer another 10 mins
-  - Serve with chopped coriander
+    step:
+    - Pressure cook dal 8 mins with yam, peanuts, dates
+    - Remove potato, add salt and whisk well
+    - Dice potato
+    - Fry the spices in ghee until the mustard seeds pop, 3/4 mins
+    - Add the veg and simmer 10 mins
+    - Mix with cooked dal and potato, simmer another 10 mins
+    - Serve with chopped coriander
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: toovar dal
-      preparation: null
-      quantity: '95'
-    - measurement: ml
-      name: water
-      preparation: null
-      quantity: '500'
-    - measurement: g
-      name: potato
-      preparation: peeled
-      quantity: '150'
-    - measurement: tbsp
-      name: peanutes
-      preparation: null
-      quantity: '1'
-    - measurement: null
-      name: date
-      preparation: coarsely chopped
-      quantity: '1'
-    name: Dal
-  - ingredient:
-    - measurement: tsp
-      name: mustard seeds
-      preparation: null
-      quantity: '0.25'
-    - measurement: tsp
-      name: cumin seeds
-      preparation: null
-      quantity: '0.25'
-    - measurement: tsp
-      name: fenugreek
-      preparation: null
-      quantity: '0.25'
-    - measurement: curry
-      name: leaves
-      preparation: null
-      quantity: '6'
-    - measurement: null
-      name: cloves
-      preparation: null
-      quantity: '2'
-    - measurement: stick
-      name: cinnamon
-      preparation: null
-      quantity: '1'
-    - measurement: leaf
-      name: bay
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: assafoetida
-      preparation: null
-      quantity: '0.5'
-    name: Spices
-  - ingredient:
-    - measurement: pieces
-      name: kokum
-      preparation: soaked, or tamarind
-      quantity: '4'
-    - measurement: null
-      name: tomato
-      preparation: chopped
-      quantity: '1'
-    - measurement: tbsp
-      name: jaggery
-      preparation: null
-      quantity: '1'
-    - measurement: cm
-      name: ginger
-      preparation: grated
-      quantity: '1'
-    - measurement: null
-      name: chillies
-      preparation: deseeded
-      quantity: '2'
-    - measurement: ml
-      name: water
-      preparation: null
-      quantity: '300'
-    - measurement: tsp
-      name: turmeric
-      preparation: null
-      quantity: '0.5'
-    - measurement: tsp
-      name: chili
-      preparation: null
-      quantity: '0.5'
-    name: Veg
-  serves: '2'
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: toovar dal
+            preparation: null
+            quantity: '23.75'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '125.00'
+        -   measurement: g
+            name: potato
+            preparation: peeled
+            quantity: '37.50'
+        -   measurement: tbsp
+            name: peanutes
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: date
+            preparation: coarsely chopped
+            quantity: '0.25'
+        name: Dal
+    -   ingredient:
+        -   measurement: tsp
+            name: mustard seeds
+            preparation: null
+            quantity: '0.06'
+        -   measurement: tsp
+            name: cumin seeds
+            preparation: null
+            quantity: '0.06'
+        -   measurement: tsp
+            name: fenugreek
+            preparation: null
+            quantity: '0.06'
+        -   measurement: curry
+            name: leaves
+            preparation: null
+            quantity: '1.50'
+        -   measurement: null
+            name: cloves
+            preparation: null
+            quantity: '0.50'
+        -   measurement: stick
+            name: cinnamon
+            preparation: null
+            quantity: '0.25'
+        -   measurement: leaf
+            name: bay
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: assafoetida
+            preparation: null
+            quantity: '0.12'
+        name: Spices
+    -   ingredient:
+        -   measurement: pieces
+            name: kokum
+            preparation: soaked, or tamarind
+            quantity: '1.00'
+        -   measurement: null
+            name: tomato
+            preparation: chopped
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: jaggery
+            preparation: null
+            quantity: '0.25'
+        -   measurement: cm
+            name: ginger
+            preparation: grated
+            quantity: '0.25'
+        -   measurement: null
+            name: chillies
+            preparation: deseeded
+            quantity: '0.50'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '75.00'
+        -   measurement: tsp
+            name: turmeric
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: chili
+            preparation: null
+            quantity: '0.12'
+        name: Veg
+    serves: 1
 source: Tarla Dalal
-tags:
-- dal
+tags: []
 title: Yam Gujarati dal

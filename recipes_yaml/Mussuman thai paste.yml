@@ -1,81 +1,76 @@
 cuisine: .thai
 description: null
 directions:
-  '#text': '>
-
-
-
-
-    >'
-  step:
-  - dry roast the spices and crush them in mortar
-  - wet roast vegetables in a little water in wok
-  - "pur\xE8e the roasted veg, add the salt, peanuts, sieved roasted spices"
+    step:
+    - dry roast the spices and crush them in mortar
+    - wet roast vegetables in a little water in wok
+    - purèe the roasted veg, add the salt, peanuts, sieved roasted spices
 ingredients:
-  group:
-    ingredient:
-    - measurement: null
-      name: dried chillies
-      preparation: desseeded
-      quantity: '5'
-    - measurement: Tbsp
-      name: shallots
-      preparation: chopped
-      quantity: '4'
-    - measurement: Tbsp
-      name: garlic cloves
-      preparation: chopped
-      quantity: '5'
-    - measurement: Tbsp
-      name: galangal
-      preparation: chopped
-      quantity: '2'
-    - measurement: Tbsp
-      name: lemongrass
-      preparation: chopped
-      quantity: '3'
-    - measurement: Tbsp
-      name: coriander root
-      preparation: scraped
-      quantity: '1'
-    - measurement: pinch
-      name: salt
-      preparation: null
-      quantity: null
-    - measurement: Tbsp
-      name: peanuts
-      preparation: roasted
-      quantity: '2'
-    - measurement: Tbsp
-      name: coriander seeds
-      preparation: roasted
-      quantity: '1'
-    - measurement: tsp
-      name: cumin seeds
-      preparation: roasted
-      quantity: '1'
-    - measurement: null
-      name: cloves
-      preparation: roasted
-      quantity: '5'
-    - measurement: null
-      name: nutmeg
-      preparation: roasted
-      quantity: '0.5'
-    - measurement: sheats
-      name: mace
-      preparation: roasted
-      quantity: '2'
-    - measurement: cm
-      name: cassia bark
-      preparation: roasted
-      quantity: '2'
-    - measurement: null
-      name: cardamom pods
-      preparation: roasted
-      quantity: '4'
-  serves: null
-source: null
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: dried chillies
+            preparation: desseeded
+            quantity: '1.25'
+        -   measurement: Tbsp
+            name: shallots
+            preparation: chopped
+            quantity: '1.00'
+        -   measurement: Tbsp
+            name: garlic cloves
+            preparation: chopped
+            quantity: '1.25'
+        -   measurement: Tbsp
+            name: galangal
+            preparation: chopped
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: lemongrass
+            preparation: chopped
+            quantity: '0.75'
+        -   measurement: Tbsp
+            name: coriander root
+            preparation: scraped
+            quantity: '0.25'
+        -   measurement: pinch
+            name: salt
+            preparation: null
+            quantity: null
+        -   measurement: Tbsp
+            name: peanuts
+            preparation: roasted
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: coriander seeds
+            preparation: roasted
+            quantity: '0.25'
+        -   measurement: tsp
+            name: cumin seeds
+            preparation: roasted
+            quantity: '0.25'
+        -   measurement: null
+            name: cloves
+            preparation: roasted
+            quantity: '1.25'
+        -   measurement: null
+            name: nutmeg
+            preparation: roasted
+            quantity: '0.12'
+        -   measurement: sheats
+            name: mace
+            preparation: roasted
+            quantity: '0.50'
+        -   measurement: cm
+            name: cassia bark
+            preparation: roasted
+            quantity: '0.50'
+        -   measurement: null
+            name: cardamom pods
+            preparation: roasted
+            quantity: '1.00'
+        name: null
+    serves: 1
+source: ''
 tags:
 - basics
 title: Mussuman thai paste

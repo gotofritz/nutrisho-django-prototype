@@ -1,33 +1,33 @@
 cuisine: .italian
 description: Wholesome side dish
 directions:
-  step:
-  - Separate the green from the whites
-  - Cook the whites with the potatoes, salt, a couple of drops of olive oil, and a
-    couple of drops of soya sauce for 15 mins
-  - Add the greens, for another 5 mins
-  - Chope the chard, toss them with some olive oil, salt and pepper, and layer a baking
-    tray with them
-  - Mash the potatoes, mix them with the parmesan
-  - Layer the mashed potatoes at the top of the baking tray
-  - "Grill at 200\xB0 for 10 mins"
+    step:
+    - Separate the green from the whites
+    - Cook the whites with the potatoes, salt, a couple of drops of olive oil, and
+        a couple of drops of soya sauce for 15 mins
+    - Add the greens, for another 5 mins
+    - Chope the chard, toss them with some olive oil, salt and pepper, and layer a
+        baking tray with them
+    - Mash the potatoes, mix them with the parmesan
+    - Layer the mashed potatoes at the top of the baking tray
+    - Grill at 200° for 10 mins
 ingredients:
-  group:
-    ingredient:
-    - measurement: g
-      name: chard
-      preparation: null
-      quantity: '800'
-    - measurement: g
-      name: potatoes
-      preparation: peeled
-      quantity: '800'
-    - measurement: g
-      name: parmesan
-      preparation: grated
-      quantity: '50'
-    name: null
-  serves: '4'
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: chard
+            preparation: null
+            quantity: '200.00'
+        -   measurement: g
+            name: potatoes
+            preparation: peeled
+            quantity: '200.00'
+        -   measurement: g
+            name: parmesan
+            preparation: grated
+            quantity: '12.50'
+        name: null
+    serves: 1
 source: web
 tags:
 - veg

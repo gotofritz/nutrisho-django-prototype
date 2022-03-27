@@ -1,0 +1,79 @@
+cuisine: .indian.punjab
+description: null
+directions:
+    step:
+    - Sauté carrots in the ghee, or butter and oil mixture, for a few minutes on high
+        heat
+    - Add ginger, then remaining curry ingredients. Bring to boil then lower heat
+        and cover.
+    - Cook covered 20-30 mins. Time depends on toughness of carrots. Add water as
+        needed.
+    - When almost done, increase heat, uncover and toss until all liquid has evaporated.
+    - Remove from heat and toss in butter, chopped coriander, lemon juice, and nutmeg.
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: carrots
+            preparation: peeled
+            quantity: '112.50'
+        -   measurement: Tbsp
+            name: ghee
+            preparation: or oil and butter mixture
+            quantity: '0.50'
+        -   measurement: tsp
+            name: ginger
+            preparation: peeled and grated
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: jaggery
+            preparation: grated, or brown sugar
+            quantity: '0.50'
+        -   measurement: tsp
+            name: turmeric
+            preparation: null
+            quantity: '0.06'
+        -   measurement: tsp
+            name: cardamom pods
+            preparation: crushed
+            quantity: '0.06'
+        -   measurement: tsp
+            name: ground coriander
+            preparation: null
+            quantity: '0.06'
+        -   measurement: Tbsp
+            name: orange juice
+            preparation: or apple juice
+            quantity: '0.50'
+        -   measurement: ml
+            name: water
+            preparation: carbonated of from tap
+            quantity: '40.00'
+        -   measurement: tsp
+            name: pepper
+            preparation: null
+            quantity: '0.12'
+        name: Curry
+    -   ingredient:
+        -   measurement: Tbsp
+            name: coriander leaves
+            preparation: chopped finely
+            quantity: '0.50'
+        -   measurement: tsp
+            name: lemon juice
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: nutmeg
+            preparation: grated
+            quantity: '0.06'
+        -   measurement: Tbsp
+            name: ghee
+            preparation: or butter
+            quantity: '0.25'
+        name: Garnish
+    serves: 1
+source: Hare Krishna
+tags:
+- vegetable
+title: Carrot curry / Gajar Sabji

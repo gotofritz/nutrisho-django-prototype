@@ -1,72 +1,71 @@
 cuisine: .chinese
 description: Chung Bing
 directions:
-  '#text': '>'
-  step:
-  - blanch carrot and celery 1.5m
-  - blacnh bamboo shots, cabbage, bean sprouts, spring onions 1m
-  - combine all ingredients together
-  - stuff spring rolls deep fry and serve with soy sauce
+    step:
+    - blanch carrot and celery 1.5m
+    - blacnh bamboo shots, cabbage, bean sprouts, spring onions 1m
+    - combine all ingredients together
+    - stuff spring rolls deep fry and serve with soy sauce
 ingredients:
-  group:
-  - ingredient:
-    - measurement: null
-      name: dried mushrooms
-      preparation: soaked 25m
-      quantity: '3'
-    - measurement: cm
-      name: dried black fungus
-      preparation: soaked 25 m
-      quantity: '4'
-    - measurement: g
-      name: carrots
-      preparation: julienne
-      quantity: '75'
-    - measurement: g
-      name: celery
-      preparation: julienned
-      quantity: '50'
-    - measurement: g
-      name: bamboo shots
-      preparation: julienned
-      quantity: '40'
-    - measurement: g
-      name: cabbage
-      preparation: napa
-      quantity: '60'
-    - measurement: g
-      name: bean sprouts
-      preparation: null
-      quantity: '45'
-    - measurement: null
-      name: spring onions
-      preparation: julienned
-      quantity: '2'
-    - measurement: Tbsp
-      name: hoisin sauce
-      preparation: null
-      quantity: '2'
-    - measurement: Tbsp
-      name: cornstarch
-      preparation: or tapioca
-      quantity: '1'
-    name: Filling
-  - ingredient:
-    - measurement: null
-      name: 13cm spring rolls square
-      preparation: null
-      quantity: '20'
-    - measurement: cups
-      name: oil
-      preparation: groundnut
-      quantity: '2'
-    - measurement: Tbsp
-      name: light soy sauce
-      preparation: null
-      quantity: '2'
-    name: Spring Rolls
-  serves: null
-source: null
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: dried mushrooms
+            preparation: soaked 25m
+            quantity: '0.75'
+        -   measurement: cm
+            name: dried black fungus
+            preparation: soaked 25 m
+            quantity: '1.00'
+        -   measurement: g
+            name: carrots
+            preparation: julienne
+            quantity: '18.75'
+        -   measurement: g
+            name: celery
+            preparation: julienned
+            quantity: '12.50'
+        -   measurement: g
+            name: bamboo shots
+            preparation: julienned
+            quantity: '10.00'
+        -   measurement: g
+            name: cabbage
+            preparation: napa
+            quantity: '15.00'
+        -   measurement: g
+            name: bean sprouts
+            preparation: null
+            quantity: '11.25'
+        -   measurement: null
+            name: spring onions
+            preparation: julienned
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: hoisin sauce
+            preparation: null
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: cornstarch
+            preparation: or tapioca
+            quantity: '0.25'
+        name: Filling
+    -   ingredient:
+        -   measurement: null
+            name: 13cm spring rolls square
+            preparation: null
+            quantity: '5.00'
+        -   measurement: cups
+            name: oil
+            preparation: groundnut
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: light soy sauce
+            preparation: null
+            quantity: '0.50'
+        name: Spring Rolls
+    serves: 1
+source: ''
 tags:
 - snack
 title: Vegeterian Spring Rolls

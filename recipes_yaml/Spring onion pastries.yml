@@ -1,45 +1,43 @@
 cuisine: .chinese
 description: You Yuan
 directions:
-  '#text': '>'
-  step:
-  - sift 315g flour into a bowl, make a well in the middle, and pour 250ml boiling
-    water
-  - work quickly into a dough
-  - make a ball and brush lightly with sesame oil. rest covered 5m
-  - knead some more until rubbery, rub with more sesame oil, place in plastic bag
-    60m
-  - roll into  a log 25 cm long and split into 6
-  - roll each into a very thin 18 cm disk, rub with sesame oil, sprinkle salt, 3 chopped
-    spring onions each
-  - roll into a cigar
-  - twist into a tight coil
-  - flatten coil into a 13cm disk
-  - shallo fry  3m oin each side
+    step:
+    - sift 315g flour into a bowl, make a well in the middle, and pour 250ml boiling
+        water
+    - work quickly into a dough
+    - make a ball and brush lightly with sesame oil. rest covered 5m
+    - knead some more until rubbery, rub with more sesame oil, place in plastic bag
+        60m
+    - roll into a log 25 cm long and split into 6
+    - roll each into a very thin 18 cm disk, rub with sesame oil, sprinkle salt, 3
+        chopped spring onions each
+    - roll into a cigar
+    - twist into a tight coil
+    - flatten coil into a 13cm disk
+    - shallo fry 3m oin each side
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: flour
-      preparation: plain
-      quantity: '315'
-    - measurement: ml
-      name: water
-      preparation: boiling
-      quantity: '250'
-    - measurement: null
-      name: untitled ingredient
-      preparation: null
-      quantity: null
-    name: Pastry
-  - ingredient:
-      measurement: g
-      name: spring onions
-      preparation: chopped
-      quantity: '110'
-    name: Stuffing
-  serves: null
-source: null
-tags:
-- snack
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: flour
+            preparation: plain
+            quantity: '78.75'
+        -   measurement: ml
+            name: water
+            preparation: boiling
+            quantity: '62.50'
+        -   measurement: null
+            name: untitled ingredient
+            preparation: null
+            quantity: null
+        name: Pastry
+    -   ingredient:
+        -   measurement: g
+            name: spring onions
+            preparation: chopped
+            quantity: '27.50'
+        name: Stuffing
+    serves: 1
+source: ''
+tags: []
 title: Spring onion pastries

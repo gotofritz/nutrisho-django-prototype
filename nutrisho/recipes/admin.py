@@ -19,7 +19,7 @@ class CuisineAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ("name",)
+    list_display = ("recipe_name",)
 
 
 @admin.register(Tag)
@@ -29,7 +29,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(IngredientGroup)
 class IngredientGroupAdmin(admin.ModelAdmin):
-    list_display = ("name", "recipe", "index_in_sequence")
+    list_display = ("group_name", "recipe", "index_in_sequence")
 
 
 @admin.register(IngredientInRecipe)
@@ -44,7 +44,7 @@ class StepAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ("name",)
+    list_display = ("ingredient_name",)
 
 
 @admin.register(Source)

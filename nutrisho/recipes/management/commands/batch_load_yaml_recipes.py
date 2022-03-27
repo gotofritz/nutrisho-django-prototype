@@ -15,7 +15,7 @@ from recipes.models.tag import Tag
 
 
 class Command(BaseCommand):
-    help = "Adds a single recipe (pass it as arg)"
+    help = "Adds a single recipe or a directory. Source must be yml"
 
     @classmethod
     def clean(cls, s):
@@ -31,11 +31,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         user = User.objects.get(username="gotofritz")
 
-        # files_to_load = [x for x in p.iterdir() if x.is_dir() else x]
-        files_to_load = [
-            Path(x).glob("*.yml") if Path(x).is_dir() else Path(x)
-            for x in options["paths"]
-        ]
         files_to_load = []
         for passed_path in [Path(x) for x in options["paths"]]:
             if passed_path.is_dir():
@@ -58,9 +53,9 @@ class Command(BaseCommand):
                     cuisine = None
 
                 recipe, _ = Recipe.objects.get_or_create(
-                    name=Command.clean(recipe_dict["title"]),
+                    recipe_name=Command.clean(recipe_dict["title"]),
                     short_description=Command.clean(recipe_dict["description"]),
-                    source_instance=recipe_dict["source"],
+                    source_instance=recipe_dict["source"] or "",
                     owner=user,
                     cuisine=cuisine,
                 )
@@ -88,7 +83,7 @@ class Command(BaseCommand):
                     ]
                 for i, group_dict in enumerate(recipe_dict["ingredients"]["group"]):
                     group, _ = IngredientGroup.objects.get_or_create(
-                        name=Command.clean(group_dict.get("name")),
+                        group_name=Command.clean(group_dict.get("name")),
                         index_in_sequence=i + 1,
                         recipe=recipe,
                     )
@@ -98,23 +93,28 @@ class Command(BaseCommand):
                         group_dict["ingredient"] = [group_dict["ingredient"]]
                     for j, ingredient_raw in enumerate(group_dict["ingredient"]):
                         ingredient, _ = Ingredient.objects.get_or_create(
-                            name=Command.clean(ingredient_raw.get("name")),
+                            ingredient_name=Command.clean(ingredient_raw.get("name")),
                         )
                         ingredient.save()
 
-                        (
-                            ingredient_in_recipe,
-                            _,
-                        ) = IngredientInRecipe.objects.get_or_create(
-                            ingredient=ingredient,
-                            unit=ingredient_raw["measurement"],
-                            preparation=ingredient_raw["preparation"],
-                            quantity=eval(ingredient_raw["quantity"]) / serves
-                            if ingredient_raw["quantity"] is not None
-                            else None,
-                            ingredient_group=group,
-                            index_in_sequence=j + 1,
-                        )
+                        try:
+                            (
+                                ingredient_in_recipe,
+                                _,
+                            ) = IngredientInRecipe.objects.get_or_create(
+                                ingredient=ingredient,
+                                unit=ingredient_raw["measurement"],
+                                preparation=ingredient_raw["preparation"],
+                                quantity=None
+                                if ingredient_raw["quantity"] is None
+                                else eval(ingredient_raw["quantity"]) / serves
+                                if ingredient_raw["quantity"] is not None
+                                else None,
+                                ingredient_group=group,
+                                index_in_sequence=j + 1,
+                            )
+                        except:
+                            breakpoint()
                         ingredient_in_recipe.save()
 
                 for tag_raw in recipe_dict["tags"]:

@@ -1,68 +1,59 @@
 cuisine: .chinese
 description: null
 directions:
-  '#text': '>
-
-
-
-
-
-
-
-    >'
-  step:
-  - soak 3 tbsp dried shrimps in 125 ml boiling water for 10 m, then drain keeping
-    the water
-  - add 440ml water to prawn water if using or 500ml water if not, and cook 330g rice
-    in it for 16m
-  - blanch 90 g corn kernel and 75 g peans for 2 m
-  - fry 2 beaten eggs without stirring until lightly set, then break up with spatula
-    and set aside
-  - 'stir fry, high heat: 90 g diced ham or bacon, 60 g diced onion 1 chili, then
-    set aside'
-  - when rice is ready, stir fry shrimps, ham, egg, veg, 1 tbp soy sauce then add
-    the rice and cook until done
+    step:
+    - soak 3 tbsp dried shrimps in 125 ml boiling water for 10 m, then drain keeping
+        the water
+    - add 440ml water to prawn water if using or 500ml water if not, and cook 330g
+        rice in it for 16m
+    - blanch 90 g corn kernel and 75 g peans for 2 m
+    - fry 2 beaten eggs without stirring until lightly set, then break up with spatula
+        and set aside
+    - 'stir fry, high heat: 90 g diced ham or bacon, 60 g diced onion 1 chili, then
+        set aside'
+    - when rice is ready, stir fry shrimps, ham, egg, veg, 1 tbp soy sauce then add
+        the rice and cook until done
 ingredients:
-  group:
-    ingredient:
-    - measurement: Tbsp
-      name: dried shrimp
-      preparation: null
-      quantity: '3'
-    - measurement: g
-      name: rice
-      preparation: null
-      quantity: '330'
-    - measurement: g
-      name: corn kernel
-      preparation: null
-      quantity: '90'
-    - measurement: g
-      name: green peas
-      preparation: null
-      quantity: '75'
-    - measurement: null
-      name: egg
-      preparation: null
-      quantity: '2'
-    - measurement: g
-      name: ham / bacon
-      preparation: diced
-      quantity: '90'
-    - measurement: g
-      name: onion
-      preparation: diced
-      quantity: '60'
-    - measurement: null
-      name: chili
-      preparation: null
-      quantity: '1'
-    - measurement: Tbsp
-      name: soy sauce
-      preparation: null
-      quantity: '1'
-  serves: null
-source: null
-tags:
-- rice
+    group:
+    -   ingredient:
+        -   measurement: Tbsp
+            name: dried shrimp
+            preparation: null
+            quantity: '0.75'
+        -   measurement: g
+            name: rice
+            preparation: null
+            quantity: '82.50'
+        -   measurement: g
+            name: corn kernel
+            preparation: null
+            quantity: '22.50'
+        -   measurement: g
+            name: green peas
+            preparation: null
+            quantity: '18.75'
+        -   measurement: null
+            name: egg
+            preparation: null
+            quantity: '0.50'
+        -   measurement: g
+            name: ham / bacon
+            preparation: diced
+            quantity: '22.50'
+        -   measurement: g
+            name: onion
+            preparation: diced
+            quantity: '15.00'
+        -   measurement: null
+            name: chili
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: null
+            quantity: '0.25'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Yangzhou Fried Rice

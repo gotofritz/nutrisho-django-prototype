@@ -1,0 +1,64 @@
+cuisine: .british
+description: Moist
+directions:
+    step:
+    - Butter and line the base of a 20cm cake tin
+    - Beat the sugar, butter, flour, ground hazelnuts, eggs and baking powder with
+        a wooden spoon, until smooth and light
+    - Stir in che chopped plums and chocolate
+    - Tip into the cake tin and smooth the top
+    - Scatter halved plums and the hazelnuts over mixture, and push in gently
+    - Bake for 40-50 mins at 180°, then turn out and cool on a wire rack
+    - Heat the jelly and brush over the cake
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '37.50'
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '43.75'
+        -   measurement: g
+            name: self raising flour
+            preparation: null
+            quantity: '43.75'
+        -   measurement: g
+            name: ground hazelnuts
+            preparation: null
+            quantity: '43.75'
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '0.75'
+        -   measurement: tsp
+            name: baking powder
+            preparation: null
+            quantity: '0.25'
+        name: Mixture
+    -   ingredient:
+        -   measurement: g
+            name: plums
+            preparation: 4 halved and stoned, the rest roughly chopped
+            quantity: '125.00'
+        -   measurement: g
+            name: dark chocolate
+            preparation: chopped
+            quantity: '12.50'
+        -   measurement: tbsp
+            name: hazelnuts
+            preparation: null
+            quantity: '0.50'
+        name: Topping
+    -   ingredient:
+        -   measurement: tbsp
+            name: redcurrant jelly
+            preparation: or damson or plum
+            quantity: '0.50'
+        name: Garnish
+    serves: 1
+source: BBC Food
+tags: []
+title: Plum, Hazelnut & Chocolate Cake

@@ -1,77 +1,78 @@
 cuisine: .fusion.british
 description: Serve with bread for a light lunch
 directions:
-  step:
-  - Mix the yogurt dressing ingredients in a bowl
-  - Char the cherry tomatoes still on the vine fror 4 mins on a hot pan
-  - Cook the potato ingredients for 20 mins in oil, stirring occasionally.
-  - Stir in the sugar and garlic and season.
-  - Spread the mixture to cover the pan, and crack the eggs in, without breaking the
-    yolk. Cook for 3 mins
-  - Drizzle the tahini over the egg whites, cover, and cook 2 more minutes
-  - Pour the yogurt dressing over the mixture, avoiding the yolks, and sprinkle coriander
-  - Put the tomatoes over, and drizzle some oil
+    step:
+    - Mix the yogurt dressing ingredients in a bowl
+    - Char the cherry tomatoes still on the vine fror 4 mins on a hot pan
+    - Cook the potato ingredients for 20 mins in oil, stirring occasionally.
+    - Stir in the sugar and garlic and season.
+    - Spread the mixture to cover the pan, and crack the eggs in, without breaking
+        the yolk. Cook for 3 mins
+    - Drizzle the tahini over the egg whites, cover, and cook 2 more minutes
+    - Pour the yogurt dressing over the mixture, avoiding the yolks, and sprinkle
+        coriander
+    - Put the tomatoes over, and drizzle some oil
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: yogurt
-      preparation: null
-      quantity: '100'
-    - measurement: tbso
-      name: lemon juice
-      preparation: null
-      quantity: '1'
-    - measurement: tbsp
-      name: oil
-      preparation: null
-      quantity: '1'
-    name: Yogurt dressing
-  - ingredient:
-    - measurement: null
-      name: onions
-      preparation: sliced thinly
-      quantity: '3'
-    - measurement: g
-      name: potatoes
-      preparation: sliced 5mm
-      quantity: '200'
-    - measurement: null
-      name: chilli
-      preparation: deseeded, chopped
-      quantity: '1'
-    - measurement: tsp
-      name: sumac
-      preparation: null
-      quantity: '0.5'
-    name: Potatoes
-  - ingredient:
-    - measurement: tsp
-      name: sugar
-      preparation: null
-      quantity: '0.5'
-    - measurement: clove
-      name: garlic
-      preparation: crushed
-      quantity: '1'
-    - measurement: null
-      name: eggs
-      preparation: null
-      quantity: '4'
-    - measurement: g
-      name: cherry tomatoes
-      preparation: still on the vine
-      quantity: '300'
-    - measurement: tbsp
-      name: tahini
-      preparation: null
-      quantity: '1.5'
-    - measurement: tbsp
-      name: coriander
-      preparation: null
-      quantity: '1'
-    name: Rest
-  serves: '2'
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: yogurt
+            preparation: null
+            quantity: '25.00'
+        -   measurement: tbso
+            name: lemon juice
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: oil
+            preparation: null
+            quantity: '0.25'
+        name: Yogurt dressing
+    -   ingredient:
+        -   measurement: null
+            name: onions
+            preparation: sliced thinly
+            quantity: '0.75'
+        -   measurement: g
+            name: potatoes
+            preparation: sliced 5mm
+            quantity: '50.00'
+        -   measurement: null
+            name: chilli
+            preparation: deseeded, chopped
+            quantity: '0.25'
+        -   measurement: tsp
+            name: sumac
+            preparation: null
+            quantity: '0.12'
+        name: Potatoes
+    -   ingredient:
+        -   measurement: tsp
+            name: sugar
+            preparation: null
+            quantity: '0.12'
+        -   measurement: clove
+            name: garlic
+            preparation: crushed
+            quantity: '0.25'
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '1.00'
+        -   measurement: g
+            name: cherry tomatoes
+            preparation: still on the vine
+            quantity: '75.00'
+        -   measurement: tbsp
+            name: tahini
+            preparation: null
+            quantity: '0.38'
+        -   measurement: tbsp
+            name: coriander
+            preparation: null
+            quantity: '0.25'
+        name: Rest
+    serves: 1
 source: Ottolenghi
 tags:
 - light lunch

@@ -27,16 +27,16 @@ class Ingredient(models.Model):
         ("CHM", "Chemical"),
         ("MSC", "Misc"),
     ]
-    name = models.CharField(max_length=64, unique=True)
+    ingredient_name = models.CharField(max_length=64, unique=True)
     dietary_constraint = models.CharField(
-        "vegetarian etc", choices=CONSTRAINT_CHOICES, null=True, max_length=32
+        "vegetarian etc", choices=CONSTRAINT_CHOICES, blank=True, max_length=32
     )
     family = models.CharField(
         "Anything that will let you find the source: ISDN, url...",
         max_length=32,
         choices=GROUP_CHOICES,
-        null=True,
+        blank=True,
     )
 
     def natural_key(self):
-        return self.name
+        return self.ingredient_name

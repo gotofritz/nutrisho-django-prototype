@@ -1,36 +1,36 @@
 cuisine: .chinese
 description: Baicai Doufu Tang
 directions:
-  '#text': '>'
-  step:
-  - boil stock, ginger, pickled cabbage, cabbage stems 8m
-  - add cabbage leaves, tofu 1m
-  - salt and pepper
+    step:
+    - boil stock, ginger, pickled cabbage, cabbage stems 8m
+    - add cabbage leaves, tofu 1m
+    - salt and pepper
 ingredients:
-  group:
-    ingredient:
-    - measurement: l
-      name: stock
-      preparation: null
-      quantity: '1.5'
-    - measurement: g
-      name: cabbage
-      preparation: napa
-      quantity: '125'
-    - measurement: g
-      name: pickled cabbage
-      preparation: chopped
-      quantity: '60'
-    - measurement: tsp
-      name: ginger
-      preparation: peeled
-      quantity: '1.5'
-    - measurement: g
-      name: tofu
-      preparation: soft
-      quantity: '330'
-  serves: null
-source: null
+    group:
+    -   ingredient:
+        -   measurement: l
+            name: stock
+            preparation: null
+            quantity: '0.38'
+        -   measurement: g
+            name: cabbage
+            preparation: napa
+            quantity: '31.25'
+        -   measurement: g
+            name: pickled cabbage
+            preparation: chopped
+            quantity: '15.00'
+        -   measurement: tsp
+            name: ginger
+            preparation: peeled
+            quantity: '0.38'
+        -   measurement: g
+            name: tofu
+            preparation: soft
+            quantity: '82.50'
+        name: null
+    serves: 1
+source: ''
 tags:
 - soup
 title: Cabbage and Tofu soup

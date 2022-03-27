@@ -1,0 +1,85 @@
+cuisine: .chinese.yangzhou
+description: Shizi Tou
+directions:
+    step:
+    - mince meat, then add remaining ingredients and process
+    - form into 4 meatballs
+    - make a paste with cornstarch and soy sauce, a bit water if required, and coat
+        meatballs with it - keep rest
+    - deep fry meatballs 2/3 m, then remove
+    - fry pak choi in same oil until wilted
+    - place in pirex dish, put meatballs on top, pour remaining ingredients, cover
+        in foil
+    - steam 40 miuntes, turning meatballs over halfway - alternatively cook normally
+        on stove
+    - when cooked, pour stock in heated wok with remaining paste (3), and reudce,
+        2m
+    - season with salt and pepper and pour over meatballs
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: pork
+            preparation: fat (such as butt)
+            quantity: '125.00'
+        -   measurement: g
+            name: pork
+            preparation: lean or beef
+            quantity: '125.00'
+        -   measurement: null
+            name: spring onions
+            preparation: whites only
+            quantity: '2.50'
+        -   measurement: g
+            name: water chestnuts
+            preparation: chopped
+            quantity: '15.00'
+        -   measurement: Tbsp
+            name: ginger
+            preparation: peeled
+            quantity: '0.38'
+        -   measurement: Tbsp
+            name: garlic cloves
+            preparation: chopped
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: cornstarch
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '1.00'
+        name: Meatballs
+    -   ingredient:
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: cornstarch
+            preparation: null
+            quantity: '0.75'
+        name: Paste
+    -   ingredient:
+        -   measurement: g
+            name: bak choi
+            preparation: roughly chopped
+            quantity: '125.00'
+        -   measurement: cup
+            name: oil
+            preparation: frying
+            quantity: '0.25'
+        -   measurement: ml
+            name: stock
+            preparation: chicken or pork
+            quantity: '125.00'
+        -   measurement: ml
+            name: rice wine
+            preparation: null
+            quantity: '15.00'
+        name: Sauce
+    serves: 1
+source: ''
+tags: []
+title: Lion's head meatballs

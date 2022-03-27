@@ -14,14 +14,13 @@ class Step(models.Model):
     )
     duration = models.DurationField("How long the step should take", null=True)
     extra_info = models.CharField(
-        "extra information, for example how to peel tomatoes", max_length=512, null=True
+        "extra information, for example how to peel tomatoes",
+        max_length=512,
+        blank=True,
     )
 
     def natural_key(self):
-        return (self.index_in_sequence, self.step[:32])
-
-    # def __str__:
-    #     related_name='recipe'
+        return (self.index_in_sequence, self.step_text[:32])
 
     class Meta:
         constraints = [

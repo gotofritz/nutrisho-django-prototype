@@ -9,12 +9,14 @@ class IngredientInRecipe(models.Model):
         Ingredient, on_delete=models.DO_NOTHING, related_name="+"
     )
     substitute = models.ForeignKey(
-        Ingredient, on_delete=models.DO_NOTHING, related_name="+", null=True
+        Ingredient, on_delete=models.DO_NOTHING, related_name="+", blank=True, null=True
     )
-    unit = models.CharField("the unit", max_length=32, null=True)
-    preparation = models.CharField("chopped, blanched...", max_length=128, null=True)
+    unit = models.CharField("the unit", max_length=32, blank=True, null=True)
+    preparation = models.CharField(
+        "chopped, blanched...", max_length=128, blank=True, null=True
+    )
     quantity = models.DecimalField(
-        "how many", decimal_places=2, max_digits=7, null=True
+        "how many", decimal_places=2, max_digits=7, blank=True, null=True
     )
     ingredient_group = models.ForeignKey(
         IngredientGroup, on_delete=models.CASCADE, related_name="ingredient"
@@ -25,17 +27,16 @@ class IngredientInRecipe(models.Model):
     note = models.CharField(
         "any extra info",
         max_length=128,
-        null=True,
+        blank=True,
     )
 
     def natural_key(self):
-        return (self.ingredient_group, self.quantity, self.unit, self.name)
+        return (
+            self.ingredient_group,
+            self.quantity,
+            self.unit,
+            self.ingredient.ingredient_name,
+        )
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["index_in_sequence", "ingredient_group", "ingredient"],
-                name="unique IngredientInRecipe step in sequence",
-            )
-        ]
         ordering = ["index_in_sequence"]

@@ -1,0 +1,79 @@
+cuisine: .english
+description: null
+directions:
+    step:
+    - fry the leeks in butter for a few minutes (2) add gammon, vegetables, thyme,
+        toss (3) add the flour, keep tossing (4) increase the heat, pour the cider,
+        bring to boil, season (5) cook 35 mins
+    - mix the pastry ingredients in a bowl, make a dough, roll out 1cm thick (7) lay
+        over the pot, cook another 30 mins
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: Tbsp
+            name: water
+            preparation: null
+            quantity: '0.50'
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '25.00'
+        -   measurement: g
+            name: suet
+            preparation: grated
+            quantity: '12.50'
+        -   measurement: pinch
+            name: salt
+            preparation: null
+            quantity: null
+        -   measurement: tsp
+            name: baking powder
+            preparation: null
+            quantity: '0.06'
+        name: For the pastry
+    -   ingredient:
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '6.25'
+        -   measurement: null
+            name: leeks
+            preparation: chopped
+            quantity: '0.50'
+        -   measurement: g
+            name: gammon joint
+            preparation: unsmoked
+            quantity: '225.00'
+        -   measurement: null
+            name: carrots
+            preparation: peeled
+            quantity: '0.50'
+        -   measurement: null
+            name: celery stalks
+            preparation: finely sliced
+            quantity: '0.75'
+        -   measurement: handful
+            name: thyme
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: flour
+            preparation: null
+            quantity: '0.50'
+        -   measurement: ml
+            name: dry cider
+            preparation: null
+            quantity: '100.00'
+        -   measurement: to taste
+            name: salt
+            preparation: null
+            quantity: null
+        -   measurement: to taste
+            name: pepper
+            preparation: null
+            quantity: null
+        name: For the filling
+    serves: 1
+source: ''
+tags: []
+title: 'Pie: Ham, Leek, Cider pan pie'

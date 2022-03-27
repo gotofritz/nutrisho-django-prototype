@@ -1,82 +1,82 @@
 cuisine: .italian
 description: null
 directions:
-  step:
-  - Mix all the shortcrust pastry ingredients, and knead into a ball. Leave in the
-    fridge, covered , for 30 mins.
-  - "Cover a tart base and blind bake at 170\xB0 for 30 mins"
-  - Bring the milk ingredients to the boil
-  - Beat the egg yolk and sugar well
-  - Sieve the flour into the egg mixture, then slowly add the boiled milk without
-    the cinnamon
-  - Put the milk and egg mixture back on the fire, at low heat, and ring back to boil
-  - Turn off the fire and let it cool, mixing it every it so often
-  - Fill the tart base with the cream, and stick the grapes in it
-  - Cool and serve
+    step:
+    - Mix all the shortcrust pastry ingredients, and knead into a ball. Leave in the
+        fridge, covered , for 30 mins.
+    - Cover a tart base and blind bake at 170° for 30 mins
+    - Bring the milk ingredients to the boil
+    - Beat the egg yolk and sugar well
+    - Sieve the flour into the egg mixture, then slowly add the boiled milk without
+        the cinnamon
+    - Put the milk and egg mixture back on the fire, at low heat, and ring back to
+        boil
+    - Turn off the fire and let it cool, mixing it every it so often
+    - Fill the tart base with the cream, and stick the grapes in it
+    - Cool and serve
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: flour
-      preparation: null
-      quantity: '120'
-    - measurement: g
-      name: butter
-      preparation: cubed, room temperature
-      quantity: '60'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '40'
-    - measurement: null
-      name: egg yolks
-      preparation: null
-      quantity: '2'
-    - measurement: null
-      name: lemon zest
-      preparation: grated
-      quantity: '0.5'
-    - measurement: pinch
-      name: salt
-      preparation: null
-      quantity: '1'
-    name: Shortcrust (pasta frolla)
-  - ingredient:
-    - measurement: ml
-      name: milk
-      preparation: null
-      quantity: '500'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '75'
-    - measurement: stick
-      name: cinnamon
-      preparation: null
-      quantity: '1'
-    name: Milk
-  - ingredient:
-    - measurement: null
-      name: egg yolks
-      preparation: null
-      quantity: '4'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '75'
-    - measurement: g
-      name: flour
-      preparation: null
-      quantity: '60'
-    name: Cream
-  - ingredient:
-      measurement: g
-      name: grapes
-      preparation: deseeded
-      quantity: '500'
-    name: Topping
-  serves: '6'
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '30.00'
+        -   measurement: g
+            name: butter
+            preparation: cubed, room temperature
+            quantity: '15.00'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '10.00'
+        -   measurement: null
+            name: egg yolks
+            preparation: null
+            quantity: '0.50'
+        -   measurement: null
+            name: lemon zest
+            preparation: grated
+            quantity: '0.12'
+        -   measurement: pinch
+            name: salt
+            preparation: null
+            quantity: '0.25'
+        name: Shortcrust (pasta frolla)
+    -   ingredient:
+        -   measurement: ml
+            name: milk
+            preparation: null
+            quantity: '125.00'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '18.75'
+        -   measurement: stick
+            name: cinnamon
+            preparation: null
+            quantity: '0.25'
+        name: Milk
+    -   ingredient:
+        -   measurement: null
+            name: egg yolks
+            preparation: null
+            quantity: '1.00'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '18.75'
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '15.00'
+        name: Cream
+    -   ingredient:
+        -   measurement: g
+            name: grapes
+            preparation: deseeded
+            quantity: '125.00'
+        name: Topping
+    serves: 1
 source: Cucinare mag, 2009-10
-tags:
-- dessert
+tags: []
 title: Grapes and cinnamon crostata

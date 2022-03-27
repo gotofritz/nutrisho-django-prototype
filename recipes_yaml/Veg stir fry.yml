@@ -1,107 +1,94 @@
 cuisine: .chinese
 description: Use available veg. The idea is that they are all the same size
 directions:
-  '#text': '>
-
-
-
-
-
-
-
-
-
-
-    >'
-  step:
-  - soak dried mushrooms in hot water for 25m
-  - remove stalks from mushrooms, boil them with the soaking water then set aside.
-    keep water for 5m
-  - stir fry carrots, broccoli, cauliflower for 20s
-  - add mushroom water and cook covered until the water evaporates
-  - add Asparagus, celery, zucchini, bak choi splashing water as needed for 30s
-  - uncover and add 2 tbsp oil and mangetout, bamboo shots and stiry fry for 20s
-  - add water, light soy sauce, sugar and mushrooms
-  - dissolve cornstarch in water or stock and add
-  - Finish off then season for 30s
+    step:
+    - soak dried mushrooms in hot water for 25m
+    - remove stalks from mushrooms, boil them with the soaking water then set aside.
+        keep water for 5m
+    - stir fry carrots, broccoli, cauliflower for 20s
+    - add mushroom water and cook covered until the water evaporates
+    - add Asparagus, celery, zucchini, bak choi splashing water as needed for 30s
+    - uncover and add 2 tbsp oil and mangetout, bamboo shots and stiry fry for 20s
+    - add water, light soy sauce, sugar and mushrooms
+    - dissolve cornstarch in water or stock and add
+    - Finish off then season for 30s
 ingredients:
-  group:
-  - ingredient:
-    - measurement: null
-      name: dried mushrooms
-      preparation: null
-      quantity: '4'
-    - measurement: null
-      name: hot water
-      preparation: null
-      quantity: null
-    name: Mushroom
-  - ingredient:
-    - measurement: null
-      name: carrots
-      preparation: cut on diagonal
-      quantity: '0.5'
-    - measurement: g
-      name: broccoli
-      preparation: cut in florets
-      quantity: '60'
-    - measurement: g
-      name: cauliflower
-      preparation: cut in florets
-      quantity: '60'
-    name: Hard veg
-  - ingredient:
-    - measurement: spear
-      name: Asparagus
-      preparation: cut on diagonal
-      quantity: '4'
-    - measurement: stick
-      name: celery
-      preparation: cut on diagonal
-      quantity: '1'
-    - measurement: null
-      name: zucchini
-      preparation: cut on diagonal
-      quantity: '1'
-    - measurement: g
-      name: bak choi
-      preparation: white separated from leave
-      quantity: '90'
-    name: Medium veg
-  - ingredient:
-    - measurement: null
-      name: mangetout
-      preparation: null
-      quantity: '8'
-    - measurement: g
-      name: bamboo shots
-      preparation: null
-      quantity: '75'
-    - measurement: ml
-      name: water
-      preparation: null
-      quantity: '250'
-    name: Soft veg
-  - ingredient:
-    - measurement: Tbsp
-      name: soy sauce
-      preparation: light
-      quantity: '1'
-    - measurement: tsp
-      name: sugar
-      preparation: null
-      quantity: '0.5'
-    - measurement: tsp
-      name: cornstarch
-      preparation: null
-      quantity: '1.5'
-    - measurement: Tbsp
-      name: water or stock
-      preparation: null
-      quantity: '2'
-    name: Sauce
-  serves: '4'
-source: null
-tags:
-- side
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: dried mushrooms
+            preparation: null
+            quantity: '1.00'
+        -   measurement: null
+            name: hot water
+            preparation: null
+            quantity: null
+        name: Mushroom
+    -   ingredient:
+        -   measurement: null
+            name: carrots
+            preparation: cut on diagonal
+            quantity: '0.12'
+        -   measurement: g
+            name: broccoli
+            preparation: cut in florets
+            quantity: '15.00'
+        -   measurement: g
+            name: cauliflower
+            preparation: cut in florets
+            quantity: '15.00'
+        name: Hard veg
+    -   ingredient:
+        -   measurement: spear
+            name: Asparagus
+            preparation: cut on diagonal
+            quantity: '1.00'
+        -   measurement: stick
+            name: celery
+            preparation: cut on diagonal
+            quantity: '0.25'
+        -   measurement: null
+            name: zucchini
+            preparation: cut on diagonal
+            quantity: '0.25'
+        -   measurement: g
+            name: bak choi
+            preparation: white separated from leave
+            quantity: '22.50'
+        name: Medium veg
+    -   ingredient:
+        -   measurement: null
+            name: mangetout
+            preparation: null
+            quantity: '2.00'
+        -   measurement: g
+            name: bamboo shots
+            preparation: null
+            quantity: '18.75'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '62.50'
+        name: Soft veg
+    -   ingredient:
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.25'
+        -   measurement: tsp
+            name: sugar
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: cornstarch
+            preparation: null
+            quantity: '0.38'
+        -   measurement: Tbsp
+            name: water or stock
+            preparation: null
+            quantity: '0.50'
+        name: Sauce
+    serves: 1
+source: ''
+tags: []
 title: Veg stir fry

@@ -1,82 +1,203 @@
 cuisine: .italian.modern
 description: Base sauce from that chef who hates garlic
 directions:
-  step: Mix all the ingredients in a food processor. Goes well with pasta, cous cous
-    or rice. Use wholemeal pasta for pasta salads.
+    step:
+    - M
+    - i
+    - x
+    - ''
+    - a
+    - l
+    - l
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - i
+    - n
+    - g
+    - r
+    - e
+    - d
+    - i
+    - e
+    - n
+    - t
+    - s
+    - ''
+    - i
+    - n
+    - ''
+    - a
+    - ''
+    - f
+    - o
+    - o
+    - d
+    - ''
+    - p
+    - r
+    - o
+    - c
+    - e
+    - s
+    - s
+    - o
+    - r
+    - .
+    - ''
+    - G
+    - o
+    - e
+    - s
+    - ''
+    - w
+    - e
+    - l
+    - l
+    - ''
+    - w
+    - i
+    - t
+    - h
+    - ''
+    - p
+    - a
+    - s
+    - t
+    - a
+    - ','
+    - ''
+    - c
+    - o
+    - u
+    - s
+    - ''
+    - c
+    - o
+    - u
+    - s
+    - ''
+    - o
+    - r
+    - ''
+    - r
+    - i
+    - c
+    - e
+    - .
+    - ''
+    - U
+    - s
+    - e
+    - ''
+    - w
+    - h
+    - o
+    - l
+    - e
+    - m
+    - e
+    - a
+    - l
+    - ''
+    - p
+    - a
+    - s
+    - t
+    - a
+    - ''
+    - f
+    - o
+    - r
+    - ''
+    - p
+    - a
+    - s
+    - t
+    - a
+    - ''
+    - s
+    - a
+    - l
+    - a
+    - d
+    - s
+    - .
 ingredients:
-  group:
-  - ingredient:
-    - measurement: null
-      name: oranges
-      preparation: peeled and flesh cut out
-      quantity: '4'
-    - measurement: g
-      name: almnods
-      preparation: blanched and peeled
-      quantity: '200'
-    - measurement: g
-      name: capers
-      preparation: salted, with salt washed away
-      quantity: '50'
-    - measurement: ml
-      name: oil, olive
-      preparation: null
-      quantity: '50'
-    - measurement: leaves
-      name: basil
-      preparation: null
-      quantity: '60'
-    name: Basic Orange and Basil Pesto
-  - ingredient:
-    - measurement: null
-      name: lemons
-      preparation: peeled and flesh cut out
-      quantity: '2'
-    - measurement: g
-      name: almnods
-      preparation: blanched and peeled
-      quantity: '200'
-    - measurement: g
-      name: capers
-      preparation: salted, with salt washed away
-      quantity: '50'
-    - measurement: ml
-      name: oil, olive
-      preparation: null
-      quantity: '50'
-    - measurement: leaves
-      name: basil
-      preparation: null
-      quantity: '60'
-    name: Lemon variation
-  - ingredient:
-    - measurement: g
-      name: sundried tomatoes
-      preparation: null
-      quantity: '30'
-    - measurement: g
-      name: almnods
-      preparation: blanched and peeled
-      quantity: '200'
-    - measurement: g
-      name: capers
-      preparation: salted, with salt washed away
-      quantity: '50'
-    - measurement: ml
-      name: oil, olive
-      preparation: null
-      quantity: '50'
-    - measurement: leaves
-      name: mint
-      preparation: null
-      quantity: '60'
-    - measurement: tsp
-      name: oregano
-      preparation: null
-      quantity: '1'
-    name: Sun dried tomatoes variation
-  serves: '4'
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: oranges
+            preparation: peeled and flesh cut out
+            quantity: '1.00'
+        -   measurement: g
+            name: almnods
+            preparation: blanched and peeled
+            quantity: '50.00'
+        -   measurement: g
+            name: capers
+            preparation: salted, with salt washed away
+            quantity: '12.50'
+        -   measurement: ml
+            name: oil, olive
+            preparation: null
+            quantity: '12.50'
+        -   measurement: leaves
+            name: basil
+            preparation: null
+            quantity: '15.00'
+        name: Basic Orange and Basil Pesto
+    -   ingredient:
+        -   measurement: null
+            name: lemons
+            preparation: peeled and flesh cut out
+            quantity: '0.50'
+        -   measurement: g
+            name: almnods
+            preparation: blanched and peeled
+            quantity: '50.00'
+        -   measurement: g
+            name: capers
+            preparation: salted, with salt washed away
+            quantity: '12.50'
+        -   measurement: ml
+            name: oil, olive
+            preparation: null
+            quantity: '12.50'
+        -   measurement: leaves
+            name: basil
+            preparation: null
+            quantity: '15.00'
+        name: Lemon variation
+    -   ingredient:
+        -   measurement: g
+            name: sundried tomatoes
+            preparation: null
+            quantity: '7.50'
+        -   measurement: g
+            name: almnods
+            preparation: blanched and peeled
+            quantity: '50.00'
+        -   measurement: g
+            name: capers
+            preparation: salted, with salt washed away
+            quantity: '12.50'
+        -   measurement: ml
+            name: oil, olive
+            preparation: null
+            quantity: '12.50'
+        -   measurement: leaves
+            name: mint
+            preparation: null
+            quantity: '15.00'
+        -   measurement: tsp
+            name: oregano
+            preparation: null
+            quantity: '0.25'
+        name: Sun dried tomatoes variation
+    serves: 1
 source: Filippo La Mantia
-tags:
-- sauce
+tags: []
 title: Pesto arance e basilico

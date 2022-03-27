@@ -1,0 +1,81 @@
+cuisine: .chinese.qinghai
+description: Fengmi Niulijirou Hetaoren
+directions:
+    step:
+    - Mix marinade ingredients and add meat
+    - Deep fry for 2 min, then set aside
+    - Deep fry the walnuts for 1 min, then set aside with beef
+    - Mix the sauce ingredients in a bowl with salt
+    - Remove oil, wipe wok, put 2 tbsp oil back in
+    - Dook sauce mixture for 20 sec
+    - Add meat and walnut
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: tbsp
+            name: cornstarch
+            preparation: null
+            quantity: '0.62'
+        -   measurement: tbsp
+            name: water
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: egg
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: soy sauce
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: five-spice
+            preparation: ground
+            quantity: '0.50'
+        -   measurement: g
+            name: beef
+            preparation: sliced, julienned
+            quantity: '78.75'
+        name: Marinade
+    -   ingredient:
+        -   measurement: g
+            name: walnuts
+            preparation: halved
+            quantity: '22.50'
+        -   measurement: cups
+            name: oil
+            preparation: frying
+            quantity: '0.50'
+        name: Deep fry
+    -   ingredient:
+        -   measurement: tbsp
+            name: cornstarch
+            preparation: null
+            quantity: '0.12'
+        -   measurement: g
+            name: honey
+            preparation: null
+            quantity: '22.50'
+        -   measurement: tbsp
+            name: rice wine
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: ginger juiice
+            preparation: null
+            quantity: '0.25'
+        -   measurement: rsp
+            name: rice vinegar
+            preparation: null
+            quantity: '0.06'
+        name: Sauce
+    -   ingredient:
+        -   measurement: tsp
+            name: sesame seeds
+            preparation: null
+            quantity: '0.38'
+        name: to serve
+    serves: 1
+source: ''
+tags: []
+title: Beef, honey-glazed with walnuts

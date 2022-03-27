@@ -1,120 +1,120 @@
 cuisine: .fusion.middle east
 description: Serve with rice or roti
 directions:
-  step:
-  - Soak lentils in water for 30 mins
-  - Chop up the coriander stems, onions, ginger, garlic, and chilli coarsely in a
-    food processor.
-  - Put the mustard seeds in a pot on medium, when they begin to pop add oil and the
-    onion mix.
-  - Stir and cook for 10 mins on low heat
-  - Add the spices and continue cooking for 5 mins, stirring
-  - Add the lentil with their water, the wet ingredients, and season with salt. Simmer
-    30 mins
-  - Prepare the yoghurt garnish by mixing yogurt, olive oil, and cucumber in a bowl
-  - Add the garnish ingredients to the soup, and a dollop of the yorgurt mix for each
-    bowl
+    step:
+    - Soak lentils in water for 30 mins
+    - Chop up the coriander stems, onions, ginger, garlic, and chilli coarsely in
+        a food processor.
+    - Put the mustard seeds in a pot on medium, when they begin to pop add oil and
+        the onion mix.
+    - Stir and cook for 10 mins on low heat
+    - Add the spices and continue cooking for 5 mins, stirring
+    - Add the lentil with their water, the wet ingredients, and season with salt.
+        Simmer 30 mins
+    - Prepare the yoghurt garnish by mixing yogurt, olive oil, and cucumber in a bowl
+    - Add the garnish ingredients to the soup, and a dollop of the yorgurt mix for
+        each bowl
 ingredients:
-  group:
-  - ingredient:
-    - measurement: bunch
-      name: coriander stems
-      preparation: null
-      quantity: '1'
-    - measurement: null
-      name: onion
-      preparation: peeled
-      quantity: '1'
-    - measurement: g
-      name: ginger
-      preparation: peeled
-      quantity: '40'
-    - measurement: cloves
-      name: garlic
-      preparation: null
-      quantity: '3'
-    - measurement: null
-      name: chillies
-      preparation: deseeded
-      quantity: '2'
-    - measurement: tsp
-      name: mustard seeds
-      preparation: null
-      quantity: '1.5'
-    - measurement: tsp
-      name: coriander, ground
-      preparation: null
-      quantity: '1.5'
-    - measurement: tsp
-      name: cumin, ground
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: turmeric
-      preparation: null
-      quantity: '0.5'
-    - measurement: tsp
-      name: paprika
-      preparation: null
-      quantity: '0.5'
-    - measurement: leaves
-      name: curry
-      preparation: null
-      quantity: '10'
-    name: Spices
-  - ingredient:
-    - measurement: g
-      name: lentils, red
-      preparation: null
-      quantity: '200'
-    - measurement: ml
-      name: water
-      preparation: null
-      quantity: '350'
-    - measurement: g
-      name: tomatoes
-      preparation: chopped
-      quantity: '300'
-    - measurement: tsp
-      name: sugar
-      preparation: null
-      quantity: '2'
-    - measurement: tsp
-      name: fenugreek
-      preparation: null
-      quantity: '0.5'
-    - measurement: pinch
-      name: assafoetida
-      preparation: null
-      quantity: '1'
-  - ingredient:
-    - measurement: g
-      name: butter
-      preparation: null
-      quantity: '70'
-    - measurement: tbsp
-      name: lime
-      preparation: juiced
-      quantity: '1.5'
-    - measurement: handful
-      name: coriander
-      preparation: chopped
-      quantity: '1'
-    - measurement: g
-      name: yogurt
-      preparation: null
-      quantity: '150'
-    - measurement: g
-      name: cucumber
-      preparation: diced finely
-      quantity: '75'
-    - measurement: tbsp
-      name: olive oil
-      preparation: null
-      quantity: '1.5'
-    name: Garnish
-  serves: '2'
+    group:
+    -   ingredient:
+        -   measurement: bunch
+            name: coriander stems
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: onion
+            preparation: peeled
+            quantity: '0.25'
+        -   measurement: g
+            name: ginger
+            preparation: peeled
+            quantity: '10.00'
+        -   measurement: cloves
+            name: garlic
+            preparation: null
+            quantity: '0.75'
+        -   measurement: null
+            name: chillies
+            preparation: deseeded
+            quantity: '0.50'
+        -   measurement: tsp
+            name: mustard seeds
+            preparation: null
+            quantity: '0.38'
+        -   measurement: tsp
+            name: coriander, ground
+            preparation: null
+            quantity: '0.38'
+        -   measurement: tsp
+            name: cumin, ground
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: turmeric
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: paprika
+            preparation: null
+            quantity: '0.12'
+        -   measurement: leaves
+            name: curry
+            preparation: null
+            quantity: '2.50'
+        name: Spices
+    -   ingredient:
+        -   measurement: g
+            name: lentils, red
+            preparation: null
+            quantity: '50.00'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '87.50'
+        -   measurement: g
+            name: tomatoes
+            preparation: chopped
+            quantity: '75.00'
+        -   measurement: tsp
+            name: sugar
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: fenugreek
+            preparation: null
+            quantity: '0.12'
+        -   measurement: pinch
+            name: assafoetida
+            preparation: null
+            quantity: '0.25'
+        name: null
+    -   ingredient:
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '17.50'
+        -   measurement: tbsp
+            name: lime
+            preparation: juiced
+            quantity: '0.38'
+        -   measurement: handful
+            name: coriander
+            preparation: chopped
+            quantity: '0.25'
+        -   measurement: g
+            name: yogurt
+            preparation: null
+            quantity: '37.50'
+        -   measurement: g
+            name: cucumber
+            preparation: diced finely
+            quantity: '18.75'
+        -   measurement: tbsp
+            name: olive oil
+            preparation: null
+            quantity: '0.38'
+        name: Garnish
+    serves: 1
 source: Ottolenghi
-tags:
-- dal
+tags: []
 title: Lentil Soup Ottolenghi style

@@ -1,87 +1,78 @@
 cuisine: .chinese
 description: 'Shuang jiao niu rou: A delicious, colourful dish that leaves your guests
-  wanting more!'
+    wanting more!'
 directions:
-  '#text': '>
-
-
-
-
-
-
-    >'
-  step:
-  - Mix together fillet beef, rice wine, light soy sauce, cornstarch, cold water with
-    your finger and marinade for 20m
-  - stir fry fresh chilies with the meat in oil high heat until it begins to change
-    colour, about 2m
-  - add spring onions, garlic and carry on for 20s
-  - add red pepper, green pepper and keep on stirring briskly for 2m
-  - sprinkle light soy sauce, salt, sugar over and carry on stir frying for 2m
+    step:
+    - Mix together fillet beef, rice wine, light soy sauce, cornstarch, cold water
+        with your finger and marinade for 20m
+    - stir fry fresh chilies with the meat in oil high heat until it begins to change
+        colour, about 2m
+    - add spring onions, garlic and carry on for 20s
+    - add red pepper, green pepper and keep on stirring briskly for 2m
+    - sprinkle light soy sauce, salt, sugar over and carry on stir frying for 2m
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: beef
-      preparation: fillet
-      quantity: '170'
-    - measurement: tsp
-      name: rice wine
-      preparation: null
-      quantity: '2'
-    - measurement: tsp
-      name: soy sauce
-      preparation: light
-      quantity: '1'
-    - measurement: tsp
-      name: cornstarch
-      preparation: null
-      quantity: '2'
-    - measurement: tsp
-      name: water
-      preparation: cold
-      quantity: '1'
-    name: Marinade
-  - ingredient:
-    - measurement: null
-      name: chilies
-      preparation: fresh
-      quantity: '1'
-    - measurement: tbsp
-      name: oil
-      preparation: null
-      quantity: '2.5'
-    - measurement: null
-      name: spring onions
-      preparation: chopped finely
-      quantity: '2'
-    - measurement: cloves
-      name: garlic
-      preparation: chopped finely
-      quantity: '2'
-    - measurement: null
-      name: red pepper
-      preparation: small
-      quantity: '1'
-    - measurement: null
-      name: green pepper
-      preparation: small
-      quantity: '1'
-    - measurement: tsp
-      name: soy sauce
-      preparation: light
-      quantity: '2'
-    - measurement: pinch
-      name: salt
-      preparation: null
-      quantity: '2'
-    - measurement: pinch
-      name: sugar
-      preparation: null
-      quantity: '1'
-    name: Stir Fry
-  serves: '4'
-source: null
-tags:
-- main
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: beef
+            preparation: fillet
+            quantity: '42.50'
+        -   measurement: tsp
+            name: rice wine
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.25'
+        -   measurement: tsp
+            name: cornstarch
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: water
+            preparation: cold
+            quantity: '0.25'
+        name: Marinade
+    -   ingredient:
+        -   measurement: null
+            name: chilies
+            preparation: fresh
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: oil
+            preparation: null
+            quantity: '0.62'
+        -   measurement: null
+            name: spring onions
+            preparation: chopped finely
+            quantity: '0.50'
+        -   measurement: cloves
+            name: garlic
+            preparation: chopped finely
+            quantity: '0.50'
+        -   measurement: null
+            name: red pepper
+            preparation: small
+            quantity: '0.25'
+        -   measurement: null
+            name: green pepper
+            preparation: small
+            quantity: '0.25'
+        -   measurement: tsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.50'
+        -   measurement: pinch
+            name: salt
+            preparation: null
+            quantity: '0.50'
+        -   measurement: pinch
+            name: sugar
+            preparation: null
+            quantity: '0.25'
+        name: Stir Fry
+    serves: 1
+source: ''
+tags: []
 title: Beef with Red and Green Peppers and Chilli

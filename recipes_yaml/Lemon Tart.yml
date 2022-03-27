@@ -1,76 +1,74 @@
 cuisine: .british
 description: null
 directions:
-  '#text': '>'
-  step:
-  - "Whiz butter and\_sugar in a food processor, then add egg for 30 sec, then flour\
-    \ and for a few\_seconds until the dough just comes together,\_(add 1 tbsp cold\
-    \ water if the dough seems too\_dry). Knead lightly on floured surface then shape\
-    \ into a flat disc and chill for\_30 minutes."
-  - "Heat ovetn 190\xB0C. Roll\_the pastry out and line a 20cm\_loose-based tart ring.\
-    \ Leave the\_excess pastry hanging over the edge. Rest\_for 20 minutes in the\
-    \ fridge. Bake blind with foil and beans for 15 minutes, until the\_sides just\
-    \ begin to colour. Remove the beans\_and foil and bake for another 5 minutes or\_\
-    until the base is cooked and lightly golden."
-  - "Brush the base with the melted chocolate\_and cool. Lower oven to 110\xB0C."
-  - "Whisk the eggs, yolks and sugar together\_in a bowl and stir in the cream. Finally,\
-    \ add\_the lemon juice. Strain the filling through a fine sieve into \_a jug,\
-    \ pour half into the pastry\_case, then put the pastry case on the shelf and pour\
-    \ the rest in."
-  - "Bake for 50-60 minutes until the filling is\_almost set. It should have a slight\
-    \ wobble in\_the centre. Trim the pastry level with the top\_of the tin and leave\
-    \ it to cool completely.\_Dust with icing sugar and run a cook's\_blowtorch over\
-    \ the surface to give a br\xFBl\xE9e effect."
+    step:
+    - Whiz butter and sugar in a food processor, then add egg for 30 sec, then flour
+        and for a few seconds until the dough just comes together, (add 1 tbsp cold
+        water if the dough seems too dry). Knead lightly on floured surface then shape
+        into a flat disc and chill for 30 minutes.
+    - Heat ovetn 190°C. Roll the pastry out and line a 20cm loose-based tart ring.
+        Leave the excess pastry hanging over the edge. Rest for 20 minutes in the
+        fridge. Bake blind with foil and beans for 15 minutes, until the sides just
+        begin to colour. Remove the beans and foil and bake for another 5 minutes
+        or until the base is cooked and lightly golden.
+    - Brush the base with the melted chocolate and cool. Lower oven to 110°C.
+    - Whisk the eggs, yolks and sugar together in a bowl and stir in the cream. Finally,
+        add the lemon juice. Strain the filling through a fine sieve into  a jug,
+        pour half into the pastry case, then put the pastry case on the shelf and
+        pour the rest in.
+    - Bake for 50-60 minutes until the filling is almost set. It should have a slight
+        wobble in the centre. Trim the pastry level with the top of the tin and leave
+        it to cool completely. Dust with icing sugar and run a cook's blowtorch over
+        the surface to give a brûlée effect.
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: flour
-      preparation: plain
-      quantity: '250'
-    - measurement: g
-      name: butter
-      preparation: null
-      quantity: '125'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '70'
-    - measurement: null
-      name: egg
-      preparation: null
-      quantity: '1'
-    name: Dough
-  - ingredient:
-      measurement: g
-      name: chocolate
-      preparation: dark
-      quantity: '50'
-    name: Extra
-  - ingredient:
-    - measurement: null
-      name: egg yolk
-      preparation: null
-      quantity: '4'
-    - measurement: null
-      name: eggs
-      preparation: null
-      quantity: '2'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '150'
-    - measurement: ml
-      name: cream
-      preparation: double
-      quantity: '200'
-    - measurement: null
-      name: lemon
-      preparation: juiced
-      quantity: '2'
-    name: Filling
-  serves: null
-source: null
-tags:
-- desserts
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: flour
+            preparation: plain
+            quantity: '62.50'
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '31.25'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '17.50'
+        -   measurement: null
+            name: egg
+            preparation: null
+            quantity: '0.25'
+        name: Dough
+    -   ingredient:
+        -   measurement: g
+            name: chocolate
+            preparation: dark
+            quantity: '12.50'
+        name: Extra
+    -   ingredient:
+        -   measurement: null
+            name: egg yolk
+            preparation: null
+            quantity: '1.00'
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '0.50'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '37.50'
+        -   measurement: ml
+            name: cream
+            preparation: double
+            quantity: '50.00'
+        -   measurement: null
+            name: lemon
+            preparation: juiced
+            quantity: '0.50'
+        name: Filling
+    serves: 1
+source: ''
+tags: []
 title: Lemon Tart

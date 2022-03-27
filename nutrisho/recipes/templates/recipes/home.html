@@ -6,7 +6,7 @@
 {% if latest_recipe_list %}
 <ul>
   {% for recipe in latest_recipe_list %}
-  <li><a href="{% url 'recipes:recipe' recipe.id %}">{{ recipe.name }}</a></li>
+  <li><a href="{% url 'recipes:recipe' recipe.id %}">{{ recipe.recipe_name }}</a></li>
   {% endfor %}
 </ul>
 {% else %}

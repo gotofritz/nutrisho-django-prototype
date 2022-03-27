@@ -1,0 +1,42 @@
+cuisine: .syria
+description: Za'atar is a kind of Middle Eastern pesto made with wild thyme which
+    grows in the mountains and sesame seeds. In some villages they also add marjoram
+    and a few pinches of crushed sumac - a slightly sour crimson berry which adds
+    a tart, lemony flavour.
+directions:
+    step:
+    - Make the za'atar by placing the sesame seeds in a dry frying pan on low heat.
+        Toast for 4-5 minutes or until lightly golden. Place the seeds in a mortar
+        and pestle and coarsely grind. Add the herbs and salt and grind to a paste.
+        Stir in the sumac and olive oil.
+    - Za'atar is delicious sprinkled on toasted pita bread, stirred through couscous
+        or drizzled on roast pumpkin or cauliflower.
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: sesame seeds
+            preparation: null
+            quantity: '12.50'
+        -   measurement: sprigs
+            name: thyme
+            preparation: fresh
+            quantity: '1.25'
+        -   measurement: sprigs
+            name: marjoram
+            preparation: fresh
+            quantity: '0.50'
+        -   measurement: pinch
+            name: sumac
+            preparation: null
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: oil
+            preparation: olive
+            quantity: '2.00'
+        name: null
+    serves: 1
+source: ''
+tags:
+- dip
+title: Syrian Za'atar

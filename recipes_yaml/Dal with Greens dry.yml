@@ -1,0 +1,78 @@
+cuisine: .india.classic
+description: Toovar Palak Dal. This is a dal where the individual lentils are still
+    separate from each other.
+directions:
+    step:
+    - Cook the dal for 30 mins in not too much water with a dollop of butter
+    - 15 mins or so before the dal is ready sautè cumin in oil / butter mixture (or
+        ghee), then add asafetida for a few seconds only
+    - Add chopped tomatoes, turmeric, chili and coriander powders, and salt, cook
+        down 3 mins
+    - Add the chopped greens, cook until just tender (depends on the type of green)
+    - When the dal is ready pour the chaunk into it, as well as the lemon juice. Cook
+        a few minutes to mix in
+    - Sprinkle a bit of nutmeg and chopped leaves before serving
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: toovar dal
+            preparation: split peas
+            quantity: '25.00'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '45.00'
+        -   measurement: dollop
+            name: butter
+            preparation: null
+            quantity: '0.25'
+        name: Dal
+    -   ingredient:
+        -   measurement: tsp
+            name: cumin seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: asafetida
+            preparation: null
+            quantity: '0.06'
+        -   measurement: null
+            name: tomato
+            preparation: peeled and chopped coarsely
+            quantity: '0.25'
+        -   measurement: tsp
+            name: ground coriander
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: cayenne
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: turmeric
+            preparation: null
+            quantity: '0.06'
+        -   measurement: g
+            name: spinach, or greens
+            preparation: coarsely chopped
+            quantity: '30.00'
+        name: Chaunk
+    -   ingredient:
+        -   measurement: tbsp
+            name: lemon juice
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: coriander
+            preparation: chopped
+            quantity: '0.25'
+        -   measurement: tsp
+            name: nutmeg
+            preparation: ground
+            quantity: '0.02'
+        name: Garnish
+    serves: 1
+source: HK
+tags: []
+title: Dal with Greens, dry

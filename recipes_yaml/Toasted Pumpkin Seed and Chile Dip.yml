@@ -1,45 +1,46 @@
 cuisine: null
 description: null
 directions:
-  step:
-  - dry roast in medium puffed up and golden on 5m
-  - peel
-  - "pur\xE9 with in smooth"
-  - remove from stove, discard garlic, chop coarsely and set aside
-  - "saut\xE9 in oil, olive medium translucent on 5m"
-  - add on 1m
-  - "add tomato and chilies pure\xE9 and simmer in thickened on 6-8m"
-  - season with salt and pepper and let cool
-  - blend pumpkin seeds in powder
-  - "mix with tomato pur\xE9, water if needed and"
+    step:
+    - dry roast in medium puffed up and golden on 5m
+    - peel
+    - puré with in smooth
+    - remove from stove, discard garlic, chop coarsely and set aside
+    - sauté in oil, olive medium translucent on 5m
+    - add on 1m
+    - add tomato and chilies pureé and simmer in thickened on 6-8m
+    - season with salt and pepper and let cool
+    - blend pumpkin seeds in powder
+    - mix with tomato puré, water if needed and
 ingredients:
-  group:
-    ingredient:
-    - measurement: g
-      name: pumpkin seeds
-      preparation: null
-      quantity: '175'
-    - measurement: g
-      name: tomatoes
-      preparation: null
-      quantity: '350'
-    - measurement: null
-      name: "jalape\xF1os chilies"
-      preparation: null
-      quantity: '2'
-    - measurement: null
-      name: onion
-      preparation: chopped, finely
-      quantity: '0.5'
-    - measurement: cloves
-      name: garlic
-      preparation: chopped, finely
-      quantity: '3'
-    - measurement: handful
-      name: coriander leaves
-      preparation: chopped, finely
-      quantity: '1'
-  serves: null
-source: null
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: pumpkin seeds
+            preparation: null
+            quantity: '43.75'
+        -   measurement: g
+            name: tomatoes
+            preparation: null
+            quantity: '87.50'
+        -   measurement: null
+            name: jalapeños chilies
+            preparation: null
+            quantity: '0.50'
+        -   measurement: null
+            name: onion
+            preparation: chopped, finely
+            quantity: '0.12'
+        -   measurement: cloves
+            name: garlic
+            preparation: chopped, finely
+            quantity: '0.75'
+        -   measurement: handful
+            name: coriander leaves
+            preparation: chopped, finely
+            quantity: '0.25'
+        name: null
+    serves: 1
+source: ''
 tags: []
 title: Toasted Pumpkin Seed and Chile Dip

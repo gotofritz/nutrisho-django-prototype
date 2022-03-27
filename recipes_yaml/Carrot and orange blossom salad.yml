@@ -1,43 +1,42 @@
 cuisine: .spanish
 description: null
 directions:
-  '#text': '>'
-  step:
-  - parboil the carrot but not for long, then cool
-  - slice in 5mm slices and mix with remaining ingredients
+    step:
+    - parboil the carrot but not for long, then cool
+    - slice in 5mm slices and mix with remaining ingredients
 ingredients:
-  group:
-    ingredient:
-    - measurement: g
-      name: carrots
-      preparation: peeled
-      quantity: '600'
-    - measurement: Tbsp
-      name: orange blossom water
-      preparation: null
-      quantity: '1'
-    - measurement: Tbsp
-      name: mint
-      preparation: chopped
-      quantity: '2'
-    - measurement: cloves
-      name: garlic
-      preparation: chopped
-      quantity: '0.5'
-    - measurement: tsp
-      name: caster sugar
-      preparation: null
-      quantity: '0.5'
-    - measurement: Tbsp
-      name: lemon juice
-      preparation: null
-      quantity: '0.5'
-    - measurement: Tbsp
-      name: oil
-      preparation: oilve
-      quantity: '3'
-  serves: null
-source: null
-tags:
-- salad
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: carrots
+            preparation: peeled
+            quantity: '150.00'
+        -   measurement: Tbsp
+            name: orange blossom water
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: mint
+            preparation: chopped
+            quantity: '0.50'
+        -   measurement: cloves
+            name: garlic
+            preparation: chopped
+            quantity: '0.12'
+        -   measurement: tsp
+            name: caster sugar
+            preparation: null
+            quantity: '0.12'
+        -   measurement: Tbsp
+            name: lemon juice
+            preparation: null
+            quantity: '0.12'
+        -   measurement: Tbsp
+            name: oil
+            preparation: oilve
+            quantity: '0.75'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Carrot and orange blossom salad

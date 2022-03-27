@@ -1,68 +1,67 @@
 cuisine: .spain.classic
 description: Typical moorish combination of ingredients, gluten free cake
 directions:
-  step:
-  - "CAKE: Set oven to 180\xB0, line 23cm spring form tin with greased paper"
-  - Mix the egg yolks and sugar together until pale, then add almonds and zest
-  - Beat egg whites with sugar until stiff and carefully fold into (2)
-  - Pour into baking tin and bake in middle shelf 35 - 45 mins
-  - 'SYRUP: place juices and cinnamon stick in a saucepan with the sugar, bring to
-    a boil and simmer until thickened a bit'
-  - Allow to cool and put in fridge
-  - 'CAKE: cool the cake completely, then remove from tin'
-  - Make six small holes in the cake. Pour the syrup over the cake, spreading all
-    over, and also so that it falls in the holes
+    step:
+    - 'CAKE: Set oven to 180°, line 23cm spring form tin with greased paper'
+    - Mix the egg yolks and sugar together until pale, then add almonds and zest
+    - Beat egg whites with sugar until stiff and carefully fold into (2)
+    - Pour into baking tin and bake in middle shelf 35 - 45 mins
+    - 'SYRUP: place juices and cinnamon stick in a saucepan with the sugar, bring
+        to a boil and simmer until thickened a bit'
+    - Allow to cool and put in fridge
+    - 'CAKE: cool the cake completely, then remove from tin'
+    - Make six small holes in the cake. Pour the syrup over the cake, spreading all
+        over, and also so that it falls in the holes
 ingredients:
-  group:
-  - ingredient:
-    - measurement: null
-      name: egg yolks
-      preparation: null
-      quantity: '6'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '200'
-    - measurement: g
-      name: almonds
-      preparation: blanched and ground
-      quantity: '230'
-    - measurement: null
-      name: oranges
-      preparation: zested
-      quantity: '2.5'
-    name: 'Cake: egg yolks'
-  - ingredient:
-    - measurement: null
-      name: egg whites
-      preparation: null
-      quantity: '6'
-    - measurement: tbs
-      name: sugar
-      preparation: null
-      quantity: '1'
-    name: 'Cake: egg whites'
-  - ingredient:
-    - measurement: null
-      name: oranges
-      preparation: juiced
-      quantity: '4'
-    - measurement: null
-      name: lemon
-      preparation: juiced
-      quantity: '1'
-    - measurement: stick
-      name: cinnamon
-      preparation: null
-      quantity: '1'
-    - measurement: handful
-      name: sugar
-      preparation: null
-      quantity: '1'
-    name: Syrup
-  serves: '2'
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: egg yolks
+            preparation: null
+            quantity: '1.50'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '50.00'
+        -   measurement: g
+            name: almonds
+            preparation: blanched and ground
+            quantity: '57.50'
+        -   measurement: null
+            name: oranges
+            preparation: zested
+            quantity: '0.62'
+        name: 'Cake: egg yolks'
+    -   ingredient:
+        -   measurement: null
+            name: egg whites
+            preparation: null
+            quantity: '1.50'
+        -   measurement: tbs
+            name: sugar
+            preparation: null
+            quantity: '0.25'
+        name: 'Cake: egg whites'
+    -   ingredient:
+        -   measurement: null
+            name: oranges
+            preparation: juiced
+            quantity: '1.00'
+        -   measurement: null
+            name: lemon
+            preparation: juiced
+            quantity: '0.25'
+        -   measurement: stick
+            name: cinnamon
+            preparation: null
+            quantity: '0.25'
+        -   measurement: handful
+            name: sugar
+            preparation: null
+            quantity: '0.25'
+        name: Syrup
+    serves: 1
 source: Moro white
 tags:
-- dessert
 - gluten free
 title: Orange and Almonds Sponge

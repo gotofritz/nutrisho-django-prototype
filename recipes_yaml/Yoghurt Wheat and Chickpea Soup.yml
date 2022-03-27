@@ -1,0 +1,101 @@
+cuisine: .turkish
+description: Tangy, garlicky and fragrant, yoghurt soups are eaten across Eastern
+    Europe, the Caucasus and into the Middle East. This soup is why nearly every village
+    in Turkey and Armenia can boast at least one resident who at 100 years old can
+    still dance a respectable tango. The combination of yoghurt, chickpeas and spelt
+    or wheatberries is incredibly fortifying and nutritious. Much as I hate the idea
+    of using dried herbs, it really is essential to use dried mint in this recipe.
+    To make your own, just lay a few handfuls of fresh mint leaves on a cloth on your
+    radiator or on a sunny window ledge for a few hours, or place them in a low oven
+    for 45 minutes.
+directions:
+    step:
+    - Sauté onion, mint, and salt for 4-5 minutes in oil and butter until the onion
+        is soft
+    - add the chicken stock, spelt and chickpeas and bring the mixture to the boil.
+    - After 2-3 minutes, reduce the heat and simmmer 1 hr on low
+    - Stir in the chard, cook for a minute further, then switch off the heat.
+    - In a separate pot, combine the yoghurt, water, garlic, flour and egg and whisk
+        together. Bring to boil over high heat and whisking constantly.
+    - As soon as it's boiled, stir it into the chicken stock mixture simmer 5 minutes,
+        then remove and cool slightly. Season with salt and pepper.
+    - Sizzle the mint in melted butter gently just until its colour and flavour are
+        released.
+    - To serve, ladle the soup into bowls and drizzle with the mint butter. Serve
+        warm.
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: tsp
+            name: oil
+            preparation: olive
+            quantity: '1.00'
+        -   measurement: Tbsp
+            name: butter
+            preparation: null
+            quantity: '0.50'
+        -   measurement: null
+            name: onion
+            preparation: finely shopped
+            quantity: '0.25'
+        -   measurement: sprigs
+            name: mint
+            preparation: shredded
+            quantity: '0.75'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.25'
+        -   measurement: l
+            name: stock
+            preparation: chicken
+            quantity: '0.38'
+        -   measurement: g
+            name: spelt
+            preparation: farro
+            quantity: '42.50'
+        -   measurement: g
+            name: chickpeas
+            preparation: dried
+            quantity: '32.50'
+        -   measurement: handful
+            name: swiss chard
+            preparation: or spinach
+            quantity: '0.50'
+        name: Pulses
+    -   ingredient:
+        -   measurement: ml
+            name: yogurt
+            preparation: full fat
+            quantity: '187.50'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '62.50'
+        -   measurement: cloves
+            name: garlic
+            preparation: finely minced
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: flour
+            preparation: plain
+            quantity: '0.75'
+        -   measurement: null
+            name: egg
+            preparation: null
+            quantity: '0.25'
+        name: Yogurt soup
+    -   ingredient:
+        -   measurement: Tbsp
+            name: butter
+            preparation: null
+            quantity: '1.00'
+        -   measurement: Tbsp
+            name: dried mint
+            preparation: crumbled between your fingers
+            quantity: '0.25'
+        name: Seasonings
+    serves: 1
+source: ''
+tags: []
+title: Yoghurt, Wheat and Chickpea Soup

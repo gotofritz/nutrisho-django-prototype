@@ -1,0 +1,74 @@
+cuisine: .thai
+description: null
+directions:
+    step:
+    - deep fry chicken / tofu, potatoes, and shallots separately, pat dry
+    - put the chicken / tofu in a pan and just cover with coconut milk, and bring
+        to boil
+    - add cardamom pods, peanuts, bay leaves, 10 mins
+    - add the potatoes an onions
+    - in another pot cook coconut cream and curry paste, low heat, 10 m. use juice
+        from (4) if it gets too dry
+    - when dry, add sugar until caramelized
+    - add fish sauce and tamarind water
+    - add (7) to (4), add the pinea[[le / apple juice, and serve
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: chicken legs
+            preparation: or 250 g of tofu
+            quantity: '0.75'
+        -   measurement: null
+            name: potatoes
+            preparation: medium
+            quantity: '1.00'
+        -   measurement: null
+            name: shallots
+            preparation: small
+            quantity: '2.00'
+        -   measurement: l
+            name: coconut milk
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: cardamom pods
+            preparation: roasted
+            quantity: '1.25'
+        -   measurement: ml
+            name: coconut cream
+            preparation: null
+            quantity: '187.50'
+        -   measurement: Tbsp
+            name: sugar
+            preparation: palm
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: fish sauce
+            preparation: null
+            quantity: '0.75'
+        -   measurement: lump
+            name: tamarind pulp
+            preparation: turned intoo 3-5 tbsp tamarind water
+            quantity: '0.25'
+        -   measurement: null
+            name: bay leaves
+            preparation: roasted
+            quantity: '1.00'
+        -   measurement: null
+            name: peanuts
+            preparation: roasted
+            quantity: '18.75'
+        -   measurement: null
+            name: pineapple juice
+            preparation: or apple
+            quantity: '62.50'
+        -   measurement: Tbsp
+            name: mussuman curry paste
+            preparation: see eparate recipe - or any other curry paste
+            quantity: '1.00'
+        name: null
+    serves: 1
+source: ''
+tags: []
+title: Mussuman chicken / tofu curry

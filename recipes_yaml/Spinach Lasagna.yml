@@ -1,82 +1,81 @@
 cuisine: .italian.generic
 description: Not as good as Petra's
 directions:
-  step:
-  - "Oven at 180\xB0"
-  - Warm the milk in its own pot. Don't let it boil
-  - If you have a style of lasagna that needs precooking, precook
-  - "Prepare the spinach: either put frozen spinach in bowl and pour boiling water\
-    \ over it, then drain and squeeze. Or saut\xE8 fresh spinache in olive oil and\
-    \ garlic, then chop"
-  - In a separate pot, melt the butter, then add the flour and stir for a few minutes,
-    until a blonde colour
-  - Add the warm milk to the butter, and whisk
-  - Add nutmeg, salt, pepper and a dollop of mustard. Keep whisking every so often.
-    It should be ready in a few minutes, when it's nice and thick. This is bechamel
-    sauce
-  - Remove from fire, add the grated cheese mixture and whisk vigorously. This is
-    now mornay sauce
-  - Put 1/6 of the mornay at the bottom of a 25 x 20 roasting tray (no need to grease
-    it). Put two lasagnas on top, then 1/4 of the spinach, 1/6 of the mornay. Repeat
-    with three more layers of lasagna + spinach + sauce. Change orientation of the
-    lasagna at every layer
-  - Put a last layer of sauce on top, and add the grated parmesan
-  - Bake 20 mins (or as per packet instructions), top of oven
+    step:
+    - Oven at 180°
+    - Warm the milk in its own pot. Don't let it boil
+    - If you have a style of lasagna that needs precooking, precook
+    - 'Prepare the spinach: either put frozen spinach in bowl and pour boiling water
+        over it, then drain and squeeze. Or sautè fresh spinache in olive oil and
+        garlic, then chop'
+    - In a separate pot, melt the butter, then add the flour and stir for a few minutes,
+        until a blonde colour
+    - Add the warm milk to the butter, and whisk
+    - Add nutmeg, salt, pepper and a dollop of mustard. Keep whisking every so often.
+        It should be ready in a few minutes, when it's nice and thick. This is bechamel
+        sauce
+    - Remove from fire, add the grated cheese mixture and whisk vigorously. This is
+        now mornay sauce
+    - Put 1/6 of the mornay at the bottom of a 25 x 20 roasting tray (no need to grease
+        it). Put two lasagnas on top, then 1/4 of the spinach, 1/6 of the mornay.
+        Repeat with three more layers of lasagna + spinach + sauce. Change orientation
+        of the lasagna at every layer
+    - Put a last layer of sauce on top, and add the grated parmesan
+    - Bake 20 mins (or as per packet instructions), top of oven
 ingredients:
-  group:
-  - ingredient:
-    - measurement: L
-      name: milk
-      preparation: null
-      quantity: '1'
-    - measurement: g
-      name: butter
-      preparation: null
-      quantity: '80'
-    - measurement: g
-      name: flour
-      preparation: null
-      quantity: '80'
-    - measurement: tsp
-      name: nutmeg
-      preparation: grated
-      quantity: '0.25'
-    - measurement: tbsp
-      name: mustard
-      preparation: null
-      quantity: '1'
-    - measurement: g
-      name: emmenthal + parmesan
-      preparation: grated
-      quantity: '200'
-    name: Mornay sauce
-  - ingredient:
-    - measurement: g
-      name: spinach, frozen
-      preparation: null
-      quantity: '250'
-    - measurement: g
-      name: spinach, fresh
-      preparation: alternatvie
-      quantity: '500'
-    - measurement: clove
-      name: garlic
-      preparation: if fresh
-      quantity: '1'
-    name: Spinach
-  - ingredient:
-    - measurement: sheets
-      name: lasagna
-      preparation: null
-      quantity: '8'
-    - measurement: g
-      name: parmesan
-      preparation: grated
-      quantity: '50'
-    name: Lasagna
-  serves: '4'
+    group:
+    -   ingredient:
+        -   measurement: L
+            name: milk
+            preparation: null
+            quantity: '0.25'
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '20.00'
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '20.00'
+        -   measurement: tsp
+            name: nutmeg
+            preparation: grated
+            quantity: '0.06'
+        -   measurement: tbsp
+            name: mustard
+            preparation: null
+            quantity: '0.25'
+        -   measurement: g
+            name: emmenthal + parmesan
+            preparation: grated
+            quantity: '50.00'
+        name: Mornay sauce
+    -   ingredient:
+        -   measurement: g
+            name: spinach, frozen
+            preparation: null
+            quantity: '62.50'
+        -   measurement: g
+            name: spinach, fresh
+            preparation: alternatvie
+            quantity: '125.00'
+        -   measurement: clove
+            name: garlic
+            preparation: if fresh
+            quantity: '0.25'
+        name: Spinach
+    -   ingredient:
+        -   measurement: sheets
+            name: lasagna
+            preparation: null
+            quantity: '2.00'
+        -   measurement: g
+            name: parmesan
+            preparation: grated
+            quantity: '12.50'
+        name: Lasagna
+    serves: 1
 source: Fritz
 tags:
-- main
 - vegetarian
 title: Spinach lasagna

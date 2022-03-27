@@ -1,81 +1,81 @@
 cuisine: null
 description: I've used blueberries for this cheesecake, but you could also substitute
-  raspberries, blackcurrants or strawberries.
+    raspberries, blackcurrants or strawberries.
 directions:
-  step:
-  - Put 200g of the blueberries (use the softer ones) into a pan with the sugar and
-    175ml water. Slowly bring to the boil to dissolve the sugar, then simmer for 7-8
-    minutes. Mix the cornflour with the remaining 25ml water and add to the pan, stirring.
-    Simmer, stirring, for 2-3 minutes. Remove from the heat and strain through a fine
-    sieve into a bowl, pushing the berries in the sieve with the back of a spoon to
-    extract as much juice as possible. Leave to cool.
-  - Meanwhile, line a 17-18cm round springform cake tin with greaseproof paper. Crush
-    the biscuits in a food processor until they are the texture of coarse breadcrumbs.
-    (Or smash them in a plastic bag with a rolling pin.) Mix the biscuit crumbs with
-    the melted butter and pack into the cake tin, firming it down with the back of
-    a spoon.
-  - Whip the cream and sugar together until fairly stiff. In another bowl, beat the
-    cream cheese to soften, then fold in the whipped cream with the lemon zest and
-    vanilla extract. Lightly fold through half of the blueberry syrup (not too thoroughly,
-    though, as you want a rippled effect). Spoon the mix on to the biscuit base and
-    place in the fridge for 2-3 hours until firm.
-  - Mix the rest of the blueberries with the remaining blueberry syrup. To take the
-    cheesecake out, run a hot knife around the edge, then release the side of the
-    tin and slide the cheesecake on to a board. Cut into slices and serve each portion
-    topped with a couple of spoonfuls of the blueberry sauce.
+    step:
+    - Put 200g of the blueberries (use the softer ones) into a pan with the sugar
+        and 175ml water. Slowly bring to the boil to dissolve the sugar, then simmer
+        for 7-8 minutes. Mix the cornflour with the remaining 25ml water and add to
+        the pan, stirring. Simmer, stirring, for 2-3 minutes. Remove from the heat
+        and strain through a fine sieve into a bowl, pushing the berries in the sieve
+        with the back of a spoon to extract as much juice as possible. Leave to cool.
+    - Meanwhile, line a 17-18cm round springform cake tin with greaseproof paper.
+        Crush the biscuits in a food processor until they are the texture of coarse
+        breadcrumbs. (Or smash them in a plastic bag with a rolling pin.) Mix the
+        biscuit crumbs with the melted butter and pack into the cake tin, firming
+        it down with the back of a spoon.
+    - Whip the cream and sugar together until fairly stiff. In another bowl, beat
+        the cream cheese to soften, then fold in the whipped cream with the lemon
+        zest and vanilla extract. Lightly fold through half of the blueberry syrup
+        (not too thoroughly, though, as you want a rippled effect). Spoon the mix
+        on to the biscuit base and place in the fridge for 2-3 hours until firm.
+    - Mix the rest of the blueberries with the remaining blueberry syrup. To take
+        the cheesecake out, run a hot knife around the edge, then release the side
+        of the tin and slide the cheesecake on to a board. Cut into slices and serve
+        each portion topped with a couple of spoonfuls of the blueberry sauce.
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: blueberries
-      preparation: null
-      quantity: '450'
-    - measurement: g
-      name: caster sugar
-      preparation: null
-      quantity: '200'
-    - measurement: ml
-      name: water
-      preparation: null
-      quantity: '200'
-    - measurement: g
-      name: cornflour
-      preparation: null
-      quantity: '20'
-  - ingredient:
-    - measurement: g
-      name: butter
-      preparation: melted
-      quantity: '80'
-    - measurement: g
-      name: Digestive Biscuits Or Hobnobs
-      preparation: null
-      quantity: '250'
-    name: For The Base
-  - ingredient:
-    - measurement: null
-      name: ml double cream
-      preparation: null
-      quantity: '300'
-    - measurement: g
-      name: caster sugar
-      preparation: null
-      quantity: '100'
-    - measurement: g
-      name: cream cheese
-      preparation: such as Philadelphia
-      quantity: '500'
-    - measurement: null
-      name: Finely grated zest of 1 lemon
-      preparation: null
-      quantity: null
-    - measurement: tsp
-      name: vanilla extract
-      preparation: null
-      quantity: '1'
-    name: For The Filling
-  serves: Serves 4
-source: null
-tags:
-- dessert
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: blueberries
+            preparation: null
+            quantity: '112.50'
+        -   measurement: g
+            name: caster sugar
+            preparation: null
+            quantity: '50.00'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '50.00'
+        -   measurement: g
+            name: cornflour
+            preparation: null
+            quantity: '5.00'
+        name: null
+    -   ingredient:
+        -   measurement: g
+            name: butter
+            preparation: melted
+            quantity: '20.00'
+        -   measurement: g
+            name: Digestive Biscuits Or Hobnobs
+            preparation: null
+            quantity: '62.50'
+        name: For The Base
+    -   ingredient:
+        -   measurement: null
+            name: ml double cream
+            preparation: null
+            quantity: '75.00'
+        -   measurement: g
+            name: caster sugar
+            preparation: null
+            quantity: '25.00'
+        -   measurement: g
+            name: cream cheese
+            preparation: such as Philadelphia
+            quantity: '125.00'
+        -   measurement: null
+            name: Finely grated zest of 1 lemon
+            preparation: null
+            quantity: null
+        -   measurement: tsp
+            name: vanilla extract
+            preparation: null
+            quantity: '0.25'
+        name: For The Filling
+    serves: 1
+source: ''
+tags: []
 title: Blueberry cheesecake

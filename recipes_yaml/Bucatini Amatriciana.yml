@@ -1,60 +1,49 @@
 cuisine: .italian
 description: This is tradidionally made with guaciale, a kind of bacon made with pig's
-  cheeks, and bucatini, which are very thick spaghettli-like tubes. Substitute as
-  required. The name comes fron a town in the county of Rieti, Amatrice.
+    cheeks, and bucatini, which are very thick spaghettli-like tubes. Substitute as
+    required. The name comes fron a town in the county of Rieti, Amatrice.
 directions:
-  '#text': '>
-
-
-
-
-
-
-
-
-
-    >'
-  step:
-  - if using canned tomatoes start making the sauce, otherwise you can leave it until
-    the pasta is cooking
-  - "cube the guanciale, and saut\xE8 in oil with chilli powder until browned, 1 m"
-  - add the wine, cook until reduced
-  - 'if using canned tomatoes: add them, break with a fork, add salt to taste and
-    cook for 15 m on low heat'
-  - bring a large pot of salted water to boil, then cook the bucatini (or other pasta)
-    in them
-  - if using passata, add passata, and salt to taste, cook 5 m on low heat
-  - cook the pasta until al dente, drain and toss in the sauce pot
-  - add pecorino to the pot, mix throughly, serve
+    step:
+    - if using canned tomatoes start making the sauce, otherwise you can leave it
+        until the pasta is cooking
+    - cube the guanciale, and sautè in oil with chilli powder until browned, 1 m
+    - add the wine, cook until reduced
+    - 'if using canned tomatoes: add them, break with a fork, add salt to taste and
+        cook for 15 m on low heat'
+    - bring a large pot of salted water to boil, then cook the bucatini (or other
+        pasta) in them
+    - if using passata, add passata, and salt to taste, cook 5 m on low heat
+    - cook the pasta until al dente, drain and toss in the sauce pot
+    - add pecorino to the pot, mix throughly, serve
 ingredients:
-  group:
-    ingredient:
-    - measurement: g
-      name: bucatini
-      preparation: or spaghetti
-      quantity: '500'
-    - measurement: g
-      name: guanciale
-      preparation: or pancetta
-      quantity: '400'
-    - measurement: Tbsp
-      name: wine
-      preparation: white
-      quantity: '2'
-    - measurement: g
-      name: cheese
-      preparation: pecorino
-      quantity: '30'
-    - measurement: tsp
-      name: chilli powder
-      preparation: or to taste
-      quantity: '1'
-    - measurement: kg
-      name: canned tomatoes
-      preparation: or 500 g passata
-      quantity: '1'
-  serves: '4'
-source: null
-tags:
-- pasta
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: bucatini
+            preparation: or spaghetti
+            quantity: '125.00'
+        -   measurement: g
+            name: guanciale
+            preparation: or pancetta
+            quantity: '100.00'
+        -   measurement: Tbsp
+            name: wine
+            preparation: white
+            quantity: '0.50'
+        -   measurement: g
+            name: cheese
+            preparation: pecorino
+            quantity: '7.50'
+        -   measurement: tsp
+            name: chilli powder
+            preparation: or to taste
+            quantity: '0.25'
+        -   measurement: kg
+            name: canned tomatoes
+            preparation: or 500 g passata
+            quantity: '0.25'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Bucatini Amatriciana

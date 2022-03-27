@@ -1,0 +1,45 @@
+cuisine: .chinese
+description: null
+directions:
+    step:
+    - chop garlic
+    - heat oil in wok
+    - stir fry garlic 10 s
+    - add spinach, 1 m
+    - add sauces and sugar, 30 s
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: Tbsp
+            name: oil
+            preparation: null
+            quantity: '0.38'
+        -   measurement: tsp
+            name: oil
+            preparation: sesame
+            quantity: '0.25'
+        -   measurement: cloves
+            name: garlic
+            preparation: null
+            quantity: '0.75'
+        -   measurement: g
+            name: spinach
+            preparation: null
+            quantity: '93.75'
+        -   measurement: Tbsp
+            name: oyster sauce
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.25'
+        -   measurement: tsp
+            name: sugar
+            preparation: null
+            quantity: '0.12'
+        name: null
+    serves: 1
+source: ''
+tags: []
+title: Spinach, stir fried

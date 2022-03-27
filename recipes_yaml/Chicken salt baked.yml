@@ -1,0 +1,48 @@
+cuisine: .chinese.sichuan
+description: Dong Jiang Yan Jiu Ji
+directions:
+    step:
+    - mix ginger and rice wine, then sieve over chicken and put solids in cavity with
+        spring onion. marinate 1h
+    - spread the salt on dish, bake 20m ar 190C
+    - mix fennel seeds and pepper with salt in dish
+    - scoop half the salt, place chicken on top of remainder, rub other half on chicken.cover
+        with tin foil and bake 45m
+    - uncover and bake another 15 20m
+    - shake salt away and serve
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: kg
+            name: chicken
+            preparation: null
+            quantity: '0.38'
+        -   measurement: Tbsp
+            name: ginger
+            preparation: peeled
+            quantity: '0.50'
+        -   measurement: Tbsp
+            name: rice wine
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: spring onion
+            preparation: while  chopped
+            quantity: '0.25'
+        -   measurement: kg
+            name: salt
+            preparation: rock
+            quantity: '0.38'
+        -   measurement: Tbsp
+            name: fennel seeds
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: Sichuan pepper
+            preparation: crushed lightly
+            quantity: '0.25'
+        name: null
+    serves: 1
+source: ''
+tags: []
+title: Chicken, salt baked

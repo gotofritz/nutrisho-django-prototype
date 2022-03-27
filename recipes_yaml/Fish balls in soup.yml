@@ -1,59 +1,309 @@
 cuisine: .chinese
 description: Gao Tang Yu Jiao
 directions:
-  '#text': '>'
-  step: process fish and all other fish ball ingredients (2) make balls out of them
-    (3) heat the stock, cook the fishballs 40 s in them (4) ladle out fish balls,
-    split into soup bowls adding coriander and tomates (5) add salt and pepper to
-    stock, sieve into bowls
+    step:
+    - p
+    - r
+    - o
+    - c
+    - e
+    - s
+    - s
+    - ''
+    - f
+    - i
+    - s
+    - h
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - a
+    - l
+    - l
+    - ''
+    - o
+    - t
+    - h
+    - e
+    - r
+    - ''
+    - f
+    - i
+    - s
+    - h
+    - ''
+    - b
+    - a
+    - l
+    - l
+    - ''
+    - i
+    - n
+    - g
+    - r
+    - e
+    - d
+    - i
+    - e
+    - n
+    - t
+    - s
+    - ''
+    - (
+    - '2'
+    - )
+    - ''
+    - m
+    - a
+    - k
+    - e
+    - ''
+    - b
+    - a
+    - l
+    - l
+    - s
+    - ''
+    - o
+    - u
+    - t
+    - ''
+    - o
+    - f
+    - ''
+    - t
+    - h
+    - e
+    - m
+    - ''
+    - (
+    - '3'
+    - )
+    - ''
+    - h
+    - e
+    - a
+    - t
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - s
+    - t
+    - o
+    - c
+    - k
+    - ','
+    - ''
+    - c
+    - o
+    - o
+    - k
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - f
+    - i
+    - s
+    - h
+    - b
+    - a
+    - l
+    - l
+    - s
+    - ''
+    - '4'
+    - '0'
+    - ''
+    - s
+    - ''
+    - i
+    - n
+    - ''
+    - t
+    - h
+    - e
+    - m
+    - ''
+    - (
+    - '4'
+    - )
+    - ''
+    - l
+    - a
+    - d
+    - l
+    - e
+    - ''
+    - o
+    - u
+    - t
+    - ''
+    - f
+    - i
+    - s
+    - h
+    - ''
+    - b
+    - a
+    - l
+    - l
+    - s
+    - ','
+    - ''
+    - s
+    - p
+    - l
+    - i
+    - t
+    - ''
+    - i
+    - n
+    - t
+    - o
+    - ''
+    - s
+    - o
+    - u
+    - p
+    - ''
+    - b
+    - o
+    - w
+    - l
+    - s
+    - ''
+    - a
+    - d
+    - d
+    - i
+    - n
+    - g
+    - ''
+    - c
+    - o
+    - r
+    - i
+    - a
+    - n
+    - d
+    - e
+    - r
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - t
+    - o
+    - m
+    - a
+    - t
+    - e
+    - s
+    - ''
+    - (
+    - '5'
+    - )
+    - ''
+    - a
+    - d
+    - d
+    - ''
+    - s
+    - a
+    - l
+    - t
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - p
+    - e
+    - p
+    - p
+    - e
+    - r
+    - ''
+    - t
+    - o
+    - ''
+    - s
+    - t
+    - o
+    - c
+    - k
+    - ','
+    - ''
+    - s
+    - i
+    - e
+    - v
+    - e
+    - ''
+    - i
+    - n
+    - t
+    - o
+    - ''
+    - b
+    - o
+    - w
+    - l
+    - s
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: fish fillet
-      preparation: white
-      quantity: '220'
-    - measurement: null
-      name: spring onions
-      preparation: white only
-      quantity: '3'
-    - measurement: tea
-      name: spring onion
-      preparation: grated
-      quantity: '1'
-    - measurement: Tbsp
-      name: water
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: rice wine
-      preparation: null
-      quantity: '1'
-    - measurement: null
-      name: egg whites
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: baking powder
-      preparation: null
-      quantity: '0.25'
-    name: Fish balls
-  - ingredient:
-    - measurement: null
-      name: tomatoes
-      preparation: cherry
-      quantity: '4'
-    - measurement: bunch
-      name: coriander
-      preparation: broken in small stalks
-      quantity: '1'
-    - measurement: l
-      name: fish stock
-      preparation: null
-      quantity: '1.5'
-    name: Soup
-  serves: null
-source: null
-tags:
-- savoring china
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: fish fillet
+            preparation: white
+            quantity: '55.00'
+        -   measurement: null
+            name: spring onions
+            preparation: white only
+            quantity: '0.75'
+        -   measurement: tea
+            name: spring onion
+            preparation: grated
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: water
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: rice wine
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: egg whites
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: baking powder
+            preparation: null
+            quantity: '0.06'
+        name: Fish balls
+    -   ingredient:
+        -   measurement: null
+            name: tomatoes
+            preparation: cherry
+            quantity: '1.00'
+        -   measurement: bunch
+            name: coriander
+            preparation: broken in small stalks
+            quantity: '0.25'
+        -   measurement: l
+            name: fish stock
+            preparation: null
+            quantity: '0.38'
+        name: Soup
+    serves: 1
+source: ''
+tags: []
 title: Fish balls in soup

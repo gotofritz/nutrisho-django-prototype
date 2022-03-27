@@ -1,48 +1,48 @@
 cuisine: .middle east.syria
 description: Almost a mediterannean dahl
 directions:
-  step:
-  - Deep fry the onions in veg oil, until brown, then drain and dry off the oil
-  - Fry garlic and cumin in olive oil until golden
-  - Stir in coriander stalks and lentils, half the caramelized onion, water
-  - Bring to boil and simmer gently for 40-60 mins
-  - Add in coriander leaves, olive oil, squeeze of lemon, salt and pepper.
-  - Serve with remaining caramelized onion on top
+    step:
+    - Deep fry the onions in veg oil, until brown, then drain and dry off the oil
+    - Fry garlic and cumin in olive oil until golden
+    - Stir in coriander stalks and lentils, half the caramelized onion, water
+    - Bring to boil and simmer gently for 40-60 mins
+    - Add in coriander leaves, olive oil, squeeze of lemon, salt and pepper.
+    - Serve with remaining caramelized onion on top
 ingredients:
-  group:
-  - ingredient:
-      measurement: medium
-      name: onions
-      preparation: sliced evenly with mandolin
-      quantity: '2'
-    name: caramelized onions
-  - ingredient:
-    - measurement: cloves
-      name: garlic
-      preparation: chopped finely
-      quantity: '4'
-    - measurement: tsp
-      name: cumin
-      preparation: ground coarsely
-      quantity: '2'
-    - measurement: g
-      name: lentils, puy
-      preparation: null
-      quantity: '250'
-    - measurement: L
-      name: water
-      preparation: null
-      quantity: '1.75'
-    - measurement: g
-      name: coriander
-      preparation: chopped leaves, stalk kept
-      quantity: '125'
-    - measurement: null
-      name: lemon
-      preparation: squeezed
-      quantity: '0.5'
-    name: soup
-  serves: '2'
+    group:
+    -   ingredient:
+        -   measurement: medium
+            name: onions
+            preparation: sliced evenly with mandolin
+            quantity: '0.50'
+        name: caramelized onions
+    -   ingredient:
+        -   measurement: cloves
+            name: garlic
+            preparation: chopped finely
+            quantity: '1.00'
+        -   measurement: tsp
+            name: cumin
+            preparation: ground coarsely
+            quantity: '0.50'
+        -   measurement: g
+            name: lentils, puy
+            preparation: null
+            quantity: '62.50'
+        -   measurement: L
+            name: water
+            preparation: null
+            quantity: '0.44'
+        -   measurement: g
+            name: coriander
+            preparation: chopped leaves, stalk kept
+            quantity: '31.25'
+        -   measurement: null
+            name: lemon
+            preparation: squeezed
+            quantity: '0.12'
+        name: soup
+    serves: 1
 source: Moro Cookbook 2
 tags:
 - dahl

@@ -1,46 +1,47 @@
 cuisine: null
 description: null
 directions:
-  step:
-  - Tip in the peas and simmer for another 5 minutes or until tender (frozen peas
-    will only need a couple of minutes once they come back to a simmer). Add the lovage
-    and immediately take off the heat.
-  - Whiz the mixture in a blender until smooth, then taste. Adjust the seasoning and
-    blend in some more lovage if you think the soup needs it. Pass through a sieve
-    if you wish (some blenders do a better job than others). Serve hot or cold.
+    step:
+    - Tip in the peas and simmer for another 5 minutes or until tender (frozen peas
+        will only need a couple of minutes once they come back to a simmer). Add the
+        lovage and immediately take off the heat.
+    - Whiz the mixture in a blender until smooth, then taste. Adjust the seasoning
+        and blend in some more lovage if you think the soup needs it. Pass through
+        a sieve if you wish (some blenders do a better job than others). Serve hot
+        or cold.
 ingredients:
-  group:
-    ingredient:
-    - measurement: Tbsp
-      name: vegetable or corn oil
-      preparation: null
-      quantity: '1'
-    - measurement: null
-      name: leek (both green and white parts)
-      preparation: washed and roughly chopped
-      quantity: '1'
-    - measurement: l
-      name: vegetable stock
-      preparation: null
-      quantity: '1.2'
-    - measurement: null
-      name: Salt and freshly ground black pepper
-      preparation: null
-      quantity: null
-    - measurement: g
-      name: freshly podded peas (or frozen ones will do)
-      preparation: null
-      quantity: '450'
-    - measurement: null
-      name: lovage leaves (or celery leaves)
-      preparation: null
-      quantity: 10-12
-    - measurement: null
-      name: Heat the oil in a pan and gently cook the leek for 3-4 minutes
-      preparation: stirring occasionally until soft. Add the stock
-      quantity: null
-  serves: Serves 4
-source: null
-tags:
-- soup
+    group:
+    -   ingredient:
+        -   measurement: Tbsp
+            name: vegetable or corn oil
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: leek (both green and white parts)
+            preparation: washed and roughly chopped
+            quantity: '0.25'
+        -   measurement: l
+            name: vegetable stock
+            preparation: null
+            quantity: '0.30'
+        -   measurement: null
+            name: Salt and freshly ground black pepper
+            preparation: null
+            quantity: null
+        -   measurement: g
+            name: freshly podded peas (or frozen ones will do)
+            preparation: null
+            quantity: '112.50'
+        -   measurement: null
+            name: lovage leaves (or celery leaves)
+            preparation: null
+            quantity: '-0.50'
+        -   measurement: null
+            name: Heat the oil in a pan and gently cook the leek for 3-4 minutes
+            preparation: stirring occasionally until soft. Add the stock
+            quantity: null
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Chilled pea and lovage soup

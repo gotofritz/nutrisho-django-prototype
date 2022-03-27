@@ -1,62 +1,365 @@
 cuisine: null
 description: This is a great way to introduce beetroot to children without them knowing
-  - it's worked on mine!
+    - it's worked on mine!
 directions:
-  '#text': '>'
-  step: "Preheat the oven to 180C/350F/Gas4. Place all of the ingredients in the food\
-    \ processor in the order above and whizz until smooth. Place in a greased 20cm\
-    \ cake tin and bake for 45-50 minutes until a skewer inserted comes out clean.\
-    \ Allow to cool, then sprinkle with icing sugar and serve with cr\xE8me fra\xEE\
-    che. '"
+    step:
+    - P
+    - r
+    - e
+    - h
+    - e
+    - a
+    - t
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - o
+    - v
+    - e
+    - n
+    - ''
+    - t
+    - o
+    - ''
+    - '1'
+    - '8'
+    - '0'
+    - C
+    - /
+    - '3'
+    - '5'
+    - '0'
+    - F
+    - /
+    - G
+    - a
+    - s
+    - '4'
+    - .
+    - ''
+    - P
+    - l
+    - a
+    - c
+    - e
+    - ''
+    - a
+    - l
+    - l
+    - ''
+    - o
+    - f
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - i
+    - n
+    - g
+    - r
+    - e
+    - d
+    - i
+    - e
+    - n
+    - t
+    - s
+    - ''
+    - i
+    - n
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - f
+    - o
+    - o
+    - d
+    - ''
+    - p
+    - r
+    - o
+    - c
+    - e
+    - s
+    - s
+    - o
+    - r
+    - ''
+    - i
+    - n
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - o
+    - r
+    - d
+    - e
+    - r
+    - ''
+    - a
+    - b
+    - o
+    - v
+    - e
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - w
+    - h
+    - i
+    - z
+    - z
+    - ''
+    - u
+    - n
+    - t
+    - i
+    - l
+    - ''
+    - s
+    - m
+    - o
+    - o
+    - t
+    - h
+    - .
+    - ''
+    - P
+    - l
+    - a
+    - c
+    - e
+    - ''
+    - i
+    - n
+    - ''
+    - a
+    - ''
+    - g
+    - r
+    - e
+    - a
+    - s
+    - e
+    - d
+    - ''
+    - '2'
+    - '0'
+    - c
+    - m
+    - ''
+    - c
+    - a
+    - k
+    - e
+    - ''
+    - t
+    - i
+    - n
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - b
+    - a
+    - k
+    - e
+    - ''
+    - f
+    - o
+    - r
+    - ''
+    - '4'
+    - '5'
+    - '-'
+    - '5'
+    - '0'
+    - ''
+    - m
+    - i
+    - n
+    - u
+    - t
+    - e
+    - s
+    - ''
+    - u
+    - n
+    - t
+    - i
+    - l
+    - ''
+    - a
+    - ''
+    - s
+    - k
+    - e
+    - w
+    - e
+    - r
+    - ''
+    - i
+    - n
+    - s
+    - e
+    - r
+    - t
+    - e
+    - d
+    - ''
+    - c
+    - o
+    - m
+    - e
+    - s
+    - ''
+    - o
+    - u
+    - t
+    - ''
+    - c
+    - l
+    - e
+    - a
+    - n
+    - .
+    - ''
+    - A
+    - l
+    - l
+    - o
+    - w
+    - ''
+    - t
+    - o
+    - ''
+    - c
+    - o
+    - o
+    - l
+    - ','
+    - ''
+    - t
+    - h
+    - e
+    - n
+    - ''
+    - s
+    - p
+    - r
+    - i
+    - n
+    - k
+    - l
+    - e
+    - ''
+    - w
+    - i
+    - t
+    - h
+    - ''
+    - i
+    - c
+    - i
+    - n
+    - g
+    - ''
+    - s
+    - u
+    - g
+    - a
+    - r
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - s
+    - e
+    - r
+    - v
+    - e
+    - ''
+    - w
+    - i
+    - t
+    - h
+    - ''
+    - c
+    - r
+    - è
+    - m
+    - e
+    - ''
+    - f
+    - r
+    - a
+    - î
+    - c
+    - h
+    - e
+    - .
+    - ''
+    - ''''
 ingredients:
-  group:
-    ingredient:
-    - measurement: g
-      name: caster sugar
-      preparation: null
-      quantity: '125'
-    - measurement: medium
-      name: free-range eggs
-      preparation: null
-      quantity: '2'
-    - measurement: g
-      name: Greek yoghurt
-      preparation: null
-      quantity: '100'
-    - measurement: g
-      name: cocoa powder
-      preparation: null
-      quantity: '35'
-    - measurement: g
-      name: soft unsalted butter
-      preparation: null
-      quantity: '75'
-    - measurement: tsp
-      name: baking soda
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: salt
-      preparation: null
-      quantity: 1/4
-    - measurement: g
-      name: flour
-      preparation: null
-      quantity: '200'
-    - measurement: tsp
-      name: baking powder
-      preparation: null
-      quantity: '1'
-    - measurement: ml
-      name: strong
-      preparation: black coffee (hot)
-      quantity: '100'
-    - measurement: g
-      name: grated raw beetroot
-      preparation: null
-      quantity: '150'
-  serves: Makes one medium-sized cake
-source: null
-tags:
-- cake
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: caster sugar
+            preparation: null
+            quantity: '31.25'
+        -   measurement: medium
+            name: free-range eggs
+            preparation: null
+            quantity: '0.50'
+        -   measurement: g
+            name: Greek yoghurt
+            preparation: null
+            quantity: '25.00'
+        -   measurement: g
+            name: cocoa powder
+            preparation: null
+            quantity: '8.75'
+        -   measurement: g
+            name: soft unsalted butter
+            preparation: null
+            quantity: '18.75'
+        -   measurement: tsp
+            name: baking soda
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.06'
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '50.00'
+        -   measurement: tsp
+            name: baking powder
+            preparation: null
+            quantity: '0.25'
+        -   measurement: ml
+            name: strong
+            preparation: black coffee (hot)
+            quantity: '25.00'
+        -   measurement: g
+            name: grated raw beetroot
+            preparation: null
+            quantity: '37.50'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Dense beetroot and chocolate cake

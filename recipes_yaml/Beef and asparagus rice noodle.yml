@@ -1,97 +1,82 @@
 cuisine: .chinese
 description: null
 directions:
-  '#text': '>
-
-
-
-
-
-
-
-
-
-
-
-
-    >'
-  step:
-  - bring water for blanching to boil
-  - Cut beef into thin strips, 4 x 1 cm or thereabout
-  - mix with marinade ingredients in a bowl, and stand for 20m
-  - cut asparagus on the diagonal, 1.5 cm long, and blanch 1 m in boiling water, then
-    immediately dip in chilled water
-  - chop spring onion
-  - rinse noodles in cold water
-  - stir fry beef 30 s then set aside
-  - stir fry noodles, 1m, the lay on serving plate
-  - put sauce ingredients in wok and reduce 1m
-  - add asparagus and beef 30s
-  - spoon over noodles, and sprinkle spring onions on top
+    step:
+    - bring water for blanching to boil
+    - Cut beef into thin strips, 4 x 1 cm or thereabout
+    - mix with marinade ingredients in a bowl, and stand for 20m
+    - cut asparagus on the diagonal, 1.5 cm long, and blanch 1 m in boiling water,
+        then immediately dip in chilled water
+    - chop spring onion
+    - rinse noodles in cold water
+    - stir fry beef 30 s then set aside
+    - stir fry noodles, 1m, the lay on serving plate
+    - put sauce ingredients in wok and reduce 1m
+    - add asparagus and beef 30s
+    - spoon over noodles, and sprinkle spring onions on top
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: beef
-      preparation: sirloin or rump
-      quantity: '185'
-    - measurement: Tbsp
-      name: rice wine
-      preparation: null
-      quantity: '1'
-    - measurement: Tbsp
-      name: soy sauce
-      preparation: light
-      quantity: '1'
-    - measurement: tsp
-      name: cornstarch
-      preparation: null
-      quantity: '1.5'
-    - measurement: tsp
-      name: sugar
-      preparation: null
-      quantity: '0.5'
-    name: Marinade
-  - ingredient:
-    - measurement: g
-      name: noodles
-      preparation: flat
-      quantity: '500'
-    - measurement: null
-      name: asparagus
-      preparation: null
-      quantity: '12'
-    name: Noodles
-  - ingredient:
-    - measurement: Tbsp
-      name: oyster sauce
-      preparation: null
-      quantity: '3'
-    - measurement: Tbsp
-      name: soy sauce
-      preparation: light
-      quantity: '1'
-    - measurement: tsp
-      name: cornstarch
-      preparation: dissolved in 180ml stock
-      quantity: '2'
-    - measurement: tsp
-      name: sugar
-      preparation: null
-      quantity: '0.5'
-    - measurement: tsp
-      name: oil
-      preparation: sesame
-      quantity: '2'
-    name: Sauce
-  - ingredient:
-      measurement: null
-      name: spring onions
-      preparation: whole
-      quantity: '1'
-    name: Serving
-  serves: '4'
-source: null
-tags:
-- with rice
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: beef
+            preparation: sirloin or rump
+            quantity: '46.25'
+        -   measurement: Tbsp
+            name: rice wine
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.25'
+        -   measurement: tsp
+            name: cornstarch
+            preparation: null
+            quantity: '0.38'
+        -   measurement: tsp
+            name: sugar
+            preparation: null
+            quantity: '0.12'
+        name: Marinade
+    -   ingredient:
+        -   measurement: g
+            name: noodles
+            preparation: flat
+            quantity: '125.00'
+        -   measurement: null
+            name: asparagus
+            preparation: null
+            quantity: '3.00'
+        name: Noodles
+    -   ingredient:
+        -   measurement: Tbsp
+            name: oyster sauce
+            preparation: null
+            quantity: '0.75'
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.25'
+        -   measurement: tsp
+            name: cornstarch
+            preparation: dissolved in 180ml stock
+            quantity: '0.50'
+        -   measurement: tsp
+            name: sugar
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: oil
+            preparation: sesame
+            quantity: '0.50'
+        name: Sauce
+    -   ingredient:
+        -   measurement: null
+            name: spring onions
+            preparation: whole
+            quantity: '0.25'
+        name: Serving
+    serves: 1
+source: ''
+tags: []
 title: Beef and asparagus rice noodle

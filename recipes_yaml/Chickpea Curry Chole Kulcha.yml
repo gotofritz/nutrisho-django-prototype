@@ -1,0 +1,188 @@
+cuisine: .indian.punjab
+description: Indian classic
+directions:
+    step:
+    - CHOLA (chickpeas). Lightly roast masala seeds. When they are fragrant add the
+        powder a few seconds
+    - Cool down, then grind. Can be stored 3-4 months in fridge
+    - Pressure cook the chickpeas for 45 minutes with the spices and salt. When cooked
+        keep the water
+    - Sauté seeds, add ginger, shortly after assafoetida and 2 secs later onions.
+        Cook a few minutes
+    - Add the tomates and cook until the liquid has evaporated
+    - Add 2 tsp of the spice mix. Stir in well then ad a bit of water and dry it out.
+        Add water again and dry it out again
+    - Add in the chickpeas. Stir vigorously
+    - Add amchoor and garam masala, mix, and add in enough cooking water to just cover
+        chickpeas. Reduce
+    - KULCHA (patties). Make a dough with all the ingredients and let it rest covered
+        for 2 hours
+    - Mix the stuffing ingredients well, add salt
+    - Divide into small balls, flatten them wide and put a spoonful of stuffin in
+        the middle. Fold doug over stuffing
+    - Sautè briefly then bake 20 mins or so
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: tsp
+            name: fennel seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: cumin seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: black peppercorn
+            preparation: null
+            quantity: '0.12'
+        -   measurement: tsp
+            name: pomegranate seeds
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: mace
+            preparation: null
+            quantity: '0.25'
+        -   measurement: cm
+            name: cinnamon
+            preparation: null
+            quantity: '0.75'
+        -   measurement: null
+            name: green cardamom
+            preparation: null
+            quantity: '0.50'
+        -   measurement: null
+            name: cloves
+            preparation: null
+            quantity: '1.00'
+        -   measurement: tsp
+            name: chili powder
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: coriander powder
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: turmeric
+            preparation: null
+            quantity: '0.25'
+        name: Masala powder
+    -   ingredient:
+        -   measurement: cup
+            name: dried chickpeas
+            preparation: null
+            quantity: '0.50'
+        -   measurement: cm
+            name: cinnamon
+            preparation: null
+            quantity: '0.50'
+        -   measurement: leaf
+            name: bay
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: cloves
+            preparation: null
+            quantity: '1.00'
+        -   measurement: null
+            name: black peppercorn
+            preparation: null
+            quantity: '1.75'
+        -   measurement: cm
+            name: ginger
+            preparation: cut in 3
+            quantity: '0.75'
+        -   measurement: null
+            name: tea bag
+            preparation: null
+            quantity: '0.25'
+        name: Chickpeas
+    -   ingredient:
+        -   measurement: medium
+            name: tomatoes
+            preparation: peeled
+            quantity: '0.50'
+        -   measurement: null
+            name: onions
+            preparation: chopped
+            quantity: '0.75'
+        -   measurement: large
+            name: chili
+            preparation: null
+            quantity: '0.25'
+        -   measurement: cloves
+            name: garlic
+            preparation: chopped
+            quantity: '0.75'
+        -   measurement: tsp
+            name: cumin seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: pinch
+            name: asafoetida
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: amchoor
+            preparation: null
+            quantity: '0.25'
+        -   measurement: pinch
+            name: garam masala
+            preparation: null
+            quantity: '0.25'
+        name: Chickpeas
+    -   ingredient:
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '62.50'
+        -   measurement: ml
+            name: yoghurt
+            preparation: null
+            quantity: '30.00'
+        -   measurement: tsp
+            name: honey
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: baking sode
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.25'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '27.50'
+        name: Kulcha dough
+    -   ingredient:
+        -   measurement: null
+            name: potato
+            preparation: boiled
+            quantity: '0.25'
+        -   measurement: small
+            name: onion
+            preparation: diced
+            quantity: '0.25'
+        -   measurement: cm
+            name: ginger
+            preparation: grated
+            quantity: '0.25'
+        -   measurement: tsp
+            name: chola mix
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: amchoor
+            preparation: null
+            quantity: '0.12'
+        name: Kulcha stuffing
+    serves: 1
+source: http://imgur.com/a/DLgo9
+tags:
+- curry
+title: 'Chickpea Curry: Chole Kulcha'

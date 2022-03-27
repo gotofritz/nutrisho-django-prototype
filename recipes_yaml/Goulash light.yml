@@ -1,0 +1,102 @@
+cuisine: .hungary
+description: A light, easy version of the Hungarian-American recipe
+directions:
+    step:
+    - In large pressure cooker sauté the vegetables in generous butter and oil until
+        wilted, 10 mins
+    - Turn up heat, and start adding meat a bit at the time to scorch it, and stir
+    - Lower heat and leave 5 mins
+    - Add water, caraway seeds, and pressure cook 30 mins (depending on toughness
+        of meat)
+    - Prepare a slurry by mixing the flour, paprika and a bit of water
+    - Open the pressure cooker. Add the slurry, tomato, water, parsely and bay leaf
+        tied together, potato, to the stew and cook another 20 mins
+    - Before serving warm up the butter and add paprika, stir a bit and add to soup
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: onions
+            preparation: chopped finely
+            quantity: '0.50'
+        -   measurement: null
+            name: carrot
+            preparation: sliced
+            quantity: '0.25'
+        -   measurement: null
+            name: red pepper
+            preparation: sliced
+            quantity: '0.25'
+        name: Veg base
+    -   ingredient:
+        -   measurement: g
+            name: beef, shin
+            preparation: cubed
+            quantity: '125.00'
+        -   measurement: null
+            name: water
+            preparation: enough to cover meat
+            quantity: null
+        -   measurement: tsp
+            name: caraway
+            preparation: coarsely ground
+            quantity: '0.25'
+        name: Meat
+    -   ingredient:
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '15.00'
+        -   measurement: tsp
+            name: paprika
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tbsp
+            name: salt
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: black pepper
+            preparation: null
+            quantity: '0.12'
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '15.00'
+        name: Slurry
+    -   ingredient:
+        -   measurement: ml
+            name: water
+            preparation: null
+            quantity: '150.00'
+        -   measurement: null
+            name: tomato
+            preparation: peeled, chopped
+            quantity: '0.25'
+        -   measurement: g
+            name: potatoes
+            preparation: large cubes
+            quantity: '75.00'
+        -   measurement: leaf
+            name: bay
+            preparation: null
+            quantity: '0.25'
+        -   measurement: bunch
+            name: parsley
+            preparation: null
+            quantity: '0.25'
+        name: Second cooking
+    -   ingredient:
+        -   measurement: tbsp
+            name: butter
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: paprika
+            preparation: null
+            quantity: '0.50'
+        name: Final garnish
+    serves: 1
+source: "Louis SzathmaÌ\x81ry \"The chef's secret cook book \""
+tags: []
+title: Goulash, light

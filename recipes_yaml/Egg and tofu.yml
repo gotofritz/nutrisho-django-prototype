@@ -1,79 +1,77 @@
 cuisine: .chinese
 description: Feicui La Doufu - this is good with spring onion pastries
 directions:
-  '#text': '>'
-  step:
-  - whisk egg mixture, set aside
-  - chop veg for stir fry finely
-  - make wok very hot, add oil
-  - stir fry veg with salt, 2m
-  - chop garlic, chilli, start choping the coriander
-  - add stir fry saiuce ingredients 20 s
-  - add egg mixture (1), 15 s
-  - lower heat, 1m
-  - dice the tofu 1cm, finish chopping coriander
-  - add tofu, coriander, ground pepper, 2m
-  - serve
+    step:
+    - whisk egg mixture, set aside
+    - chop veg for stir fry finely
+    - make wok very hot, add oil
+    - stir fry veg with salt, 2m
+    - chop garlic, chilli, start choping the coriander
+    - add stir fry saiuce ingredients 20 s
+    - add egg mixture (1), 15 s
+    - lower heat, 1m
+    - dice the tofu 1cm, finish chopping coriander
+    - add tofu, coriander, ground pepper, 2m
+    - serve
 ingredients:
-  group:
-  - ingredient:
-    - measurement: null
-      name: eggs
-      preparation: null
-      quantity: '4'
-    - measurement: null
-      name: egg whites
-      preparation: null
-      quantity: '3'
-    - measurement: Tbsp
-      name: cornstarch
-      preparation: null
-      quantity: '1'
-    name: Egg mixture
-  - ingredient:
-    - measurement: Tbsp
-      name: oil
-      preparation: null
-      quantity: '1.5'
-    - measurement: g
-      name: onions
-      preparation: null
-      quantity: '75'
-    - measurement: g
-      name: bell peppers
-      preparation: null
-      quantity: '75'
-    - measurement: g
-      name: celery
-      preparation: or zucchini
-      quantity: '40'
-    name: Stir fry veg
-  - ingredient:
-    - measurement: tsp
-      name: chili
-      preparation: fresh
-      quantity: '2'
-    - measurement: null
-      name: garlic cloves
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: soy sauce
-      preparation: light
-      quantity: '2'
-    - measurement: tsp
-      name: spicy bean paste
-      preparation: null
-      quantity: '0.5'
-    name: stir fry sauce
-  - ingredient:
-      measurement: g
-      name: tofu
-      preparation: null
-      quantity: '315'
-    name: Final bit
-  serves: '4'
-source: null
-tags:
-- savoring china
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '1.00'
+        -   measurement: null
+            name: egg whites
+            preparation: null
+            quantity: '0.75'
+        -   measurement: Tbsp
+            name: cornstarch
+            preparation: null
+            quantity: '0.25'
+        name: Egg mixture
+    -   ingredient:
+        -   measurement: Tbsp
+            name: oil
+            preparation: null
+            quantity: '0.38'
+        -   measurement: g
+            name: onions
+            preparation: null
+            quantity: '18.75'
+        -   measurement: g
+            name: bell peppers
+            preparation: null
+            quantity: '18.75'
+        -   measurement: g
+            name: celery
+            preparation: or zucchini
+            quantity: '10.00'
+        name: Stir fry veg
+    -   ingredient:
+        -   measurement: tsp
+            name: chili
+            preparation: fresh
+            quantity: '0.50'
+        -   measurement: null
+            name: garlic cloves
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.50'
+        -   measurement: tsp
+            name: spicy bean paste
+            preparation: null
+            quantity: '0.12'
+        name: stir fry sauce
+    -   ingredient:
+        -   measurement: g
+            name: tofu
+            preparation: null
+            quantity: '78.75'
+        name: Final bit
+    serves: 1
+source: ''
+tags: []
 title: Egg and tofu

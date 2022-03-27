@@ -1,0 +1,77 @@
+cuisine: .mediterranean.modern
+description: Ottolenghi side dish / starter
+directions:
+    step:
+    - Oven 250°
+    - 'If using dried chickpeas, soak overnight (optional if using pressure cooker)
+        and boil: 1hr in normal pot if soaked or pressure cooker unsoaked, 30mins
+        pressure cooker if soaked. Keep cooking liquid'
+    - Mix aubergine marinade in bowl, toss aubergines in it to coat, then spread in
+        one layer on lined baking tray. Put a tray with water at bottom of oven to
+        keep moisture, and bake aubergines 40 mins. Let cool
+    - Mix chickpea ingredients with 2 tbsp chickpea cooking water, salt and pepper.
+        Mash roughly with potato masher to a paste, adding more cooking liquid as
+        needed
+    - Whiz the yoghurt ingredients, salt and pepper. It should be just runny
+    - Layer chickpeas on plate, put chickpea paste on top, and drizzle yoghurt dressing
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: small
+            name: aubergines
+            preparation: 2cm slices
+            quantity: '0.50'
+        -   measurement: tbsp
+            name: olive oil
+            preparation: null
+            quantity: '1.00'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.12'
+        -   measurement: grind
+            name: black pepper
+            preparation: null
+            quantity: '0.25'
+        name: Aubergine Marinade
+    -   ingredient:
+        -   measurement: g
+            name: chickpea dried
+            preparation: or half can
+            quantity: '12.50'
+        -   measurement: tsp
+            name: cumin
+            preparation: toasted and crushed
+            quantity: '0.38'
+        -   measurement: tbsp
+            name: olive oil
+            preparation: null
+            quantity: '0.75'
+        name: Chickpea Paste
+    -   ingredient:
+        -   measurement: g
+            name: Greek yoghurt
+            preparation: null
+            quantity: '12.50'
+        -   measurement: g
+            name: mint
+            preparation: roughly chopped
+            quantity: '2.50'
+        -   measurement: g
+            name: parsley
+            preparation: chopped
+            quantity: '3.75'
+        -   measurement: tbsp
+            name: olive oil
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: water
+            preparation: null
+            quantity: '0.50'
+        name: Youghurt Dressing
+    serves: 1
+source: Yotam Ottolenghi "Plenty More"
+tags:
+- side dish
+title: Aubergines with Crushed Chickpeas and Herb Yoghurt

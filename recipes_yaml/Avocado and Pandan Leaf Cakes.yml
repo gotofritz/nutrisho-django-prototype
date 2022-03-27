@@ -1,86 +1,81 @@
 cuisine: null
-description: 'While the idea of avocado in a dessert may seem rather bizarre initially,
-  it really is delicious and makes an incredibly moist cake. This cake is inspired
-  by the avocado milkshakes I used to have in Ethiopia and in Vietnamese cafes as
-  a teenager. In many parts of Asia, Africa and Latin America avocados are eaten with
-  a sprinkling of sugar as a pudding or even as an ice-cream flavour.
-
-
-  I prefer to use the ''Haas'' variety of avocado, also known as a "crocodile pear"
-  due to its dark, wrinkly skin. Hass avocados are rich and buttery tasting and have
-  none of the soapy or bland taste of many of the smooth-skinned varieties.
-
-
-  The pandan leaf is frequently used in puddings and rice dishes in Asia where it
-  lends its delicate, sweet and powdery aroma to dishes. You can find it sold in bundles
-  in many Thai or Asian food shops.
-
-
-  Silicon baking moulds are perfect for this recipe as you do not have to grease them
-  beforehand and once cool the little cakes slide out gracefully onto plates.'
+description: While the idea of avocado in a dessert may seem rather bizarre initially,
+    it really is delicious and makes an incredibly moist cake. This cake is inspired
+    by the avocado milkshakes I used to have in Ethiopia and in Vietnamese cafes as
+    a teenager. In many parts of Asia, Africa and Latin America avocados are eaten
+    with a sprinkling of sugar as a pudding or even as an ice-cream flavour. I prefer
+    to use the 'Haas' variety of avocado, also known as a "crocodile pear" due to
+    its dark, wrinkly skin. Hass avocados are rich and buttery tasting and have none
+    of the soapy or bland taste of many of the smooth-skinned varieties. The pandan
+    leaf is frequently used in puddings and rice dishes in Asia where it lends its
+    delicate, sweet and powdery aroma to dishes. You can find it sold in bundles in
+    many Thai or Asian food shops. Silicon baking moulds are perfect for this recipe
+    as you do not have to grease them beforehand and once cool the little cakes slide
+    out gracefully onto plates.
 directions:
-  step:
-  - Place the milk and the pandan leaf in a saucepan and bring to a gentle simmer.
-    Simmer for 2-3 minutes and then remove from the heat. Set aside to cool for at
-    least 20 minutes allowing the pandan leaf to infuse its flavour into the milk.
-  - Preheat the oven to 110C. Separate the eggs and remove the pandan leaf from the
-    milk.
-  - Place the butter and sugar in a food processor and cream until smooth and fluffy.
-    Add the avocado and egg yolks and process until smooth. Pour in the milk, cream,
-    lime juice and zest and process again until smooth. Add the flour and process
-    briefly until just incorporated.
-  - If you do not have a food processor, do the first two steps using a hand mixer,
-    then switch to a wooden spoon and stir in the milk, cream and remaining steps
-    by hand.
-  - In a separate bowl, whisk the egg whites until the form soft peaks. Gently fold
-    the egg whites through the avocado mixture being careful not to deflate your egg
-    whites.
-  - Pour the mold into 8 silicone baking moulds or butter and sugar 8 ceramic ramekins.
-    Place the batter in the oven and bake for 45 minutes to an hour or until the puddings
-    are set and feel springy to the touch.
-  - Allow to cool completely and then turn out onto plates. Serve with tropical fruit,
-    sorbet or ice cream.
+    step:
+    - Place the milk and the pandan leaf in a saucepan and bring to a gentle simmer.
+        Simmer for 2-3 minutes and then remove from the heat. Set aside to cool for
+        at least 20 minutes allowing the pandan leaf to infuse its flavour into the
+        milk.
+    - Preheat the oven to 110C. Separate the eggs and remove the pandan leaf from
+        the milk.
+    - Place the butter and sugar in a food processor and cream until smooth and fluffy.
+        Add the avocado and egg yolks and process until smooth. Pour in the milk,
+        cream, lime juice and zest and process again until smooth. Add the flour and
+        process briefly until just incorporated.
+    - If you do not have a food processor, do the first two steps using a hand mixer,
+        then switch to a wooden spoon and stir in the milk, cream and remaining steps
+        by hand.
+    - In a separate bowl, whisk the egg whites until the form soft peaks. Gently fold
+        the egg whites through the avocado mixture being careful not to deflate your
+        egg whites.
+    - Pour the mold into 8 silicone baking moulds or butter and sugar 8 ceramic ramekins.
+        Place the batter in the oven and bake for 45 minutes to an hour or until the
+        puddings are set and feel springy to the touch.
+    - Allow to cool completely and then turn out onto plates. Serve with tropical
+        fruit, sorbet or ice cream.
 ingredients:
-  group:
-    ingredient:
-    - measurement: ml
-      name: milk
-      preparation: whole
-      quantity: '165'
-    - measurement: null
-      name: pandan leaf
-      preparation: tied in a knot
-      quantity: '1'
-    - measurement: null
-      name: eggs
-      preparation: null
-      quantity: '3'
-    - measurement: g
-      name: butter
-      preparation: null
-      quantity: '30'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '180'
-    - measurement: null
-      name: avocado
-      preparation: haas or crocodile pear
-      quantity: '1'
-    - measurement: ml
-      name: cr\U00e8me fraiche
-      preparation: null
-      quantity: '125'
-    - measurement: null
-      name: limes
-      preparation: juiced
-      quantity: '1'
-    - measurement: g
-      name: flour
-      preparation: plain
-      quantity: '90'
-  serves: null
-source: null
-tags:
-- dessert
+    group:
+    -   ingredient:
+        -   measurement: ml
+            name: milk
+            preparation: whole
+            quantity: '41.25'
+        -   measurement: null
+            name: pandan leaf
+            preparation: tied in a knot
+            quantity: '0.25'
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '0.75'
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '7.50'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '45.00'
+        -   measurement: null
+            name: avocado
+            preparation: haas or crocodile pear
+            quantity: '0.25'
+        -   measurement: ml
+            name: cr\U00e8me fraiche
+            preparation: null
+            quantity: '31.25'
+        -   measurement: null
+            name: limes
+            preparation: juiced
+            quantity: '0.25'
+        -   measurement: g
+            name: flour
+            preparation: plain
+            quantity: '22.50'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Avocado and Pandan Leaf Cakes

@@ -1,93 +1,92 @@
 cuisine: .european.modern
 description: null
 directions:
-  step:
-  - Beat the eggs and add olive oil and sugar. Stir until well mixed
-  - In another bowl sift the flour and dry ingredients, make a well in the middle
-  - Add the egg mixture to the well in the sifted flour, mixing well
-  - Add the walnuts and carrots
-  - Line a 24 cm cake tin with baking paper, grease lightly and dust with flour.
-  - Pour in the cake mixture
-  - "Bake for 80 mins at 170\xB0, then cool in the tin"
-  - Mix the butter, vanilla, and mascarpone
-  - Add the icing sugar gradually
-  - Use the mixture to ice the cake
+    step:
+    - Beat the eggs and add olive oil and sugar. Stir until well mixed
+    - In another bowl sift the flour and dry ingredients, make a well in the middle
+    - Add the egg mixture to the well in the sifted flour, mixing well
+    - Add the walnuts and carrots
+    - Line a 24 cm cake tin with baking paper, grease lightly and dust with flour.
+    - Pour in the cake mixture
+    - Bake for 80 mins at 170°, then cool in the tin
+    - Mix the butter, vanilla, and mascarpone
+    - Add the icing sugar gradually
+    - Use the mixture to ice the cake
 ingredients:
-  group:
-  - ingredient:
-    - measurement: ml
-      name: olive oil
-      preparation: null
-      quantity: '250'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '430'
-    - measurement: null
-      name: eggs
-      preparation: null
-      quantity: '4'
-    name: Wet ingredient
-  - ingredient:
-    - measurement: g
-      name: flour
-      preparation: null
-      quantity: '250'
-    - measurement: tsp
-      name: baking powder
-      preparation: null
-      quantity: '2'
-    - measurement: tsp
-      name: bicarbonate
-      preparation: null
-      quantity: '2'
-    - measurement: tsp
-      name: cinnamon
-      preparation: ground
-      quantity: '2'
-    - measurement: tsp
-      name: cloves
-      preparation: ground
-      quantity: '1'
-    - measurement: tsp
-      name: cardamom
-      preparation: ground
-      quantity: '1'
-    - measurement: tsp
-      name: salt
-      preparation: null
-      quantity: '1'
-    name: Dry ingredient
-  - ingredient:
-    - measurement: g
-      name: walnuts
-      preparation: chopped coarsely
-      quantity: '125'
-    - measurement: g
-      name: carrots
-      preparation: grated
-      quantity: '500'
-    name: Filling
-  - ingredient:
-    - measurement: g
-      name: butter
-      preparation: null
-      quantity: '125'
-    - measurement: tsp
-      name: vanilla extract
-      preparation: null
-      quantity: '2'
-    - measurement: g
-      name: mascarpone
-      preparation: or cream cheese
-      quantity: '250'
-    - measurement: g
-      name: icing sugar
-      preparation: null
-      quantity: '250'
-    name: Icing
-  serves: '8'
+    group:
+    -   ingredient:
+        -   measurement: ml
+            name: olive oil
+            preparation: null
+            quantity: '62.50'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '107.50'
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '1.00'
+        name: Wet ingredient
+    -   ingredient:
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '62.50'
+        -   measurement: tsp
+            name: baking powder
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: bicarbonate
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: cinnamon
+            preparation: ground
+            quantity: '0.50'
+        -   measurement: tsp
+            name: cloves
+            preparation: ground
+            quantity: '0.25'
+        -   measurement: tsp
+            name: cardamom
+            preparation: ground
+            quantity: '0.25'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.25'
+        name: Dry ingredient
+    -   ingredient:
+        -   measurement: g
+            name: walnuts
+            preparation: chopped coarsely
+            quantity: '31.25'
+        -   measurement: g
+            name: carrots
+            preparation: grated
+            quantity: '125.00'
+        name: Filling
+    -   ingredient:
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '31.25'
+        -   measurement: tsp
+            name: vanilla extract
+            preparation: null
+            quantity: '0.50'
+        -   measurement: g
+            name: mascarpone
+            preparation: or cream cheese
+            quantity: '62.50'
+        -   measurement: g
+            name: icing sugar
+            preparation: null
+            quantity: '62.50'
+        name: Icing
+    serves: 1
 source: BBC Food
-tags:
-- cake
+tags: []
 title: Carrot and olive oil cake

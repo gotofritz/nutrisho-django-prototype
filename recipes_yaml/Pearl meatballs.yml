@@ -1,65 +1,63 @@
 cuisine: null
 description: Zhen Zhu Qui
 directions:
-  '#text': '>'
-  step:
-  - mix meatballs 1 ingredients in food processor
-  - add meatballs 2 ingredients in food processor
-  - rinse rice under cold water, then pour boiling water over it, then rinse again.
-    Spread over a plate.
-  - make 2.5 cm meatballs, and roll over the rice to cover
-  - put in oiled dish in steamer and steam hi fire, 20m
-  - lower fire and steam 15m longer
+    step:
+    - mix meatballs 1 ingredients in food processor
+    - add meatballs 2 ingredients in food processor
+    - rinse rice under cold water, then pour boiling water over it, then rinse again.
+        Spread over a plate.
+    - make 2.5 cm meatballs, and roll over the rice to cover
+    - put in oiled dish in steamer and steam hi fire, 20m
+    - lower fire and steam 15m longer
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: pork
-      preparation: fat
-      quantity: '440'
-    - measurement: Tbsp
-      name: soy sauce
-      preparation: light
-      quantity: '1'
-    - measurement: tsp
-      name: rice wine
-      preparation: null
-      quantity: '1.5'
-    - measurement: tsp
-      name: sugar
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: salt
-      preparation: null
-      quantity: '0.5'
-    name: Meatball 1
-  - ingredient:
-    - measurement: Tbsp
-      name: spring onions
-      preparation: null
-      quantity: '2'
-    - measurement: tsp
-      name: ginger
-      preparation: null
-      quantity: '1.5'
-    - measurement: g
-      name: cornstarch
-      preparation: null
-      quantity: '30'
-    - measurement: Tbsp
-      name: stock
-      preparation: null
-      quantity: '2'
-    name: Meatball 2
-  - ingredient:
-      measurement: g
-      name: rice
-      preparation: sticky
-      quantity: '220'
-    name: Rice
-  serves: '4'
-source: null
-tags:
-- with rice
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: pork
+            preparation: fat
+            quantity: '110.00'
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.25'
+        -   measurement: tsp
+            name: rice wine
+            preparation: null
+            quantity: '0.38'
+        -   measurement: tsp
+            name: sugar
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: salt
+            preparation: null
+            quantity: '0.12'
+        name: Meatball 1
+    -   ingredient:
+        -   measurement: Tbsp
+            name: spring onions
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: ginger
+            preparation: null
+            quantity: '0.38'
+        -   measurement: g
+            name: cornstarch
+            preparation: null
+            quantity: '7.50'
+        -   measurement: Tbsp
+            name: stock
+            preparation: null
+            quantity: '0.50'
+        name: Meatball 2
+    -   ingredient:
+        -   measurement: g
+            name: rice
+            preparation: sticky
+            quantity: '55.00'
+        name: Rice
+    serves: 1
+source: ''
+tags: []
 title: Pearl meatballs

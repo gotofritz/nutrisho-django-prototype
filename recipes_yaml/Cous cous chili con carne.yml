@@ -1,75 +1,75 @@
 cuisine: null
 description: A chili con carne kind of thing, with cous cous
 directions:
-  step:
-  - Bring the stock to boil. Meanwhile put the cous cous in a small baking dish, mix
-    in salt, add boiling water. Rub it in, then mix in the olive oil
-  - Put the cous cous in steamer dish - it should be sticky enough not to fall through.
-    Put the steamer over the boiling stock, and cover with a lid.
-  - Meanwhile chop the onion, chilli, and parsley, and finely dice the carrots and
-    celery. You can put them all together in the chopper to be faster. Mince the meat,
-    separately.
-  - Remove the cous cous from the steamer and put back into baking dish. Rub in boiling
-    water and a dollop of butter, then put back in the steamer dish
-  - Pour the stock in a bowl, dry the pot, and put it back on high fire with olive
-    oil.
-  - "Saut\xE8 the veg mixture and cumin for 3 mins or so, adding salt and pepper"
-  - "Add the meat, and saut\xE8 a few minutes, until all browned, stirring constantly."
-  - Lower the heat, add back the stock and the harissa, and cover with the steamer
-    dish and lid. Cook for about 20 mins.
-  - Check the stock every so often, adding water if it's all dried out, or increase
-    the heat if it looks too liquid.
+    step:
+    - Bring the stock to boil. Meanwhile put the cous cous in a small baking dish,
+        mix in salt, add boiling water. Rub it in, then mix in the olive oil
+    - Put the cous cous in steamer dish - it should be sticky enough not to fall through.
+        Put the steamer over the boiling stock, and cover with a lid.
+    - Meanwhile chop the onion, chilli, and parsley, and finely dice the carrots and
+        celery. You can put them all together in the chopper to be faster. Mince the
+        meat, separately.
+    - Remove the cous cous from the steamer and put back into baking dish. Rub in
+        boiling water and a dollop of butter, then put back in the steamer dish
+    - Pour the stock in a bowl, dry the pot, and put it back on high fire with olive
+        oil.
+    - Sautè the veg mixture and cumin for 3 mins or so, adding salt and pepper
+    - Add the meat, and sautè a few minutes, until all browned, stirring constantly.
+    - Lower the heat, add back the stock and the harissa, and cover with the steamer
+        dish and lid. Cook for about 20 mins.
+    - Check the stock every so often, adding water if it's all dried out, or increase
+        the heat if it looks too liquid.
 ingredients:
-  group:
-  - ingredient:
-    - measurement: g
-      name: cous cous
-      preparation: null
-      quantity: '180'
-    - measurement: ml
-      name: boiling water
-      preparation: (twice)
-      quantity: '50'
-    - measurement: tsp
-      name: olive oil
-      preparation: null
-      quantity: '1'
-    - measurement: g
-      name: butter
-      preparation: null
-      quantity: '20'
-    - measurement: ml
-      name: stock
-      preparation: fresh or stock cube
-      quantity: '300'
-    name: cous cous
-  - ingredient:
-    - measurement: tsp
-      name: cumin
-      preparation: null
-      quantity: '0.5'
-    - measurement: g
-      name: beef
-      preparation: minced
-      quantity: '350'
-    - measurement: null
-      name: onion
-      preparation: or shallots
-      quantity: '1'
-    - measurement: small
-      name: carrot
-      preparation: diced finely
-      quantity: '1'
-    - measurement: stick
-      name: celery
-      preparation: diced finely
-      quantity: '0.5'
-    - measurement: dollop
-      name: harissa
-      preparation: null
-      quantity: '1'
-    name: stew
-  serves: '2'
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: cous cous
+            preparation: null
+            quantity: '45.00'
+        -   measurement: ml
+            name: boiling water
+            preparation: (twice)
+            quantity: '12.50'
+        -   measurement: tsp
+            name: olive oil
+            preparation: null
+            quantity: '0.25'
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '5.00'
+        -   measurement: ml
+            name: stock
+            preparation: fresh or stock cube
+            quantity: '75.00'
+        name: cous cous
+    -   ingredient:
+        -   measurement: tsp
+            name: cumin
+            preparation: null
+            quantity: '0.12'
+        -   measurement: g
+            name: beef
+            preparation: minced
+            quantity: '87.50'
+        -   measurement: null
+            name: onion
+            preparation: or shallots
+            quantity: '0.25'
+        -   measurement: small
+            name: carrot
+            preparation: diced finely
+            quantity: '0.25'
+        -   measurement: stick
+            name: celery
+            preparation: diced finely
+            quantity: '0.12'
+        -   measurement: dollop
+            name: harissa
+            preparation: null
+            quantity: '0.25'
+        name: stew
+    serves: 1
 source: Fritz
 tags: []
 title: Cous cous chili con carne

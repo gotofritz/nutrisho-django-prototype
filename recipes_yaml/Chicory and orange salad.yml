@@ -1,61 +1,63 @@
 cuisine: null
 description: null
 directions:
-  step:
-  - heat the oil in an ovenproof frying pan over a medium heat, add the chicory, cut-side
-    down, and and add half of the orange juice and zest. Cook for 2-3 minutes, or
-    until softened, then transfer to the oven for 4-5 minutes, or until tender.
-  - 6. Heat a chargrill pan over a medium heat, add the braised chicory and grill
-    for 1-2 minutes, or golden-brown grill marks appear. (Retain the cooking juices
-    in the frying pan.)
-  - 7. Return the chicory to the frying pan, add the remaining orange zest and another
-    tablespoon of orange juice and fry for a further 1-2 minutes, stirring well to
-    coat the chicory.
-  - 8. Place the orange segments and the watercress into a bowl and mix well to combine.
-  - 9. In a separate bowl, whisk together the mustard, one tablespoon of the reserved
-    orange juice, the white wine vinegar and the olive oil until well combined. Season,
-    to taste, with salt and freshly ground black pepper.
+    step:
+    - heat the oil in an ovenproof frying pan over a medium heat, add the chicory,
+        cut-side down, and and add half of the orange juice and zest. Cook for 2-3
+        minutes, or until softened, then transfer to the oven for 4-5 minutes, or
+        until tender.
+    - 6. Heat a chargrill pan over a medium heat, add the braised chicory and grill
+        for 1-2 minutes, or golden-brown grill marks appear. (Retain the cooking juices
+        in the frying pan.)
+    - 7. Return the chicory to the frying pan, add the remaining orange zest and another
+        tablespoon of orange juice and fry for a further 1-2 minutes, stirring well
+        to coat the chicory.
+    - 8. Place the orange segments and the watercress into a bowl and mix well to
+        combine.
+    - 9. In a separate bowl, whisk together the mustard, one tablespoon of the reserved
+        orange juice, the white wine vinegar and the olive oil until well combined.
+        Season, to taste, with salt and freshly ground black pepper.
 ingredients:
-  group:
-    ingredient:
-    - measurement: Tbsp
-      name: oil
-      preparation: olive
-      quantity: '1'
-    - measurement: null
-      name: heads chicory
-      preparation: cut in half lengthways
-      quantity: '6'
-    - measurement: null
-      name: orange
-      preparation: zest and juice only
-      quantity: '1'
-    - measurement: null
-      name: orange
-      preparation: juice only
-      quantity: '1'
-    - measurement: null
-      name: oranges
-      preparation: peeled and segmented
-      quantity: '2'
-    - measurement: g
-      name: watercress
-      preparation: null
-      quantity: '180'
-    - measurement: tsp
-      name: mustard
-      preparation: wholegrain
-      quantity: '1'
-    - measurement: Tbsp
-      name: vinegar
-      preparation: white vine
-      quantity: '1'
-    - measurement: Tbsp
-      name: oil
-      preparation: oilve
-      quantity: '2'
-  serves: '4'
-source: null
-tags:
-- salad
+    group:
+    -   ingredient:
+        -   measurement: Tbsp
+            name: oil
+            preparation: olive
+            quantity: '0.25'
+        -   measurement: null
+            name: heads chicory
+            preparation: cut in half lengthways
+            quantity: '1.50'
+        -   measurement: null
+            name: orange
+            preparation: zest and juice only
+            quantity: '0.25'
+        -   measurement: null
+            name: orange
+            preparation: juice only
+            quantity: '0.25'
+        -   measurement: null
+            name: oranges
+            preparation: peeled and segmented
+            quantity: '0.50'
+        -   measurement: g
+            name: watercress
+            preparation: null
+            quantity: '45.00'
+        -   measurement: tsp
+            name: mustard
+            preparation: wholegrain
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: vinegar
+            preparation: white vine
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: oil
+            preparation: oilve
+            quantity: '0.50'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Chicory and orange salad

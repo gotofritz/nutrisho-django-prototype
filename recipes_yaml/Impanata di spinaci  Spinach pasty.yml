@@ -1,102 +1,89 @@
 cuisine: .italian.sicilian
 description: There are many variations. Not all the options here go together - either
-  raisins, or sausage, or mozzarella.
+    raisins, or sausage, or mozzarella.
 directions:
-  '#text': '>
-
-
-
-
-
-
-
-
-
-
-
-
-    >'
-  step:
-  - dissolve fresh yeast in warm water for 5m. Add flour bit by bit and knead for
-    10m
-  - rest in greased bowl, covered in kitchen towel until doubled in size, about 2h
-  - "saut\xE9 garlic in olive oil hot until just golden, about 1m"
-  - "saut\xE9 spinach until just wilted, about 3m. Drain, squeeze well keeping the\
-    \ water, and chop corasely"
-  - soak raisins, if using, in spinach water for 10m
-  - drain and add to chopped spinach
-  - add chili powder if using, black olives, mozzarella if using
-  - "If using sausage, saut\xE9 onion in olive oil med for 4m, add sausage until seared,\
-    \ about 2m. then set aside."
-  - Mix all the fillings together in a bowl
-  - Roll out dough as thin as possible, smear oil over it, lay the stuffing over it.
-    Start rolling, smearing more oil between layers of dough
-  - "Bake until ready 190\xB0 for 35m"
+    step:
+    - dissolve fresh yeast in warm water for 5m. Add flour bit by bit and knead for
+        10m
+    - rest in greased bowl, covered in kitchen towel until doubled in size, about
+        2h
+    - sauté garlic in olive oil hot until just golden, about 1m
+    - sauté spinach until just wilted, about 3m. Drain, squeeze well keeping the water,
+        and chop corasely
+    - soak raisins, if using, in spinach water for 10m
+    - drain and add to chopped spinach
+    - add chili powder if using, black olives, mozzarella if using
+    - If using sausage, sauté onion in olive oil med for 4m, add sausage until seared,
+        about 2m. then set aside.
+    - Mix all the fillings together in a bowl
+    - Roll out dough as thin as possible, smear oil over it, lay the stuffing over
+        it. Start rolling, smearing more oil between layers of dough
+    - Bake until ready 190° for 35m
 ingredients:
-  group:
-  - ingredient:
-    - measurement: tsp
-      name: yeast
-      preparation: fresh
-      quantity: '3'
-    - measurement: ml
-      name: water
-      preparation: warm
-      quantity: '320'
-    - measurement: g
-      name: flour
-      preparation: null
-      quantity: '480'
-    name: Dough
-  - ingredient:
-    - measurement: kg
-      name: spinach
-      preparation: washed and rubbed with a little salt
-      quantity: '1'
-    - measurement: cloves
-      name: garlic
-      preparation: chopped fine
-      quantity: '3'
-    - measurement: Tbsp
-      name: oil
-      preparation: oilve
-      quantity: '2'
-    - measurement: null
-      name: olives
-      preparation: black
-      quantity: '24'
-    name: Spinach
-  - ingredient:
-    - measurement: null
-      name: mozzarella
-      preparation: (optional) cubed
-      quantity: '1'
-    - measurement: null
-      name: onion
-      preparation: (optional) sliced finely
-      quantity: '1'
-    - measurement: g
-      name: sausage
-      preparation: (optional) broken with a fork
-      quantity: '500'
-    - measurement: Tbsp
-      name: raisins
-      preparation: null
-      quantity: '6'
-    - measurement: Tbsp
-      name: oil
-      preparation: oilve
-      quantity: '4'
-    - measurement: ml
-      name: wine
-      preparation: red
-      quantity: '60'
-    - measurement: tsp
-      name: chili powder
-      preparation: null
-      quantity: '1'
-    name: Optional
-  serves: null
-source: null
+    group:
+    -   ingredient:
+        -   measurement: tsp
+            name: yeast
+            preparation: fresh
+            quantity: '0.75'
+        -   measurement: ml
+            name: water
+            preparation: warm
+            quantity: '80.00'
+        -   measurement: g
+            name: flour
+            preparation: null
+            quantity: '120.00'
+        name: Dough
+    -   ingredient:
+        -   measurement: kg
+            name: spinach
+            preparation: washed and rubbed with a little salt
+            quantity: '0.25'
+        -   measurement: cloves
+            name: garlic
+            preparation: chopped fine
+            quantity: '0.75'
+        -   measurement: Tbsp
+            name: oil
+            preparation: oilve
+            quantity: '0.50'
+        -   measurement: null
+            name: olives
+            preparation: black
+            quantity: '6.00'
+        name: Spinach
+    -   ingredient:
+        -   measurement: null
+            name: mozzarella
+            preparation: (optional) cubed
+            quantity: '0.25'
+        -   measurement: null
+            name: onion
+            preparation: (optional) sliced finely
+            quantity: '0.25'
+        -   measurement: g
+            name: sausage
+            preparation: (optional) broken with a fork
+            quantity: '125.00'
+        -   measurement: Tbsp
+            name: raisins
+            preparation: null
+            quantity: '1.50'
+        -   measurement: Tbsp
+            name: oil
+            preparation: oilve
+            quantity: '1.00'
+        -   measurement: ml
+            name: wine
+            preparation: red
+            quantity: '15.00'
+        -   measurement: tsp
+            name: chili powder
+            preparation: null
+            quantity: '0.25'
+        name: Optional
+    serves: 1
+source: ''
 tags: []
 title: Impanata di spinaci / Spinach pasty

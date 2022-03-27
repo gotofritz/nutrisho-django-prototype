@@ -1,0 +1,39 @@
+cuisine: .chinese.beijing
+description: null
+directions:
+    step:
+    - blanch duck pieces a few secs, then drain
+    - add warm water, remaining ingredients, bring to boil over medium heat
+    - lower heat, boil 45m then sieve
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: kg
+            name: duck bones and neck
+            preparation: null
+            quantity: '0.25'
+        -   measurement: cm
+            name: ginger
+            preparation: chunks
+            quantity: '1.00'
+        -   measurement: null
+            name: star aniseed
+            preparation: null
+            quantity: '0.50'
+        -   measurement: cm
+            name: cassia bark
+            preparation: or cinnamon
+            quantity: '1.00'
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '1.00'
+        -   measurement: l
+            name: water
+            preparation: warm
+            quantity: '0.50'
+        name: null
+    serves: 1
+source: ''
+tags: []
+title: 'Stock: duck'

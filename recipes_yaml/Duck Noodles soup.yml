@@ -1,75 +1,74 @@
 cuisine: .chinese.beijing
 description: Ya Mian Tang
 directions:
-  '#text': '>'
-  step:
-  - soak 8 mushrooms 5m then drain
-  - reduce the duck stock with soaked mushrooms (1), 1 tbsp rice wine, 2 tbsp soy
-    sauce, 0.5 tsp salt, 20m
-  - mix marinade ingredients, glaze over duck, stand on rack over greaseproof paper
-    15m
-  - roast duck at 200C for 8 - 12 mins (depending on whether breast / thigh) then
-    rest 5m
-  - cook noodels 2.5m, drain, rinse in hot water, drain again, then place in individual
-    bowls
-  - fish out mushrooms from soup, and place with noodles, coriander leaves, chopped
-    spring onions, thinkly sliced duck
-  - sive the stock over the bowls and serve
+    step:
+    - soak 8 mushrooms 5m then drain
+    - reduce the duck stock with soaked mushrooms (1), 1 tbsp rice wine, 2 tbsp soy
+        sauce, 0.5 tsp salt, 20m
+    - mix marinade ingredients, glaze over duck, stand on rack over greaseproof paper
+        15m
+    - roast duck at 200C for 8 - 12 mins (depending on whether breast / thigh) then
+        rest 5m
+    - cook noodels 2.5m, drain, rinse in hot water, drain again, then place in individual
+        bowls
+    - fish out mushrooms from soup, and place with noodles, coriander leaves, chopped
+        spring onions, thinkly sliced duck
+    - sive the stock over the bowls and serve
 ingredients:
-  group:
-  - ingredient:
-      measurement: l
-      name: stock
-      preparation: duck
-      quantity: '1.5'
-  - ingredient:
-    - measurement: null
-      name: dried mushrooms
-      preparation: black
-      quantity: '8'
-    - measurement: Tbsp
-      name: rice wine
-      preparation: null
-      quantity: '1'
-    - measurement: Tbsp
-      name: soy sauce
-      preparation: light
-      quantity: '2'
-    name: Brothj
-  - ingredient:
-    - measurement: g
-      name: duck thigh
-      preparation: null
-      quantity: '220'
-    - measurement: tsp
-      name: soy sauce
-      preparation: dark
-      quantity: '2'
-    - measurement: tsp
-      name: honey
-      preparation: null
-      quantity: '2'
-    - measurement: tsp
-      name: five spice
-      preparation: crushed
-      quantity: '0.5'
-    name: Duck
-  - ingredient:
-    - measurement: g
-      name: noodles
-      preparation: thin
-      quantity: '200'
-    - measurement: null
-      name: spring onions
-      preparation: green parts only
-      quantity: '2'
-    - measurement: null
-      name: coriander leaves
-      preparation: null
-      quantity: '36'
-    name: Soup
-  serves: '4'
-source: null
-tags:
-- savoring china
+    group:
+    -   ingredient:
+        -   measurement: l
+            name: stock
+            preparation: duck
+            quantity: '0.38'
+        name: null
+    -   ingredient:
+        -   measurement: null
+            name: dried mushrooms
+            preparation: black
+            quantity: '2.00'
+        -   measurement: Tbsp
+            name: rice wine
+            preparation: null
+            quantity: '0.25'
+        -   measurement: Tbsp
+            name: soy sauce
+            preparation: light
+            quantity: '0.50'
+        name: Brothj
+    -   ingredient:
+        -   measurement: g
+            name: duck thigh
+            preparation: null
+            quantity: '55.00'
+        -   measurement: tsp
+            name: soy sauce
+            preparation: dark
+            quantity: '0.50'
+        -   measurement: tsp
+            name: honey
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: five spice
+            preparation: crushed
+            quantity: '0.12'
+        name: Duck
+    -   ingredient:
+        -   measurement: g
+            name: noodles
+            preparation: thin
+            quantity: '50.00'
+        -   measurement: null
+            name: spring onions
+            preparation: green parts only
+            quantity: '0.50'
+        -   measurement: null
+            name: coriander leaves
+            preparation: null
+            quantity: '9.00'
+        name: Soup
+    serves: 1
+source: ''
+tags: []
 title: Duck Noodles soup

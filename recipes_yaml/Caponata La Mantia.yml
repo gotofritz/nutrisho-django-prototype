@@ -1,68 +1,67 @@
 cuisine: .italian.sicilia.modern
 description: From that chap that hates garlic
 directions:
-  step:
-  - Soak the aubergines in salty water for 15 mins
-  - Cook the tomato sauce on high for 20 mins, then pass through a food mill
-  - Add some basil leaves and whizz in a food processor
-  - Cook the sauce on low another 15 mins
-  - Drain the aubergines and deep fry, then pat dry on kitchen paper
-  - Mix together the aubergines, tomato sauce, and remaining ingredients
-  - Serve with bread or cous cous
+    step:
+    - Soak the aubergines in salty water for 15 mins
+    - Cook the tomato sauce on high for 20 mins, then pass through a food mill
+    - Add some basil leaves and whizz in a food processor
+    - Cook the sauce on low another 15 mins
+    - Drain the aubergines and deep fry, then pat dry on kitchen paper
+    - Mix together the aubergines, tomato sauce, and remaining ingredients
+    - Serve with bread or cous cous
 ingredients:
-  group:
-  - ingredient:
-      measurement: null
-      name: aubergines
-      preparation: cubed, 1.5cm
-      quantity: '4'
-    name: Aubergines
-  - ingredient:
-    - measurement: kg
-      name: tomates
-      preparation: null
-      quantity: '2'
-    - measurement: g
-      name: capers
-      preparation: salt preserved, washed
-      quantity: '20'
-    - measurement: tsp
-      name: oregano
-      preparation: null
-      quantity: '1'
-    - measurement: handful
-      name: basil
-      preparation: null
-      quantity: '1'
-    - measurement: tbsp
-      name: olive oil
-      preparation: null
-      quantity: '1'
-    name: Tomato sauce
-  - ingredient:
-    - measurement: g
-      name: capers
-      preparation: null
-      quantity: '80'
-    - measurement: g
-      name: pine nuts
-      preparation: null
-      quantity: '100'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '50'
-    - measurement: ml
-      name: vinegar, wine
-      preparation: null
-      quantity: '50'
-    - measurement: g
-      name: almonds
-      preparation: peeled
-      quantity: '200'
-    name: Other ingredients
-  serves: '4'
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: aubergines
+            preparation: cubed, 1.5cm
+            quantity: '1.00'
+        name: Aubergines
+    -   ingredient:
+        -   measurement: kg
+            name: tomates
+            preparation: null
+            quantity: '0.50'
+        -   measurement: g
+            name: capers
+            preparation: salt preserved, washed
+            quantity: '5.00'
+        -   measurement: tsp
+            name: oregano
+            preparation: null
+            quantity: '0.25'
+        -   measurement: handful
+            name: basil
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tbsp
+            name: olive oil
+            preparation: null
+            quantity: '0.25'
+        name: Tomato sauce
+    -   ingredient:
+        -   measurement: g
+            name: capers
+            preparation: null
+            quantity: '20.00'
+        -   measurement: g
+            name: pine nuts
+            preparation: null
+            quantity: '25.00'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '12.50'
+        -   measurement: ml
+            name: vinegar, wine
+            preparation: null
+            quantity: '12.50'
+        -   measurement: g
+            name: almonds
+            preparation: peeled
+            quantity: '50.00'
+        name: Other ingredients
+    serves: 1
 source: Filippo La Mantia
-tags:
-- starter
+tags: []
 title: Caponata La Mantia

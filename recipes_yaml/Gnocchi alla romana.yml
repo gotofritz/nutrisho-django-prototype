@@ -1,69 +1,61 @@
 cuisine: .italian
 description: null
 directions:
-  '#text': '>
-
-
-
-
-
-
-
-    >'
-  step:
-  - Put the milk, butter, nutmeg in a large pot, season with salt, and bring to boil
-    on low fire
-  - Slowly add the semolina, stirring vigorously to avoid lumps, then cook slowly
-    for 10m
-  - Away from the fire mix in the egg yolks, parmesan cheese, butter. Spread mixture
-    over greaseproof paper, put another sheet on top, and gently roll the mixture
-    to 1 cm thickness
-  - Cool in the fridge for 30m
-  - Grease a baking dish, use a glass to cut disks from the mixture, place the disks
-    in the baking dish slightly overlapping.
-  - "Scatter the fontina cheese, parmesan over the gnocchi and and bake at 200\xB0\
-    \ for 20m"
+    step:
+    - Put the milk, butter, nutmeg in a large pot, season with salt, and bring to
+        boil on low fire
+    - Slowly add the semolina, stirring vigorously to avoid lumps, then cook slowly
+        for 10m
+    - Away from the fire mix in the egg yolks, parmesan cheese, butter. Spread mixture
+        over greaseproof paper, put another sheet on top, and gently roll the mixture
+        to 1 cm thickness
+    - Cool in the fridge for 30m
+    - Grease a baking dish, use a glass to cut disks from the mixture, place the disks
+        in the baking dish slightly overlapping.
+    - Scatter the fontina cheese, parmesan over the gnocchi and and bake at 200° for
+        20m
 ingredients:
-  group:
-    ingredient:
-    - measurement: ml
-      name: milk
-      preparation: null
-      quantity: '800'
-    - measurement: g
-      name: butter
-      preparation: null
-      quantity: '20'
-    - measurement: pinch
-      name: nutmeg
-      preparation: grated
-      quantity: '1'
-    - measurement: g
-      name: semolina
-      preparation: null
-      quantity: '200'
-    - measurement: null
-      name: egg yolks
-      preparation: null
-      quantity: '2'
-    - measurement: g
-      name: cheese
-      preparation: parmesan
-      quantity: '30'
-    - measurement: g
-      name: butter
-      preparation: null
-      quantity: '20'
-    - measurement: g
-      name: cheese
-      preparation: fontina
-      quantity: '160'
-    - measurement: g
-      name: parmesan
-      preparation: grated
-      quantity: '100'
-  serves: '2'
-source: null
+    group:
+    -   ingredient:
+        -   measurement: ml
+            name: milk
+            preparation: null
+            quantity: '200.00'
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '5.00'
+        -   measurement: pinch
+            name: nutmeg
+            preparation: grated
+            quantity: '0.25'
+        -   measurement: g
+            name: semolina
+            preparation: null
+            quantity: '50.00'
+        -   measurement: null
+            name: egg yolks
+            preparation: null
+            quantity: '0.50'
+        -   measurement: g
+            name: cheese
+            preparation: parmesan
+            quantity: '7.50'
+        -   measurement: g
+            name: butter
+            preparation: null
+            quantity: '5.00'
+        -   measurement: g
+            name: cheese
+            preparation: fontina
+            quantity: '40.00'
+        -   measurement: g
+            name: parmesan
+            preparation: grated
+            quantity: '25.00'
+        name: null
+    serves: 1
+source: ''
 tags:
 - main
 title: Gnocchi alla romana

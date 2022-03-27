@@ -1,0 +1,45 @@
+cuisine: .perú
+description: Peruvian street food
+directions:
+    step:
+    - Boil the beans in water for 30 mins in pressure cooker (1.5h after overnight
+        soaking if using a normal pot)
+    - Drain and pass through a coarse sieve to remove skins.
+    - Meanwhile simmer down milk until it becomes half the amount, about 250ml
+    - Blend beans and reduced milk together to a smooth mixture
+    - Add sugar, cinnamon, cloves to mixture and boil on medium for 25 - 30 mins until
+        thick.
+    - Cool then serve into individual bowls and refrigerate
+    - Sprinkle with toasted sesame seeds before serving
+ingredients:
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: red kidney beans
+            preparation: soaked overnight unless pressure cooker is used
+            quantity: '62.50'
+        -   measurement: ml
+            name: milk
+            preparation: or 250 ml evaporated milk
+            quantity: '125.00'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '50.00'
+        -   measurement: stick
+            name: cinnamon
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: cloves
+            preparation: null
+            quantity: '0.75'
+        -   measurement: tbdp
+            name: sesame seeds
+            preparation: toasted
+            quantity: '0.50'
+        name: null
+    serves: 1
+source: Cooking of Perú
+tags: []
+title: Sweet Bean Purè / Freiol Colado

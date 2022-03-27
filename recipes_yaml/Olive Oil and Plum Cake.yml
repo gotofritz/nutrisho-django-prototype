@@ -1,64 +1,65 @@
 cuisine: .italian
 description: null
 directions:
-  step:
-  - Preheat the oven to 175C and lightly brush the bottom and sides of a 9 inch springform
-    pan with olive oil.
-  - Place the flour, baking powder, salt and cornmeal in a bowl and stir to combine.
-    In a separate bowl whisk together the olive oil, sugar, lemon zest and eggs. Stir
-    in the milk and whisk to combine.
-  - Add the dry ingredients to the wet ingredients and stir well to make a batter.
-    Pour half the batter into the pan and layer with half the plums over top. Pour
-    the remaining batter into the pan and top with the second half of the plums.
-  - Place the cake in the oven and bake for 30-35 minutes until the cake is set and
-    a toothpick inserted into the centre comes out clean. Allow to cool for 10 minutes,
-    then turn out and cool on a rack.
-  - Serve with a dollop of creme fraiche.
+    step:
+    - Preheat the oven to 175C and lightly brush the bottom and sides of a 9 inch
+        springform pan with olive oil.
+    - Place the flour, baking powder, salt and cornmeal in a bowl and stir to combine.
+        In a separate bowl whisk together the olive oil, sugar, lemon zest and eggs.
+        Stir in the milk and whisk to combine.
+    - Add the dry ingredients to the wet ingredients and stir well to make a batter.
+        Pour half the batter into the pan and layer with half the plums over top.
+        Pour the remaining batter into the pan and top with the second half of the
+        plums.
+    - Place the cake in the oven and bake for 30-35 minutes until the cake is set
+        and a toothpick inserted into the centre comes out clean. Allow to cool for
+        10 minutes, then turn out and cool on a rack.
+    - Serve with a dollop of creme fraiche.
 ingredients:
-  group:
-    ingredient:
-    - measurement: g
-      name: flour
-      preparation: plain
-      quantity: '165'
-    - measurement: tsp
-      name: baking powder
-      preparation: null
-      quantity: '1.5'
-    - measurement: null
-      name: generous pinch of salt
-      preparation: null
-      quantity: null
-    - measurement: g
-      name: cornmeal
-      preparation: null
-      quantity: '65'
-    - measurement: ml
-      name: oil
-      preparation: olive
-      quantity: '125'
-    - measurement: g
-      name: sugar
-      preparation: null
-      quantity: '200'
-    - measurement: null
-      name: lemon
-      preparation: zested
-      quantity: '1'
-    - measurement: null
-      name: eggs
-      preparation: null
-      quantity: '3'
-    - measurement: ml
-      name: milk
-      preparation: null
-      quantity: '80'
-    - measurement: null
-      name: plums
-      preparation: large
-      quantity: '4'
-  serves: '12'
-source: null
-tags:
-- desserts
+    group:
+    -   ingredient:
+        -   measurement: g
+            name: flour
+            preparation: plain
+            quantity: '41.25'
+        -   measurement: tsp
+            name: baking powder
+            preparation: null
+            quantity: '0.38'
+        -   measurement: null
+            name: generous pinch of salt
+            preparation: null
+            quantity: null
+        -   measurement: g
+            name: cornmeal
+            preparation: null
+            quantity: '16.25'
+        -   measurement: ml
+            name: oil
+            preparation: olive
+            quantity: '31.25'
+        -   measurement: g
+            name: sugar
+            preparation: null
+            quantity: '50.00'
+        -   measurement: null
+            name: lemon
+            preparation: zested
+            quantity: '0.25'
+        -   measurement: null
+            name: eggs
+            preparation: null
+            quantity: '0.75'
+        -   measurement: ml
+            name: milk
+            preparation: null
+            quantity: '20.00'
+        -   measurement: null
+            name: plums
+            preparation: large
+            quantity: '1.00'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Olive Oil and Plum Cake

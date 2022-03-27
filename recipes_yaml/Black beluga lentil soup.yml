@@ -1,74 +1,466 @@
 cuisine: null
 description: Black beluga lentils are similar to Puy lentils but they are grown in
-  the cool climate of America's Northern plains. Some lentils tend to go murky when
-  cooked but these beauties keep their remarkable satin-black colour.
+    the cool climate of America's Northern plains. Some lentils tend to go murky when
+    cooked but these beauties keep their remarkable satin-black colour.
 directions:
-  step: Gently cook the onion, ginger, garlic, chilli and spices in the butter for
-    3-4 minutes, add the vegetable stock and lentils, season, bring to the boil and
-    simmer for 40 minutes or until the lentils are soft. Blend about one-third of
-    the soup in a liquidiser until smooth and return to the pan. Adjust the seasoning
-    if necessary and add the coriander. Serve with half a spoonful of yoghurt on top.
+    step:
+    - G
+    - e
+    - n
+    - t
+    - l
+    - y
+    - ''
+    - c
+    - o
+    - o
+    - k
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - o
+    - n
+    - i
+    - o
+    - n
+    - ','
+    - ''
+    - g
+    - i
+    - n
+    - g
+    - e
+    - r
+    - ','
+    - ''
+    - g
+    - a
+    - r
+    - l
+    - i
+    - c
+    - ','
+    - ''
+    - c
+    - h
+    - i
+    - l
+    - l
+    - i
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - s
+    - p
+    - i
+    - c
+    - e
+    - s
+    - ''
+    - i
+    - n
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - b
+    - u
+    - t
+    - t
+    - e
+    - r
+    - ''
+    - f
+    - o
+    - r
+    - ''
+    - '3'
+    - '-'
+    - '4'
+    - ''
+    - m
+    - i
+    - n
+    - u
+    - t
+    - e
+    - s
+    - ','
+    - ''
+    - a
+    - d
+    - d
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - v
+    - e
+    - g
+    - e
+    - t
+    - a
+    - b
+    - l
+    - e
+    - ''
+    - s
+    - t
+    - o
+    - c
+    - k
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - l
+    - e
+    - n
+    - t
+    - i
+    - l
+    - s
+    - ','
+    - ''
+    - s
+    - e
+    - a
+    - s
+    - o
+    - n
+    - ','
+    - ''
+    - b
+    - r
+    - i
+    - n
+    - g
+    - ''
+    - t
+    - o
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - b
+    - o
+    - i
+    - l
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - s
+    - i
+    - m
+    - m
+    - e
+    - r
+    - ''
+    - f
+    - o
+    - r
+    - ''
+    - '4'
+    - '0'
+    - ''
+    - m
+    - i
+    - n
+    - u
+    - t
+    - e
+    - s
+    - ''
+    - o
+    - r
+    - ''
+    - u
+    - n
+    - t
+    - i
+    - l
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - l
+    - e
+    - n
+    - t
+    - i
+    - l
+    - s
+    - ''
+    - a
+    - r
+    - e
+    - ''
+    - s
+    - o
+    - f
+    - t
+    - .
+    - ''
+    - B
+    - l
+    - e
+    - n
+    - d
+    - ''
+    - a
+    - b
+    - o
+    - u
+    - t
+    - ''
+    - o
+    - n
+    - e
+    - '-'
+    - t
+    - h
+    - i
+    - r
+    - d
+    - ''
+    - o
+    - f
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - s
+    - o
+    - u
+    - p
+    - ''
+    - i
+    - n
+    - ''
+    - a
+    - ''
+    - l
+    - i
+    - q
+    - u
+    - i
+    - d
+    - i
+    - s
+    - e
+    - r
+    - ''
+    - u
+    - n
+    - t
+    - i
+    - l
+    - ''
+    - s
+    - m
+    - o
+    - o
+    - t
+    - h
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - r
+    - e
+    - t
+    - u
+    - r
+    - n
+    - ''
+    - t
+    - o
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - p
+    - a
+    - n
+    - .
+    - ''
+    - A
+    - d
+    - j
+    - u
+    - s
+    - t
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - s
+    - e
+    - a
+    - s
+    - o
+    - n
+    - i
+    - n
+    - g
+    - ''
+    - i
+    - f
+    - ''
+    - n
+    - e
+    - c
+    - e
+    - s
+    - s
+    - a
+    - r
+    - y
+    - ''
+    - a
+    - n
+    - d
+    - ''
+    - a
+    - d
+    - d
+    - ''
+    - t
+    - h
+    - e
+    - ''
+    - c
+    - o
+    - r
+    - i
+    - a
+    - n
+    - d
+    - e
+    - r
+    - .
+    - ''
+    - S
+    - e
+    - r
+    - v
+    - e
+    - ''
+    - w
+    - i
+    - t
+    - h
+    - ''
+    - h
+    - a
+    - l
+    - f
+    - ''
+    - a
+    - ''
+    - s
+    - p
+    - o
+    - o
+    - n
+    - f
+    - u
+    - l
+    - ''
+    - o
+    - f
+    - ''
+    - y
+    - o
+    - g
+    - h
+    - u
+    - r
+    - t
+    - ''
+    - o
+    - n
+    - ''
+    - t
+    - o
+    - p
+    - .
 ingredients:
-  group:
-    ingredient:
-    - measurement: null
-      name: onion
-      preparation: peeled and finely chopped
-      quantity: '1'
-    - measurement: null
-      name: A small piece of root ginger weighing about 30g
-      preparation: scraped and finely chopped
-      quantity: null
-    - measurement: null
-      name: cloves of garlic
-      preparation: peeled and finely chopped
-      quantity: '3'
-    - measurement: small
-      name: chilli
-      preparation: chopped
-      quantity: '1'
-    - measurement: tsp
-      name: cumin seeds
-      preparation: null
-      quantity: '2'
-    - measurement: tsp
-      name: fenugreek
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: black mustard seeds
-      preparation: null
-      quantity: '1'
-    - measurement: tsp
-      name: fennel seeds
-      preparation: null
-      quantity: '1'
-    - measurement: null
-      name: A couple of good knobs of butter
-      preparation: null
-      quantity: null
-    - measurement: null
-      name: litres vegetable stock
-      preparation: null
-      quantity: '1.5'
-    - measurement: g
-      name: black beluga lentils
-      preparation: soaked overnight
-      quantity: '100'
-    - measurement: null
-      name: Salt and freshly ground black pepper
-      preparation: null
-      quantity: null
-    - measurement: Tbsp
-      name: chopped coriander
-      preparation: null
-      quantity: 1-2
-    - measurement: Tbsp
-      name: natural yoghurt (optional)
-      preparation: null
-      quantity: '2'
-  serves: Mark HixServes 4-6
-source: null
-tags:
-- dal
+    group:
+    -   ingredient:
+        -   measurement: null
+            name: onion
+            preparation: peeled and finely chopped
+            quantity: '0.25'
+        -   measurement: null
+            name: A small piece of root ginger weighing about 30g
+            preparation: scraped and finely chopped
+            quantity: null
+        -   measurement: null
+            name: cloves of garlic
+            preparation: peeled and finely chopped
+            quantity: '0.75'
+        -   measurement: small
+            name: chilli
+            preparation: chopped
+            quantity: '0.25'
+        -   measurement: tsp
+            name: cumin seeds
+            preparation: null
+            quantity: '0.50'
+        -   measurement: tsp
+            name: fenugreek
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: black mustard seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: tsp
+            name: fennel seeds
+            preparation: null
+            quantity: '0.25'
+        -   measurement: null
+            name: A couple of good knobs of butter
+            preparation: null
+            quantity: null
+        -   measurement: null
+            name: litres vegetable stock
+            preparation: null
+            quantity: '0.38'
+        -   measurement: g
+            name: black beluga lentils
+            preparation: soaked overnight
+            quantity: '25.00'
+        -   measurement: null
+            name: Salt and freshly ground black pepper
+            preparation: null
+            quantity: null
+        -   measurement: Tbsp
+            name: chopped coriander
+            preparation: null
+            quantity: '-0.25'
+        -   measurement: Tbsp
+            name: natural yoghurt (optional)
+            preparation: null
+            quantity: '0.50'
+        name: null
+    serves: 1
+source: ''
+tags: []
 title: Black beluga lentil soup
