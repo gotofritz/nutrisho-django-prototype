@@ -1,4 +1,5 @@
 from django import forms
+import math
 
 from recipes.models import Recipe, Step
 
@@ -21,13 +22,20 @@ class RecipeEditForm(forms.ModelForm):
         step_fields = {}
         for i in range(len(steps)):
             field_name = f"{PREFIX_STEP}-{i}"
-            step_fields[field_name] = forms.CharField(
-                required=False, widget=forms.Textarea
-            )
             try:
-                args[0][field_name] = steps[i].step_text
+                field_text = steps[i].step_text
             except IndexError:
-                ...
+                field_text = ""
+            step_fields[field_name] = forms.CharField(
+                required=False,
+                widget=forms.Textarea(
+                    attrs={
+                        "placeholder": "Enter a step here",
+                        "style": f"height: {_textarea_height(field_text)}px;",
+                    }
+                ),
+            )
+            args[0][field_name] = field_text
 
         for j in range(i + 1, i + 1 + EXTRA_BLANK_FIELDS):
             field_name = "step-%s" % (j,)
@@ -63,3 +71,13 @@ class RecipeEditForm(forms.ModelForm):
         for field_name in self.fields:
             if field_name.startswith(PREFIX_STEP):
                 yield self[field_name]
+
+
+def _textarea_height(sentence: str) -> int:
+    CHARS_PER_LINE = 64
+    MIN_PIX_HEIGHT = 54
+    PIX_PER_EXTRA_LINE = 30
+    how_many_lines = math.ceil(len(sentence) / CHARS_PER_LINE)
+    if how_many_lines < 3:
+        return MIN_PIX_HEIGHT
+    return MIN_PIX_HEIGHT + (how_many_lines - 2) * PIX_PER_EXTRA_LINE
