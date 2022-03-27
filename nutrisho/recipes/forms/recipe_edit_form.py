@@ -30,7 +30,6 @@ class RecipeEditForm(forms.ModelForm):
                 required=False,
                 widget=forms.Textarea(
                     attrs={
-                        "placeholder": "Enter a step here",
                         "style": f"height: {_textarea_height(field_text)}px;",
                     }
                 ),

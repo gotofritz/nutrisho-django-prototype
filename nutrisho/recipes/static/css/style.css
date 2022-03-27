@@ -64,8 +64,15 @@ input[type="text"] {
 
 .sidebar {
   background: #fff;
+  display: flex;
+  flex-direction: column;
   font: 14px "Inconsolata";
   width: 250px;
+}
+
+.sidebar > div:last-child,
+.sidebar > div:last-child > * {
+  height: 100%;
 }
 
 .recipe-description {
