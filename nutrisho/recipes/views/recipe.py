@@ -16,9 +16,9 @@ def recipe_edit(request, recipe_id):
     form_data = {}
     if request.POST:
         debug = "YES"
-        recipe.name = request.POST["recipe.name"]
-        recipe.short_description = request.POST["recipe.short_description"]
-        recipe.save()
+        # recipe.name = request.POST["recipe.name"]
+        # recipe.short_description = request.POST["recipe.short_description"]
+        # recipe.save()
         form_data = request.POST
     else:
         form_data = {

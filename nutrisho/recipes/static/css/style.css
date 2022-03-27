@@ -41,7 +41,8 @@ input[type="text"] {
   padding-left: 0;
 }
 
-.group-name {
+.group-name,
+.group-name input[type="text"] {
   font-size: 16px;
   font-weight: normal;
   margin: 0 0 3px 0;
@@ -118,15 +119,42 @@ ol {
   padding-top: 3px;
 }
 
-.ingredient-in-group {
+.ingredient-in-group-show,
+.ingredient-in-group-edit {
   margin: 0;
   border-bottom: 1px dotted #ccc;
   padding-top: 2px;
   padding-bottom: 3px;
+}
+
+.ingredient-in-group-show {
   text-indent: -36px;
   padding-left: 36px;
 }
-.ingredient-group:last-of-type .ingredient-in-group:last-of-type {
+
+.ingredient-in-group-edit {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ingredient-quantity {
+  flex: 0 0 32px;
+}
+
+.ingredient-unit {
+  flex: 1 1 15%;
+}
+
+.ingredient-name {
+  flex: 1 0 50%;
+}
+
+.ingredient-preparation {
+  flex: 0 0 100%;
+}
+
+.ingredient-group:last-of-type .ingredient-in-group-show:last-of-type,
+.ingredient-group:last-of-type .ingredient-in-group-edit:last-of-type {
   border-bottom: none;
 }
 
