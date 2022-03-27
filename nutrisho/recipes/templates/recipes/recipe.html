@@ -8,11 +8,23 @@
 <div class="recipe-contents">
 
   <div class="recipe-directions">
-    <div class="recipe-title">{% block name %}{{ recipe.name }}{% endblock %}</div>
+    <div class="recipe-title">
+      {% if form %}
+      {{ form.name }}
+      {% else %}
+      {{ recipe.name }}
+      {% endif %}
+    </div>
     <ol>
+      {% if form %}
+      {% for step in form.get_step_fields %}
+      <li>{{ step }}</li>
+      {% endfor %}
+      {% else %}
       {% for step in recipe.step.all %}
       <li>{{ step.step_text }}</li>
       {% endfor %}
+      {% endif %}
     </ol>
   </div>
 
@@ -43,16 +55,22 @@
       {% endfor %}
     </div>
     <div class="recipe-description">
-      {% block description %}{{ recipe.short_description|default:"" }}{% endblock %}
+      {% if form %}
+      {{ form.short_description }}
+      {% else %}
+      {{ recipe.short_description|default:"" }}
+      {% endif %}
     </div>
   </div>
 </div>
 
 <div class="no-print" id="control">
   <nav>
-    {% block page_nav %}
-    <a href="./edit">Edit</a>
-    {% endblock %}
+    {% if form %}
+    {% include "./nav_recipe_edit.html" %}
+    {% else %}
+    {% include "./nav_recipe.html" %}
+    {% endif %}
   </nav>
 
   {% block no_print %}

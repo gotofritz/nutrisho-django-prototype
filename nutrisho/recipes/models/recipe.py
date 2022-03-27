@@ -8,7 +8,7 @@ from .source import Source
 class Recipe(models.Model):
     name = models.CharField("Recipe main name", max_length=200, unique=True)
     short_description = models.CharField(
-        "A short blurb about the recipe", max_length=200, null=True
+        "A short blurb about the recipe", max_length=512, null=True
     )
     owner = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=2, null=False)
     source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True)
