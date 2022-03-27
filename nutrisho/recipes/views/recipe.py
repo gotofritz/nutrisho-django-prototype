@@ -1,3 +1,4 @@
+from xmlrpc.client import Boolean
 from django.shortcuts import get_object_or_404, render
 
 from recipes.models import Recipe
@@ -24,6 +25,7 @@ def recipe_edit(request, recipe_id):
         form_data = {
             "name": recipe.name,
             "short_description": recipe.short_description,
+            "can_mutate": True,
         }
     form = RecipeEditForm(form_data, instance=recipe)
     return render(

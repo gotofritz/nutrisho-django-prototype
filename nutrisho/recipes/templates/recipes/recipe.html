@@ -103,9 +103,8 @@
       {% include "./nav_recipe.html" %}
       {% endif %}
     </nav>
-
-    {% block no_print %}
-    {% endblock %}
+    <pre>{{ debug | pprint }}</pre>
+    <pre>{{ request.POST | pprint }}</pre>
     {% if form %}
 </form>
 {% endif %}

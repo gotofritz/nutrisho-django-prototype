@@ -1,5 +1,6 @@
 import re
-from django import forms
+from urllib import request
+from django import forms, http
 import math
 
 from recipes.models import Recipe, Step
@@ -26,15 +27,25 @@ class RecipeEditForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
-        extra_fields = {}
+        print("000000000000000000000000000000000000000000000000000000000")
+        print(type(args))
+        print(type(args[0]))
+        print(args)
+        print(kwargs)
 
+        extra_fields = {}
+        is_mutable = not isinstance(args[0], http.request.QueryDict)
         steps = kwargs["instance"].step.all()
         for i in range(len(steps)):
             field_name = f"{PREFIX_STEP}-{i}"
             try:
-                field_text = steps[i].step_text
-            except IndexError:
-                field_text = ""
+                field_text = args[0][field_name]
+            except KeyError:
+                try:
+                    field_text = steps[i].step_text
+                except IndexError:
+                    field_text = ""
+
             extra_fields[field_name] = forms.CharField(
                 required=False,
                 widget=forms.Textarea(
@@ -43,7 +54,8 @@ class RecipeEditForm(forms.ModelForm):
                     }
                 ),
             )
-            args[0][field_name] = field_text
+            if is_mutable:
+                args[0][field_name] = field_text
 
         for j in range(
             i + 1, max(MIN_NUMBER_STEP_FIELDS, i + 1 + EXTRA_BLANK_STEP_FIELDS)
@@ -61,7 +73,8 @@ class RecipeEditForm(forms.ModelForm):
             except IndexError:
                 field_text = ""
             extra_fields[group_field_name] = forms.CharField(required=False)
-            args[0][group_field_name] = field_text
+            if is_mutable:
+                args[0][group_field_name] = field_text
 
             ingredients = groups[i].ingredient.all()
             for j in range(len(ingredients)):
@@ -77,7 +90,8 @@ class RecipeEditForm(forms.ModelForm):
                     required=False,
                     widget=forms.TextInput(attrs={"class": "ingredient-quantity"}),
                 )
-                args[0][ingredient_field_name] = field_text
+                if is_mutable:
+                    args[0][ingredient_field_name] = field_text
 
                 ingredient_field_name = (
                     f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-unit"
@@ -87,7 +101,8 @@ class RecipeEditForm(forms.ModelForm):
                     required=False,
                     widget=forms.TextInput(attrs={"class": "ingredient-unit"}),
                 )
-                args[0][ingredient_field_name] = field_text
+                if is_mutable:
+                    args[0][ingredient_field_name] = field_text
 
                 ingredient_field_name = (
                     f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-name"
@@ -97,7 +112,8 @@ class RecipeEditForm(forms.ModelForm):
                     required=False,
                     widget=forms.TextInput(attrs={"class": "ingredient-name"}),
                 )
-                args[0][ingredient_field_name] = field_text
+                if is_mutable:
+                    args[0][ingredient_field_name] = field_text
 
                 ingredient_field_name = (
                     f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-preparation"
@@ -107,7 +123,8 @@ class RecipeEditForm(forms.ModelForm):
                     required=False,
                     widget=forms.TextInput(attrs={"class": "ingredient-preparation"}),
                 )
-                args[0][ingredient_field_name] = field_text
+                if is_mutable:
+                    args[0][ingredient_field_name] = field_text
 
         # for j in range(i + 1, max(MIN_NUMBER_GROUPS, i + 1 + EXTRA_BLANK_GROUPS)):
         #     field_name = "group-%s" % (j,)
@@ -119,12 +136,6 @@ class RecipeEditForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if len(extra_fields):
             self.fields.update(extra_fields)
-
-        print("000000000000000000000000000000000000000000000000000000000")
-        print(self.initial)
-        print(args)
-        print(kwargs)
-        print(steps)
 
     def clean(self):
         interests = set()
