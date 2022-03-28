@@ -1,5 +1,6 @@
 :root {
   --hbar: 8px solid #000;
+  --nav-next-prev-x: calc((100% - 1040px) / 2 * 0.65);
 }
 
 body {
@@ -170,4 +171,30 @@ ol {
   .recipe-contents {
     box-shadow: none;
   }
+}
+
+.nav-next-prev {
+  height: 48px;
+  position: fixed;
+  top: 8%;
+  width: 48px;
+}
+
+.nav-next-prev svg {
+  cursor: pointer;
+  fill: orange;
+  filter: drop-shadow(4px 4px 0 pink);
+}
+
+.nav-next-prev svg:active {
+  filter: none;
+  margin: 4px 4px 0 0;
+}
+
+.nav-prev {
+  left: var(--nav-next-prev-x);
+}
+
+.nav-next {
+  right: var(--nav-next-prev-x);
 }
