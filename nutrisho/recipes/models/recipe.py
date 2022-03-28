@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 from .cuisine import Cuisine
 from .source import Source
@@ -24,3 +25,6 @@ class Recipe(models.Model):
 
     def natural_key(self):
         return self.recipe_name
+
+    def get_absolute_url(self):
+        return reverse("recipes:recipe", kwargs={"recipe_id": self.id})

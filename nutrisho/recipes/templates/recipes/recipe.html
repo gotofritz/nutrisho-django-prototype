@@ -4,11 +4,11 @@
 {% block page_title %}{{ recipe.recipe_name }}{% endblock %}
 
 {% block content %}
-<div class="recipe-contents">
-  {% if form %}
-  <form action="{% url 'recipes:edit' recipe.id %}" method="post">
-    {% csrf_token %}
-    {% endif %}
+{% if form %}
+<form action="{% url 'recipes:edit' recipe.id %}" method="post">
+  {% csrf_token %}
+  {% endif %}
+  <div class="recipe-contents">
 
     <div class="recipe-directions">
       <div class="recipe-title">
@@ -92,29 +92,26 @@
       {{ recipe.short_description|default:"" }}
       {% endif %}
     </div>
-</div>
-</div>
-</div>
+  </div>
+  </div>
+  </div>
 
-<div class="no-print" id="control">
-  <nav>
+  <div class="no-print" id="control">
+    <nav>
+      {% if form %}
+      {% include "./nav_recipe_edit.html" %}
+      {% else %}
+      {% include "./nav_recipe.html" %}
+      {% endif %}
+    </nav>
+    <pre>{{ debug | pprint }}</pre>
+    <pre>{{ request.POST | pprint }}</pre>
     {% if form %}
-    {% include "./nav_recipe_edit.html" %}
-    {% else %}
-    {% include "./nav_recipe.html" %}
-    {% endif %}
-  </nav>
-  <pre>{{ debug | pprint }}</pre>
-  <pre>{{ request.POST | pprint }}</pre>
-  {% if form %}
-  </form>
-  {% endif %}
-  <div class="nav-next-prev nav-prev">
-    <a href="{% url 'recipes:recipe' nav.prev_id %}">{% include "../icons/arrow-prev.svg" %}</a>
-  </div>
-  <div class="nav-next-prev nav-next">
-    <a href="{% url 'recipes:recipe' nav.next_id %}">{% include "../icons/arrow-next.svg" %}</a>
-  </div>
+    {% include "./nav_recipe_prev_next.html" with template_name="recipes:edit" %}
+</form>
+{% else %}
+{% include "./nav_recipe_prev_next.html" with template_name="recipes:recipe" %}
+{% endif %}" %}
 </div>
 
 {% endblock %}

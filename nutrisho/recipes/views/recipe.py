@@ -52,6 +52,6 @@ def recipe_edit(request, recipe_id):
             "recipe": recipe,
             "form": form,
             "debug": debug,
-            "nav": _get_recipe_nav(recipe),
+            "nav": _get_recipe_nav(recipe_id),
         },
     )
