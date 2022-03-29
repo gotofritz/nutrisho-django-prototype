@@ -1,6 +1,5 @@
 :root {
   --hbar: 8px solid #000;
-  --nav-next-prev-x: calc((100% - 1040px) / 2 * 0.65);
 }
 
 body {
@@ -164,6 +163,33 @@ ol {
   vertical-align: text-top;
 }
 
+.navbar {
+  background-color: #336;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: start;
+  position: fixed;
+  top: 0;
+  width: 3rem;
+}
+.nav-button {
+  height: 40px;
+  margin: 1rem 0;
+  width: 40px;
+}
+
+.nav-button svg {
+  cursor: pointer;
+  fill: orange;
+  filter: drop-shadow(4px 4px 0 pink);
+}
+
+.nav-button svg:active {
+  filter: none;
+  margin: 4px 4px 0 0;
+}
+
 @media print {
   .no-print {
     display: none;
@@ -171,30 +197,7 @@ ol {
   .recipe-contents {
     box-shadow: none;
   }
-}
-
-.nav-next-prev {
-  height: 48px;
-  position: fixed;
-  top: 8%;
-  width: 48px;
-}
-
-.nav-next-prev svg {
-  cursor: pointer;
-  fill: orange;
-  filter: drop-shadow(4px 4px 0 pink);
-}
-
-.nav-next-prev svg:active {
-  filter: none;
-  margin: 4px 4px 0 0;
-}
-
-.nav-prev {
-  left: var(--nav-next-prev-x);
-}
-
-.nav-next {
-  right: var(--nav-next-prev-x);
+  .navbar {
+    display: none;
+  }
 }

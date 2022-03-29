@@ -107,10 +107,10 @@
     <pre>{{ debug | pprint }}</pre>
     <pre>{{ request.POST | pprint }}</pre>
     {% if form %}
-    {% include "./nav_recipe_prev_next.html" with template_name="recipes:edit" %}
+    {% include "./navbar.html" with template_name="recipes:edit" %}
 </form>
 {% else %}
-{% include "./nav_recipe_prev_next.html" with template_name="recipes:recipe" %}
+{% include "./navbar.html" with template_name="recipes:recipe" %}
 {% endif %}" %}
 </div>
 

@@ -1,0 +1,11 @@
+<div class="navbar">
+  <div class="nav-button nav-home">
+    <a href="{% url "recipes:home" %}">{% include "../icons/arrow-list.svg" %}</a>
+  </div>
+  <div class="nav-button nav-next">
+    <a href="{% url template_name nav.next_id %}">{% include "../icons/arrow-next.svg" %}</a>
+  </div>
+  <div class="nav-button nav-prev">
+    <a href="{% url template_name nav.prev_id %}">{% include "../icons/arrow-prev.svg" %}</a>
+  </div>
+</div>
