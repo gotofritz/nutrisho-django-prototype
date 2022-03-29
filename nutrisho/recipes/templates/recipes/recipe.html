@@ -4,12 +4,15 @@
 {% block page_title %}{{ recipe.recipe_name }}{% endblock %}
 
 {% block content %}
+
 {% if form %}
+{% include "./navbar.html" with template_name="recipes:edit" %}
 <form action="{% url 'recipes:edit' recipe.id %}" method="post">
   {% csrf_token %}
+  {% else %}
+  {% include "./navbar.html" with template_name="recipes:recipe" %}
   {% endif %}
   <div class="recipe-contents">
-
     <div class="recipe-directions">
       <div class="recipe-title">
         {% if form %}
@@ -50,7 +53,7 @@
       <div class="ingredient-group">
         <h4 class="group-name">{{ group_or_ingredient }}</h4>
       </div>
-      <div div class="ingredients-list">
+      <div class="ingredients-list">
         {% else %}
         {% if is_first_of_ingredients %}
         <div class="ingredient-in-group-edit">
@@ -101,17 +104,8 @@
     </div>
   </div>
   </div>
-  </div>
-
-  <div class="no-print" id="control">
-    <pre>{{ debug | pprint }}</pre>
-    <pre>{{ request.POST | pprint }}</pre>
-    {% if form %}
-    {% include "./navbar.html" with template_name="recipes:edit" %}
+  {% if form %}
 </form>
-{% else %}
-{% include "./navbar.html" with template_name="recipes:recipe" %}
-{% endif %}" %}
-</div>
+{% endif %}
 
 {% endblock %}

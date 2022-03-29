@@ -29,11 +29,9 @@ def recipe(request, recipe_id):
 
 
 def recipe_edit(request, recipe_id):
-    debug = {}
     recipe = get_object_or_404(Recipe, id=recipe_id)
     form_data = {}
     if request.POST:
-        debug = "YES"
         # recipe.recipe_name = request.POST["recipe.recipe_name"]
         # recipe.short_description = request.POST["recipe.short_description"]
         # recipe.save()
@@ -51,7 +49,6 @@ def recipe_edit(request, recipe_id):
         {
             "recipe": recipe,
             "form": form,
-            "debug": debug,
             "nav": _get_recipe_nav(recipe_id),
         },
     )

@@ -239,3 +239,12 @@ ol {
   top: -0;
   width: 250px;
 }
+
+.sidebar input[type="submit"] {
+  display: none;
+}
+
+.debug {
+  background: pink;
+  width: inherit;
+}
