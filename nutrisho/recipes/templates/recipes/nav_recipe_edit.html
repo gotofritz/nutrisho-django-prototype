@@ -1,2 +1,7 @@
-<input type="submit" value="Update">
-<a href="./">Cancel</a>
+<div class="nav-button">
+  <a href="{% url "recipes:recipe" recipe.id %}">{% include "../icons/cancel.svg" %}</a>
+</div>
+
+<div class="nav-button">
+  <a href="{% url "recipes:recipe" recipe.id %}">{% include "../icons/ok.svg" %}</a>
+</div>

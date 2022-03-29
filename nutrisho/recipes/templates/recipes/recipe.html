@@ -32,6 +32,13 @@
     </div>
 
     <div class="sidebar">
+      <nav>
+        {% if form %}
+        {% include "./nav_recipe_edit.html" %}
+        {% else %}
+        {% include "./nav_recipe.html" %}
+        {% endif %}
+      </nav>
       <h3 class="serves">Serves 1</h3>
       <div class="recipe-ingredients">
         {% if form %}
@@ -97,13 +104,6 @@
   </div>
 
   <div class="no-print" id="control">
-    <nav>
-      {% if form %}
-      {% include "./nav_recipe_edit.html" %}
-      {% else %}
-      {% include "./nav_recipe.html" %}
-      {% endif %}
-    </nav>
     <pre>{{ debug | pprint }}</pre>
     <pre>{{ request.POST | pprint }}</pre>
     {% if form %}

@@ -1,1 +1,3 @@
-<a href="./edit">Edit</a>
+<div class="nav-button">
+  <a href="{% url "recipes:edit" recipe.id %}">{% include "../icons/edit.svg" %}</a>
+</div>
