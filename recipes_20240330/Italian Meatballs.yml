@@ -1,0 +1,80 @@
+cuisine: .med.italy
+description: Italian staple
+directions:
+  step:
+    - Mix Meatball ingredients in a bowl by hand, no need for food processor. Add breacrumbs last, you may not need them all. Mixture should be fairly solid yet still pliable
+    - Divide mixture in 3 equal lumps. Divide each lump in half, and each half in half again. That should give you 3 x 4 = 12 lumps
+    - Shape into meatballs, chill (2hr in fridge or 10/15m in freezer)
+    - Meanwhile whiz Sauce Base ingredients in small food processor
+    - Sauté Sauce Base in abundant olive oil on medium heat, 3-4 m
+    - Add the meatballs, sauté gently shaking constantly to prevent sticking, until browned (4-5 m)
+    - Add the white wine and let it evaporate
+    - Whiz the remaining Sauce ingredients in small food processor
+    - Add Sauce ingredients to pan, cover, cook on medium-low for 15 mins
+    - If the sauce looks too dry while cooking, add a bit of water
+    - Serve with nice bread to scoop up the sauce with
+ingredients:
+  serves: "2"
+  group:
+    - ingredient:
+        - measurement: g
+          name: beef mince
+          preparation: null
+          quantity: "500"
+        - measurement: null
+          name: egg
+          preparation: null
+          quantity: "1"
+        - measurement: g
+          name: parmesan
+          preparation: grated
+          quantity: "25"
+        - measurement: fistful
+          name: parsley
+          preparation: chopped (!KIDS)
+          quantity: "1"
+        - measurement: g
+          name: breadcrumbs
+          preparation: null
+          quantity: "80"
+        - measurement: ml
+          name: milk
+          preparation: null
+          quantity: "60"
+      name: Meatballs
+    - ingredient:
+        - measurement: null
+          name: carrots
+          preparation: peeled
+          quantity: "0.5"
+        - measurement: stick
+          name: celery
+          preparation: peeled
+          quantity: "1"
+        - measurement: null
+          name: onion
+          preparation: peeled
+          quantity: "1"
+      name: Sauce Base
+    - ingredient:
+        - measurement: cups
+          name: white wine
+          preparation: null
+          quantity: "0.33"
+        - measurement: ml
+          name: passata
+          preparation: null
+          quantity: "350"
+        - measurement: tsp
+          name: soya sauce
+          preparation: null
+          quantity: "2"
+        - measurement: null
+          name: salt & pepper
+          preparation: to taste
+          quantity: null
+      name: Sauce
+source: Fritz
+tags:
+  - main
+title: Italian Meatballs (Polpette al Sugo)

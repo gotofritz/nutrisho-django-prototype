@@ -105,16 +105,20 @@ class Command(BaseCommand):
                                 ingredient=ingredient,
                                 unit=ingredient_raw["measurement"],
                                 preparation=ingredient_raw["preparation"],
-                                quantity=None
-                                if ingredient_raw["quantity"] is None
-                                else eval(ingredient_raw["quantity"]) / serves
-                                if ingredient_raw["quantity"] is not None
-                                else None,
+                                quantity=(
+                                    None
+                                    if ingredient_raw["quantity"] is None
+                                    else (
+                                        ingredient_raw["quantity"]
+                                        if ingredient_raw["quantity"] is not None
+                                        else None
+                                    )
+                                ),
                                 ingredient_group=group,
                                 index_in_sequence=j + 1,
                             )
                         except:
-                            breakpoint()
+                            ...
                         ingredient_in_recipe.save()
 
                 for tag_raw in recipe_dict["tags"]:

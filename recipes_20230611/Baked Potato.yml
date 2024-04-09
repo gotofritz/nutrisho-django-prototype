@@ -1,0 +1,36 @@
+cuisine: .europe.uk
+description: Do it without cheese for vegans
+directions:
+  step:
+    - Heat oven to 200°C
+    - Wrap potatoes in foil, and put them in the oven for 30 mins
+    - Check if they are ready by piercing them with a fork. If it doesn't go through easily, leave them for another 10 mins. Repeat until soft
+    - "Take them out, unwrap them (careful: THEY ARE HOT!) and cut them in half lengthways, without completely separating the two halves"
+    - "Optional: add big knob of butter"
+    - Add salt and pepper. Break the flesh tof the potatoes a bit with a fork and mix with the seasoning
+    - "Optional: add handful of grated cheese, mix again"
+    - Put the baked beans in a cup, warm them up a bit, then spoon them over the potates
+ingredients:
+  group:
+    - ingredient:
+        - measurement: null
+          name: potatoes
+          preparation: null
+          quantity: "4"
+        - measurement: g
+          name: butter
+          preparation: null
+          quantity: "20"
+        - measurement: can
+          name: baked beans
+          preparation: null
+          quantity: "1"
+        - measurement: fistfuls
+          name: grated cheese
+          preparation: null
+          quantity: "4"
+  serves: 4
+source: https://www.youtube.com/watch?v=VVqLiUezQUk
+tags:
+  - vegetarian
+title: Baked potato with beans

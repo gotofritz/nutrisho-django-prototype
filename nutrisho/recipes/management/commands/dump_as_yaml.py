@@ -1,5 +1,4 @@
 from argparse import ArgumentError
-import json
 from django.core.management.base import BaseCommand
 from django.utils.encoding import force_str
 import yaml
@@ -7,13 +6,7 @@ import unicodedata
 import re
 from pathlib import Path
 
-from recipes.models.ingredient import Ingredient
-from recipes.models.cuisine import Cuisine
-from recipes.models.ingredient_group import IngredientGroup
-from recipes.models.ingredient_in_recipe import IngredientInRecipe
 from recipes.models.recipe import Recipe
-from recipes.models.step import Step
-from recipes.models.tag import Tag
 
 
 class Command(BaseCommand):
@@ -48,7 +41,7 @@ class Command(BaseCommand):
             as_data["directions"] = {
                 "step": [step.step_text for step in recipe.step.all()]
             }
-            as_data["ingredients"] = {"serves": 1, "group": []}
+            as_data["ingredients"] = {"serves": recipe.serves, "group": []}
             for group in recipe.ingredients_group.all():
                 group = {
                     "name": group.group_name,
@@ -57,9 +50,9 @@ class Command(BaseCommand):
                             "measurement": ing.unit,
                             "name": ing.ingredient.ingredient_name,
                             "preparation": ing.preparation,
-                            "quantity": None
-                            if ing.quantity is None
-                            else str(ing.quantity),
+                            "quantity": (
+                                None if ing.quantity is None else str(ing.quantity)
+                            ),
                         }
                         for ing in group.ingredient.all()
                     ],

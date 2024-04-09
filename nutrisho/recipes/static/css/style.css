@@ -73,7 +73,7 @@ input[type="text"] {
   display: flex;
   flex-direction: column;
   font: 14px "Inconsolata";
-  width: 250px;
+  width: 28%;
 }
 
 .sidebar > div:last-child,
@@ -90,7 +90,7 @@ input[type="text"] {
 }
 
 .recipe-directions {
-  width: 720px;
+  width: 72%;
 }
 
 .recipe-directions p,
@@ -210,18 +210,6 @@ ol {
   margin: 4px 4px 0 0;
 }
 
-@media print {
-  .no-print {
-    display: none;
-  }
-  .recipe-contents {
-    box-shadow: none;
-  }
-  .navbar {
-    display: none;
-  }
-}
-
 .sidebar nav {
   background: var(--color-light-main);
   display: flex;
@@ -229,7 +217,7 @@ ol {
   height: 48px;
   position: absolute;
   top: -18px;
-  width: 250px;
+  width: 100%;
 }
 
 .sidebar nav:hover {
@@ -237,7 +225,7 @@ ol {
   height: 48px;
   position: absolute;
   top: -0;
-  width: 250px;
+  width: 100%;
 }
 
 .sidebar input[type="submit"] {
@@ -247,4 +235,22 @@ ol {
 .debug {
   background: pink;
   width: inherit;
+}
+
+@media print {
+  .no-print {
+    display: none;
+  }
+  .recipe-contents {
+    box-shadow: none;
+    padding: 0;
+    width: 100%;
+  }
+  .navbar {
+    visibility: hidden;
+  }
+
+  .sidebar {
+    padding-top: 30px;
+  }
 }
