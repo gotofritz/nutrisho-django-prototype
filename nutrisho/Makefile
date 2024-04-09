@@ -22,10 +22,3 @@ filldb: venv clean
 createsuperuser: venv
 	 DJANGO_SUPERUSER_PASSWORD=fritz python manage.py createsuperuser --noinput --username fritz --email fritzthecat@gmail.com
 .PHONY: createsuperuser
-
-promote_latest_yaml_recipes:
-	mkdir ../recipes_yaml/ || true
-	rm ../recipes_yaml/*.yml || true
-	mkdir ../recipes_tmp/ || true
-	mv ../recipes_tmp/*.yml ../recipes_yaml || true
-.PHONY: promote_latest_yaml_recipes
