@@ -2,7 +2,6 @@ cuisine: .asia.japan
 description: Japanese staple
 directions:
   step:
-    - Cut chicken in pieces roughly the size of a ping pong ball
     - Put all the Marinade ingredients in the small food processor and whiz
     - Remove blade, add the chicken pieces and coat meat with marinade. Tip into bowl
     - Let it rest 30 mins to overnight in the fridge. Remove from fridge 30 m before using
@@ -19,7 +18,7 @@ ingredients:
     - ingredient:
         - measurement: g
           name: chicken breast
-          preparation: null
+          preparation: cut nuggets size
           quantity: "300"
       name: Meat
     - ingredient:

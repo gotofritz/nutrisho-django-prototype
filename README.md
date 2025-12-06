@@ -22,6 +22,14 @@ Create a folder recipes_xxxx/, next to the other ones, then ..
 
 Then go to <http://127.0.0.1:8000/recipes/>
 
+## Editing recipes
+
+You need to do it directly in the SQL, in `sql_to_edit_recipes_hack/`
+
+```bash
+❯ sqlite3 ~/work/nutrisho-django-prototype/nutrisho/db.sqlite3 < ~/work/nutrisho-django-prototype/nutrisho/sql_to_edit_recipes_hack/edit_recipe.sql
+```
+
 ## LICENSE
 
 This is licensed under the [0BSD license](LICENSE.md).

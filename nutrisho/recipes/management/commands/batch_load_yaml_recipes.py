@@ -1,12 +1,12 @@
-from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
-import yaml
 import json
 import re
 from pathlib import Path
 
-from recipes.models.ingredient import Ingredient
+import yaml
+from django.contrib.auth.models import User
+from django.core.management.base import BaseCommand
 from recipes.models.cuisine import Cuisine
+from recipes.models.ingredient import Ingredient
 from recipes.models.ingredient_group import IngredientGroup
 from recipes.models.ingredient_in_recipe import IngredientInRecipe
 from recipes.models.recipe import Recipe
@@ -77,7 +77,7 @@ class Command(BaseCommand):
                     else 4
                 )
 
-                if type(recipe_dict["ingredients"]["group"]) != list:
+                if not isinstance(recipe_dict["ingredients"]["group"], list):
                     recipe_dict["ingredients"]["group"] = [
                         recipe_dict["ingredients"]["group"]
                     ]
@@ -89,7 +89,7 @@ class Command(BaseCommand):
                     )
                     group.save()
 
-                    if type(group_dict["ingredient"]) != list:
+                    if not isinstance(group_dict["ingredient"], list):
                         group_dict["ingredient"] = [group_dict["ingredient"]]
                     for j, ingredient_raw in enumerate(group_dict["ingredient"]):
                         ingredient, _ = Ingredient.objects.get_or_create(
@@ -103,22 +103,17 @@ class Command(BaseCommand):
                                 _,
                             ) = IngredientInRecipe.objects.get_or_create(
                                 ingredient=ingredient,
-                                unit=ingredient_raw["measurement"],
-                                preparation=ingredient_raw["preparation"],
-                                quantity=(
-                                    None
-                                    if ingredient_raw["quantity"] is None
-                                    else (
-                                        ingredient_raw["quantity"]
-                                        if ingredient_raw["quantity"] is not None
-                                        else None
-                                    )
-                                ),
+                                unit=ingredient_raw.get("measurement"),
+                                preparation=ingredient_raw.get("preparation"),
+                                quantity=ingredient_raw.get("quantity"),
                                 ingredient_group=group,
                                 index_in_sequence=j + 1,
                             )
-                        except:
-                            ...
+                        except Exception as e:
+                            print(
+                                f"ERROR with {recipe.recipe_name} / {ingredient.ingredient_name}"
+                            )
+                            raise e
                         ingredient_in_recipe.save()
 
                 for tag_raw in recipe_dict["tags"]:

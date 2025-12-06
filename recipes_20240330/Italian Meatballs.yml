@@ -16,7 +16,8 @@ directions:
 ingredients:
   serves: "2"
   group:
-    - ingredient:
+    - name: Meatballs
+      ingredient:
         - measurement: g
           name: beef mince
           preparation: null
@@ -41,7 +42,6 @@ ingredients:
           name: milk
           preparation: null
           quantity: "60"
-      name: Meatballs
     - ingredient:
         - measurement: null
           name: carrots

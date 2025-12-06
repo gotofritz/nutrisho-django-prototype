@@ -236,21 +236,3 @@ ol {
   background: pink;
   width: inherit;
 }
-
-@media print {
-  .no-print {
-    display: none;
-  }
-  .recipe-contents {
-    box-shadow: none;
-    padding: 0;
-    width: 100%;
-  }
-  .navbar {
-    visibility: hidden;
-  }
-
-  .sidebar {
-    padding-top: 30px;
-  }
-}
