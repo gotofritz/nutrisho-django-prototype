@@ -15,7 +15,8 @@ This phase focuses on bringing the project up to date with current best practice
     - [✅] Upgrade PyYAML and google-genai to their latest versions.
     - [✅] Integrate ty for typechecking.
     - [✅] Ensure ruff is up-to-date and run it
-    - [ ] Investigate and propose a modern task manager to replace Make.
+    - [✅] Investigate and propose a modern task manager to replace Make. (Proposed: Invoke)
+    - [ ] Replace make with Taskfile as a task runner, and migrate all the tasks using the structure in @../sam-audio-playground/audio-playground/Taskfile.yml
 
 1.  **Modernize Django App Structure:**
 

@@ -2,7 +2,7 @@
 
 - Issue tracker: Github
 - Repository: Use `gh` CLI for all GitHub operations
-- Task runner is make
+- Task runner is Taskfile
 
 ## Development Standards
 

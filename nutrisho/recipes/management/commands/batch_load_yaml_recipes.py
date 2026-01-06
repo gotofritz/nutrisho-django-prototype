@@ -106,9 +106,11 @@ class Command(BaseCommand):
                                 index_in_sequence=j + 1,
                             )
                         except Exception as e:
-                            self.stdout.write(self.style.ERROR(
-                                f"ERROR with {recipe.recipe_name} / {ingredient.ingredient_name}"
-                            ))
+                            self.stdout.write(
+                                self.style.ERROR(
+                                    f"ERROR with {recipe.recipe_name} / {ingredient.ingredient_name}"
+                                )
+                            )
                             raise e
                         ingredient_in_recipe.save()
 

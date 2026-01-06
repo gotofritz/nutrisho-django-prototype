@@ -25,7 +25,6 @@ class RecipeEditForm(forms.ModelForm):
     short_description = forms.CharField(required=False, max_length=512, widget=forms.Textarea)
 
     def __init__(self, *args, **kwargs):
-
         extra_fields = {}
         is_mutable = not isinstance(args[0], http.request.QueryDict)
         steps = kwargs["instance"].step.all()
