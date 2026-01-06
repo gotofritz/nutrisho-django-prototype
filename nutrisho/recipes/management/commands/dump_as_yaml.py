@@ -1,5 +1,5 @@
 from argparse import ArgumentError
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.utils.encoding import force_str
 import yaml
 import unicodedata
@@ -26,7 +26,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dir = Path(options["dir"])
         if not dir.is_dir():
-            raise ArgumentError("You need to pass a dir where yml files can be saved")
+            raise CommandError("You need to pass a dir where yml files can be saved")
 
         all_recipes = (x for x in Recipe.objects.all())
         for recipe in all_recipes:

@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Ingredient(models.Model):
+    id = models.AutoField(primary_key=True)
     CONSTRAINT_CHOICES = [
         ("PSC", "Pescatarian"),
         ("VGT", "Vegetarian"),
@@ -37,6 +38,7 @@ class Ingredient(models.Model):
         choices=GROUP_CHOICES,
         blank=True,
     )
+    objects = models.Manager()
 
     def natural_key(self):
         return self.ingredient_name

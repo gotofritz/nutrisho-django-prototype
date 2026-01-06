@@ -1,9 +1,11 @@
 from django.db import models
+from typing import cast
 
 from .recipe import Recipe
 
 
 class Step(models.Model):
+    id = models.AutoField(primary_key=True)
     step_text = models.CharField(
         "The description of a step",
         max_length=512,
@@ -14,13 +16,14 @@ class Step(models.Model):
     )
     duration = models.DurationField("How long the step should take", null=True)
     extra_info = models.CharField(
-        "extra information, for example how to peel tomatoes",
+        "any extra info",
         max_length=512,
         blank=True,
     )
+    objects = models.Manager()
 
     def natural_key(self):
-        return (self.index_in_sequence, self.step_text[:32])
+        return (self.index_in_sequence, cast(str, self.step_text)[:32])
 
     class Meta:
         constraints = [

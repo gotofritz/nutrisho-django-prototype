@@ -4,7 +4,8 @@ SHELL := bash
 .DELETE_ON_ERROR:
 
 venv:
-	poetry shell || true
+	source .venv/bin/activate
+
 .PHONY: venv
 
 clean:

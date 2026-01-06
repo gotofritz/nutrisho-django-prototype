@@ -8,22 +8,26 @@ This phase focuses on bringing the project up to date with current best practice
 
 1.  **Upgrade Dependencies:**
 
-    - Upgrade Django to the latest LTS version. This will provide access to new features, security updates, and performance improvements.
-    - Upgrade other dependencies like `PyYAML` and `google-genai` to their latest versions.
-    - Adopt `uv` for dependency management. It is already present in the project.
-    - Adopt ty for typechecking, ruff for linting, and a modern task manager to replace Make
+    - [✅] Resolve dependency manager conflict: Confirm uv is the chosen dependency manager and remove poetry references from Makefile.
+    - [✅] Identify current Django, PyYAML, and google-genai versions from pyproject.toml.
+    - [✅] Ensure .venv exists and dependencies are installed with uv by running uv venv and uv sync from the project root.
+    - [✅] Identify latest LTS Django version compatible with Python 3.14 (or adjust Python version if necessary).
+    - [✅] Upgrade PyYAML and google-genai to their latest versions.
+    - [✅] Integrate ty for typechecking.
+    - [ ] Ensure ruff is up-to-date and run it
+    - [ ] Investigate and propose a modern task manager to replace Make.
 
-2.  **Modernize Django App Structure:**
+1.  **Modernize Django App Structure:**
 
     - Move the `recipes` app to a more standard location.
     - Organize templates, static files, and management commands according to Django best practices.
 
-3.  **Implement a Robust Settings Configuration:**
+1.  **Implement a Robust Settings Configuration:**
 
     - Use a library like `django-environ` to manage settings via environment variables. This will improve security by removing secrets from source code.
     - Create separate settings files for development and production environments.
 
-4.  **Introduce HTMX and Tailwind CSS:**
+1.  **Introduce HTMX and Tailwind CSS:**
     - Integrate HTMX to add dynamic, interactive features to the frontend without writing complex JavaScript.
     - Use Tailwind CSS for a utility-first approach to styling, allowing for rapid development of a modern user interface.
     - Set up a process to compile Tailwind's CSS, for example by using the `tailwindcss` CLI.

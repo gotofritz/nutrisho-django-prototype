@@ -1,10 +1,12 @@
 from django.db import models
+from typing import cast
 
 from .ingredient import Ingredient
 from .ingredient_group import IngredientGroup
 
 
 class IngredientInRecipe(models.Model):
+    id = models.AutoField(primary_key=True)
     ingredient = models.ForeignKey(
         Ingredient, on_delete=models.DO_NOTHING, related_name="+"
     )
@@ -29,13 +31,14 @@ class IngredientInRecipe(models.Model):
         max_length=128,
         blank=True,
     )
+    objects = models.Manager()
 
     def natural_key(self):
         return (
             self.ingredient_group,
             self.quantity,
             self.unit,
-            self.ingredient.ingredient_name,
+            cast(Ingredient, self.ingredient).ingredient_name,
         )
 
     class Meta:
