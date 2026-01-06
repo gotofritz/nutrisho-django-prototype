@@ -12,14 +12,15 @@ authors = [
 license = "0BSD"
 requires-python = ">=3.13,<3.14"
 dependencies = [
-    "Django >=4.0.3",
-    "PyYAML >=6.0.1",
-    "django-debug-toolbar >=3.2.4",
+    "Django ~=6.0.0",
+    "PyYAML ~=6.0",
+    "django-debug-toolbar ~=6.1",
+    "google-genai~=1.56",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "black>=22.1.0",
+    "black~=24.4",
 ]
 
 [tool.hatch]
