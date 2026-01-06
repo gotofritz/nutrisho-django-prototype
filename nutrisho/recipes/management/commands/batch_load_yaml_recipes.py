@@ -40,14 +40,12 @@ class Command(BaseCommand):
         for source_path in files_to_load:
             with open(source_path, "r") as stream:
                 recipe_dict = yaml.safe_load(stream)
-                print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-                print(source_path)
-                print(json.dumps(recipe_dict, indent=2))
+                self.stdout.write(self.style.NOTICE(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"))
+                self.stdout.write(self.style.NOTICE(str(source_path)))
+                self.stdout.write(self.style.NOTICE(json.dumps(recipe_dict, indent=2)))
 
                 if recipe_dict["cuisine"]:
-                    cuisine, _ = Cuisine.objects.get_or_create(
-                        cuisine=recipe_dict["cuisine"]
-                    )
+                    cuisine, _ = Cuisine.objects.get_or_create(cuisine=recipe_dict["cuisine"])
                     cuisine.save()
                 else:
                     cuisine = None
@@ -71,16 +69,14 @@ class Command(BaseCommand):
 
                 # whatever i used to convert to yaml, was inconsistent; if only a single
                 # entry, it'd do a dict and not a list
-                serves = (
+                _ = (
                     int(recipe_dict["ingredients"]["serves"])
                     if hasattr(recipe_dict["ingredients"], "serves")
                     else 4
                 )
 
                 if not isinstance(recipe_dict["ingredients"]["group"], list):
-                    recipe_dict["ingredients"]["group"] = [
-                        recipe_dict["ingredients"]["group"]
-                    ]
+                    recipe_dict["ingredients"]["group"] = [recipe_dict["ingredients"]["group"]]
                 for i, group_dict in enumerate(recipe_dict["ingredients"]["group"]):
                     group, _ = IngredientGroup.objects.get_or_create(
                         group_name=Command.clean(group_dict.get("name")),
@@ -110,9 +106,9 @@ class Command(BaseCommand):
                                 index_in_sequence=j + 1,
                             )
                         except Exception as e:
-                            print(
+                            self.stdout.write(self.style.ERROR(
                                 f"ERROR with {recipe.recipe_name} / {ingredient.ingredient_name}"
-                            )
+                            ))
                             raise e
                         ingredient_in_recipe.save()
 

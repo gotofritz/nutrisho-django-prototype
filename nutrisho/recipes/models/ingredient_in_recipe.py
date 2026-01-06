@@ -1,5 +1,6 @@
-from django.db import models
 from typing import cast
+
+from django.db import models
 
 from .ingredient import Ingredient
 from .ingredient_group import IngredientGroup
@@ -7,16 +8,12 @@ from .ingredient_group import IngredientGroup
 
 class IngredientInRecipe(models.Model):
     id = models.AutoField(primary_key=True)
-    ingredient = models.ForeignKey(
-        Ingredient, on_delete=models.DO_NOTHING, related_name="+"
-    )
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.DO_NOTHING, related_name="+")
     substitute = models.ForeignKey(
         Ingredient, on_delete=models.DO_NOTHING, related_name="+", blank=True, null=True
     )
     unit = models.CharField("the unit", max_length=32, blank=True, null=True)
-    preparation = models.CharField(
-        "chopped, blanched...", max_length=128, blank=True, null=True
-    )
+    preparation = models.CharField("chopped, blanched...", max_length=128, blank=True, null=True)
     quantity = models.DecimalField(
         "how many", decimal_places=2, max_digits=7, blank=True, null=True
     )

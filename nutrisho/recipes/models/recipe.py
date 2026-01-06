@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from django.urls import reverse
 
 from .cuisine import Cuisine
@@ -19,9 +19,7 @@ class Recipe(models.Model):
         max_length=200,
         blank=True,
     )
-    cuisine = models.ForeignKey(
-        Cuisine, on_delete=models.SET_NULL, null=True, blank=True
-    )
+    cuisine = models.ForeignKey(Cuisine, on_delete=models.SET_NULL, null=True, blank=True)
     created_date = models.DateTimeField("date created", auto_now_add=True)
     objects = models.Manager()
 

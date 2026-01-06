@@ -1,5 +1,6 @@
-from django.db import models
 from typing import cast
+
+from django.db import models
 
 from .recipe import Recipe
 
@@ -11,9 +12,7 @@ class Step(models.Model):
         max_length=512,
     )
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="step")
-    index_in_sequence = models.SmallIntegerField(
-        "What step is this, for a given recipe?"
-    )
+    index_in_sequence = models.SmallIntegerField("What step is this, for a given recipe?")
     duration = models.DurationField("How long the step should take", null=True)
     extra_info = models.CharField(
         "any extra info",

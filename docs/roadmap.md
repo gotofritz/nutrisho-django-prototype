@@ -14,7 +14,7 @@ This phase focuses on bringing the project up to date with current best practice
     - [✅] Identify latest LTS Django version compatible with Python 3.14 (or adjust Python version if necessary).
     - [✅] Upgrade PyYAML and google-genai to their latest versions.
     - [✅] Integrate ty for typechecking.
-    - [ ] Ensure ruff is up-to-date and run it
+    - [✅] Ensure ruff is up-to-date and run it
     - [ ] Investigate and propose a modern task manager to replace Make.
 
 1.  **Modernize Django App Structure:**

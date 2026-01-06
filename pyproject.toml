@@ -27,7 +27,6 @@ target-version = "py314"
 
 # This only has an effect when the `docstring-code-format` setting is
 # enabled.
-docstring-code-line-length = "dynamic"
 exclude = [
   ".bzr",
   ".direnv",

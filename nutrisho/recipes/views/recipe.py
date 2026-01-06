@@ -1,9 +1,7 @@
-from xmlrpc.client import Boolean
 from django.shortcuts import get_object_or_404, render
 
-from recipes.models import Recipe
-
 from recipes.forms.recipe_edit_form import RecipeEditForm
+from recipes.models import Recipe
 
 
 def _get_recipe_nav(recipe_id):
