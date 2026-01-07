@@ -11,6 +11,14 @@ tasks:
     cmds:
       - echo "Virtual environment tasks use {{.VENV}}/python. For interactive shell, run 'source .venv/bin/activate' manually."
 
+  run:
+    dir: nutrisho
+    cmd: "{{.VENV}}/python manage.py runserver"
+
+  migrate:
+    dir: nutrisho
+    cmd: "{{.VENV}}/python manage.py migrate"
+
   clean:
     desc: "Clean up database and migration files"
     cmds:
