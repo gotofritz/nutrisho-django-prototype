@@ -1,0 +1,88 @@
+version: "3"
+
+vars:
+  ALL: . tests/
+  VENV: /Users/fritz/work/nutrisho/.venv/bin
+  SOURCES: ./
+
+tasks:
+  venv:
+    desc: "Activate the virtual environment (use 'source .venv/bin/activate' manually or 'uv run ...')"
+    cmds:
+      - echo "Virtual environment tasks use {{.VENV}}/python. For interactive shell, run 'source .venv/bin/activate' manually."
+
+  run:
+    dir: nutrisho
+    cmd: "{{.VENV}}/python manage.py runserver"
+
+  migrate:
+    dir: nutrisho
+    cmd: "{{.VENV}}/python manage.py migrate"
+
+  clean:
+    desc: "Clean up database and migration files"
+    cmds:
+      - rm ./db.sqlite3 || true
+      - rm ./recipes/migrations/0* || true
+
+  filldb:
+    desc: "Fill database with initial data"
+    dir: nutrisho
+    deps:
+      - clean
+    cmds:
+      - "{{.VENV}}/python manage.py makemigrations"
+      - "{{.VENV}}/python manage.py migrate"
+      - "{{.VENV}}/python manage.py addinitialuser"
+      - "{{.VENV}}/python manage.py batch_load_yaml_recipes ../recipes_yaml/"
+
+  createsuperuser:
+    desc: "Create a superuser"
+    dir: nutrisho
+    cmds:
+      - DJANGO_SUPERUSER_PASSWORD=fritz {{.VENV}}/python manage.py createsuperuser --noinput --username fritz --email fritzthecat@gmail.com
+
+  lint-fix:
+    desc: "Fix linting issues"
+    cmds:
+      - uv run python -m ruff check --fix {{.SOURCES}}
+      - uv run python -m ruff format {{.SOURCES}}
+
+  ruff:
+    desc: "Run ruff"
+    cmds:
+      - uv run python -m ruff check {{.SOURCES}}
+      - uv run python -m ruff format {{.SOURCES}}
+
+  # Task to open the latest coverage report in a web browser
+  coverage:
+    desc: "Open the latest coverage report in a web browser"
+    cmds:
+      - open tests/coverage/index.html
+
+  # Task to run all linting tasks (ruff, ty)
+  lint:
+    desc: "Run all linting tasks"
+    deps:
+      - ruff
+      - ty
+
+  # Task to run ty for static type checking on the source code
+  ty:
+    desc: "Run ty for static type checking"
+    cmds:
+      - "{{.VENV}}/ty check nutrisho"
+
+  # Task to run linting and tests
+  qa:
+    desc: "Run linting and tests"
+    deps:
+      - test
+      - lint
+
+  # Task to run tests using pytest with coverage reporting
+  test:
+    desc: "Run tests with coverage"
+    cmds:
+      # - pytest -vv -s --cov --cov-report=html:tests/coverage --cov-fail-under=40 $(if [ -n "{{.CLI_ARGS}}" ]; then echo "{{.CLI_ARGS}}"; else echo .; fi)
+      - echo "N/A"

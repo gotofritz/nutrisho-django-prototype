@@ -1,11 +1,10 @@
-from argparse import ArgumentError
-from django.core.management.base import BaseCommand
-from django.utils.encoding import force_str
-import yaml
-import unicodedata
 import re
+import unicodedata
 from pathlib import Path
 
+import yaml
+from django.core.management.base import BaseCommand, CommandError
+from django.utils.encoding import force_str
 from recipes.models.recipe import Recipe
 
 
@@ -26,21 +25,17 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dir = Path(options["dir"])
         if not dir.is_dir():
-            raise ArgumentError("You need to pass a dir where yml files can be saved")
+            raise CommandError("You need to pass a dir where yml files can be saved")
 
         all_recipes = (x for x in Recipe.objects.all())
         for recipe in all_recipes:
             as_data = {}
             as_data["description"] = recipe.short_description
             as_data["title"] = recipe.recipe_name.strip()
-            as_data["cuisine"] = (
-                recipe.cuisine.cuisine if recipe.cuisine is not None else None
-            )
+            as_data["cuisine"] = recipe.cuisine.cuisine if recipe.cuisine is not None else None
             as_data["source"] = recipe.source_instance
             as_data["tags"] = [tag.tag for tag in recipe.tag.all()]
-            as_data["directions"] = {
-                "step": [step.step_text for step in recipe.step.all()]
-            }
+            as_data["directions"] = {"step": [step.step_text for step in recipe.step.all()]}
             as_data["ingredients"] = {"serves": recipe.serves, "group": []}
             for group in recipe.ingredients_group.all():
                 group = {
@@ -50,9 +45,7 @@ class Command(BaseCommand):
                             "measurement": ing.unit,
                             "name": ing.ingredient.ingredient_name,
                             "preparation": ing.preparation,
-                            "quantity": (
-                                None if ing.quantity is None else str(ing.quantity)
-                            ),
+                            "quantity": (None if ing.quantity is None else str(ing.quantity)),
                         }
                         for ing in group.ingredient.all()
                     ],
@@ -62,6 +55,6 @@ class Command(BaseCommand):
             filename = re.sub(r"[^\w\s-]", "", filename)
             with open(dir / f"{filename}.yml", "w", encoding="utf-8") as stream:
                 yaml.dump(as_data, stream, indent=4, allow_unicode=True)
-            print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-            print(dir / f"{filename}.yml")
-            print(yaml.dump(as_data, indent=2))
+            self.stdout.write(self.style.NOTICE(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"))
+            self.stdout.write(self.style.NOTICE(str(dir / f"{filename}.yml")))
+            self.stdout.write(self.style.NOTICE(yaml.dump(as_data, indent=2)))

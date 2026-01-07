@@ -5,9 +5,7 @@ A recipe manager built with DJango. Inspired by the excellent <http://www.obeyth
 ## Running the app
 
 ```bash
-❯ source venv/bin/activate
-❯ cd nutrisho
-❯ python manage.py runserver
+❯ task run
 ```
 
 ## Importing yaml recipes

@@ -1,9 +1,9 @@
-import re
-from urllib import request
-from django import forms, http
 import math
+import re
 
-from recipes.models import Recipe, Step
+from django import forms, http
+
+from recipes.models import Recipe
 
 MIN_NUMBER_STEP_FIELDS = 4
 EXTRA_BLANK_STEP_FIELDS = 2
@@ -22,17 +22,9 @@ class RecipeEditForm(forms.ModelForm):
         fields = ["recipe_name", "short_description"]
 
     recipe_name = forms.CharField(required=False, max_length=200)
-    short_description = forms.CharField(
-        required=False, max_length=512, widget=forms.Textarea
-    )
+    short_description = forms.CharField(required=False, max_length=512, widget=forms.Textarea)
 
     def __init__(self, *args, **kwargs):
-        print("000000000000000000000000000000000000000000000000000000000")
-        print(type(args))
-        print(type(args[0]))
-        print(args)
-        print(kwargs)
-
         extra_fields = {}
         is_mutable = not isinstance(args[0], http.request.QueryDict)
         steps = kwargs["instance"].step.all()
@@ -57,13 +49,9 @@ class RecipeEditForm(forms.ModelForm):
             if is_mutable:
                 args[0][field_name] = field_text
 
-        for j in range(
-            i + 1, max(MIN_NUMBER_STEP_FIELDS, i + 1 + EXTRA_BLANK_STEP_FIELDS)
-        ):
+        for j in range(i + 1, max(MIN_NUMBER_STEP_FIELDS, i + 1 + EXTRA_BLANK_STEP_FIELDS)):
             field_name = "step-%s" % (j,)
-            extra_fields[field_name] = forms.CharField(
-                required=False, widget=forms.Textarea
-            )
+            extra_fields[field_name] = forms.CharField(required=False, widget=forms.Textarea)
 
         groups = kwargs["instance"].ingredients_group.all()
         for i in range(len(groups)):
@@ -78,13 +66,9 @@ class RecipeEditForm(forms.ModelForm):
 
             ingredients = groups[i].ingredient.all()
             for j in range(len(ingredients)):
-                ingredient_field_name = (
-                    f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-quantity"
-                )
+                ingredient_field_name = f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-quantity"
                 field_text = (
-                    "{0:.2g}".format(ingredients[j].quantity)
-                    if ingredients[j].quantity
-                    else ""
+                    "{0:.2g}".format(ingredients[j].quantity) if ingredients[j].quantity else ""
                 )
                 extra_fields[ingredient_field_name] = forms.CharField(
                     required=False,
@@ -93,9 +77,7 @@ class RecipeEditForm(forms.ModelForm):
                 if is_mutable:
                     args[0][ingredient_field_name] = field_text
 
-                ingredient_field_name = (
-                    f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-unit"
-                )
+                ingredient_field_name = f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-unit"
                 field_text = ingredients[j].unit or ""
                 extra_fields[ingredient_field_name] = forms.CharField(
                     required=False,
@@ -104,9 +86,7 @@ class RecipeEditForm(forms.ModelForm):
                 if is_mutable:
                     args[0][ingredient_field_name] = field_text
 
-                ingredient_field_name = (
-                    f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-name"
-                )
+                ingredient_field_name = f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-name"
                 field_text = ingredients[j].ingredient.ingredient_name or ""
                 extra_fields[ingredient_field_name] = forms.CharField(
                     required=False,
@@ -115,9 +95,7 @@ class RecipeEditForm(forms.ModelForm):
                 if is_mutable:
                     args[0][ingredient_field_name] = field_text
 
-                ingredient_field_name = (
-                    f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-preparation"
-                )
+                ingredient_field_name = f"{PREFIX_GROUP}-{i}-{PREFIX_INGREDIENT}-{j}-preparation"
                 field_text = ingredients[j].preparation or ""
                 extra_fields[ingredient_field_name] = forms.CharField(
                     required=False,
@@ -158,15 +136,13 @@ class RecipeEditForm(forms.ModelForm):
                 yield self[field_name]
 
     def get_groups(self):
-        group_matcher = re.compile(fr"{PREFIX_GROUP}-\d+")
+        group_matcher = re.compile(rf"{PREFIX_GROUP}-\d+")
         for field_name in self.fields:
             if field_name.startswith(PREFIX_GROUP):
                 is_group = group_matcher.fullmatch(field_name)
                 is_first_of_ingredients = field_name.endswith("-quantity")
                 is_last_of_ingredients = field_name.endswith("-preparation")
-                yield self[
-                    field_name
-                ], is_group, is_first_of_ingredients, is_last_of_ingredients
+                yield self[field_name], is_group, is_first_of_ingredients, is_last_of_ingredients
 
 
 def _textarea_height(sentence: str) -> int:

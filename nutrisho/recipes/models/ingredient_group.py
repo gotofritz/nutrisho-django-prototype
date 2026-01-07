@@ -4,15 +4,11 @@ from .recipe import Recipe
 
 
 class IngredientGroup(models.Model):
-    group_name = models.CharField(
-        "Label for group", max_length=64, blank=True, null=True
-    )
-    recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name="ingredients_group"
-    )
-    index_in_sequence = models.SmallIntegerField(
-        "Where to show this group, for a given recipe?"
-    )
+    id = models.AutoField(primary_key=True)
+    group_name = models.CharField("Label for group", max_length=64, blank=True, null=True)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="ingredients_group")
+    index_in_sequence = models.SmallIntegerField("Where to show this group, for a given recipe?")
+    objects = models.Manager()
 
     def natural_key(self):
         return self.group_name

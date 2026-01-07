@@ -2,9 +2,7 @@ from django.db import models
 
 
 class Source(models.Model):
-    short_name = models.CharField(
-        "A short name like 'Moro book'", max_length=64, unique=True
-    )
+    short_name = models.CharField("A short name like 'Moro book'", max_length=64, unique=True)
     source = models.CharField(
         "Anything that will let you find the source: ISDN, url...",
         max_length=255,

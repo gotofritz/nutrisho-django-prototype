@@ -6,3 +6,14 @@ from .recipe import Recipe
 from .source import Source
 from .step import Step
 from .tag import Tag
+
+__all__ = [
+    "Cuisine",
+    "Ingredient",
+    "IngredientGroup",
+    "IngredientInRecipe",
+    "Recipe",
+    "Source",
+    "Step",
+    "Tag",
+]
