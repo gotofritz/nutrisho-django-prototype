@@ -18,17 +18,17 @@ This phase focuses on bringing the project up to date with current best practice
     - [✅] Investigate and propose a modern task manager to replace Make. (Proposed: Invoke)
     - [✅] Replace make with Taskfile as a task runner, and migrate all the tasks using the structure in @../sam-audio-playground/audio-playground/Taskfile.yml
 
-1.  **Modernize Django App Structure:**
+2.  **Modernize Django App Structure:**
 
-    - Move the `recipes` app to a more standard location.
+    - Move the `recipes` app to a more standard location. Use an src/ layout if possible
     - Organize templates, static files, and management commands according to Django best practices.
 
-1.  **Implement a Robust Settings Configuration:**
+3.  **Implement a Robust Settings Configuration:**
 
     - Use a library like `django-environ` to manage settings via environment variables. This will improve security by removing secrets from source code.
     - Create separate settings files for development and production environments.
 
-1.  **Introduce HTMX and Tailwind CSS:**
+4.  **Introduce HTMX and Tailwind CSS:**
     - Integrate HTMX to add dynamic, interactive features to the frontend without writing complex JavaScript.
     - Use Tailwind CSS for a utility-first approach to styling, allowing for rapid development of a modern user interface.
     - Set up a process to compile Tailwind's CSS, for example by using the `tailwindcss` CLI.

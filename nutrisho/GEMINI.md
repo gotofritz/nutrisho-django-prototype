@@ -19,10 +19,11 @@
 - At the start of a session run source .venv/bin/activate
 - Organise work in small, atomic commits
 - Limit linting exceptions. If you have to, add a comment explaining why you think you have to.
+- Each unit of work from the project plan / roadmap, which is either a phase (if reasonably small) or a step within a phase, should be its own branch and PR.
 
 ## Python
 
-- Tools: TBC
+- Tools: ruff, ty, taskfile
 - Django
 - Enforce named arguments for functions with >1 parameter
 - Testing: pytest with faker, polyfactory, pytest-data

@@ -2,7 +2,7 @@ version: "3"
 
 vars:
   ALL: . tests/
-  VENV: ./.venv/bin
+  VENV: /Users/fritz/work/nutrisho/.venv/bin
   SOURCES: ./
 
 tasks:
@@ -19,6 +19,7 @@ tasks:
 
   filldb:
     desc: "Fill database with initial data"
+    dir: nutrisho
     deps:
       - clean
     cmds:
@@ -29,6 +30,7 @@ tasks:
 
   createsuperuser:
     desc: "Create a superuser"
+    dir: nutrisho
     cmds:
       - DJANGO_SUPERUSER_PASSWORD=fritz {{.VENV}}/python manage.py createsuperuser --noinput --username fritz --email fritzthecat@gmail.com
 
