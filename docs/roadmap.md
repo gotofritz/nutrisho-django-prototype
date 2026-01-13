@@ -20,8 +20,8 @@ This phase focuses on bringing the project up to date with current best practice
 
 2.  **Modernize Django App Structure:**
 
-    - Move the `recipes` app to a more standard location. Use an src/ layout if possible
-    - Organize templates, static files, and management commands according to Django best practices.
+    - [✅] Move the `recipes` app to a more standard location. Use an src/ layout if possible
+    - [✅] Organize templates, static files, and management commands according to Django best practices.
 
 3.  **Implement a Robust Settings Configuration:**
 

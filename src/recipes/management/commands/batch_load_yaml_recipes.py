@@ -5,6 +5,7 @@ from pathlib import Path
 import yaml
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
+
 from recipes.models.cuisine import Cuisine
 from recipes.models.ingredient import Ingredient
 from recipes.models.ingredient_group import IngredientGroup

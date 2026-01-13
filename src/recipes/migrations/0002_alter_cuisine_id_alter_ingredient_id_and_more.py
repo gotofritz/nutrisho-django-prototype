@@ -4,50 +4,49 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('recipes', '0001_initial'),
+        ("recipes", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cuisine',
-            name='id',
+            model_name="cuisine",
+            name="id",
             field=models.AutoField(primary_key=True, serialize=False),
         ),
         migrations.AlterField(
-            model_name='ingredient',
-            name='id',
+            model_name="ingredient",
+            name="id",
             field=models.AutoField(primary_key=True, serialize=False),
         ),
         migrations.AlterField(
-            model_name='ingredientgroup',
-            name='id',
+            model_name="ingredientgroup",
+            name="id",
             field=models.AutoField(primary_key=True, serialize=False),
         ),
         migrations.AlterField(
-            model_name='ingredientinrecipe',
-            name='id',
+            model_name="ingredientinrecipe",
+            name="id",
             field=models.AutoField(primary_key=True, serialize=False),
         ),
         migrations.AlterField(
-            model_name='recipe',
-            name='id',
+            model_name="recipe",
+            name="id",
             field=models.AutoField(primary_key=True, serialize=False),
         ),
         migrations.AlterField(
-            model_name='step',
-            name='extra_info',
-            field=models.CharField(blank=True, max_length=512, verbose_name='any extra info'),
+            model_name="step",
+            name="extra_info",
+            field=models.CharField(blank=True, max_length=512, verbose_name="any extra info"),
         ),
         migrations.AlterField(
-            model_name='step',
-            name='id',
+            model_name="step",
+            name="id",
             field=models.AutoField(primary_key=True, serialize=False),
         ),
         migrations.AlterField(
-            model_name='tag',
-            name='id',
+            model_name="tag",
+            name="id",
             field=models.AutoField(primary_key=True, serialize=False),
         ),
     ]

@@ -2,11 +2,17 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[dependency-groups]
+dev = [
+  "ruff>=0.14.10",
+  "ty>=0.0.9"
+]
+
 [project]
 name = "nutrisho"
 version = "0.2.0"
 description = "Quick and dirty django prototype"
-authors = [{ name = "Your Name", email = "you@example.com" }]
+authors = [{name = "Your Name", email = "you@example.com"}]
 license = "0BSD"
 requires-python = ">=3.14,<3.15"
 dependencies = [
@@ -14,19 +20,24 @@ dependencies = [
   "PyYAML ~=6.0",
   "django-debug-toolbar ~=6.1",
   "google-genai~=1.56",
-  "xmltodict",
+  "xmltodict"
 ]
 
 [project.optional-dependencies]
 dev = [
- "ty",
+  "ty"
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nutrisho", "src/recipes"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src" = ""
 
 [tool.ruff]
 line-length = 100
 indent-width = 4
 target-version = "py314"
-
 # This only has an effect when the `docstring-code-format` setting is
 # enabled.
 exclude = [
@@ -56,22 +67,18 @@ exclude = [
   "node_modules",
   "site-packages",
   "venv",
-  "docs",
+  "docs"
 ]
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.
 quote-style = "double"
-
 # Like Black, indent with spaces, rather than tabs.
 indent-style = "space"
-
 # Like Black, respect magic trailing commas.
 skip-magic-trailing-comma = false
-
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
-
 # Enable auto-formatting of code examples in docstrings. Markdown,
 # reStructuredText code/literal blocks and doctests are all supported.
 #
@@ -97,7 +104,7 @@ select = [
   "T20",
   # Enforce : dict | None annotation instead of Optional[Dict]
   "UP006",
-  "UP007",
+  "UP007"
 ]
 ignore = []
 # Allow fix for all enabled rules (when `--fix`) is provided.
@@ -105,9 +112,3 @@ fixable = ["ALL"]
 unfixable = []
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-[dependency-groups]
-dev = [
-    "ruff>=0.14.10",
-    "ty>=0.0.9",
-]
