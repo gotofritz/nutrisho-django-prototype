@@ -1,0 +1,11 @@
+# /split-pr
+
+Split branch into atomic PRs. For each:
+
+1. Create new branch & squash rebase to 1 commit
+2. Fix linting: `source .venv/bin/activate && ruff check . --fix --unsafe-fixes && poe qa`
+3. Re-add if files modified
+4. Commit: `<type>: <description>` (feat/fix/chore/docs/test/ci) - imperative, lowercase, no period
+5. Push & create PR: `gh pr create --body "### Linear Issue 🎟\nRef {ASK}\n### Main Changes 🤹\n{summary}"`
+
+Always activate venv before commits. Never use --no-verify.

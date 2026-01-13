@@ -1,9 +1,9 @@
 version: "3"
 
 vars:
-  ALL: . tests/
-  VENV: /Users/fritz/work/nutrisho/.venv/bin
-  SOURCES: ./
+  ALL: src/ tests/
+  VENV: .venv/bin
+  SOURCES: src/
 
 tasks:
   venv:
@@ -12,33 +12,29 @@ tasks:
       - echo "Virtual environment tasks use {{.VENV}}/python. For interactive shell, run 'source .venv/bin/activate' manually."
 
   run:
-    dir: nutrisho
     cmd: "{{.VENV}}/python manage.py runserver"
 
   migrate:
-    dir: nutrisho
     cmd: "{{.VENV}}/python manage.py migrate"
 
   clean:
     desc: "Clean up database and migration files"
     cmds:
       - rm ./db.sqlite3 || true
-      - rm ./recipes/migrations/0* || true
+      - rm src/recipes/migrations/0* || true
 
   filldb:
     desc: "Fill database with initial data"
-    dir: nutrisho
     deps:
       - clean
     cmds:
       - "{{.VENV}}/python manage.py makemigrations"
       - "{{.VENV}}/python manage.py migrate"
       - "{{.VENV}}/python manage.py addinitialuser"
-      - "{{.VENV}}/python manage.py batch_load_yaml_recipes ../recipes_yaml/"
+      - "{{.VENV}}/python manage.py batch_load_yaml_recipes recipes_yaml/"
 
   createsuperuser:
     desc: "Create a superuser"
-    dir: nutrisho
     cmds:
       - DJANGO_SUPERUSER_PASSWORD=fritz {{.VENV}}/python manage.py createsuperuser --noinput --username fritz --email fritzthecat@gmail.com
 
@@ -71,7 +67,7 @@ tasks:
   ty:
     desc: "Run ty for static type checking"
     cmds:
-      - "{{.VENV}}/ty check nutrisho"
+      - "{{.VENV}}/ty check src"
 
   # Task to run linting and tests
   qa:

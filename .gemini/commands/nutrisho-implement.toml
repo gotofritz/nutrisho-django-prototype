@@ -1,0 +1,17 @@
+prompt = """
+Read `docs/project-plan.md`. If {{step}} provided, implement it. Otherwise list top-level steps and ask which to implement.
+
+**Branch creation:**
+Ask: "Create new branch? (no/yes/{issue-number} {title})"
+
+- "no" → stay on current branch
+- "{number} {title}" → checkout main, pull, create branch `{number}-{slugified-title}`
+- "yes" → ask for issue number/title, then checkout main, pull, create branch `{number}-{slugified-title}`
+- If no issue → create branch from `{slugified-step-name}`
+
+**Implementation:**
+Follow CLAUDE.md standards: create todos, type hints, tests, atomic commits.
+
+**Completion:**
+Run `task qa`, then `/tool-archive {{step}}`
+"""

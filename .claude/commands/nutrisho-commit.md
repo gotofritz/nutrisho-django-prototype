@@ -1,0 +1,17 @@
+# /commit
+
+Conventional Commits: `<type>: <description>` (feat/fix/chore/docs/test/ci). Imperative, lowercase, no period.
+
+## Steps
+
+1. Run `git status` and `git diff` in parallel
+2. Fix linting FIRST: `source .venv/bin/activate && ruff check . --fix --unsafe-fixes && poe qa`
+3. Determine if changes should be split into multiple atomic commits
+4. For each: draft message, `git add <files>`, `source .venv/bin/activate && git commit -m "..."`, verify with `git status`
+5. If hooks modify files: re-add and commit again
+
+## Critical
+
+- Always prefix commits with `source .venv/bin/activate &&`
+- Never use --no-verify
+- Don't commit secrets or push
