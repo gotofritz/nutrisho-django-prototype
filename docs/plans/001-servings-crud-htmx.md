@@ -265,7 +265,8 @@ paths distinguish create/update/delete intent.
 
 ```
 /recipes/                                GET    — list (exists)
-/recipes/new/                            POST   — create recipe
+/recipes/new/                            GET    — render empty recipe form
+/recipes/new/                            POST   — create recipe, redirect to detail
 /recipes/<id>/                           GET    — detail (exists)
 /recipes/<id>/delete/                    POST   — delete recipe
 
@@ -309,9 +310,9 @@ handling work out of the box.
 Use `django.views.decorators.http.require_GET` / `require_POST` to restrict
 methods.
 
-For the **Create** flow (`/recipes/new/`): render an empty recipe form. On
-first save, create the Recipe object, then redirect to the detail page where
-the user continues editing inline.
+For the **Create** flow: GET `/recipes/new/` renders an empty form. POST
+`/recipes/new/` validates and creates the Recipe, then redirects to the detail
+page where the user continues editing inline. Same view handles both methods.
 
 For **Delete**: POST with confirmation. Return `HX-Redirect` header to send
 user back to the list.
