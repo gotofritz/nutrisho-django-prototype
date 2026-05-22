@@ -258,24 +258,29 @@ Files changed:
 
 ### 3.1 URL scheme
 
+All mutations use POST. Django only populates `request.POST` for POST
+requests — using PUT/DELETE would require custom body parsing and extra CSRF
+plumbing for no real benefit in a server-rendered HTMX app. Separate URL
+paths distinguish create/update/delete intent.
+
 ```
-/recipes/                          GET    — list (exists)
-/recipes/new/                      GET    — empty recipe form
-/recipes/<id>/                     GET    — detail (exists)
-/recipes/<id>/delete/              POST   — delete recipe
+/recipes/                                GET    — list (exists)
+/recipes/new/                            POST   — create recipe
+/recipes/<id>/                           GET    — detail (exists)
+/recipes/<id>/delete/                    POST   — delete recipe
 
 # HTMX endpoints (return partials)
-/recipes/<id>/field/<field_name>/       GET  — edit widget for field
-/recipes/<id>/field/<field_name>/       PUT  — save field, return display partial
-/recipes/<id>/steps/                    POST — add step
-/recipes/<id>/steps/<step_id>/          PUT  — update step
-/recipes/<id>/steps/<step_id>/          DELETE — remove step
-/recipes/<id>/ingredients/              POST — add ingredient
-/recipes/<id>/ingredients/<iir_id>/     PUT  — update ingredient
-/recipes/<id>/ingredients/<iir_id>/     DELETE — remove ingredient
-/recipes/<id>/groups/                   POST — add ingredient group
-/recipes/<id>/groups/<group_id>/        PUT  — update group name
-/recipes/<id>/groups/<group_id>/        DELETE — remove group
+/recipes/<id>/field/<field_name>/        GET    — edit widget for field
+/recipes/<id>/field/<field_name>/save/   POST   — save field, return display partial
+/recipes/<id>/steps/add/                 POST   — add step
+/recipes/<id>/steps/<step_id>/save/      POST   — update step
+/recipes/<id>/steps/<step_id>/delete/    POST   — remove step
+/recipes/<id>/ingredients/add/           POST   — add ingredient
+/recipes/<id>/ingredients/<iir_id>/save/ POST   — update ingredient
+/recipes/<id>/ingredients/<iir_id>/delete/ POST — remove ingredient
+/recipes/<id>/groups/add/                POST   — add ingredient group
+/recipes/<id>/groups/<group_id>/save/    POST   — update group name
+/recipes/<id>/groups/<group_id>/delete/  POST   — remove group
 ```
 
 Files changed:
@@ -287,16 +292,22 @@ Replace the monolithic `recipe_edit` view with granular views. Each HTMX
 endpoint returns just its partial. Each endpoint gets its own TDD cycles — test
 the response status, content, and side effects before writing the view.
 
-**Field-level views** (generic pattern):
+**Field-level views** (two views per field):
 ```python
 def recipe_field_edit(request, recipe_id, field_name):
-    """GET: return edit partial. PUT: validate, save, return display partial."""
+    """GET: return edit partial with current value in a form."""
+
+def recipe_field_save(request, recipe_id, field_name):
+    """POST: validate, save, return display partial."""
 ```
 
-**Collection views** for steps, ingredients, groups follow the same
-GET-edit/PUT-save/POST-create/DELETE-remove pattern.
+**Collection views** for steps, ingredients, groups follow the same pattern:
+separate `/edit` (GET), `/save` (POST), `/add` (POST), `/delete` (POST)
+endpoints. All mutations are POST so Django's `request.POST` and CSRF
+handling work out of the box.
 
-Use `django.views.decorators.http.require_http_methods` to restrict methods.
+Use `django.views.decorators.http.require_GET` / `require_POST` to restrict
+methods.
 
 For the **Create** flow (`/recipes/new/`): render an empty recipe form. On
 first save, create the Recipe object, then redirect to the detail page where
@@ -307,13 +318,14 @@ user back to the list.
 
 TDD cycles (per endpoint family, example for fields):
 1. Test: GET field endpoint returns edit partial with current value in input
-2. Test: PUT field endpoint with valid data saves and returns display partial
-3. Test: PUT field endpoint with invalid data returns form with errors
-4. Test: GET/PUT for non-existent recipe returns 404
-5. Repeat pattern for steps, ingredients, groups
-6. Test: POST to `/recipes/new/` with valid name creates recipe, redirects
-7. Test: POST to delete endpoint removes recipe, returns HX-Redirect
-8. Test: DELETE step reorders remaining steps' `index_in_sequence`
+2. Test: POST save endpoint with valid data saves and returns display partial
+3. Test: POST save endpoint with invalid data returns form with errors
+4. Test: GET/POST for non-existent recipe returns 404
+5. Test: POST save without CSRF token returns 403
+6. Repeat pattern for steps, ingredients, groups
+7. Test: POST to `/recipes/new/` with valid name creates recipe, redirects
+8. Test: POST to delete endpoint removes recipe, returns HX-Redirect
+9. Test: POST delete step reorders remaining steps' `index_in_sequence`
 
 Files changed:
 - `src/recipes/views/recipe.py` — refactor heavily
@@ -352,26 +364,29 @@ Files changed:
 
 ### 3.4 Inline edit UX
 
-Each display element gets HTMX attributes:
+Each display element gets HTMX attributes. All mutations use `hx-post` so
+Django's standard `request.POST` and `{% csrf_token %}` work without extra
+configuration.
 
 ```html
-<!-- display mode -->
+<!-- display mode: click to edit -->
 <span hx-get="/recipes/5/field/recipe_name/" hx-swap="outerHTML"
       class="editable">
   {{ recipe.recipe_name }}
 </span>
 
 <!-- edit mode (returned by GET) -->
-<form hx-put="/recipes/5/field/recipe_name/" hx-swap="outerHTML">
+<form hx-post="/recipes/5/field/recipe_name/save/" hx-swap="outerHTML">
+  {% csrf_token %}
   <input name="recipe_name" value="{{ recipe.recipe_name }}">
   <button type="submit">Save</button>
-  <button hx-get="/recipes/5/" hx-target="closest .editable"
-          hx-swap="outerHTML">Cancel</button>
+  <button hx-get="/recipes/5/field/recipe_name/" hx-swap="outerHTML"
+          type="button">Cancel</button>
 </form>
 ```
 
 Steps and ingredients follow the same pattern but also support add/remove via
-`hx-post` and `hx-delete`.
+separate `hx-post` endpoints (`/add/`, `/delete/`).
 
 ### 3.5 Servings adjuster (HTMX)
 
@@ -398,8 +413,9 @@ Add a "New Recipe" button to the home page linking to `/recipes/new/`.
 
 ### 4.2 Delete from list
 
-Each recipe row gets a delete button. Uses `hx-delete` with `hx-confirm` for
-safety. On success, the row is removed from the DOM.
+Each recipe row gets a delete button. Uses `hx-post` to the `/delete/`
+endpoint with `hx-confirm` for safety. The form includes `{% csrf_token %}`.
+On success, the row is removed from the DOM.
 
 Files changed:
 - `src/recipes/templates/recipes/home.html`
