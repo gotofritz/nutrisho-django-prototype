@@ -271,17 +271,28 @@ paths distinguish create/update/delete intent.
 /recipes/<id>/delete/                    POST   — delete recipe
 
 # HTMX endpoints (return partials)
-/recipes/<id>/field/<field_name>/        GET    — edit widget for field
-/recipes/<id>/field/<field_name>/save/   POST   — save field, return display partial
-/recipes/<id>/steps/add/                 POST   — add step
-/recipes/<id>/steps/<step_id>/save/      POST   — update step
-/recipes/<id>/steps/<step_id>/delete/    POST   — remove step
-/recipes/<id>/ingredients/add/           POST   — add ingredient
-/recipes/<id>/ingredients/<iir_id>/save/ POST   — update ingredient
-/recipes/<id>/ingredients/<iir_id>/delete/ POST — remove ingredient
-/recipes/<id>/groups/add/                POST   — add ingredient group
-/recipes/<id>/groups/<group_id>/save/    POST   — update group name
-/recipes/<id>/groups/<group_id>/delete/  POST   — remove group
+# Fields
+/recipes/<id>/field/<field_name>/           GET  — display partial (read-only)
+/recipes/<id>/field/<field_name>/edit/      GET  — edit widget for field
+/recipes/<id>/field/<field_name>/save/      POST — save field, return display partial
+# Steps
+/recipes/<id>/steps/<step_id>/              GET  — display partial (read-only)
+/recipes/<id>/steps/<step_id>/edit/         GET  — edit widget for step
+/recipes/<id>/steps/<step_id>/save/         POST — update step, return display partial
+/recipes/<id>/steps/<step_id>/delete/       POST — remove step
+/recipes/<id>/steps/add/                    POST — add step
+# Ingredients
+/recipes/<id>/ingredients/<iir_id>/         GET  — display partial (read-only)
+/recipes/<id>/ingredients/<iir_id>/edit/    GET  — edit widget for ingredient
+/recipes/<id>/ingredients/<iir_id>/save/    POST — update ingredient, return display partial
+/recipes/<id>/ingredients/<iir_id>/delete/  POST — remove ingredient
+/recipes/<id>/ingredients/add/              POST — add ingredient
+# Groups
+/recipes/<id>/groups/<group_id>/            GET  — display partial (read-only)
+/recipes/<id>/groups/<group_id>/edit/       GET  — edit widget for group name
+/recipes/<id>/groups/<group_id>/save/       POST — update group name, return display partial
+/recipes/<id>/groups/<group_id>/delete/     POST — remove group
+/recipes/<id>/groups/add/                   POST — add ingredient group
 ```
 
 Files changed:
@@ -293,8 +304,11 @@ Replace the monolithic `recipe_edit` view with granular views. Each HTMX
 endpoint returns just its partial. Each endpoint gets its own TDD cycles — test
 the response status, content, and side effects before writing the view.
 
-**Field-level views** (two views per field):
+**Field-level views** (three views per field):
 ```python
+def recipe_field_display(request, recipe_id, field_name):
+    """GET: return read-only display partial."""
+
 def recipe_field_edit(request, recipe_id, field_name):
     """GET: return edit partial with current value in a form."""
 
@@ -302,10 +316,13 @@ def recipe_field_save(request, recipe_id, field_name):
     """POST: validate, save, return display partial."""
 ```
 
-**Collection views** for steps, ingredients, groups follow the same pattern:
-separate `/edit` (GET), `/save` (POST), `/add` (POST), `/delete` (POST)
-endpoints. All mutations are POST so Django's `request.POST` and CSRF
-handling work out of the box.
+The display view exists so cancel buttons and successful saves can swap back
+to the read-only state without reloading the full page.
+
+**Collection views** for steps, ingredients, groups follow the same three-view
+pattern: `/` (GET display), `/edit/` (GET edit widget), `/save/` (POST),
+plus `/add/` (POST) and `/delete/` (POST). All mutations are POST so Django's
+`request.POST` and CSRF handling work out of the box.
 
 Use `django.views.decorators.http.require_GET` / `require_POST` to restrict
 methods.
@@ -370,13 +387,13 @@ Django's standard `request.POST` and `{% csrf_token %}` work without extra
 configuration.
 
 ```html
-<!-- display mode: click to edit -->
-<span hx-get="/recipes/5/field/recipe_name/" hx-swap="outerHTML"
+<!-- display partial: click to switch to edit mode -->
+<span hx-get="/recipes/5/field/recipe_name/edit/" hx-swap="outerHTML"
       class="editable">
   {{ recipe.recipe_name }}
 </span>
 
-<!-- edit mode (returned by GET) -->
+<!-- edit partial (returned by GET /edit/) -->
 <form hx-post="/recipes/5/field/recipe_name/save/" hx-swap="outerHTML">
   {% csrf_token %}
   <input name="recipe_name" value="{{ recipe.recipe_name }}">
@@ -384,6 +401,8 @@ configuration.
   <button hx-get="/recipes/5/field/recipe_name/" hx-swap="outerHTML"
           type="button">Cancel</button>
 </form>
+<!-- Cancel GETs the display partial (not /edit/), restoring read-only view.
+     Save POSTs to /save/ which also returns the display partial on success. -->
 ```
 
 Steps and ingredients follow the same pattern but also support add/remove via
