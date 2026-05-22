@@ -144,13 +144,22 @@ Files changed:
 
 In `batch_load_yaml_recipes.py`:
 - Stop discarding `serves` (line 74 currently assigns to `_`)
-- Pass it to `Recipe.objects.get_or_create(... servings=serves)`
-- For existing data this will be 1, matching the default
+- Switch from `get_or_create` to `update_or_create` for Recipe (and
+  IngredientInRecipe, Step, etc.) so that re-importing corrected YAML
+  overwrites existing records. This is required for the export → edit →
+  re-import cleanup workflow to actually apply fixes.
+- Add a `--dry-run` flag that reports what would change without writing to DB,
+  so users can preview the effect of a re-import before committing to it.
+- Pass `servings=serves` to the Recipe upsert. For existing data this will be
+  1, matching the default.
 
 TDD cycles:
 1. Test: loading a YAML with `serves: 4` creates Recipe with `servings=4`
 2. Test: loading a YAML with `serves: 1` creates Recipe with `servings=1`
 3. Test: YAML missing `serves` key defaults to 1
+4. Test: re-importing YAML with changed `serves` updates existing Recipe
+5. Test: re-importing YAML with changed quantity updates existing ingredient
+6. Test: `--dry-run` flag reports changes without modifying DB
 
 Files changed:
 - `src/recipes/management/commands/batch_load_yaml_recipes.py`
@@ -453,11 +462,8 @@ S = small (single commit), M = medium (2–3 commits), L = large (multiple commi
    `recipe.servings` in DB) or **ephemeral** (client-side scaling, DB
    unchanged)? Suggest: persistent for the recipe author's default, ephemeral
    for viewer scaling — but ephemeral needs JS. Start with persistent-only.
-3. **Bulk re-import**: If YAML files are re-imported, `get_or_create` won't
-   update `servings` on existing records. Decide whether the loader should
-   use `update_or_create` instead. This is especially relevant for the data
-   cleanup workflow — the loader likely needs `update_or_create` (or a
-   `--force` flag) to overwrite corrected servings/quantities.
+3. ~~**Bulk re-import**~~: Resolved — Step 1.2 now switches the loader to
+   `update_or_create` so re-imports overwrite existing records.
 4. **DB-only recipes**: Some recipes exist in the DB but have no YAML file in
    the repo. The export command (Step 0) must capture these. Decide whether
    exported files should be committed to the repo or kept separate.
