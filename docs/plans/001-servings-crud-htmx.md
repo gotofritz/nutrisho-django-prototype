@@ -324,8 +324,9 @@ pattern: `/` (GET display), `/edit/` (GET edit widget), `/save/` (POST),
 plus `/add/` (POST) and `/delete/` (POST). All mutations are POST so Django's
 `request.POST` and CSRF handling work out of the box.
 
-Use `django.views.decorators.http.require_GET` / `require_POST` to restrict
-methods.
+Use `require_GET` for display/edit views, `require_POST` for save/add/delete
+views. The create view (`/recipes/new/`) handles both GET and POST, so use
+`require_http_methods(["GET", "POST"])` there instead.
 
 For the **Create** flow: GET `/recipes/new/` renders an empty form. POST
 `/recipes/new/` validates and creates the Recipe, then redirects to the detail
