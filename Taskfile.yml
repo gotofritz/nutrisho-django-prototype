@@ -73,5 +73,4 @@ tasks:
   test:
     desc: "Run tests with coverage"
     cmds:
-      # - pytest -vv -s --cov --cov-report=html:tests/coverage --cov-fail-under=40 $(if [ -n "{{.CLI_ARGS}}" ]; then echo "{{.CLI_ARGS}}"; else echo .; fi)
-      - echo "N/A"
+      - uv run pytest -vv -s {{.CLI_ARGS}}
