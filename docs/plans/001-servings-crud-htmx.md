@@ -342,7 +342,10 @@ TDD cycles (per endpoint family, example for fields):
 4. Test: POST save endpoint with invalid data returns form with errors
 5. Test: GET/POST for non-existent recipe returns 404
 6. Test: POST save without CSRF token returns 403
-7. Test: cancel flow — GET display after edit returns read-only partial
+7. Test: edit partial's cancel button has `hx-get` pointing to display
+   endpoint (not edit) and `hx-swap="outerHTML"` targeting the enclosing
+   form — so the swap replaces the whole form with the read-only partial,
+   not just the button itself
 8. Repeat pattern for steps, ingredients, groups
 9. Test: POST to `/recipes/new/` with valid name creates recipe, redirects
 10. Test: POST to delete endpoint removes recipe, returns HX-Redirect
