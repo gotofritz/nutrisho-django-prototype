@@ -37,8 +37,7 @@ Required flow:
 2. Confirm correct failure
 3. Implement minimal fix
 4. Refactor with tests green
-5. Run `make check`
-6. Run `task qa` before PR
+5. Run `task qa` before PR
 
 ## Decision Order
 
