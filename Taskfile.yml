@@ -45,16 +45,16 @@ tasks:
       - uv run python -m ruff format {{.SOURCES}}
 
   lint:
-    desc: "Run ruff"
+    desc: "Run ruff (non-mutating)"
     cmds:
       - uv run python -m ruff check {{.SOURCES}}
-      - uv run python -m ruff format {{.SOURCES}}
+      - uv run python -m ruff format --check {{.SOURCES}}
 
   # Task to open the latest coverage report in a web browser
   coverage:
     desc: "Open the latest coverage report in a web browser"
     cmds:
-      - open tests/coverage/index.html
+      - open htmlcov/index.html
 
   # Task to run ty for static type checking on the source code
   typecheck:
@@ -62,13 +62,13 @@ tasks:
     cmds:
       - "{{.VENV}}/ty check src"
 
-  # Task to run linting, type checking, and tests
+  # Task to run linting, type checking, and tests (sequential for deterministic validation)
   qa:
     desc: "Run linting, type checking, and tests"
-    deps:
-      - test
-      - lint
-      - typecheck
+    cmds:
+      - task: lint
+      - task: typecheck
+      - task: test
 
   # Task to run tests using pytest with coverage reporting
   test:

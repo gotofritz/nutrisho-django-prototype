@@ -37,7 +37,7 @@ dev = [
 DJANGO_SETTINGS_MODULE = "nutrisho.settings"
 pythonpath = ["src"]
 testpaths = ["tests"]
-addopts = "--cov=src --cov-report=html:tests/coverage --cov-fail-under=40"
+addopts = "--cov=src --cov-report=html:htmlcov --cov-fail-under=40"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/nutrisho", "src/recipes"]
