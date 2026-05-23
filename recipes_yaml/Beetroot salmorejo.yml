@@ -1,0 +1,71 @@
+cuisine: .med.spain
+description: A chilled beetroot soup served with anchovy toasts, perfect as a refreshing starter or light meal.
+directions:
+  step:
+    - Heat the oven to 180C fan/gas mark 6. Wrap the beetroot in foil and roast for 40-45 minutes until tender.
+    - Unwrap and cool enough to handle, then peel off the skin and chop into small pieces.
+    - Put the chopped beetroot and tomatoes in a blender and blitz until smooth.
+    - Add the bread, garlic, and vinegar, along with sea salt and black pepper, and blitz again until smooth.
+    - Gradually whizz in the water until you have a smooth, thick soup, then blend in the extra virgin olive oil.
+    - Pour into a jug and chill for at least 2 hours.
+    - Toast the baguette slices and rub them with the clove of garlic.
+    - Arrange 2 anchovies on each toast.
+    - Divide the soup into 4 bowls, top each one with 2 toasts, and scatter with chives.
+    - Drizzle with oil, add a grind of black pepper, and serve.
+ingredients:
+  serves: "4"
+  group:
+    - name: Beetroot salmorejo
+      ingredient:
+        - measurement: medium
+          name: beetroot
+          preparation: cleaned
+          quantity: 1
+        - measurement: g
+          name: tomatoes
+          preparation: cored and chopped
+          quantity: 500
+        - measurement: g
+          name: white bread
+          preparation: slightly stale, torn
+          quantity: 100
+        - measurement: cloves
+          name: garlic
+          preparation: crushed
+          quantity: 2
+        - measurement: tsp
+          name: sherry vinegar
+          quantity: 2
+        - measurement: ml
+          name: water
+          quantity: 300-350
+        - measurement: ml
+          name: extra virgin olive oil
+          quantity: 75
+    - name: Anchovy toasts
+      ingredient:
+        - measurement: slices
+          name: baguette
+          quantity: 8
+        - measurement: clove
+          name: garlic
+          preparation: peeled
+          quantity: 1
+        - measurement: pieces
+          name: salted anchovies
+          quantity: 16
+        - measurement: tbsp
+          name: chives
+          preparation: snipped
+          quantity: 2
+        - measurement: ml
+          name: extra virgin olive oil
+          quantity: 2
+source: José Pizarro <https://www.theguardian.com/food/article/2024/jun/16/jose-pizarro-spanish-summer-recipes-prawn-pil-pil-tortilla-devilled-eggs-chicken-chilindron-flan-de-fresa>
+tags:
+  - beetroot
+  - soup
+  - appetizer
+  - Spanish
+  - cold dish
+title: Beetroot salmorejo

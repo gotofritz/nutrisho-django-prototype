@@ -1,0 +1,49 @@
+cuisine: .med.italy
+description: Easy chips of cavolo nero with sesame seeds and goat cheese, prepared in the microwave oven.
+directions:
+  step:
+    - Wash and dry the cavolo nero leaves well, then pat them dry.
+    - Season with olive oil and salt, place between two sheets of microwave-safe paper and cook at 600 W for 1 minute, then at maximum power for another 30 seconds until crispy. Sprinkle with sesame seeds.
+    - Mix the goat cheese with a little olive oil and grated lemon zest.
+    - Serve the sesame-coated chips with goat cheese dollops and coarsely ground pink pepper.
+ingredients:
+  serves: 4
+  group:
+    - name: Leaves
+      ingredient:
+        - measurement: g
+          name: cavolo nero
+          preparation: ""
+          quantity: "300"
+        - measurement: ""
+          name: extra virgin olive oil
+          preparation: ""
+          quantity: ""
+    - name: Dip
+      ingredient:
+        - measurement: ""
+          name: pink pepper
+          preparation: coarsely ground
+          quantity: ""
+        - measurement: g
+          name: goat cheese
+          preparation: ""
+          quantity: "250"
+        - measurement: ""
+          name: organic lemon
+          preparation: ""
+          quantity: "1"
+        - measurement: ""
+          name: sesame seeds
+          preparation: toasted
+          quantity: ""
+source: Redazione
+tags:
+  - cavolo nero
+  - vegetarian recipes
+  - autumn
+  - winter
+  - gluten free
+  - microwave
+  - easy
+title: Chips di cavolo nero con semi di sesamo e caprino
