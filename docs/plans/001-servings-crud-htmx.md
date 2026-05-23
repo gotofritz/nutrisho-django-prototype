@@ -336,15 +336,17 @@ For **Delete**: POST with confirmation. Return `HX-Redirect` header to send
 user back to the list.
 
 TDD cycles (per endpoint family, example for fields):
-1. Test: GET field endpoint returns edit partial with current value in input
-2. Test: POST save endpoint with valid data saves and returns display partial
-3. Test: POST save endpoint with invalid data returns form with errors
-4. Test: GET/POST for non-existent recipe returns 404
-5. Test: POST save without CSRF token returns 403
-6. Repeat pattern for steps, ingredients, groups
-7. Test: POST to `/recipes/new/` with valid name creates recipe, redirects
-8. Test: POST to delete endpoint removes recipe, returns HX-Redirect
-9. Test: POST delete step reorders remaining steps' `index_in_sequence`
+1. Test: GET display endpoint returns read-only partial (no form elements)
+2. Test: GET edit endpoint returns edit partial with current value in input
+3. Test: POST save endpoint with valid data saves and returns display partial
+4. Test: POST save endpoint with invalid data returns form with errors
+5. Test: GET/POST for non-existent recipe returns 404
+6. Test: POST save without CSRF token returns 403
+7. Test: cancel flow — GET display after edit returns read-only partial
+8. Repeat pattern for steps, ingredients, groups
+9. Test: POST to `/recipes/new/` with valid name creates recipe, redirects
+10. Test: POST to delete endpoint removes recipe, returns HX-Redirect
+11. Test: POST delete step reorders remaining steps' `index_in_sequence`
 
 Files changed:
 - `src/recipes/views/recipe.py` — refactor heavily
@@ -414,7 +416,7 @@ separate `hx-post` endpoints (`/add/`, `/delete/`).
 The servings display becomes interactive:
 
 ```html
-<span hx-get="/recipes/5/field/servings/" hx-swap="outerHTML">
+<span hx-get="/recipes/5/field/servings/edit/" hx-swap="outerHTML">
   Serves {{ recipe.servings }}
 </span>
 ```
