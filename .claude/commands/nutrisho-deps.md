@@ -1,3 +1,0 @@
-# /deps
-
-Run `uv venv --python {PYTHON_VERSION} --clear && ae && uv sync -U` (use highest version from pyproject.toml), then commit uv.lock with message "chore: upgrade dependencies"
