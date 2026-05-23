@@ -44,7 +44,7 @@ tasks:
       - uv run python -m ruff check --fix {{.SOURCES}}
       - uv run python -m ruff format {{.SOURCES}}
 
-  ruff:
+  lint:
     desc: "Run ruff"
     cmds:
       - uv run python -m ruff check {{.SOURCES}}
@@ -56,15 +56,8 @@ tasks:
     cmds:
       - open tests/coverage/index.html
 
-  # Task to run all linting tasks (ruff, ty)
-  lint:
-    desc: "Run all linting tasks"
-    deps:
-      - ruff
-      - ty
-
   # Task to run ty for static type checking on the source code
-  ty:
+  typecheck:
     desc: "Run ty for static type checking"
     cmds:
       - "{{.VENV}}/ty check src"

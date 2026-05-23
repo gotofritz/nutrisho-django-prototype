@@ -6,36 +6,49 @@ This document outlines a roadmap for modernizing the Nutrisho recipe management 
 
 This phase focuses on bringing the project up to date with current best practices and modern tooling.
 
-1.  **Upgrade Dependencies:**
+1. ✅ **Upgrade Dependencies:**
 
-    - [✅] Resolve dependency manager conflict: Confirm uv is the chosen dependency manager and remove poetry references from Makefile.
-    - [✅] Identify current Django, PyYAML, and google-genai versions from pyproject.toml.
-    - [✅] Ensure .venv exists and dependencies are installed with uv by running uv venv and uv sync from the project root.
-    - [✅] Identify latest LTS Django version compatible with Python 3.14 (or adjust Python version if necessary).
-    - [✅] Upgrade PyYAML and google-genai to their latest versions.
-    - [✅] Integrate ty for typechecking.
-    - [✅] Ensure ruff is up-to-date and run it
-    - [✅] Investigate and propose a modern task manager to replace Make. (Proposed: Invoke)
-    - [✅] Replace make with Taskfile as a task runner, and migrate all the tasks using the structure in @../sam-audio-playground/audio-playground/Taskfile.yml
+   - [✅] Resolve dependency manager conflict: Confirm uv is the chosen dependency manager and remove poetry references from Makefile.
+   - [✅] Identify current Django, PyYAML, and google-genai versions from pyproject.toml.
+   - [✅] Ensure .venv exists and dependencies are installed with uv by running uv venv and uv sync from the project root.
+   - [✅] Identify latest LTS Django version compatible with Python 3.14 (or adjust Python version if necessary).
+   - [✅] Upgrade PyYAML and google-genai to their latest versions.
+   - [✅] Integrate ty for typechecking.
+   - [✅] Ensure ruff is up-to-date and run it
+   - [✅] Investigate and propose a modern task manager to replace Make. (Proposed: Invoke)
+   - [✅] Replace make with Taskfile as a task runner, and migrate all the tasks using the structure in @../sam-audio-playground/audio-playground/Taskfile.yml
 
-2.  **Modernize Django App Structure:**
+2. ✅ **Modernize Django App Structure:**
 
-    - [✅] Move the `recipes` app to a more standard location. Use an src/ layout if possible
-    - [✅] Organize templates, static files, and management commands according to Django best practices.
+   - [✅] Move the `recipes` app to a more standard location. Use an src/ layout if possible
+   - [✅] Organize templates, static files, and management commands according to Django best practices.
 
-3.  **Implement a Robust Settings Configuration:**
+3. **Implement a Robust Settings Configuration:**
 
-    - Use a library like `django-environ` to manage settings via environment variables. This will improve security by removing secrets from source code.
-    - Create separate settings files for development and production environments.
+   - Use a library like `django-environ` to manage settings via environment variables. This will improve security by removing secrets from source code.
+   - Create separate settings files for development and production environments.
 
-4.  **Introduce HTMX and Tailwind CSS:**
-    - Integrate HTMX to add dynamic, interactive features to the frontend without writing complex JavaScript.
-    - Use Tailwind CSS for a utility-first approach to styling, allowing for rapid development of a modern user interface.
-    - Set up a process to compile Tailwind's CSS, for example by using the `tailwindcss` CLI.
+4. **Introduce a Testing Framework:**
+
+   - Set up `pytest` for running tests.
+   - Write a comprehensive test suite, including unit and integration tests, to ensure code quality and prevent regressions.
+   - Ensure tests and data quality are run on ever merge via github workflows
+
+5. **Introduce HTMX and Tailwind CSS:**
+   - Integrate HTMX to add dynamic, interactive features to the frontend without writing complex JavaScript.
+   - Use Tailwind CSS for a utility-first approach to styling, allowing for rapid development of a modern user interface.
+   - Set up a process to compile Tailwind's CSS, for example by using the `tailwindcss` CLI.
 
 ## Phase 2: Core Functionality and DX
 
 This phase focuses on improving the core functionality of the application and the developer experience.
+
+0.  **Fix the 'serves' functionality:**
+
+    - Currently when importing recipes the ingredient amounts are normalized so that the amount for 1 are stored. When displaying the recipes, it's unclear what is being displayed
+    - These multiple layers of normalisation result in things like "1.0001 eggs"
+    - Most of the imported recipes exist as yaml files in directories called ./recipes_xxxx, but for some the yaml files where deleted. As a one off job, recreate the YAML files which were deleted from the DJango app, so that they can be edited manually
+    - Design a robust approach for handling ingredient amounds, in a way they can be normalised in the db and adjusted by the user in the UI
 
 1.  **Implement Full CRUD for Recipes:**
 
@@ -50,11 +63,6 @@ This phase focuses on improving the core functionality of the application and th
 3.  **Enhance the Admin Interface:**
 
     - Customize the Django admin interface for better management of recipes, ingredients, and other models.
-
-4.  **Introduce a Testing Framework:**
-    - Set up `pytest` for running tests.
-    - Write a comprehensive test suite, including unit and integration tests, to ensure code quality and prevent regressions.
-    - Ensure tests and data quality are run on ever merge via github workflows
 
 ## Phase 3: New Features and Future Development
 
