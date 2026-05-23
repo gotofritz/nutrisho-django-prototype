@@ -343,9 +343,9 @@ TDD cycles (per endpoint family, example for fields):
 5. Test: GET/POST for non-existent recipe returns 404
 6. Test: POST save without CSRF token returns 403
 7. Test: edit partial's cancel button has `hx-get` pointing to display
-   endpoint (not edit) and `hx-swap="outerHTML"` targeting the enclosing
-   form — so the swap replaces the whole form with the read-only partial,
-   not just the button itself
+   endpoint (not edit), `hx-target="closest form"`, and `hx-swap="outerHTML"`
+   — all three are needed to replace the whole form with the read-only partial
+   instead of just the button
 8. Repeat pattern for steps, ingredients, groups
 9. Test: POST to `/recipes/new/` with valid name creates recipe, redirects
 10. Test: POST to delete endpoint removes recipe, returns HX-Redirect
@@ -404,8 +404,8 @@ configuration.
   {% csrf_token %}
   <input name="recipe_name" value="{{ recipe.recipe_name }}">
   <button type="submit">Save</button>
-  <button hx-get="/recipes/5/field/recipe_name/" hx-swap="outerHTML"
-          type="button">Cancel</button>
+  <button hx-get="/recipes/5/field/recipe_name/" hx-target="closest form"
+          hx-swap="outerHTML" type="button">Cancel</button>
 </form>
 <!-- Cancel GETs the display partial (not /edit/), restoring read-only view.
      Save POSTs to /save/ which also returns the display partial on success. -->
