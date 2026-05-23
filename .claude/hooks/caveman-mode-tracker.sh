@@ -11,9 +11,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/caveman-config.sh"
 
 input=$(cat)
-prompt=""
 if command -v jq >/dev/null 2>&1; then
     prompt=$(printf '%s' "$input" | jq -r '.prompt // ""' 2>/dev/null || printf '')
+elif command -v python3 >/dev/null 2>&1; then
+    prompt=$(printf '%s' "$input" | python3 -c "import sys,json; print(json.load(sys.stdin).get('prompt',''))" 2>/dev/null || printf '')
+else
+    printf 'caveman-mode-tracker: jq and python3 both missing — prompt parsing disabled\n' >&2
+    prompt=""
 fi
 prompt=$(printf '%s' "$prompt" | tr '[:upper:]' '[:lower:]' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
 

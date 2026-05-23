@@ -62,12 +62,13 @@ tasks:
     cmds:
       - "{{.VENV}}/ty check src"
 
-  # Task to run linting and tests
+  # Task to run linting, type checking, and tests
   qa:
-    desc: "Run linting and tests"
+    desc: "Run linting, type checking, and tests"
     deps:
       - test
       - lint
+      - typecheck
 
   # Task to run tests using pytest with coverage reporting
   test:
