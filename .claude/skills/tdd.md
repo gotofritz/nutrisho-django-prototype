@@ -73,32 +73,27 @@ digraph tdd_cycle {
 Write one minimal test showing what should happen.
 
 <Good>
-```go
-func TestSlugFromTitle(t *testing.T) {
-    slug := SlugFromTitle("Hello, World!")
-    if slug != "hello-world" {
-        t.Errorf("got %q, want %q", slug, "hello-world")
-    }
-}
+```python
+def test_slug_from_title_basic():
+    assert slug_from_title("Hello, World!") == "hello-world"
 ```
 Clear name, tests real behavior, one thing.
 </Good>
 
 <Bad>
-```go
-func TestSlug(t *testing.T) {
-    mock := &fakeSlugger{}
-    mock.On("Slug").Return("hello-world")
-    result := mock.Slug("Hello, World!")
-    mock.AssertCalled(t, "Slug")
-}
+```python
+def test_slug(mocker):
+    mock_slugger = mocker.Mock()
+    mock_slugger.slug.return_value = "hello-world"
+    result = mock_slugger.slug("Hello, World!")
+    mock_slugger.slug.assert_called_once()
 ```
 Vague name, tests mock not code.
 </Bad>
 
 **Requirements:**
 - One behavior per test
-- Clear name describing expected behavior
+- Clear name describing expected behavior: `test_<unit>_<scenario>_<expected>`
 - Real code (no mocks unless unavoidable — e.g., external HTTP calls)
 
 ### Verify RED - Watch It Fail
@@ -106,38 +101,34 @@ Vague name, tests mock not code.
 **MANDATORY. Never skip.**
 
 ```bash
-go test ./internal/episode/... -run TestSlugFromTitle -v
+uv run pytest tests/recipes/test_models.py::test_slug_from_title_basic -v
 ```
 
 Confirm:
-- Test fails (not compile errors)
+- Test fails (not import errors)
 - Failure message is what you expect
 - Fails because the feature is missing, not due to typos
 
 **Test passes?** You're testing existing behavior. Fix the test.
 
-**Test errors/won't compile?** Fix the error, re-run until it fails correctly.
+**Test errors/won't import?** Fix the error, re-run until it fails correctly.
 
 ### GREEN - Minimal Code
 
 Write the simplest code that makes the test pass.
 
 <Good>
-```go
-func SlugFromTitle(title string) string {
-    return strings.ToLower(strings.NewReplacer(
-        ", ", "-", "!", "",
-    ).Replace(title))
-}
+```python
+def slug_from_title(title: str) -> str:
+    return title.lower().replace(", ", "-").replace("!", "")
 ```
 Just enough to pass.
 </Good>
 
 <Bad>
-```go
-func SlugFromTitle(title string, opts ...SlugOption) string {
-    // apply options, normalize unicode, handle RTL, truncate, ...
-}
+```python
+def slug_from_title(title: str, *, max_length: int = 50, separator: str = "-") -> str:
+    # normalize unicode, handle RTL, truncate, strip special chars...
 ```
 Over-engineered before there are tests for those cases.
 </Bad>
@@ -149,13 +140,12 @@ Don't add features, refactor other code, or "improve" beyond what the failing te
 **MANDATORY.**
 
 ```bash
-go test ./... -v
+uv run pytest tests/ -v
 ```
 
 Confirm:
 - The target test passes
 - All other tests still pass
-- No race conditions: `make test-race`
 - Output is pristine (no errors, warnings)
 
 **Test fails?** Fix the code, not the test.
@@ -179,8 +169,8 @@ Next failing test for the next behavior.
 
 | Quality | Good | Bad |
 |---------|------|-----|
-| **Minimal** | One behavior. "and" in name? Split it. | `TestParseArticleAndStripMarkdownAndCapitalize` |
-| **Clear** | Name describes expected behavior | `TestFoo`, `Test1` |
+| **Minimal** | One behavior. "and" in name? Split it. | `test_parse_article_and_strip_markdown_and_capitalize` |
+| **Clear** | Name describes expected behavior | `test_foo`, `test_1` |
 | **Real** | Tests production code paths | Tests mock return values |
 
 ## Why Order Matters
@@ -232,40 +222,34 @@ The "waste" is keeping code you can't trust.
 **Bug:** Empty title produces non-empty slug.
 
 **RED**
-```go
-func TestSlugFromTitle_EmptyInput(t *testing.T) {
-    slug := SlugFromTitle("")
-    if slug != "" {
-        t.Errorf("got %q, want empty string", slug)
-    }
-}
+```python
+def test_slug_from_title_empty_input():
+    assert slug_from_title("") == ""
 ```
 
 **Verify RED**
 ```bash
-$ go test ./internal/episode/... -run TestSlugFromTitle_EmptyInput -v
---- FAIL: TestSlugFromTitle_EmptyInput (0.00s)
-    slug_test.go:12: got "-", want empty string
+$ uv run pytest tests/recipes/test_utils.py::test_slug_from_title_empty_input -v
+FAILED tests/recipes/test_utils.py::test_slug_from_title_empty_input
+AssertionError: assert "-" == ""
 ```
 
 **GREEN**
-```go
-func SlugFromTitle(title string) string {
-    title = strings.TrimSpace(title)
-    if title == "" {
+```python
+def slug_from_title(title: str) -> str:
+    title = title.strip()
+    if not title:
         return ""
-    }
-    // existing logic...
-}
+    # existing logic...
 ```
 
 **Verify GREEN**
 ```bash
-$ go test ./... -v
---- PASS: TestSlugFromTitle_EmptyInput (0.00s)
+$ uv run pytest tests/ -v
+PASSED tests/recipes/test_utils.py::test_slug_from_title_empty_input
 ```
 
-**REFACTOR** — extract trim to a shared helper if needed.
+**REFACTOR** — extract strip to a shared helper if needed.
 
 ## Verification Checklist
 
@@ -273,12 +257,10 @@ Before marking work complete:
 
 - [ ] Every new function/method has a test
 - [ ] Watched each test fail before implementing
-- [ ] Each test failed for the expected reason (feature missing, not compile error)
+- [ ] Each test failed for the expected reason (feature missing, not import error)
 - [ ] Wrote minimal code to pass each test
-- [ ] All tests pass: `make test`
-- [ ] No race conditions: `make test-race`
-- [ ] Coverage still ≥ 85%: `make coverage`
-- [ ] `make check` passes (fmt + vet + lint + test)
+- [ ] All tests pass: `uv run pytest tests/ -v`
+- [ ] Full QA passes: `task qa`
 
 Can't check all boxes? You skipped TDD. Start over.
 
@@ -286,10 +268,10 @@ Can't check all boxes? You skipped TDD. Start over.
 
 | Problem | Solution |
 |---------|----------|
-| Don't know how to test | Write the wished-for API call first. Write the assertion. Ask your human partner. |
+| Don't know how to test | Write the wished-for function call first. Write the assertion. Ask your human partner. |
 | Test too complicated | Design too complicated. Simplify the interface. |
-| Must mock everything | Code too coupled. Use an interface and dependency injection. |
-| Test setup is huge | Extract table-driven subtests. Still complex? Simplify the design. |
+| Must mock everything | Code too coupled. Use dependency injection or extract an interface. |
+| Test setup is huge | Extract fixtures to `conftest.py`. Still complex? Simplify the design. |
 
 ## Final Rule
 
