@@ -1,4 +1,5 @@
 {% load static %}
+<title hx-swap-oob="true">{{ recipe.recipe_name }}</title>
 {% if form %}
 {% include "../navbar.html" with template_name="recipes:edit" %}
 <form action="{% url 'recipes:edit' recipe.id %}" method="post">

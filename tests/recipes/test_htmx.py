@@ -83,3 +83,34 @@ def test_recipe_edit_normal_request_returns_full_page(client, recipe):
     content = response.content.decode()
     assert "<html" in content
     assert "<body" in content
+
+
+@pytest.mark.django_db
+def test_recipe_view_vary_header(client, recipe):
+    """recipe() sets Vary: HX-Request to prevent cache poisoning."""
+    response = client.get(f"/recipes/{recipe.pk}/")
+    assert "HX-Request" in response.get("Vary", "")
+
+
+@pytest.mark.django_db
+def test_recipe_edit_vary_header(client, recipe):
+    """recipe_edit() sets Vary: HX-Request to prevent cache poisoning."""
+    response = client.get(f"/recipes/{recipe.pk}/edit")
+    assert "HX-Request" in response.get("Vary", "")
+
+
+@pytest.mark.django_db
+def test_recipe_htmx_response_contains_title(client, recipe):
+    """HTMX partial for recipe includes <title> OOB swap for tab title update."""
+    response = client.get(f"/recipes/{recipe.pk}/", HTTP_HX_REQUEST="true")
+    content = response.content.decode()
+    assert "<title" in content
+    assert recipe.recipe_name in content
+
+
+@pytest.mark.django_db
+def test_recipe_edit_htmx_response_contains_title(client, recipe):
+    """HTMX partial for edit includes <title> OOB swap for tab title update."""
+    response = client.get(f"/recipes/{recipe.pk}/edit", HTTP_HX_REQUEST="true")
+    content = response.content.decode()
+    assert "<title" in content
