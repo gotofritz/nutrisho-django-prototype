@@ -81,4 +81,4 @@ tasks:
   test:
     desc: "Run tests with coverage"
     cmds:
-      - uv run pytest -vv -s --cov=src --cov-report=html:htmlcov --cov-fail-under=40 {{.CLI_ARGS}}
+      - uv run pytest -vv -s --cov=src --cov-report=html:htmlcov --cov-fail-under=95 {{.CLI_ARGS}}
