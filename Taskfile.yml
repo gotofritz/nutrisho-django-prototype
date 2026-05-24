@@ -46,6 +46,25 @@ tasks:
     cmds:
       - DJANGO_SUPERUSER_PASSWORD=fritz {{.VENV}}/python manage.py createsuperuser --noinput --username fritz --email fritzthecat@gmail.com
 
+  node-install:
+    desc: "Install Node dependencies via pnpm"
+    cmds:
+      - pnpm install
+
+  css:
+    desc: "Build Tailwind CSS (minified)"
+    deps:
+      - node-install
+    cmds:
+      - pnpm run css
+
+  css-watch:
+    desc: "Watch and rebuild Tailwind CSS on changes"
+    deps:
+      - node-install
+    cmds:
+      - pnpm run css:watch
+
   lint-fix:
     desc: "Fix linting issues"
     cmds:
@@ -80,6 +99,7 @@ tasks:
   qa:
     desc: "Run linting, type checking, tests, and hook regressions"
     cmds:
+      - task: css
       - task: lint
       - task: typecheck
       - task: test

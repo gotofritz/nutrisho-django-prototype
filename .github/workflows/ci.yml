@@ -28,8 +28,58 @@ jobs:
       - name: Install jq
         run: sudo apt-get install -y jq
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Install dependencies
         run: uv sync --all-groups
 
+      - name: Install Node dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Run QA
         run: task qa
+
+      - name: Upload coverage data
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-data
+          path: .coverage
+
+  badge:
+    needs: qa
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Download coverage data
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-data
+
+      - name: Generate coverage badge
+        run: |
+          pip install coverage-badge
+          coverage-badge -o coverage.svg -f
+
+      - name: Deploy coverage badge
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: badges
+          keep_files: true
+          destination_dir: .
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'

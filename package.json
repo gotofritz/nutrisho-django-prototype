@@ -1,0 +1,13 @@
+{
+  "name": "nutrisho-django-prototype",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "css": "tailwindcss -i src/recipes/static/css/tailwind.css -o src/recipes/static/css/output.css --minify",
+    "css:watch": "tailwindcss -i src/recipes/static/css/tailwind.css -o src/recipes/static/css/output.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.0",
+    "tailwindcss": "^4.3.0"
+  }
+}

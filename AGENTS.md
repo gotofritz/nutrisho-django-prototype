@@ -17,6 +17,9 @@
 - Active: `docs/plans/`
 - Archive: `docs/archive/`
 - Archive completed plans in the same PR
+- Archived filename format: `YYYY-MM-DD-HHMM-<shortsha>-<original-name>.md`
+  where date/time and SHA are from the commit that archives the plan
+  Example: `2026-05-24-2013-8a8c2cf-002-htmx-tailwind.md`
 
 ## Architecture
 

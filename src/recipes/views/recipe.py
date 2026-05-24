@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render
+from django.views.decorators.vary import vary_on_headers
 
 from recipes.forms.recipe_edit_form import RecipeEditForm
 from recipes.models import Recipe
@@ -17,15 +18,18 @@ def _get_recipe_nav(recipe_id):
     return {"prev_id": prev_id, "next_id": next_id}
 
 
+@vary_on_headers("HX-Request")
 def recipe(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
+    template = "recipes/partials/_recipe_content.html" if request.htmx else "recipes/recipe.html"
     return render(
         request,
-        "recipes/recipe.html",
+        template,
         {"recipe": recipe, "nav": _get_recipe_nav(recipe_id)},
     )
 
 
+@vary_on_headers("HX-Request")
 def recipe_edit(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     form_data = {}
@@ -41,9 +45,10 @@ def recipe_edit(request, recipe_id):
         }
     form = RecipeEditForm(form_data, instance=recipe)
 
+    template = "recipes/partials/_recipe_content.html" if request.htmx else "recipes/recipe.html"
     return render(
         request,
-        "recipes/recipe.html",
+        template,
         {
             "recipe": recipe,
             "form": form,
