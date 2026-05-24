@@ -39,8 +39,5 @@ jobs:
       - name: Install Node dependencies
         run: pnpm install
 
-      - name: Build CSS
-        run: pnpm css
-
       - name: Run QA
         run: task qa

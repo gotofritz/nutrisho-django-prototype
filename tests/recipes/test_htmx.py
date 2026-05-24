@@ -124,3 +124,19 @@ def test_recipe_full_page_has_no_title_in_body(client, recipe):
     # <title> must appear only in <head>, not after <body>
     body_start = content.index("<body")
     assert "<title" not in content[body_start:]
+
+
+@pytest.mark.django_db
+def test_home_htmx_request_returns_200(client):
+    """Home view returns 200 for boosted HTMX navigation."""
+    response = client.get("/recipes/", HTTP_HX_REQUEST="true")
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_home_htmx_response_has_no_title_in_body(client):
+    """Home view response must not have <title> inside <body> (valid for hx-boost extraction)."""
+    response = client.get("/recipes/", HTTP_HX_REQUEST="true")
+    content = response.content.decode()
+    body_start = content.index("<body")
+    assert "<title" not in content[body_start:]
