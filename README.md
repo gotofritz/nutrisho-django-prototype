@@ -2,6 +2,14 @@
 
 A recipe manager built with DJango.
 
+## Setup
+
+```bash
+cp .env.example .env
+# Edit .env — set SECRET_KEY to a long random string
+uv sync
+```
+
 ## Running the app
 
 ```bash

@@ -24,8 +24,9 @@ dependencies = [
   "Django ~=6.0.0",
   "PyYAML ~=6.0",
   "django-debug-toolbar ~=6.1",
+  "django-environ>=0.13.0",
   "google-genai~=1.56",
-  "xmltodict"
+  "xmltodict",
 ]
 
 [tool.coverage.run]
@@ -38,7 +39,7 @@ omit = [
 ]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "nutrisho.settings"
+DJANGO_SETTINGS_MODULE = "nutrisho.settings.dev"
 pythonpath = ["src"]
 testpaths = ["tests"]
 

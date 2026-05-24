@@ -1,6 +1,6 @@
 # Plan 001: Settings Configuration
 
-## Status: Draft
+## Status: Done
 
 ## Goal
 
