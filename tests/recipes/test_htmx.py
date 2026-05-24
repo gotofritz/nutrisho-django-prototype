@@ -140,3 +140,13 @@ def test_home_htmx_response_has_no_title_in_body(client):
     content = response.content.decode()
     body_start = content.index("<body")
     assert "<title" not in content[body_start:]
+
+
+@pytest.mark.django_db
+def test_home_page_title_populated(client):
+    """Home page must render a non-empty <title> in <head>."""
+    response = client.get("/recipes/")
+    content = response.content.decode()
+    head_end = content.index("</head>")
+    head = content[:head_end]
+    assert "<title>Recipes</title>" in head
