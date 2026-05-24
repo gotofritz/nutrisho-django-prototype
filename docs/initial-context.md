@@ -15,6 +15,12 @@ Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuis
 - **Tasks**: Taskfile
 - **Tests**: pytest + pytest-django
 
+## Prerequisites
+
+- `uv` — dependency manager and task runner for Python
+- `task` — Taskfile runner (`brew install go-task` / `go install github.com/go-task/task/v3/cmd/task@latest`)
+- `jq` — required by `.claude/hooks/` for JSON parsing (`brew install jq` / `apt install jq`)
+
 ## Project Layout
 
 ```
