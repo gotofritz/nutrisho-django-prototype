@@ -5,11 +5,9 @@ from pathlib import Path
 
 import environ
 
-# Safe default so local dev works without a .env file
-os.environ.setdefault("SECRET_KEY", "dev-insecure-key-not-for-production")
-
-# Load .env before base.py reads os.environ; missing file is silently ignored
+# Load .env first so it can set SECRET_KEY; fall back only if still unset after
 environ.Env.read_env(Path(__file__).resolve().parent.parent.parent.parent / ".env")
+os.environ.setdefault("SECRET_KEY", "dev-insecure-key-not-for-production")
 
 from nutrisho.settings.base import *  # noqa: F401, F403
 
