@@ -114,3 +114,13 @@ def test_recipe_edit_htmx_response_contains_title(client, recipe):
     response = client.get(f"/recipes/{recipe.pk}/edit", HTTP_HX_REQUEST="true")
     content = response.content.decode()
     assert "<title" in content
+
+
+@pytest.mark.django_db
+def test_recipe_full_page_has_no_title_in_body(client, recipe):
+    """Normal (non-HTMX) recipe page must not have <title> inside <body>."""
+    response = client.get(f"/recipes/{recipe.pk}/")
+    content = response.content.decode()
+    # <title> must appear only in <head>, not after <body>
+    body_start = content.index("<body")
+    assert "<title" not in content[body_start:]
