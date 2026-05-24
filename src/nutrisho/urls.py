@@ -5,7 +5,10 @@ from django.urls import include, path
 
 
 def _root(request: object) -> HttpResponse:
-    return HttpResponse('<a href="./recipes/">Recipes</a>')
+    return HttpResponse("""
+        <h1>Nutrisho</h1>
+        <a href="./recipes/">Recipes</a>
+        """)
 
 
 urlpatterns = [
