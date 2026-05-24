@@ -21,9 +21,10 @@ else
 fi
 prompt=$(printf '%s' "$prompt" | tr '[:upper:]' '[:lower:]' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
 
-# Natural-language activation: "activate caveman", "talk like caveman" etc,
-# but only when no deactivation verb is present.
-if printf '%s' "$prompt" | grep -qE '\b(activate|enable|turn on|start|talk like)\b.*\bcaveman\b|\bcaveman\b.*\b(mode|activate|enable|turn on|start)\b'; then
+# Natural-language activation: explicit phrases only ("activate caveman",
+# "talk like caveman", "enable caveman mode"). Generic mentions like
+# "how does caveman mode work?" must not trigger activation.
+if printf '%s' "$prompt" | grep -qE '\b(activate|enable|turn on|start|talk like)\b.*\bcaveman\b'; then
     if ! printf '%s' "$prompt" | grep -qE '\b(stop|disable|turn off|deactivate)\b'; then
         m=$(caveman_default_mode)
         if [ "$m" != "off" ]; then
