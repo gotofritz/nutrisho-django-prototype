@@ -47,7 +47,7 @@ packages = ["src/nutrisho", "src/recipes"]
 "src" = ""
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "nutrisho.settings.dev"
+DJANGO_SETTINGS_MODULE = "nutrisho.settings.test"
 pythonpath = ["src"]
 testpaths = ["tests"]
 
