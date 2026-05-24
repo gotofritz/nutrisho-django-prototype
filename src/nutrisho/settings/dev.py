@@ -11,7 +11,7 @@ os.environ.setdefault("SECRET_KEY", "dev-insecure-key-not-for-production")
 # Load .env before base.py reads os.environ; missing file is silently ignored
 environ.Env.read_env(Path(__file__).resolve().parent.parent.parent.parent / ".env")
 
-from nutrisho.settings.base import *  # noqa: E402, F401, F403
+from nutrisho.settings.base import *  # noqa: F401, F403
 
 DEBUG = True
 

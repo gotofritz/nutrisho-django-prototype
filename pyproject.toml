@@ -129,3 +129,8 @@ fixable = ["ALL"]
 unfixable = []
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+# Settings modules intentionally call read_env() before importing base
+# so .env is loaded into os.environ before base.py reads it at import time.
+"src/nutrisho/settings/*.py" = ["E402"]
