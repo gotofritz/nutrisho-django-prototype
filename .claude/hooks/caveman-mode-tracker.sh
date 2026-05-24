@@ -75,7 +75,7 @@ fi
 active=$(caveman_read_flag) || active=""
 if [ -n "$active" ]; then
     if caveman_is_independent_mode "$active"; then
-        ctx="CAVEMAN MODE ACTIVE — independent mode: $active. Apply /$active skill behavior this turn."
+        ctx="CAVEMAN MODE ACTIVE — independent mode: $active. Apply /caveman-$active skill behavior this turn."
     else
         ctx="CAVEMAN MODE ACTIVE ($active). Drop articles/filler/pleasantries/hedging. Fragments OK. Code/commits/security: write normal."
     fi
