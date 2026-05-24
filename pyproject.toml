@@ -4,6 +4,7 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
+  "commitizen>=4.16.2",
   "faker>=37.0.0",
   "polyfactory>=2.21.0",
   "pytest>=8.3.0",
