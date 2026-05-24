@@ -28,11 +28,6 @@ dependencies = [
   "xmltodict"
 ]
 
-[project.optional-dependencies]
-dev = [
-  "ty",
-]
-
 [tool.coverage.run]
 omit = [
   "*/migrations/*",
