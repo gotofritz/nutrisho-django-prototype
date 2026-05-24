@@ -1,8 +1,0 @@
-# /pr [no-archive] [draft]
-
-prompt = """
-1. Run `/archive` to archive project plan (skip if {{no-archive}} arg provided)
-2. Push branch if needed
-3. Create PR with `gh pr create {draft if {{draft}} provided}`:
-   `--body "### Related Issue 🎟\nCloses #{issue-number}\n### Main Changes 🤹\n{concise summary}"`
-"""
