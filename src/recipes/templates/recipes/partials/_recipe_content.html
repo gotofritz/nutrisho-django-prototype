@@ -1,0 +1,103 @@
+{% load static %}
+{% if form %}
+{% include "../navbar.html" with template_name="recipes:edit" %}
+<form action="{% url 'recipes:edit' recipe.id %}" method="post">
+  {% csrf_token %}
+  {% else %}
+  {% include "../navbar.html" with template_name="recipes:recipe" %}
+  {% endif %}
+  <div class="recipe-contents">
+    <div class="recipe-directions">
+      <div class="recipe-title">
+        {% if form %}
+        {{ form.recipe_name }}
+        {% else %}
+        {{ recipe.recipe_name }}
+        {% endif %}
+      </div>
+      <ol>
+        {% if form %}
+        {% for step in form.get_step_fields %}
+        <li>{{ step }}</li>
+        {% endfor %}
+        {% else %}
+        {% for step in recipe.step.all %}
+        <li>{{ step.step_text }}</li>
+        {% endfor %}
+        {% endif %}
+      </ol>
+    </div>
+
+    <div class="sidebar">
+      <nav>
+        {% if form %}
+        {% include "../nav_recipe_edit.html" %}
+        {% else %}
+        {% include "../nav_recipe.html" %}
+        {% endif %}
+      </nav>
+      <h3 class="serves">Serves 4</h3>
+      <div class="recipe-ingredients">
+        {% if form %}
+        {% for group_or_ingredient, is_group, is_first_of_ingredients, is_last_of_ingredients in form.get_groups %}
+        {% if is_group %}
+        {% if not forloop.first %}
+      </div>
+      {% endif %}
+      <div class="ingredient-group">
+        <h4 class="group-name">{{ group_or_ingredient }}</h4>
+      </div>
+      <div class="ingredients-list">
+        {% else %}
+        {% if is_first_of_ingredients %}
+        <div class="ingredient-in-group-edit">
+          {% endif %}
+          {{group_or_ingredient}}
+          {% if is_last_of_ingredients %}
+        </div>
+        {% endif %}
+
+        {% endif %}
+        {% endfor %}
+      </div>
+
+      {% else %}
+
+      {% for group in recipe.ingredients_group.all %}
+      <div class="ingredient-group">
+
+        {% if group.group_name %}
+        <h4 class="group-name">{{ group.group_name }}</h4>
+        {% endif %}
+
+        <div class="ingredients-list">
+          {% for ingredient in group.ingredient.all %}
+          <div class="ingredient-in-group-show">
+            <span class="ingredient-quantity">{{ingredient.quantity.normalize|default:""}}</span>
+            <span class="ingredient-unit"> {{ingredient.unit|default:""}}</span>
+            <span class="ingredient-name">{{ingredient.ingredient.ingredient_name}}{% if ingredient.preparation %},
+              {% endif %}</span>
+            <span class="ingredient-preparation">{{ingredient.preparation|default:""}} </span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      {% endfor %}
+
+      {% endif %}
+
+
+    </div>
+    <div class="recipe-description">
+      {% if form %}
+      {{ form.short_description }}
+      {% else %}
+      {{ recipe.short_description|default:"" }}
+      {% endif %}
+    </div>
+  </div>
+  </div>
+  {% if form %}
+</form>
+{% endif %}

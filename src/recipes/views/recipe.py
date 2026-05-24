@@ -19,9 +19,10 @@ def _get_recipe_nav(recipe_id):
 
 def recipe(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
+    template = "recipes/partials/_recipe_content.html" if request.htmx else "recipes/recipe.html"
     return render(
         request,
-        "recipes/recipe.html",
+        template,
         {"recipe": recipe, "nav": _get_recipe_nav(recipe_id)},
     )
 

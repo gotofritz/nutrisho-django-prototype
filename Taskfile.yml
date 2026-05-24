@@ -46,6 +46,16 @@ tasks:
     cmds:
       - DJANGO_SUPERUSER_PASSWORD=fritz {{.VENV}}/python manage.py createsuperuser --noinput --username fritz --email fritzthecat@gmail.com
 
+  css:
+    desc: "Build Tailwind CSS (requires npx)"
+    cmds:
+      - npx tailwindcss -i src/recipes/static/css/style.css -o src/recipes/static/css/output.css --config tailwind.config.js
+
+  css-watch:
+    desc: "Watch and rebuild Tailwind CSS on changes"
+    cmds:
+      - npx tailwindcss -i src/recipes/static/css/style.css -o src/recipes/static/css/output.css --config tailwind.config.js --watch
+
   lint-fix:
     desc: "Fix linting issues"
     cmds:

@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     {% load static %}
+    {% load django_htmx %}
     <title>{% block page_title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
@@ -14,6 +15,8 @@
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% django_htmx_script %}
   </head>
 
   <body>
