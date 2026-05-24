@@ -40,15 +40,15 @@ caveman_default_mode() {
     local config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/caveman"
     local config_path="$config_dir/config.json"
     if [ -f "$config_path" ]; then
-        local mode=""
-        if command -v jq >/dev/null 2>&1; then
+        if ! command -v jq >/dev/null 2>&1; then
+            printf 'caveman: jq required to read %s — using default mode\n' "$config_path" >&2
+        else
+            local mode
             mode=$(jq -r '.defaultMode // ""' "$config_path" 2>/dev/null | tr '[:upper:]' '[:lower:]')
-        elif command -v python3 >/dev/null 2>&1; then
-            mode=$(python3 -c "import sys,json; print(json.load(open(sys.argv[1])).get('defaultMode',''))" "$config_path" 2>/dev/null | tr '[:upper:]' '[:lower:]' || printf '')
-        fi
-        if [ -n "$mode" ] && caveman_is_valid_mode "$mode" && ! caveman_is_independent_mode "$mode"; then
-            printf '%s' "$mode"
-            return 0
+            if [ -n "$mode" ] && caveman_is_valid_mode "$mode" && ! caveman_is_independent_mode "$mode"; then
+                printf '%s' "$mode"
+                return 0
+            fi
         fi
     fi
 
