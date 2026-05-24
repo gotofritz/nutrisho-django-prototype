@@ -1,1 +1,24 @@
-{}
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/caveman-activate.sh" }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/caveman-mode-tracker.sh" }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash .claude/hooks/caveman-statusline.sh"
+  }
+}

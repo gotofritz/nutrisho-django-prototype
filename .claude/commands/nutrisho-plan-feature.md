@@ -1,7 +1,0 @@
-# /plan [TASK]
-
-Analyze codebase for {TASK}. Map structure, identify gaps, flag constraints.
-
-Write `docs/project-plan.md`: Overview (what/why), Current State, Breakdown (steps with subtasks, reasoning, dependencies, complexity), Integration, Blockers.
-
-Keep plan concise so as not to waste tokens.
