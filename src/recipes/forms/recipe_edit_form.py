@@ -28,6 +28,7 @@ class RecipeEditForm(forms.ModelForm):
         extra_fields = {}
         is_mutable = not isinstance(args[0], http.request.QueryDict)
         steps = kwargs["instance"].step.all()
+        i = -1
         for i in range(len(steps)):
             field_name = f"{PREFIX_STEP}-{i}"
             try:

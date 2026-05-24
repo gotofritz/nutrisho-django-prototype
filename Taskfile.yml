@@ -12,9 +12,13 @@ tasks:
       - echo "Virtual environment tasks use {{.VENV}}/python. For interactive shell, run 'source .venv/bin/activate' manually."
 
   run:
+    env:
+      DJANGO_SETTINGS_MODULE: nutrisho.settings.dev
     cmd: "{{.VENV}}/python manage.py runserver"
 
   migrate:
+    env:
+      DJANGO_SETTINGS_MODULE: nutrisho.settings.dev
     cmd: "{{.VENV}}/python manage.py migrate"
 
   clean:
@@ -27,6 +31,8 @@ tasks:
     desc: "Fill database with initial data"
     deps:
       - clean
+    env:
+      DJANGO_SETTINGS_MODULE: nutrisho.settings.dev
     cmds:
       - "{{.VENV}}/python manage.py makemigrations"
       - "{{.VENV}}/python manage.py migrate"
@@ -35,20 +41,22 @@ tasks:
 
   createsuperuser:
     desc: "Create a superuser"
+    env:
+      DJANGO_SETTINGS_MODULE: nutrisho.settings.dev
     cmds:
       - DJANGO_SUPERUSER_PASSWORD=fritz {{.VENV}}/python manage.py createsuperuser --noinput --username fritz --email fritzthecat@gmail.com
 
   lint-fix:
     desc: "Fix linting issues"
     cmds:
-      - uv run python -m ruff check --fix {{.SOURCES}}
-      - uv run python -m ruff format {{.SOURCES}}
+      - uv run python -m ruff check --fix {{.ALL}}
+      - uv run python -m ruff format {{.ALL}}
 
   lint:
     desc: "Run ruff (non-mutating)"
     cmds:
-      - uv run python -m ruff check {{.SOURCES}}
-      - uv run python -m ruff format --check {{.SOURCES}}
+      - uv run python -m ruff check {{.ALL}}
+      - uv run python -m ruff format --check {{.ALL}}
 
   # Task to open the latest coverage report in a web browser
   coverage:
@@ -60,7 +68,7 @@ tasks:
   typecheck:
     desc: "Run ty for static type checking"
     cmds:
-      - "{{.VENV}}/ty check src"
+      - "{{.VENV}}/ty check src tests"
 
   # Shell hook regression tests (portability checks for caveman grep patterns)
   test-hooks:
@@ -80,5 +88,7 @@ tasks:
   # Task to run tests using pytest with coverage reporting
   test:
     desc: "Run tests with coverage"
+    env:
+      DJANGO_SETTINGS_MODULE: nutrisho.settings.test
     cmds:
-      - uv run pytest -vv -s --cov=src --cov-report=html:htmlcov --cov-fail-under=40 {{.CLI_ARGS}}
+      - uv run pytest -vv -s --cov=src --cov-report=html:htmlcov --cov-fail-under=95 {{.CLI_ARGS}}
