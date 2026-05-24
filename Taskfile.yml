@@ -5,6 +5,9 @@ vars:
   VENV: .venv/bin
   SOURCES: src/
 
+env:
+  DJANGO_SETTINGS_MODULE: nutrisho.settings.dev
+
 tasks:
   venv:
     desc: "Activate the virtual environment (use 'source .venv/bin/activate' manually or 'uv run ...')"

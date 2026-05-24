@@ -79,6 +79,21 @@ def test_dev_allowed_hosts_reads_env(monkeypatch):
     assert "myhost.example.com" in dev_settings.ALLOWED_HOSTS
 
 
+def test_bare_settings_package_raises(monkeypatch):
+    """DJANGO_SETTINGS_MODULE=nutrisho.settings raises ImproperlyConfigured."""
+    import sys
+
+    monkeypatch.setenv("DJANGO_SETTINGS_MODULE", "nutrisho.settings")
+    for mod in list(sys.modules.keys()):
+        if mod == "nutrisho.settings":
+            del sys.modules[mod]
+
+    from django.core.exceptions import ImproperlyConfigured
+
+    with pytest.raises(ImproperlyConfigured, match="nutrisho.settings is not a valid"):
+        import nutrisho.settings  # noqa: F401
+
+
 def test_existing_tests_still_pass():
     """Settings load correctly in test environment."""
     from django.conf import settings
