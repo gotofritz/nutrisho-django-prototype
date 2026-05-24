@@ -90,6 +90,7 @@ tasks:
   qa:
     desc: "Run linting, type checking, tests, and hook regressions"
     cmds:
+      - task: css
       - task: lint
       - task: typecheck
       - task: test
