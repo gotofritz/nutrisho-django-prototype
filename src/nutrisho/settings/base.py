@@ -21,7 +21,6 @@ DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
 INSTALLED_APPS = [
-    "debug_toolbar",
     "recipes.apps.RecipesConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -40,7 +39,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "nutrisho.urls"

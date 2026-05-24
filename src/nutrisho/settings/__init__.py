@@ -1,2 +1,1 @@
-# Settings package — default to dev for backwards compatibility with manage.py
-from nutrisho.settings.dev import *  # noqa: F401, F403
+# Settings package. Use explicit modules: nutrisho.settings.dev or nutrisho.settings.prod

@@ -1,11 +1,10 @@
 """Tests for settings configuration (Plan 001)."""
 
-import os
 import pytest
 
 
-def test_missing_secret_key_raises(monkeypatch):
-    """Missing SECRET_KEY env var raises ImproperlyConfigured when no .env file."""
+def test_prod_missing_secret_key_raises(monkeypatch):
+    """Prod settings raise ImproperlyConfigured when SECRET_KEY absent and no .env."""
     monkeypatch.delenv("SECRET_KEY", raising=False)
 
     import sys
@@ -17,17 +16,13 @@ def test_missing_secret_key_raises(monkeypatch):
 
     from django.core.exceptions import ImproperlyConfigured
 
-    # Patch read_env so it doesn't load .env file
     with patch("environ.Env.read_env"):
         with pytest.raises((ImproperlyConfigured, KeyError)):
-            import nutrisho.settings.base  # noqa: F401
+            import nutrisho.settings.prod  # noqa: F401
 
 
-def test_dev_settings_enable_debug(monkeypatch):
-    """Dev settings have DEBUG=True."""
-    monkeypatch.setenv("SECRET_KEY", "test-secret-key-for-testing-only")
-
-    import importlib
+def test_dev_settings_enable_debug():
+    """Dev settings have DEBUG=True and provide a safe SECRET_KEY default."""
     import sys
 
     for mod in list(sys.modules.keys()):
@@ -37,10 +32,27 @@ def test_dev_settings_enable_debug(monkeypatch):
     import nutrisho.settings.dev as dev_settings
 
     assert dev_settings.DEBUG is True
+    assert dev_settings.SECRET_KEY  # not empty
+
+
+def test_dev_settings_no_debug_toolbar_in_prod():
+    """debug_toolbar not in prod INSTALLED_APPS."""
+    import sys
+    import os
+
+    os.environ.setdefault("SECRET_KEY", "test-secret")
+
+    for mod in list(sys.modules.keys()):
+        if "nutrisho.settings" in mod:
+            del sys.modules[mod]
+
+    import nutrisho.settings.prod as prod_settings
+
+    assert "debug_toolbar" not in prod_settings.INSTALLED_APPS
 
 
 def test_existing_tests_still_pass():
-    """Settings load correctly — existing 3 tests pass when imported."""
+    """Settings load correctly in test environment."""
     from django.conf import settings
 
     assert settings.configured
