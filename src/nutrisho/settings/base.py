@@ -11,8 +11,6 @@ env = environ.Env(
     ALLOWED_HOSTS=(list, []),
 )
 
-environ.Env.read_env(BASE_DIR / ".env")
-
 # Raises ImproperlyConfigured if SECRET_KEY missing
 SECRET_KEY = env("SECRET_KEY")
 

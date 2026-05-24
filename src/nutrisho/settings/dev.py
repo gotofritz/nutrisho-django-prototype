@@ -1,13 +1,17 @@
 """Development settings."""
 
 import os
+from pathlib import Path
 
 import environ
 
 # Safe default so local dev works without a .env file
 os.environ.setdefault("SECRET_KEY", "dev-insecure-key-not-for-production")
 
-from nutrisho.settings.base import *  # noqa: F401, F403
+# Load .env before base.py reads os.environ; missing file is silently ignored
+environ.Env.read_env(Path(__file__).resolve().parent.parent.parent.parent / ".env")
+
+from nutrisho.settings.base import *  # noqa: E402, F401, F403
 
 DEBUG = True
 
