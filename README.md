@@ -1,46 +1,44 @@
 # Nutrisho
 
 [![CI](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/ci.yml/badge.svg)](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/ci.yml)
-[![Python 3.14](https://img.shields.io/badge/python-3.14-blue.svg)](https://www.python.org/downloads/)
 [![License: 0BSD](https://img.shields.io/badge/license-0BSD-green.svg)](LICENSE.md)
 
-A recipe manager built with Django. Small hobbyist project not expected to grow beyond a couple of dozen users.
+A personal recipe manager. Browse, import, and organise your recipes in one place.
 
-## Setup
+---
 
-```bash
-cp .env.example .env
-# Edit .env — set SECRET_KEY to a long random string
-uv sync
-```
+## What it does
 
-## Quick start
+- Browse your recipe collection
+- View ingredients, steps, and serving sizes
+- Navigate between recipes
 
-### Running the app
+---
 
-```bash
-❯ task run
-```
+## Importing recipes
 
-### Importing yaml recipes
+Recipes live in YAML files. To add a batch, drop them into a folder (e.g. `my_recipes/`) and ask your developer to run the import command.
 
-Create a folder recipes_xxxx/, next to the other ones, then:
+If you have direct access to the server:
 
 ```bash
-❯ source .venv/bin/activate
-❯ python manage.py batch_load_yaml_recipes recipes_xxxx/
+python manage.py batch_load_yaml_recipes my_recipes/
 ```
 
-Then go to <http://127.0.0.1:8000/recipes/>
+Then open <http://127.0.0.1:8000/recipes/> in your browser.
 
-### Editing recipes
+---
 
-Edit directly in SQL, in `sql_to_edit_recipes_hack/`:
+## Editing recipes
 
-```bash
-❯ sqlite3 db.sqlite3 < sql_to_edit_recipes_hack/edit_recipe.sql
-```
+Editing via the web interface is in progress. For now, ask your developer to edit the database directly.
 
-## LICENSE
+---
 
-This is licensed under the [0BSD license](LICENSE.md).
+## License
+
+[0BSD](LICENSE.md) — do whatever you like with it.
+
+---
+
+_Developer? See the [Developer Guide](docs/developer-guide.md)._
