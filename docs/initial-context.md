@@ -62,8 +62,7 @@ YAML files → `batch_load_yaml_recipes` management command → Django ORM → S
 
 ```bash
 source .venv/bin/activate
-task qa          # lint + test
-make check       # alias for task qa
+task qa          # lint + typecheck + test
 ```
 
 See AGENTS.md for full TDD workflow.

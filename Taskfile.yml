@@ -62,13 +62,20 @@ tasks:
     cmds:
       - "{{.VENV}}/ty check src"
 
-  # Task to run linting, type checking, and tests (sequential for deterministic validation)
+  # Shell hook regression tests (portability checks for caveman grep patterns)
+  test-hooks:
+    desc: "Run shell regression tests for .claude/hooks"
+    cmds:
+      - bash .claude/hooks/test-caveman-patterns.sh
+
+  # Task to run linting, type checking, tests, and hook regressions (sequential)
   qa:
-    desc: "Run linting, type checking, and tests"
+    desc: "Run linting, type checking, tests, and hook regressions"
     cmds:
       - task: lint
       - task: typecheck
       - task: test
+      - task: test-hooks
 
   # Task to run tests using pytest with coverage reporting
   test:

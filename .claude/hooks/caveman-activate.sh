@@ -30,7 +30,6 @@ fi
 
 if [ "$mode" = "off" ]; then
     caveman_clear_flag
-    printf 'OK'
     exit 0
 fi
 
