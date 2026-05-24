@@ -31,7 +31,7 @@ Then open <http://127.0.0.1:8000/recipes/> in your browser.
 
 ## Editing recipes
 
-Editing via the web interface is in progress. For now, ask your developer to edit the database directly.
+Web-based editing is planned for a future release. For now, ask your developer to edit the database directly.
 
 ---
 

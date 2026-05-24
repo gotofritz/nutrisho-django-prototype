@@ -1,55 +1,50 @@
 # Plan 002: HTMX and Tailwind CSS
 
-## Status: Draft
+## Status: Done
 
 ## Goal
 
-Add dynamic inline editing via HTMX. Add Tailwind CSS for styling. Both are prerequisites for Recipe CRUD (Plan 004).
+Lay the foundation for dynamic inline editing (Plan 004). This plan wires up
+HTMX and Tailwind CSS — infrastructure only, no editing UI yet.
 
 ## Step 1: HTMX
 
 ### 1.1 Dependency and middleware
 
 Add `django-htmx` to `pyproject.toml`. Configure middleware in `settings.py`.
-Vendor the HTMX JS file (preferred over CDN for offline dev).
+Use the JS bundled with `django-htmx` via `{% django_htmx_script %}` template tag.
 
 Files changed:
 - `pyproject.toml`
-- `src/nutrisho/settings.py` — add `django_htmx` to `INSTALLED_APPS` and middleware
-- `src/recipes/templates/recipes/base.html` — add `<script>` tag for HTMX
+- `src/nutrisho/settings/base.py` — add `django_htmx` to `INSTALLED_APPS` and middleware
+- `src/recipes/templates/recipes/base.html` — add `{% django_htmx_script %}` tag
 
 ### 1.2 Partial templates
 
-HTMX swaps HTML fragments. Extract each editable region into its own partial:
-
-```
-templates/recipes/partials/
-  _recipe_name.html
-  _description.html
-  _step.html
-  _ingredient.html
-  _ingredient_group.html
-  _servings.html
-```
-
-Each partial has display and edit variants (`_FOO_display.html` / `_FOO_edit.html`).
-Prefer the pair approach — less conditional logic in templates.
+HTMX swaps HTML fragments. Extract recipe body into a single content partial so
+views can return a fragment (no `<html>`/`<body>`) on HTMX requests.
 
 Files changed:
-- New partial templates (listed above)
-- `src/recipes/templates/recipes/recipe.html` — refactor to use `{% include %}` partials
+- `src/recipes/templates/recipes/partials/_recipe_content.html` (new)
+- `src/recipes/templates/recipes/recipe.html` — delegates to partial via `{% include %}`
+- `src/recipes/views/recipe.py` — returns partial template on `request.htmx`
 
 ## Step 2: Tailwind CSS
 
-- Add `tailwindcss` CLI to project (or use CDN play build for prototype)
-- Create `tailwind.config.js` pointing at template files
-- Add `task css` to Taskfile for watching/compiling
-- Replace inline styles and legacy CSS with Tailwind utility classes
+Production-ready build pipeline via pnpm. No CDN.
+
+- Tailwind CSS v4 with `@tailwindcss/cli`
+- Input: `src/recipes/static/css/tailwind.css` (CSS-first `@import "tailwindcss"`)
+- Output: `src/recipes/static/css/output.css` (gitignored build artifact)
+- `package.json` with `css` and `css:watch` scripts
 
 Files changed:
-- `tailwind.config.js` (new)
-- `Taskfile.yml` — add `css` and `css-watch` tasks
-- `src/recipes/templates/recipes/base.html` — link compiled CSS
+- `package.json` (new)
+- `pnpm-lock.yaml` (new)
+- `src/recipes/static/css/tailwind.css` (new)
+- `Taskfile.yml` — add `css` and `css-watch` tasks delegating to pnpm
+- `src/recipes/templates/recipes/base.html` — link `output.css` before `style.css`
+- `.gitignore` — add `node_modules/` and `output.css`
 
 ## TDD cycles
 
