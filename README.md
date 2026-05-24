@@ -1,5 +1,9 @@
 # Nutrisho
 
+[![CI](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/ci.yml/badge.svg)](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/ci.yml)
+[![Python 3.14](https://img.shields.io/badge/python-3.14-blue.svg)](https://www.python.org/downloads/)
+[![License: 0BSD](https://img.shields.io/badge/license-0BSD-green.svg)](LICENSE.md)
+
 A recipe manager built with Django. Small hobbyist project not expected to grow beyond a couple of dozen users.
 
 ## Setup
