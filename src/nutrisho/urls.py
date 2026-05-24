@@ -1,8 +1,15 @@
 from django.conf import settings
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import include, path
 
+
+def _root(request: object) -> HttpResponse:
+    return HttpResponse('<a href="./recipes/">Recipes</a>')
+
+
 urlpatterns = [
+    path("", _root),
     path("recipes/", include("recipes.urls")),
     path("admin/", admin.site.urls),
 ]
