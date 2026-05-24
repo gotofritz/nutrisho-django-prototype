@@ -7,4 +7,7 @@ import pytest
 def user(db):
     from django.contrib.auth.models import User
 
-    return User.objects.create_user(username="testuser", password="testpass")
+    user, _ = User.objects.get_or_create(
+        username="gotofritz", defaults={"password": "x"}
+    )
+    return user

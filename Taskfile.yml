@@ -105,6 +105,13 @@ tasks:
       - task: test
       - task: test-hooks
 
+  export:
+    desc: "Export recipes to YAML"
+    env:
+      DJANGO_SETTINGS_MODULE: nutrisho.settings.dev
+    cmds:
+      - "{{.VENV}}/python manage.py export_recipes_to_yaml recipes_yaml/ {{.CLI_ARGS}}"
+
   # Task to run tests using pytest with coverage reporting
   test:
     desc: "Run tests with coverage"

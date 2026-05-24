@@ -1,4 +1,4 @@
-{% load static %}
+{% load static recipe_filters %}
 {% if request.htmx %}<title hx-swap-oob="true">{{ recipe.recipe_name }}</title>{% endif %}
 {% if form %}
 {% include "../navbar.html" with template_name="recipes:edit" %}
@@ -37,7 +37,7 @@
         {% include "../nav_recipe.html" %}
         {% endif %}
       </nav>
-      <h3 class="serves">Serves 4</h3>
+      {% if recipe.servings %}<h3 class="serves">Serves {{ recipe.servings }}</h3>{% endif %}
       <div class="recipe-ingredients">
         {% if form %}
         {% for group_or_ingredient, is_group, is_first_of_ingredients, is_last_of_ingredients in form.get_groups %}

@@ -15,7 +15,7 @@ class IngredientInRecipe(models.Model):
     unit = models.CharField("the unit", max_length=32, blank=True, null=True)
     preparation = models.CharField("chopped, blanched...", max_length=128, blank=True, null=True)
     quantity = models.DecimalField(
-        "how many", decimal_places=2, max_digits=7, blank=True, null=True
+        "quantity as recorded in source", decimal_places=2, max_digits=7, blank=True, null=True
     )
     ingredient_group = models.ForeignKey(
         IngredientGroup, on_delete=models.CASCADE, related_name="ingredient"
@@ -40,3 +40,9 @@ class IngredientInRecipe(models.Model):
 
     class Meta:
         ordering = ["index_in_sequence"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["ingredient_group", "index_in_sequence"],
+                name="unique_ingredient_in_group",
+            )
+        ]

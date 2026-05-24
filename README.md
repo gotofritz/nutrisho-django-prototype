@@ -30,6 +30,18 @@ Then open <http://127.0.0.1:8000/recipes/> in your browser.
 
 ---
 
+## Exporting recipes
+
+To export recipes from the database back to YAML files:
+
+```bash
+python manage.py export_recipes_to_yaml recipes_yaml/
+```
+
+Use `--missing-only` to skip recipes that already have a file on disk, or `--id 42` to export a single recipe.
+
+---
+
 ## Editing recipes
 
 Web-based editing is planned for a future release. For now, ask your developer to edit the database directly.

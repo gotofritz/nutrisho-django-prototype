@@ -41,6 +41,31 @@ source .venv/bin/activate
 python manage.py batch_load_yaml_recipes path/to/recipes/
 ```
 
+`batch_load_yaml_recipes` always inserts — it never updates or reconciles existing recipes. Any `id` field in the YAML is ignored. Shared entities (Cuisine, Ingredient, Tag) are reused via `get_or_create`.
+
+To delete recipes by ID:
+
+```bash
+python manage.py delete_recipe --id 42
+python manage.py delete_recipe --id 42 43 44
+```
+
+## Exporting recipes
+
+```bash
+task export                        # export all to recipes_yaml/
+task export -- --missing-only      # skip existing files
+task export -- --id 42             # single recipe
+```
+
+Or directly:
+
+```bash
+python manage.py export_recipes_to_yaml recipes_yaml/
+```
+
+Typical workflow for fixing a recipe: export → edit YAML → delete old record (`delete_recipe --id <N>`) → re-import with `batch_load_yaml_recipes`.
+
 ## Quality checks
 
 ```bash
