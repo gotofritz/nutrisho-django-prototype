@@ -1,6 +1,7 @@
 # Nutrisho
 
 [![CI](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/ci.yml/badge.svg)](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/ci.yml)
+[![Coverage](https://raw.githubusercontent.com/gotofritz/nutrisho-django-prototype/badges/coverage.svg)](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/ci.yml)
 [![License: 0BSD](https://img.shields.io/badge/license-0BSD-green.svg)](LICENSE.md)
 
 A personal recipe manager. Browse, import, and organise your recipes in one place.
