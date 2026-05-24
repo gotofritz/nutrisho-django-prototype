@@ -60,3 +60,26 @@ def test_base_template_renders_without_error(client):
     """Base template renders without error (home page uses it)."""
     response = client.get("/recipes/")
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_recipe_edit_htmx_request_returns_partial(client, recipe):
+    """HTMX request to edit view returns fragment without html/body tags."""
+    response = client.get(
+        f"/recipes/{recipe.pk}/edit",
+        HTTP_HX_REQUEST="true",
+    )
+    assert response.status_code == 200
+    content = response.content.decode()
+    assert "<html" not in content
+    assert "<body" not in content
+
+
+@pytest.mark.django_db
+def test_recipe_edit_normal_request_returns_full_page(client, recipe):
+    """Normal request to edit view returns full HTML page."""
+    response = client.get(f"/recipes/{recipe.pk}/edit")
+    assert response.status_code == 200
+    content = response.content.decode()
+    assert "<html" in content
+    assert "<body" in content

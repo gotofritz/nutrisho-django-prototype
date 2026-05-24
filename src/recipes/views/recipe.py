@@ -42,9 +42,10 @@ def recipe_edit(request, recipe_id):
         }
     form = RecipeEditForm(form_data, instance=recipe)
 
+    template = "recipes/partials/_recipe_content.html" if request.htmx else "recipes/recipe.html"
     return render(
         request,
-        "recipes/recipe.html",
+        template,
         {
             "recipe": recipe,
             "form": form,

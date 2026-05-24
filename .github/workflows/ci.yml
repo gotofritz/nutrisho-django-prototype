@@ -28,8 +28,19 @@ jobs:
       - name: Install jq
         run: sudo apt-get install -y jq
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Install dependencies
         run: uv sync --all-groups
+
+      - name: Install Node dependencies
+        run: pnpm install
+
+      - name: Build CSS
+        run: pnpm css
 
       - name: Run QA
         run: task qa
