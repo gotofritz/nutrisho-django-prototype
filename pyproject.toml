@@ -33,6 +33,15 @@ dev = [
   "ty",
 ]
 
+[tool.coverage.run]
+omit = [
+  "*/migrations/*",
+  "*/settings*.py",
+  "*/asgi.py",
+  "*/wsgi.py",
+  "*/manage.py",
+]
+
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "nutrisho.settings"
 pythonpath = ["src"]

@@ -13,7 +13,9 @@ claude_dir=$(caveman_dir)
 flag_path=$(caveman_flag_path)
 settings_path="$claude_dir/settings.json"
 
-mode=$(caveman_default_mode)
+# Rehydrate from persisted flag; fall back to default on fresh session.
+mode=$(caveman_read_flag 2>/dev/null || true)
+[ -z "$mode" ] && mode=$(caveman_default_mode)
 
 if [ "$mode" = "off" ]; then
     caveman_clear_flag

@@ -70,17 +70,19 @@ if printf '%s' "$prompt" | grep -qE '\b(stop|disable|deactivate|turn off)\b.*\bc
     caveman_clear_flag
 fi
 
-# Per-turn reinforcement. Skip independent modes — those skills define their
-# own behavior and the base caveman rules conflict.
+# Per-turn reinforcement. Independent modes get a brief reminder instead of
+# the full caveman rules (which conflict with their own skill behavior).
 active=$(caveman_read_flag) || active=""
-if [ -n "$active" ] && ! caveman_is_independent_mode "$active"; then
-    ctx="CAVEMAN MODE ACTIVE ($active). Drop articles/filler/pleasantries/hedging. Fragments OK. Code/commits/security: write normal."
+if [ -n "$active" ]; then
+    if caveman_is_independent_mode "$active"; then
+        ctx="CAVEMAN MODE ACTIVE — independent mode: $active. Apply /$active skill behavior this turn."
+    else
+        ctx="CAVEMAN MODE ACTIVE ($active). Drop articles/filler/pleasantries/hedging. Fragments OK. Code/commits/security: write normal."
+    fi
     if command -v jq >/dev/null 2>&1; then
         jq -nc --arg ctx "$ctx" \
             '{hookSpecificOutput: {hookEventName: "UserPromptSubmit", additionalContext: $ctx}}'
     else
-        # No jq available — hand-build the JSON. The mode is whitelist-validated
-        # by caveman_read_flag, so it cannot contain JSON-special characters.
         printf '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"%s"}}' "$ctx"
     fi
 fi
