@@ -14,7 +14,12 @@ flag_path=$(caveman_flag_path)
 settings_path="$claude_dir/settings.json"
 
 # Rehydrate from persisted flag; fall back to default on fresh session.
+# Independent modes are one-shot and must not survive across sessions.
 mode=$(caveman_read_flag 2>/dev/null || true)
+if [ -n "$mode" ] && caveman_is_independent_mode "$mode"; then
+    caveman_clear_flag
+    mode=""
+fi
 [ -z "$mode" ] && mode=$(caveman_default_mode)
 
 if [ "$mode" = "off" ]; then

@@ -34,15 +34,18 @@ if printf '%s' "$prompt" | grep -qE '\b(activate|enable|turn on|start|talk like)
 fi
 
 # Slash-command parsing.
+# Independent modes (/caveman-commit etc) are one-shot — emit context for this
+# turn only, never persist to flag.
+emit_independent=""
 case "$prompt" in
     /caveman*)
         cmd=$(printf '%s' "$prompt" | awk '{print $1}')
         arg=$(printf '%s' "$prompt" | awk '{print $2}')
         new_mode=""
         case "$cmd" in
-            /caveman-commit) new_mode=commit ;;
-            /caveman-review) new_mode=review ;;
-            /caveman-compress|/caveman:caveman-compress|/caveman:compress) new_mode=compress ;;
+            /caveman-commit) emit_independent=commit ;;
+            /caveman-review) emit_independent=review ;;
+            /caveman-compress|/caveman:caveman-compress|/caveman:compress) emit_independent=compress ;;
             /caveman|/caveman:caveman)
                 if [ -z "$arg" ]; then
                     new_mode=$(caveman_default_mode)
@@ -70,15 +73,19 @@ if printf '%s' "$prompt" | grep -qE '\b(stop|disable|deactivate|turn off)\b.*\bc
     caveman_clear_flag
 fi
 
-# Per-turn reinforcement. Independent modes get a brief reminder instead of
-# the full caveman rules (which conflict with their own skill behavior).
-active=$(caveman_read_flag) || active=""
-if [ -n "$active" ]; then
-    if caveman_is_independent_mode "$active"; then
-        ctx="CAVEMAN MODE ACTIVE — independent mode: $active. Apply /caveman-$active skill behavior this turn."
-    else
+# Per-turn reinforcement.
+# Independent modes: one-shot context this turn only (not from flag).
+# Base modes: persistent reminder from flag.
+ctx=""
+if [ -n "$emit_independent" ]; then
+    ctx="Apply /caveman-$emit_independent skill behavior this turn."
+else
+    active=$(caveman_read_flag) || active=""
+    if [ -n "$active" ]; then
         ctx="CAVEMAN MODE ACTIVE ($active). Drop articles/filler/pleasantries/hedging. Fragments OK. Code/commits/security: write normal."
     fi
+fi
+if [ -n "$ctx" ]; then
     if command -v jq >/dev/null 2>&1; then
         jq -nc --arg ctx "$ctx" \
             '{hookSpecificOutput: {hookEventName: "UserPromptSubmit", additionalContext: $ctx}}'
