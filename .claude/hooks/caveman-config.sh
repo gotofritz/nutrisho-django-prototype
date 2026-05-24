@@ -31,7 +31,7 @@ caveman_default_mode() {
     if [ -n "${CAVEMAN_DEFAULT_MODE:-}" ]; then
         local mode
         mode=$(printf '%s' "$CAVEMAN_DEFAULT_MODE" | tr '[:upper:]' '[:lower:]')
-        if caveman_is_valid_mode "$mode"; then
+        if caveman_is_valid_mode "$mode" && ! caveman_is_independent_mode "$mode"; then
             printf '%s' "$mode"
             return 0
         fi
@@ -42,7 +42,7 @@ caveman_default_mode() {
     if [ -f "$config_path" ] && command -v jq >/dev/null 2>&1; then
         local mode
         mode=$(jq -r '.defaultMode // ""' "$config_path" 2>/dev/null | tr '[:upper:]' '[:lower:]')
-        if [ -n "$mode" ] && caveman_is_valid_mode "$mode"; then
+        if [ -n "$mode" ] && caveman_is_valid_mode "$mode" && ! caveman_is_independent_mode "$mode"; then
             printf '%s' "$mode"
             return 0
         fi
