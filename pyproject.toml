@@ -7,11 +7,12 @@ dev = [
   "commitizen>=4.16.2",
   "faker>=37.0.0",
   "polyfactory>=2.21.0",
+  "pre-commit>=4.6.0",
   "pytest>=8.3.0",
   "pytest-cov>=6.0.0",
   "pytest-django>=4.10.0",
   "ruff>=0.14.10",
-  "ty>=0.0.9",
+  "ty>=0.0.9"
 ]
 
 [project]
@@ -27,7 +28,7 @@ dependencies = [
   "django-debug-toolbar ~=6.1",
   "django-environ>=0.13.0",
   "google-genai~=1.56",
-  "xmltodict",
+  "xmltodict"
 ]
 
 [tool.coverage.run]
@@ -36,19 +37,19 @@ omit = [
   "*/settings*.py",
   "*/asgi.py",
   "*/wsgi.py",
-  "*/manage.py",
+  "*/manage.py"
 ]
-
-[tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "nutrisho.settings.dev"
-pythonpath = ["src"]
-testpaths = ["tests"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/nutrisho", "src/recipes"]
 
 [tool.hatch.build.targets.wheel.sources]
 "src" = ""
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "nutrisho.settings.dev"
+pythonpath = ["src"]
+testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100
