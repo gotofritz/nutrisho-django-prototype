@@ -72,11 +72,17 @@ if printf '%s' "$prompt" | grep -qE '(^|[[:space:]])(stop|disable|deactivate|tur
 fi
 
 # Per-turn reinforcement.
-# Independent modes: one-shot context this turn only (not from flag).
+# Independent modes: one-shot — load SKILL.md for this turn only (not from flag).
 # Base modes: persistent reminder from flag.
 ctx=""
 if [ -n "$emit_independent" ]; then
-    ctx="Apply /caveman-$emit_independent skill behavior this turn."
+    skill_path="$SCRIPT_DIR/../skills/caveman-$emit_independent/SKILL.md"
+    if [ -f "$skill_path" ]; then
+        # Strip YAML frontmatter; emit remaining content as context.
+        ctx=$(awk 'BEGIN{fm=0} NR==1&&/^---$/{fm=1;next} fm&&/^---$/{fm=0;next} fm{next} {print}' "$skill_path")
+    else
+        ctx="Apply /caveman-$emit_independent skill behavior this turn."
+    fi
 else
     active=$(caveman_read_flag) || active=""
     if [ -n "$active" ]; then
@@ -84,12 +90,8 @@ else
     fi
 fi
 if [ -n "$ctx" ]; then
-    if command -v jq >/dev/null 2>&1; then
-        jq -nc --arg ctx "$ctx" \
-            '{hookSpecificOutput: {hookEventName: "UserPromptSubmit", additionalContext: $ctx}}'
-    else
-        printf '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"%s"}}' "$ctx"
-    fi
+    jq -nc --arg ctx "$ctx" \
+        '{hookSpecificOutput: {hookEventName: "UserPromptSubmit", additionalContext: $ctx}}'
 fi
 
 exit 0
