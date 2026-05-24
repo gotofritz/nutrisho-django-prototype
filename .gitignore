@@ -177,3 +177,9 @@ cython_debug/
 
 docs/dump-*
 
+# Node
+node_modules/
+
+# Compiled Tailwind CSS (build artifact)
+src/recipes/static/css/output.css
+
