@@ -86,7 +86,35 @@ if [ -n "$emit_independent" ]; then
 else
     active=$(caveman_read_flag) || active=""
     if [ -n "$active" ]; then
-        ctx="CAVEMAN MODE ACTIVE ($active). Drop articles/filler/pleasantries/hedging. Fragments OK. Code/commits/security: write normal."
+        # wenyan is a canonical alias for wenyan-full.
+        if [ "$active" = "wenyan" ]; then label="wenyan-full"; else label="$active"; fi
+        skill_path="$SCRIPT_DIR/../skills/caveman/SKILL.md"
+        if [ -f "$skill_path" ]; then
+            # Mirror caveman-activate.sh: strip frontmatter, keep only the
+            # active label's intensity table row and example bullets.
+            skill_body=$(awk -v label="$label" '
+                BEGIN { in_fm = 0 }
+                NR == 1 && $0 == "---" { in_fm = 1; next }
+                in_fm && $0 == "---"   { in_fm = 0; next }
+                in_fm { next }
+                /^\|[[:space:]]*\*\*[^*]+\*\*[[:space:]]*\|/ {
+                    if (index($0, "**" label "**") > 0) print
+                    next
+                }
+                {
+                    if (match($0, /^- [a-zA-Z0-9_-]+: /)) {
+                        if (substr($0, 3, RLENGTH - 4) == label) print
+                        next
+                    }
+                    print
+                }
+            ' "$skill_path")
+            ctx="CAVEMAN MODE ACTIVE — level: $label
+
+$skill_body"
+        else
+            ctx="CAVEMAN MODE ACTIVE ($active). Drop articles/filler/pleasantries/hedging. Fragments OK. Code/commits/security: write normal."
+        fi
     fi
 fi
 if [ -n "$ctx" ]; then
