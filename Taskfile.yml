@@ -49,14 +49,14 @@ tasks:
   lint-fix:
     desc: "Fix linting issues"
     cmds:
-      - uv run python -m ruff check --fix {{.SOURCES}}
-      - uv run python -m ruff format {{.SOURCES}}
+      - uv run python -m ruff check --fix {{.ALL}}
+      - uv run python -m ruff format {{.ALL}}
 
   lint:
     desc: "Run ruff (non-mutating)"
     cmds:
-      - uv run python -m ruff check {{.SOURCES}}
-      - uv run python -m ruff format --check {{.SOURCES}}
+      - uv run python -m ruff check {{.ALL}}
+      - uv run python -m ruff format --check {{.ALL}}
 
   # Task to open the latest coverage report in a web browser
   coverage:
@@ -68,7 +68,7 @@ tasks:
   typecheck:
     desc: "Run ty for static type checking"
     cmds:
-      - "{{.VENV}}/ty check src"
+      - "{{.VENV}}/ty check src tests"
 
   # Shell hook regression tests (portability checks for caveman grep patterns)
   test-hooks:

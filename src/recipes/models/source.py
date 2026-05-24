@@ -15,6 +15,7 @@ class Source(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
+    objects = models.Manager()
 
     def natural_key(self):
         return self.short_name

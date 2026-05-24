@@ -3,7 +3,7 @@
 import pytest
 from django.test import Client
 
-from recipes.models import Recipe, Step
+from recipes.models import Recipe
 
 
 @pytest.fixture
@@ -91,3 +91,15 @@ def test_recipe_edit_post_returns_200(client, recipe):
         {"recipe_name": "Updated Name", "short_description": ""},
     )
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_recipe_edit_post_does_not_persist(client, recipe):
+    # Save-on-POST is commented out in the view — this is intentional for now.
+    original_name = recipe.recipe_name
+    client.post(
+        f"/recipes/{recipe.pk}/edit",
+        {"recipe_name": "Updated Name", "short_description": ""},
+    )
+    recipe.refresh_from_db()
+    assert recipe.recipe_name == original_name
