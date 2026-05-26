@@ -12,13 +12,21 @@ _MAX_BASENAME = 255
 
 
 def _cap_stem(stem: str, ext: str, fallback: str) -> str:
-    """Truncate stem so stem+ext fits in _MAX_BASENAME; fall back if nothing remains."""
-    budget = _MAX_BASENAME - len(ext)
+    """Truncate stem so (stem+ext).encode('utf-8') fits in _MAX_BASENAME bytes.
+
+    Byte budget matters: NAME_MAX is a filesystem byte limit, not a char limit.
+    Slices at the byte budget, then decodes with errors='ignore' to drop any
+    partial multibyte char at the cut point, then strips trailing dots/spaces.
+    """
+    ext_bytes = len(ext.encode("utf-8"))
+    budget = _MAX_BASENAME - ext_bytes
     if budget <= 0:
         return fallback
-    if len(stem) <= budget:
+    stem_bytes = stem.encode("utf-8")
+    if len(stem_bytes) <= budget:
         return stem
-    return stem[:budget].rstrip(". ") or fallback
+    truncated = stem_bytes[:budget].decode("utf-8", errors="ignore").rstrip(". ")
+    return truncated or fallback
 
 
 def _sanitize_stem(stem: str) -> str:

@@ -22,12 +22,15 @@ def _sanitize_stem_mig(stem: str) -> str:
 
 
 def _cap_stem_mig(stem: str, ext: str, fallback: str) -> str:
-    budget = _MAX_BASENAME_MIG - len(ext)
+    ext_bytes = len(ext.encode("utf-8"))
+    budget = _MAX_BASENAME_MIG - ext_bytes
     if budget <= 0:
         return fallback
-    if len(stem) <= budget:
+    stem_bytes = stem.encode("utf-8")
+    if len(stem_bytes) <= budget:
         return stem
-    return stem[:budget].rstrip(". ") or fallback
+    truncated = stem_bytes[:budget].decode("utf-8", errors="ignore").rstrip(". ")
+    return truncated or fallback
 
 
 def _safe_filename_mig(name: str, fallback: str = "recipe") -> str:

@@ -226,6 +226,12 @@ class Command(BaseCommand):
             data = recipe_to_dict(recipe)
             with out_path.open("w", encoding="utf-8") as f:
                 yaml.dump(data, f, allow_unicode=True, sort_keys=True, default_flow_style=False)
+            # Backfill stable filename for rows that never had one; future exports
+            # (including --missing-only) always match on the stored value, not the
+            # current recipe_name, so renames don't cause stale duplicate files.
+            if not recipe.yaml_filename:  # ty: ignore[unresolved-attribute]
+                recipe.yaml_filename = out_path.name  # ty: ignore[unresolved-attribute]
+                recipe.save(update_fields=["yaml_filename"])
             exported += 1
 
         self.stdout.write(self.style.SUCCESS(f"Exported {exported} recipe(s), skipped {skipped}"))

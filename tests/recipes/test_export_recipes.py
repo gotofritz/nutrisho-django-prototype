@@ -351,6 +351,78 @@ def test_sanitize_stored_filename_fits_model_max_length():
         assert len(result) <= 260, f"len={len(result)} for input length {n}"
 
 
+def test_safe_filename_multibyte_chars_capped_by_bytes():
+    """Multibyte chars (é=2 B, CJK=3 B) are truncated by byte count, not char count."""
+    from recipes.management.commands.export_recipes_to_yaml import safe_filename
+
+    # 200 × 'é' = 200 chars but 400 bytes — must not exceed 255 bytes in output
+    result_e = safe_filename("é" * 200)
+    assert result_e.endswith(".yml")
+    assert len(result_e.encode("utf-8")) <= 255
+
+    # CJK: each char = 3 bytes
+    result_cjk = safe_filename("中" * 200)
+    assert result_cjk.endswith(".yml")
+    assert len(result_cjk.encode("utf-8")) <= 255
+
+
+def test_sanitize_stored_filename_multibyte_chars_capped_by_bytes():
+    """Multibyte chars in stored filenames are truncated by byte count, not char count."""
+    from recipes.management.commands.export_recipes_to_yaml import sanitize_stored_filename
+
+    long_stored = "é" * 200 + ".yml"
+    result = sanitize_stored_filename(long_stored)
+    assert result.endswith(".yml")
+    assert len(result.encode("utf-8")) <= 255
+
+    cjk_stored = "中" * 200 + ".yaml"
+    result_cjk = sanitize_stored_filename(cjk_stored)
+    assert result_cjk.endswith(".yaml")
+    assert len(result_cjk.encode("utf-8")) <= 255
+
+
+@pytest.mark.django_db
+def test_blank_yaml_filename_backfilled_on_first_export(user, tmp_path):
+    """Export saves yaml_filename to DB when row has blank; subsequent export uses stored value."""
+    recipe = build_recipe(user, name="Backfill Me")
+    assert recipe.yaml_filename == ""
+
+    call_command("export_recipes_to_yaml", str(tmp_path))
+
+    recipe.refresh_from_db()
+    assert recipe.yaml_filename != ""
+    assert recipe.yaml_filename.endswith(".yml")
+
+
+@pytest.mark.django_db
+def test_missing_only_uses_stable_filename_after_recipe_rename(user, tmp_path):
+    """After rename, --missing-only still skips the original exported file (stored yaml_filename).
+
+    Without backfill: rename causes export to derive new filename from new recipe_name,
+    writing a second YAML file alongside the already-exported one.
+    With backfill: first export stores the filename; rename does not change stored filename;
+    --missing-only skips correctly because it matches on stored yaml_filename.
+    """
+    recipe = build_recipe(user, name="Original Name")
+
+    # First export — this should store the filename on the recipe
+    call_command("export_recipes_to_yaml", str(tmp_path))
+    recipe.refresh_from_db()
+    original_file = tmp_path / recipe.yaml_filename
+
+    # Simulate rename (not via yaml_filename field — the recipe_name changes)
+    recipe.recipe_name = "New Name After Rename"
+    recipe.save(update_fields=["recipe_name"])
+
+    # Second export with --missing-only: must NOT write a new "New Name After Rename.yml"
+    call_command("export_recipes_to_yaml", str(tmp_path), missing_only=True)
+
+    # Original file still present (exported first time)
+    assert original_file.exists()
+    # New-name file must NOT exist (recipe was skipped because yaml_filename is stable)
+    assert not (tmp_path / "New Name After Rename.yml").exists()
+
+
 def test_sanitize_stored_filename_windows_reserved_is_renamed():
     """sanitize_stored_filename prefixes Windows reserved names."""
     from recipes.management.commands.export_recipes_to_yaml import sanitize_stored_filename
