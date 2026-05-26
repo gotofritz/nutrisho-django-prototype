@@ -10,6 +10,7 @@ from django.db.models import Q
 # Do NOT replace with an import — migrations must be deterministic across
 # code changes and renames.
 _WINDOWS_RESERVED_MIG = re.compile(r"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$", re.IGNORECASE)
+_MAX_BASENAME_MIG = 255
 
 
 def _sanitize_stem_mig(stem: str) -> str:
@@ -20,11 +21,21 @@ def _sanitize_stem_mig(stem: str) -> str:
     return stem
 
 
+def _cap_stem_mig(stem: str, ext: str, fallback: str) -> str:
+    budget = _MAX_BASENAME_MIG - len(ext)
+    if budget <= 0:
+        return fallback
+    if len(stem) <= budget:
+        return stem
+    return stem[:budget].rstrip(". ") or fallback
+
+
 def _safe_filename_mig(name: str, fallback: str = "recipe") -> str:
     normalized = unicodedata.normalize("NFKC", name)
     normalized = re.sub(r"\s+", " ", normalized)
     clean = re.sub(r"[^\w -]", "", normalized)
     stem = _sanitize_stem_mig(clean) or fallback
+    stem = _cap_stem_mig(stem, ".yml", fallback)
     return stem + ".yml"
 
 
@@ -45,6 +56,7 @@ def _sanitize_stored_filename_mig(stored: str, fallback: str = "recipe") -> str:
     normalized = re.sub(r"\s+", " ", normalized)
     clean_stem = re.sub(r"[^\w .\-]", "", normalized)
     final_stem = _sanitize_stem_mig(clean_stem) or fallback
+    final_stem = _cap_stem_mig(final_stem, ext, fallback)
     return final_stem + ext
 
 

@@ -559,6 +559,26 @@ def test_serves_at_small_int_max_accepted(gotofritz, tmp_path):
 
 
 @pytest.mark.django_db
+def test_long_title_imports_with_capped_yaml_filename(gotofritz, tmp_path):
+    """Very long recipe title yields a yaml_filename under the column max_length."""
+    long_title = "Long Title " + ("a" * 300)
+    src = tmp_path / "src.yml"
+    src.write_bytes(yaml.dump(make_yaml(title=long_title), allow_unicode=True).encode())
+    call_command("batch_load_yaml_recipes", str(src))
+    # Source filename ("src.yml") is short; assert recipe_name long values still fit
+    # the model's CharField when re-saved with safe_filename(title) fallback path
+    recipe = Recipe.objects.get(recipe_name=long_title)
+    recipe.yaml_filename = ""  # force fallback path
+    recipe.save(update_fields=["yaml_filename"])
+    # Now simulate export path: would derive filename via safe_filename(title)
+    from recipes.utils.filename import safe_filename
+
+    derived = safe_filename(recipe.recipe_name)
+    assert len(derived) <= 255
+    assert derived.endswith(".yml")
+
+
+@pytest.mark.django_db
 def test_quantity_write_path_receives_decimal_not_float(gotofritz, tmp_path):
     """Write path must pass a Decimal (or None) to create(), never a raw float/str from YAML.
 

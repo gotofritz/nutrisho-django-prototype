@@ -313,6 +313,44 @@ def test_sanitize_stored_filename_strips_control_whitespace():
     assert sanitize_stored_filename("foo\nbar.yml") == "foo bar.yml"
 
 
+def test_safe_filename_caps_basename_length():
+    """Very long titles are truncated so basename fits in NAME_MAX (255 bytes)."""
+    from recipes.management.commands.export_recipes_to_yaml import safe_filename
+
+    long_title = "a" * 500
+    result = safe_filename(long_title)
+    assert len(result) <= 255
+    assert result.endswith(".yml")
+    # Must not be all-fallback when stem has plenty of valid chars
+    assert result.startswith("a")
+
+
+def test_sanitize_stored_filename_caps_basename_length():
+    """Very long stored filenames truncate the stem while preserving the extension."""
+    from recipes.management.commands.export_recipes_to_yaml import sanitize_stored_filename
+
+    long_stored = "a" * 500 + ".yaml"
+    result = sanitize_stored_filename(long_stored)
+    assert len(result) <= 255
+    assert result.endswith(".yaml")
+    assert result.startswith("a")
+
+    # .yml extension also preserved
+    long_yml = "b" * 500 + ".yml"
+    result_yml = sanitize_stored_filename(long_yml)
+    assert len(result_yml) <= 255
+    assert result_yml.endswith(".yml")
+
+
+def test_sanitize_stored_filename_fits_model_max_length():
+    """Result of sanitize_stored_filename always fits Recipe.yaml_filename max_length=260."""
+    from recipes.management.commands.export_recipes_to_yaml import sanitize_stored_filename
+
+    for n in (200, 260, 300, 500, 1000):
+        result = sanitize_stored_filename("x" * n + ".yml")
+        assert len(result) <= 260, f"len={len(result)} for input length {n}"
+
+
 def test_sanitize_stored_filename_windows_reserved_is_renamed():
     """sanitize_stored_filename prefixes Windows reserved names."""
     from recipes.management.commands.export_recipes_to_yaml import sanitize_stored_filename

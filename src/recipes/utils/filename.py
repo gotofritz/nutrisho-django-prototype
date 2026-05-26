@@ -6,6 +6,20 @@ import unicodedata
 # Windows reserved device names (case-insensitive); cannot be filenames on Windows.
 _WINDOWS_RESERVED = re.compile(r"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$", re.IGNORECASE)
 
+# Cap basename length. 255 is the de-facto NAME_MAX on most filesystems (ext4, APFS,
+# NTFS) and also fits within Recipe.yaml_filename's max_length=260 column.
+_MAX_BASENAME = 255
+
+
+def _cap_stem(stem: str, ext: str, fallback: str) -> str:
+    """Truncate stem so stem+ext fits in _MAX_BASENAME; fall back if nothing remains."""
+    budget = _MAX_BASENAME - len(ext)
+    if budget <= 0:
+        return fallback
+    if len(stem) <= budget:
+        return stem
+    return stem[:budget].rstrip(". ") or fallback
+
 
 def _sanitize_stem(stem: str) -> str:
     """Trim trailing dots/spaces and prefix Windows-reserved names."""
@@ -23,6 +37,7 @@ def safe_filename(name: str, fallback: str = "recipe") -> str:
     normalized = re.sub(r"\s+", " ", normalized)
     clean = re.sub(r"[^\w -]", "", normalized)
     stem = _sanitize_stem(clean) or fallback
+    stem = _cap_stem(stem, ".yml", fallback)
     return stem + ".yml"
 
 
@@ -57,4 +72,5 @@ def sanitize_stored_filename(stored: str, fallback: str = "recipe") -> str:
     normalized = re.sub(r"\s+", " ", normalized)
     clean_stem = re.sub(r"[^\w .\-]", "", normalized)
     final_stem = _sanitize_stem(clean_stem) or fallback
+    final_stem = _cap_stem(final_stem, ext, fallback)
     return final_stem + ext
