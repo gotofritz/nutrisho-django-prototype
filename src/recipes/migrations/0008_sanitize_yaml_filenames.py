@@ -22,7 +22,8 @@ def _sanitize_stem_mig(stem: str) -> str:
 
 def _safe_filename_mig(name: str, fallback: str = "recipe") -> str:
     normalized = unicodedata.normalize("NFKC", name)
-    clean = re.sub(r"[^\w\s-]", "", normalized)
+    normalized = re.sub(r"\s+", " ", normalized)
+    clean = re.sub(r"[^\w -]", "", normalized)
     stem = _sanitize_stem_mig(clean) or fallback
     return stem + ".yml"
 
@@ -41,7 +42,8 @@ def _sanitize_stored_filename_mig(stored: str, fallback: str = "recipe") -> str:
         stem = basename
         ext = ".yml"
     normalized = unicodedata.normalize("NFKC", stem)
-    clean_stem = re.sub(r"[^\w\s.\-]", "", normalized)
+    normalized = re.sub(r"\s+", " ", normalized)
+    clean_stem = re.sub(r"[^\w .\-]", "", normalized)
     final_stem = _sanitize_stem_mig(clean_stem) or fallback
     return final_stem + ext
 

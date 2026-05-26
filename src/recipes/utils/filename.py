@@ -20,7 +20,8 @@ def _sanitize_stem(stem: str) -> str:
 def safe_filename(name: str, fallback: str = "recipe") -> str:
     """Normalize to NFKC, strip reserved chars, fix Windows hazards, then append .yml."""
     normalized = unicodedata.normalize("NFKC", name)
-    clean = re.sub(r"[^\w\s-]", "", normalized)
+    normalized = re.sub(r"\s+", " ", normalized)
+    clean = re.sub(r"[^\w -]", "", normalized)
     stem = _sanitize_stem(clean) or fallback
     return stem + ".yml"
 
@@ -51,8 +52,9 @@ def sanitize_stored_filename(stored: str, fallback: str = "recipe") -> str:
     else:
         stem = basename
         ext = ".yml"
-    # Normalize to NFKC; strip reserved chars but keep interior dots; fix Windows hazards
+    # Normalize to NFKC; collapse whitespace; strip reserved chars; keep interior dots
     normalized = unicodedata.normalize("NFKC", stem)
-    clean_stem = re.sub(r"[^\w\s.\-]", "", normalized)
+    normalized = re.sub(r"\s+", " ", normalized)
+    clean_stem = re.sub(r"[^\w .\-]", "", normalized)
     final_stem = _sanitize_stem(clean_stem) or fallback
     return final_stem + ext

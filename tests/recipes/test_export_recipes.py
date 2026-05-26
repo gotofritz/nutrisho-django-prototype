@@ -295,6 +295,24 @@ def test_safe_filename_trims_trailing_dots_and_spaces():
     assert safe_filename("foo...") == "foo.yml"
 
 
+def test_safe_filename_strips_control_whitespace():
+    """safe_filename strips tabs, newlines, and other non-space whitespace from titles."""
+    from recipes.management.commands.export_recipes_to_yaml import safe_filename
+
+    assert safe_filename("foo\tbar") == "foo bar.yml"
+    assert safe_filename("foo\nbar") == "foo bar.yml"
+    assert safe_filename("foo\r\nbar") == "foo bar.yml"
+    assert safe_filename("foo\x0cbar") == "foo bar.yml"  # form feed
+
+
+def test_sanitize_stored_filename_strips_control_whitespace():
+    """sanitize_stored_filename strips tabs and newlines from stem."""
+    from recipes.management.commands.export_recipes_to_yaml import sanitize_stored_filename
+
+    assert sanitize_stored_filename("foo\tbar.yml") == "foo bar.yml"
+    assert sanitize_stored_filename("foo\nbar.yml") == "foo bar.yml"
+
+
 def test_sanitize_stored_filename_windows_reserved_is_renamed():
     """sanitize_stored_filename prefixes Windows reserved names."""
     from recipes.management.commands.export_recipes_to_yaml import sanitize_stored_filename
