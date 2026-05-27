@@ -1,10 +1,14 @@
 import json
 import re
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 import yaml
 from django.contrib.auth.models import User
-from django.core.management.base import BaseCommand
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.management.base import BaseCommand, CommandError
+from django.core.validators import DecimalValidator
+from django.db import transaction
 
 from recipes.models.cuisine import Cuisine
 from recipes.models.ingredient import Ingredient
@@ -13,6 +17,7 @@ from recipes.models.ingredient_in_recipe import IngredientInRecipe
 from recipes.models.recipe import Recipe
 from recipes.models.step import Step
 from recipes.models.tag import Tag
+from recipes.utils.filename import safe_filename, sanitize_stored_filename
 
 
 class Command(BaseCommand):
@@ -26,98 +31,216 @@ class Command(BaseCommand):
         tmp = re.sub(r" {2,}", " ", tmp)
         return tmp.strip()
 
+    @classmethod
+    def _validate_payload(cls, recipe_dict: dict, source_path: Path) -> None:
+        """Validate structure and normalize quantity fields in-place to Decimal/None.
+
+        Mutates ingredient dicts so the write path reads the exact Decimal that was
+        validated. Without this, the create() call would receive raw YAML values
+        (floats for unquoted numerics) and Django's DecimalField would re-convert
+        them through its own context, potentially diverging from the validated value.
+        """
+        groups = recipe_dict["ingredients"].get("group", [])
+        if not isinstance(groups, list):
+            groups = [groups]
+        for group_dict in groups:
+            ingredients = group_dict.get("ingredient", [])
+            if not isinstance(ingredients, list):
+                ingredients = [ingredients]
+            for ingredient_raw in ingredients:
+                qty = ingredient_raw.get("quantity")
+                if qty is None or qty == "":
+                    ingredient_raw["quantity"] = None
+                    continue
+                name = ingredient_raw.get("name", "?")
+                try:
+                    d = Decimal(str(qty))
+                except InvalidOperation as exc:
+                    raise CommandError(
+                        f"{source_path}: invalid quantity {qty!r} for ingredient '{name}'"
+                    ) from exc
+                try:
+                    DecimalValidator(max_digits=7, decimal_places=2)(d)
+                except DjangoValidationError as exc:
+                    raise CommandError(
+                        f"{source_path}: quantity {qty!r} for ingredient '{name}' "
+                        f"exceeds field limits (max_digits=7, decimal_places=2): {exc.message}"
+                    ) from exc
+                ingredient_raw["quantity"] = d
+
     def add_arguments(self, parser):
         parser.add_argument("paths", nargs="+", type=str, help="Path to recipe")
+        parser.add_argument(
+            "--dry-run",
+            action="store_true",
+            default=False,
+            help="Report changes without writing to DB",
+        )
+
+    @classmethod
+    def _parse_serves(cls, serves_raw, source_path: Path) -> int | None:
+        if serves_raw is None:
+            return None
+        if isinstance(serves_raw, bool):
+            raise CommandError(
+                f"{source_path}: invalid serves value {serves_raw!r} (bool not allowed)"
+            )
+        if isinstance(serves_raw, float):
+            raise CommandError(
+                f"{source_path}: invalid serves value {serves_raw!r} (must be a whole number)"
+            )
+        try:
+            serves = int(serves_raw)
+        except (ValueError, TypeError) as exc:
+            raise CommandError(f"{source_path}: invalid serves value {serves_raw!r}") from exc
+        if serves <= 0:
+            raise CommandError(f"{source_path}: serves must be > 0, got {serves}")
+        if serves > 32767:
+            raise CommandError(
+                f"{source_path}: serves value {serves} exceeds PositiveSmallIntegerField max (32767)"
+            )
+        return serves
 
     def handle(self, *args, **options):
-        user = User.objects.get(username="gotofritz")
+        dry_run = options["dry_run"]
 
-        files_to_load = []
+        # Collect files
+        files_to_load: list[Path] = []
         for passed_path in [Path(x) for x in options["paths"]]:
             if passed_path.is_dir():
-                files_to_load += [x for x in passed_path.iterdir()]
+                files_to_load += [
+                    x
+                    for x in passed_path.iterdir()
+                    if x.is_file() and x.suffix.lower() in {".yml", ".yaml"}
+                ]
             else:
                 files_to_load.append(passed_path)
+
+        # Phase 1: parse + validate all files before any DB writes
+        payloads: list[tuple[Path, dict, int | None, str, str]] = []
+        seen_names: dict[str, Path] = {}
+        seen_filenames: dict[str, Path] = {}  # casefold(yaml_filename) -> source_path
         for source_path in files_to_load:
-            with open(source_path, "r") as stream:
+            with open(source_path, "r", encoding="utf-8") as stream:
                 recipe_dict = yaml.safe_load(stream)
-                self.stdout.write(self.style.NOTICE(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"))
-                self.stdout.write(self.style.NOTICE(str(source_path)))
-                self.stdout.write(self.style.NOTICE(json.dumps(recipe_dict, indent=2)))
+            self.stdout.write(self.style.NOTICE(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"))
+            self.stdout.write(self.style.NOTICE(str(source_path)))
+            self.stdout.write(self.style.NOTICE(json.dumps(recipe_dict, indent=2)))
+
+            serves = Command._parse_serves(recipe_dict["ingredients"].get("serves"), source_path)
+            Command._validate_payload(recipe_dict, source_path)
+
+            recipe_name = Command.clean(recipe_dict["title"])
+            if recipe_name in seen_names:
+                raise CommandError(
+                    f"Duplicate title '{recipe_name}' in {source_path} and {seen_names[recipe_name]}"
+                )
+            seen_names[recipe_name] = source_path
+
+            yaml_filename = sanitize_stored_filename(source_path.name)
+            fn_key = yaml_filename.casefold()
+            if fn_key in seen_filenames:
+                raise CommandError(
+                    f"Filename collision: '{yaml_filename}' from {source_path} "
+                    f"matches '{seen_filenames[fn_key]}' (case-insensitive)"
+                )
+            seen_filenames[fn_key] = source_path
+
+            payloads.append((source_path, recipe_dict, serves, recipe_name, yaml_filename))
+
+        # Phase 2: check DB conflicts for the whole batch at once
+        existing = set(
+            Recipe.objects.filter(recipe_name__in=seen_names).values_list("recipe_name", flat=True)
+        )
+        if existing:
+            conflicts = ", ".join(f"'{n}'" for n in sorted(existing))
+            raise CommandError(f"Recipes already exist in DB: {conflicts}")
+
+        existing_filenames: set[str] = set()
+        for row in Recipe.objects.values("pk", "yaml_filename", "recipe_name"):
+            stored = row["yaml_filename"] or ""
+            pk_fallback = f"recipe-{row['pk']}"
+            if stored:
+                effective = sanitize_stored_filename(stored, fallback=pk_fallback)
+            else:
+                effective = safe_filename(str(row["recipe_name"] or ""), fallback=pk_fallback)
+            existing_filenames.add(effective.casefold())
+        batch_fn_conflicts = seen_filenames.keys() & existing_filenames
+        if batch_fn_conflicts:
+            conflicts = ", ".join(f"'{k}'" for k in sorted(batch_fn_conflicts))
+            raise CommandError(f"Filename collision with existing recipe(s) in DB: {conflicts}")
+
+        if dry_run:
+            for _path, _rd, serves, recipe_name, _fn in payloads:
+                self.stdout.write(
+                    self.style.WARNING(f"[dry-run] Would insert: {recipe_name} (serves={serves})")
+                )
+            self.stdout.write(self.style.SUCCESS("Successfully created plans"))
+            return
+
+        # Phase 3: write — single transaction so partial failures roll back the whole batch
+        _user: User | None = None
+        with transaction.atomic():
+            for source_path, recipe_dict, serves, recipe_name, yaml_filename in payloads:
+                if _user is None:
+                    _user = User.objects.get(username="gotofritz")
+                user: User = _user
 
                 if recipe_dict["cuisine"]:
                     cuisine, _ = Cuisine.objects.get_or_create(cuisine=recipe_dict["cuisine"])
-                    cuisine.save()
                 else:
                     cuisine = None
 
-                recipe, _ = Recipe.objects.get_or_create(
-                    recipe_name=Command.clean(recipe_dict["title"]),
+                recipe = Recipe.objects.create(
+                    owner=user,
+                    recipe_name=recipe_name,
                     short_description=Command.clean(recipe_dict["description"]),
                     source_instance=recipe_dict["source"] or "",
-                    owner=user,
                     cuisine=cuisine,
+                    servings=serves,
+                    yaml_filename=yaml_filename,
                 )
-                recipe.save()
 
-                for i, step_raw in enumerate(recipe_dict["directions"]["step"]):
-                    step, _ = Step.objects.get_or_create(
-                        step_text=Command.clean(step_raw),
-                        index_in_sequence=i + 1,
+                steps = recipe_dict["directions"]["step"]
+                if not isinstance(steps, list):
+                    steps = [steps]
+                for i, step_raw in enumerate(steps):
+                    Step.objects.create(
                         recipe=recipe,
+                        index_in_sequence=i + 1,
+                        step_text=Command.clean(step_raw),
                     )
-                    step.save()
-
-                # whatever i used to convert to yaml, was inconsistent; if only a single
-                # entry, it'd do a dict and not a list
-                _ = (
-                    int(recipe_dict["ingredients"]["serves"])
-                    if hasattr(recipe_dict["ingredients"], "serves")
-                    else 4
-                )
 
                 if not isinstance(recipe_dict["ingredients"]["group"], list):
                     recipe_dict["ingredients"]["group"] = [recipe_dict["ingredients"]["group"]]
                 for i, group_dict in enumerate(recipe_dict["ingredients"]["group"]):
-                    group, _ = IngredientGroup.objects.get_or_create(
-                        group_name=Command.clean(group_dict.get("name")),
-                        index_in_sequence=i + 1,
+                    group = IngredientGroup.objects.create(
                         recipe=recipe,
+                        index_in_sequence=i + 1,
+                        group_name=Command.clean(group_dict.get("name")),
                     )
-                    group.save()
-
                     if not isinstance(group_dict["ingredient"], list):
                         group_dict["ingredient"] = [group_dict["ingredient"]]
                     for j, ingredient_raw in enumerate(group_dict["ingredient"]):
+                        ingredient_name = Command.clean(ingredient_raw.get("name"))
                         ingredient, _ = Ingredient.objects.get_or_create(
-                            ingredient_name=Command.clean(ingredient_raw.get("name")),
+                            ingredient_name=ingredient_name,
                         )
-                        ingredient.save()
+                        # quantity was normalized to Decimal-or-None by _validate_payload
+                        IngredientInRecipe.objects.create(
+                            ingredient=ingredient,
+                            ingredient_group=group,
+                            index_in_sequence=j + 1,
+                            unit=ingredient_raw.get("measurement"),
+                            preparation=ingredient_raw.get("preparation"),
+                            quantity=ingredient_raw.get("quantity"),
+                        )
 
-                        try:
-                            (
-                                ingredient_in_recipe,
-                                _,
-                            ) = IngredientInRecipe.objects.get_or_create(
-                                ingredient=ingredient,
-                                unit=ingredient_raw.get("measurement"),
-                                preparation=ingredient_raw.get("preparation"),
-                                quantity=ingredient_raw.get("quantity"),
-                                ingredient_group=group,
-                                index_in_sequence=j + 1,
-                            )
-                        except Exception as e:
-                            self.stdout.write(
-                                self.style.ERROR(
-                                    f"ERROR with {recipe.recipe_name} / {ingredient.ingredient_name}"
-                                )
-                            )
-                            raise e
-                        ingredient_in_recipe.save()
-
-                for tag_raw in recipe_dict["tags"]:
+                tags_raw = recipe_dict["tags"]
+                if not isinstance(tags_raw, list):
+                    tags_raw = [tags_raw]
+                for tag_raw in tags_raw:
                     tag, _ = Tag.objects.get_or_create(tag=tag_raw.strip())
-                    tag.save()
-                    tag.recipe.set([recipe])
+                    tag.recipe.add(recipe)
 
         self.stdout.write(self.style.SUCCESS("Successfully created plans"))

@@ -7,4 +7,7 @@ import pytest
 def user(db):
     from django.contrib.auth.models import User
 
-    return User.objects.create_user(username="testuser", password="testpass")
+    existing = User.objects.filter(username="gotofritz").first()
+    if existing is not None:
+        return existing
+    return User.objects.create_user(username="gotofritz", password="x")

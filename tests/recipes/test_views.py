@@ -103,3 +103,21 @@ def test_recipe_edit_post_does_not_persist(client, recipe):
     )
     recipe.refresh_from_db()
     assert recipe.recipe_name == original_name
+
+
+@pytest.mark.django_db
+def test_serves_label_hidden_when_servings_none(client, user):
+    """Detail page omits 'Serves' label when servings is null (legacy/unknown)."""
+    r = Recipe.objects.create(recipe_name="Mystery Soup", owner=user, servings=None)
+    response = client.get(f"/recipes/{r.pk}/")
+    assert response.status_code == 200
+    assert b"Serves" not in response.content
+
+
+@pytest.mark.django_db
+def test_serves_label_shown_when_servings_set(client, user):
+    """Detail page renders 'Serves N' when servings has a known value."""
+    r = Recipe.objects.create(recipe_name="Known Soup", owner=user, servings=4)
+    response = client.get(f"/recipes/{r.pk}/")
+    assert response.status_code == 200
+    assert b"Serves 4" in response.content

@@ -1,6 +1,6 @@
 # Plan 003: YAML Export and Servings
 
-## Status: Draft
+## Status: Done
 
 ## Context
 

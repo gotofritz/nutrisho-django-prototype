@@ -2,7 +2,7 @@
 
 ## Overview
 
-Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuisines, and tags. Supports bulk YAML import.
+Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuisines, and tags. Supports bulk YAML import and export.
 
 ## Tech Stack
 
@@ -42,14 +42,19 @@ Single Django app (`recipes`) under `src/` layout. No API layer yet. Frontend is
 
 ### Key Models
 
-- `Recipe` — core entity, owns name, description, cuisine, source, owner
-- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy
+- `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; `null` when unknown)
+- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving)
 - `Step` — ordered recipe steps
 - `Cuisine`, `Source`, `Tag` — lookup/classification models
 
 ### Data Flow
 
-YAML files → `batch_load_yaml_recipes` management command → Django ORM → SQLite
+YAML files → `batch_load_yaml_recipes` management command → Django ORM → SQLite (always inserts; `id` field in YAML ignored)
+
+Django ORM → `export_recipes_to_yaml` management command → YAML files
+
+`delete_recipe --id <N>` removes recipes by primary key for post-import cleanup
+
 
 ## Constraints
 

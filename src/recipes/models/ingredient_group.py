@@ -15,3 +15,9 @@ class IngredientGroup(models.Model):
 
     class Meta:
         ordering = ["index_in_sequence"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["recipe", "index_in_sequence"],
+                name="unique_ingredient_group_in_recipe",
+            )
+        ]
