@@ -1,0 +1,48 @@
+cuisine: .europe.uk
+description: He's an asshole, but he can cook
+directions:
+  step:
+  - Rub salt and pepper on the steak and leave it outside the fridge for 30 mins or
+    more
+  - Heat the pan. Make it very, very hot
+  - Add little olive oil, and when hot add the steak(s)
+  - When one side is brown (2-3 mins, depending on how hot is the pan), turn it and
+    cook the other side
+  - Also cook the edges, if they are thick enough
+  - Put the steak flat again, and keep turning the steak every 1 to 2 mins, so that
+    it cooks evenly
+  - 'Optional: and add some thyme + garlic'
+  - Add the butter, let it melt. Every 30 seconds or so tilt the pan and spoon some
+    of the melted butter over the top of the steak
+  - Rub the garlic on the steak, if using
+  - After 6-7 minutes it should be done. Take it out and let it rest 4 mins
+  - Slice 1 cm thick and eat
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: steak
+      note: null
+      preparation: null
+      quantity: '1200.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '120.00'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '4.00'
+    - measurement: sprig
+      name: thyme
+      note: null
+      preparation: null
+      quantity: '4.00'
+    name: null
+  serves: 4
+source: https://www.youtube.com/watch?v=AmC9SmCBUj4
+tags:
+- meat
+title: Steak, Gordon Ramsay's Style

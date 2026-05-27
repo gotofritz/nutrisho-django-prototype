@@ -1,59 +1,69 @@
 cuisine: null
 description: This is a really fresh and unusual chutney that pairs well with a creamy
-    chicken curry. I also like it with sweet potato cakes fried in a bit of butter.
-    Makes around 2 cups of chutney that will keep in the fridge for a few days.
+  chicken curry. I also like it with sweet potato cakes fried in a bit of butter.
+  Makes around 2 cups of chutney that will keep in the fridge for a few days.
 directions:
-    step:
-    - Toast the black onion seeds in a dry frying pan over medium heat for 3-5 minutes
-        until they begin to pop. Grind the seeds in a mortar and pestle.
-    - Mix the ground seeds with the remaining ingredients and toss well to combine.
-        Add sea salt and pepper to taste. Allow to sit for at least 30 minutes before
-        serving to allow the flavours to develop.
+  step:
+  - Toast the black onion seeds in a dry frying pan over medium heat for 3-5 minutes
+    until they begin to pop. Grind the seeds in a mortar and pestle.
+  - Mix the ground seeds with the remaining ingredients and toss well to combine.
+    Add sea salt and pepper to taste. Allow to sit for at least 30 minutes before
+    serving to allow the flavours to develop.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: tsp
-            name: nigella seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: bunch
-            name: red grapes
-            preparation: coarsely chopped
-            quantity: '0.25'
-        -   measurement: null
-            name: spring onions
-            preparation: chopped finely
-            quantity: '0.75'
-        -   measurement: handful
-            name: coriander leaves
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: null
-            name: limes
-            preparation: juiced
-            quantity: '0.25'
-        -   measurement: cloves
-            name: garlic
-            preparation: minced finely
-            quantity: '0.25'
-        -   measurement: cm
-            name: ginger
-            preparation: grated finely
-            quantity: '0.75'
-        -   measurement: null
-            name: Splash of olive oil
-            preparation: null
-            quantity: null
-        -   measurement: null
-            name: Sea salt
-            preparation: null
-            quantity: null
-        -   measurement: null
-            name: Freshly grated black pepper
-            preparation: null
-            quantity: null
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: tsp
+      name: nigella seeds
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: bunch
+      name: red grapes
+      note: null
+      preparation: coarsely chopped
+      quantity: '1.00'
+    - measurement: null
+      name: spring onions
+      note: null
+      preparation: chopped finely
+      quantity: '3.00'
+    - measurement: handful
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: null
+      name: limes
+      note: null
+      preparation: juiced
+      quantity: '1.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: minced finely
+      quantity: '1.00'
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: grated finely
+      quantity: '3.00'
+    - measurement: null
+      name: Splash of olive oil
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: Sea salt
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: Freshly grated black pepper
+      note: null
+      preparation: null
+      quantity: null
+    name: null
+  serves: 4
 source: ''
 tags:
 - chutney

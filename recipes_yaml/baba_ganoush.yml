@@ -1,74 +1,74 @@
-title: Easy Baba Ganoush Recipe
-author: Suzy Karadsheh
 cuisine: Middle Eastern
-source: https://www.themediterraneandish.com/baba-ganoush-recipe/
-description: >-
-  Baba ganoush - also known as baba ganouj, muttabal, or salat hatzilim - is a
-  smoky, rich, and creamy eggplant dip, traditionally made by mixing tender
-  roasted (or charred) eggplant and nutty tahini with garlic, citrus, and
-  spices.
-ingredients:
-  group:
-    - ingredient:
-        - measurement: ""
-          name: aubergine
-          quantity: "2"
-          preparation: ""
-        - measurement: cup
-          name: tahini
-          quantity: .25
-          preparation:
-        - measurement: ""
-          name: lemon
-          quantity: "1"
-          preparation: juiced
-        - measurement: "clove"
-          name: "garlic"
-          quantity: "1"
-          preparation: minced
-        - measurement: tablespoon
-          name: "plain Greek yogurt"
-          quantity: "1"
-          preparation: optional
-        - measurement: ""
-          name: Kosher salt and black pepper
-          quantity: ""
-          preparation: ""
-        - measurement: tsp
-          name: sumac
-          quantity: "1"
-          preparation: ""
-        - measurement: tsp
-          name: "chili flakes "
-          quantity: 0.75
-          preparation: optional
-      name: main
-    - ingredient:
-        - measurement: "dash"
-          name: "olive oil"
-          quantity: "1"
-          preparation: ""
-        - measurement: ""
-          name: "pine nuts"
-          quantity: "6"
-          preparation: toasted
-      name: garnish
-  serves: 6
+description: Baba ganoush - also known as baba ganouj, muttabal, or salat hatzilim
+  - is a smoky, rich, and creamy eggplant dip, traditionally made by mixing tender
+  roasted (or charred) eggplant and nutty tahini with garlic, citrus, and spices.
 directions:
   step:
-    - >-
-      Put the aubergine directly over hotplate for 20 mins, turning
-      every 5, until tender and the skin is charred and crispy on all
-      sides
-    - >-
-      Remove from fire and sit in a colander until cold enough to touch,
-      then peel
-    - >-
-      Drain well, then transfer to a mixing bowl. Add remaining
-      ingredients and mash thoroughly with a fork until well combined
-    - Cover the baba ganoush and chill in the fridge for 30 minutes to an hour.
-    - >-
-      To serve, drizzle with oil and sprinkle toasted pine nuts,
-    - >-
-      Serve with pita wedges and veggies
+  - Put the aubergine directly over hotplate for 20 mins, turning every 5, until tender
+    and the skin is charred and crispy on all sides
+  - Remove from fire and sit in a colander until cold enough to touch, then peel
+  - Drain well, then transfer to a mixing bowl. Add remaining ingredients and mash
+    thoroughly with a fork until well combined
+  - Cover the baba ganoush and chill in the fridge for 30 minutes to an hour.
+  - To serve, drizzle with oil and sprinkle toasted pine nuts,
+  - Serve with pita wedges and veggies
+ingredients:
+  group:
+  - ingredient:
+    - measurement: ''
+      name: aubergine
+      note: null
+      preparation: ''
+      quantity: '2.00'
+    - measurement: cup
+      name: tahini
+      note: null
+      preparation: null
+      quantity: '0.25'
+    - measurement: ''
+      name: lemon
+      note: null
+      preparation: juiced
+      quantity: '1.00'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: minced
+      quantity: '1.00'
+    - measurement: tablespoon
+      name: plain Greek yogurt
+      note: null
+      preparation: optional
+      quantity: '1.00'
+    - measurement: ''
+      name: Kosher salt and black pepper
+      note: null
+      preparation: ''
+      quantity: null
+    - measurement: tsp
+      name: sumac
+      note: null
+      preparation: ''
+      quantity: '1.00'
+    - measurement: tsp
+      name: chili flakes
+      note: null
+      preparation: optional
+      quantity: '0.75'
+    name: main
+  - ingredient:
+    - measurement: dash
+      name: olive oil
+      note: null
+      preparation: ''
+      quantity: '1.00'
+    - measurement: ''
+      name: pine nuts
+      note: null
+      preparation: toasted
+      quantity: '6.00'
+    name: garnish
+  serves: 6
+source: https://www.themediterraneandish.com/baba-ganoush-recipe/
 tags: []
+title: Easy Baba Ganoush Recipe

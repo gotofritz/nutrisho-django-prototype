@@ -14,20 +14,15 @@ __all__ = ["safe_filename", "sanitize_stored_filename"]
 # Fields persisted on Recipe/Step/IngredientInRecipe that the YAML schema does NOT cover.
 # Export refuses recipes carrying values in these fields unless --force is given.
 # Notes:
-#   - Recipe.owner is checked against the importer's hardcoded "gotofritz" username;
-#     any other owner is dropped on re-import.
+#   - Recipe.owner is NOT lossy: export filters by --user and batch_load_yaml_recipes
+#     accepts --user, so ownership is preserved on round-trip for any username.
 #   - Recipe.created_date is excluded: it is auto_now_add, so every re-import regenerates
 #     it. Treating it as lossy would flag every recipe and make export unusable.
-_IMPORTER_OWNER_USERNAME = "gotofritz"
 
 
 def lossy_fields(recipe: Recipe) -> list[str]:
     """Return descriptions of fields whose values are dropped on export → re-import."""
     reasons: list[str] = []
-    owner = recipe.owner  # ty: ignore[possibly-missing-attribute]
-    owner_username = owner.username if owner is not None else None  # ty: ignore[possibly-missing-attribute]
-    if owner_username != _IMPORTER_OWNER_USERNAME:
-        reasons.append(f"owner={owner_username!r} (importer assigns {_IMPORTER_OWNER_USERNAME!r})")
     if recipe.source_id is not None:  # ty: ignore[unresolved-attribute]
         reasons.append(f"source FK (id={recipe.source_id})")  # ty: ignore[unresolved-attribute]
     for step in recipe.step.all():  # ty: ignore[unresolved-attribute]
@@ -39,8 +34,6 @@ def lossy_fields(recipe: Recipe) -> list[str]:
         for iir in group.ingredient.all():
             if iir.substitute_id is not None:
                 reasons.append(f"ingredient {iir.ingredient.ingredient_name!r}.substitute")
-            if iir.note:
-                reasons.append(f"ingredient {iir.ingredient.ingredient_name!r}.note")
     return reasons
 
 
@@ -55,14 +48,15 @@ def recipe_to_dict(recipe: Recipe) -> dict:
             ingredients.append(
                 {
                     "name": iir.ingredient.ingredient_name,
-                    "measurement": iir.unit,
-                    "preparation": iir.preparation,
+                    "measurement": iir.unit or None,
+                    "note": iir.note or None,
+                    "preparation": iir.preparation or None,
                     "quantity": str(iir.quantity) if iir.quantity is not None else None,
                 }
             )
         groups.append(
             {
-                "name": group.group_name,
+                "name": group.group_name or None,
                 "ingredient": ingredients,
             }
         )
@@ -75,7 +69,7 @@ def recipe_to_dict(recipe: Recipe) -> dict:
 
     return {
         "title": recipe.recipe_name,
-        "description": recipe.short_description,
+        "description": recipe.short_description or None,
         "cuisine": recipe.cuisine.cuisine if recipe.cuisine else None,  # ty: ignore[possibly-missing-attribute]
         "source": recipe.source_instance or "",
         "tags": tags,
@@ -104,7 +98,17 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("output_dir", type=str, help="Directory to write YAML files into")
         parser.add_argument(
-            "--id", type=int, dest="id", default=None, help="Export only this recipe ID"
+            "--user",
+            required=True,
+            help="Export only recipes owned by this username",
+        )
+        parser.add_argument(
+            "--id",
+            type=int,
+            dest="ids",
+            action="append",
+            default=None,
+            help="Export only this recipe ID (repeat for multiple: --id 1 --id 2)",
         )
         parser.add_argument(
             "--missing-only",
@@ -127,12 +131,23 @@ class Command(BaseCommand):
             raise CommandError(f"'{output_dir}' exists and is not a directory")
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        recipe_id = options["id"]
-        qs = Recipe.objects.all()
-        if recipe_id is not None:
-            qs = qs.filter(pk=recipe_id)
-            if not qs.exists():
-                raise CommandError(f"No recipe found with id={recipe_id}")
+        from django.contrib.auth.models import User
+        from django.core.exceptions import ObjectDoesNotExist
+
+        username = options["user"]
+        try:
+            owner = User.objects.get(username=username)
+        except ObjectDoesNotExist:
+            raise CommandError(f"User '{username}' not found in the database.")
+
+        recipe_ids = options["ids"]
+        qs = Recipe.objects.filter(owner=owner)
+        if recipe_ids is not None:
+            qs = qs.filter(pk__in=recipe_ids)
+            found = set(qs.values_list("pk", flat=True))
+            missing = set(recipe_ids) - found
+            if missing:
+                raise CommandError(f"No recipe found with id={sorted(missing)}")
 
         # Pre-scan existing files case-insensitively; used only for --missing-only skip logic.
         # Abort early if two existing files differ only in case — the casefold dict would silently

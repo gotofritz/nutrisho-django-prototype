@@ -1,0 +1,148 @@
+cuisine: .anglo.us
+description: Lasagne as they make them in NA
+directions:
+  step:
+  - '<u>RAGÚ</u>: Sauté the ground beef in olive oil until browned, then put aside.
+    Do the same for the ground pork in the same pot'
+  - Add butter to the same pot, add the vegetables and after 5 minutes the stock and
+    bay leaf. Cook 5 minutes
+  - Add the canned tomates, break them up with a fork
+  - After 4 mins add the meat, oregano, soya sauce
+  - Clear some space in the middle of the pan and add the anchovies. Break them up
+    with a fork and add the wine and tomato paste. Stir and pour in an oven friendly
+    dish
+  - Season and carry on in the oven at 140°C, stirring occasionally
+  - '<u>BECHAMEL</u>: Warm the milk with onion and pepper'
+  - Melt the butter, then add the flour and mix until it's a slurry
+  - Sieve the milk into the slurry, season, and reduce until thick
+  - Layer bechamel, lasagna, meat, mozzarella, and so on. End with a layer of bechamel,
+    and sprinkle the parmesan on it
+  - Bake 25 mins at 180°
+  - Take out and let cool 10 mins before serving
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: carrot
+      note: about 2
+      preparation: chopped
+      quantity: '150.00'
+    - measurement: g
+      name: ground beef
+      note: null
+      preparation: null
+      quantity: '250.00'
+    - measurement: g
+      name: ground pork
+      note: null
+      preparation: null
+      quantity: '250.00'
+    - measurement: g
+      name: celery
+      note: 2 sticks
+      preparation: chopped
+      quantity: '100.00'
+    - measurement: g
+      name: onions
+      note: null
+      preparation: chopped
+      quantity: '250.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: leaf
+      name: bay
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '10.00'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: tsp
+      name: oregano
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: soya sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: anchovies
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: canned tomatoes
+      note: null
+      preparation: null
+      quantity: '800.00'
+    - measurement: splash
+      name: white wine
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: tomato paste
+      note: null
+      preparation: null
+      quantity: '25.00'
+    name: Ragù
+  - ingredient:
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '100.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '100.00'
+    - measurement: ml
+      name: milk
+      note: null
+      preparation: null
+      quantity: '700.00'
+    - measurement: leaves
+      name: bay
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: null
+      name: peppercorns
+      note: null
+      preparation: null
+      quantity: '20.00'
+    name: Bechamel
+  - ingredient:
+    - measurement: g
+      name: mozzarella
+      note: null
+      preparation: in small pieces
+      quantity: '400.00'
+    - measurement: sheets
+      name: lasagna
+      note: null
+      preparation: null
+      quantity: '12.00'
+    - measurement: g
+      name: parmesan
+      note: null
+      preparation: grated
+      quantity: '40.00'
+    name: Layers
+  serves: 8
+source: Michael, Greta's Dad
+tags: []
+title: Greta's Canadian Lasagne

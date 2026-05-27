@@ -1,79 +1,94 @@
 cuisine: .chinese.sichuan
 description: GuI QW JI
 directions:
-    step:
-    - steam chicken 25 m
-    - menwhile, beat together all sauce ingredients in a bowl
-    - cool chicken for 5 m, then brush with soy sauce, and cool another 20 m uncivered
-    - deep fry chicken 2m, then cool to room temperature
-    - rip / cut chicken flesh + skin, pile on plate, pour sauce on top
+  step:
+  - steam chicken 25 m
+  - menwhile, beat together all sauce ingredients in a bowl
+  - cool chicken for 5 m, then brush with soy sauce, and cool another 20 m uncivered
+  - deep fry chicken 2m, then cool to room temperature
+  - rip / cut chicken flesh + skin, pile on plate, pour sauce on top
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: tbsp
-            name: spring onions
-            preparation: whole
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: ginger
-            preparation: peeled
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: garlic cloves
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: sesame paste
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: soy sauce
-            preparation: light
-            quantity: '0.62'
-        -   measurement: tbsp
-            name: water
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: oil
-            preparation: sesame
-            quantity: '0.38'
-        -   measurement: tbsp
-            name: vinegar
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: oil
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: chili oil
-            preparation: null
-            quantity: '0.75'
-        -   measurement: tsp
-            name: sugar
-            preparation: null
-            quantity: '0.62'
-        -   measurement: tsp
-            name: sichuan pepper
-            preparation: ground
-            quantity: '0.12'
-        name: Sauce
-    -   ingredient:
-        -   measurement: null
-            name: chicken legs
-            preparation: whole
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: soy sauce
-            preparation: light
-            quantity: '0.25'
-        -   measurement: cup
-            name: oil
-            preparation: frying
-            quantity: '0.25'
-        name: chicken
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: tbsp
+      name: spring onions
+      note: null
+      preparation: whole
+      quantity: '2.00'
+    - measurement: tbsp
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '2.00'
+    - measurement: tbsp
+      name: garlic cloves
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: tbsp
+      name: sesame paste
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: soy sauce
+      note: null
+      preparation: light
+      quantity: '2.48'
+    - measurement: tbsp
+      name: water
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tbsp
+      name: oil
+      note: null
+      preparation: sesame
+      quantity: '1.52'
+    - measurement: tbsp
+      name: vinegar
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: chili oil
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: tsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '2.48'
+    - measurement: tsp
+      name: sichuan pepper
+      note: null
+      preparation: ground
+      quantity: '0.48'
+    name: Sauce
+  - ingredient:
+    - measurement: null
+      name: chicken legs
+      note: null
+      preparation: whole
+      quantity: '2.00'
+    - measurement: tbsp
+      name: soy sauce
+      note: null
+      preparation: light
+      quantity: '1.00'
+    - measurement: cup
+      name: oil
+      note: null
+      preparation: frying
+      quantity: '1.00'
+    name: chicken
+  serves: 4
 source: ''
 tags: []
 title: Strange flavor chicken

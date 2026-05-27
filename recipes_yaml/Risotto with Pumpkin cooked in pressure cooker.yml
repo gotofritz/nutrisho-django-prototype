@@ -1,96 +1,111 @@
 cuisine: .italian.experimental
 description: null
 directions:
-    step:
-    - Coat the large punmpkin chunks with their marinade. Season and put on a baking
-        tray
-    - Coat the pumpkin dice with the other marinade. Put on a different baking tray
-    - Bake both at 200°, stirring once. Take the dice out after 30 mins, and the chunks
-        after 40 mins.
-    - Whiz the large chunks with miso, broth until a smooth. Season
-    - 'Start normal risotto in pressure cooker: sautè onions, add rice, sweat wine'
-    - Put all broth in at once, close pressure cooker. Bring to pressure on low, then
-        cook 5 mins.
-    - Meanwhile, cook sage leaves in butter, then remove them and save them.
-    - Release pressure immediately with cold water on lid. Stir risotto a bit to give
-        it right consistency. Add puréed squash and butter and stir
-    - Add grated cheese and diced squash, then season. Garnish with the fried sage
-        leaves
+  step:
+  - Coat the large punmpkin chunks with their marinade. Season and put on a baking
+    tray
+  - Coat the pumpkin dice with the other marinade. Put on a different baking tray
+  - Bake both at 200°, stirring once. Take the dice out after 30 mins, and the chunks
+    after 40 mins.
+  - Whiz the large chunks with miso, broth until a smooth. Season
+  - 'Start normal risotto in pressure cooker: sautè onions, add rice, sweat wine'
+  - Put all broth in at once, close pressure cooker. Bring to pressure on low, then
+    cook 5 mins.
+  - Meanwhile, cook sage leaves in butter, then remove them and save them.
+  - Release pressure immediately with cold water on lid. Stir risotto a bit to give
+    it right consistency. Add puréed squash and butter and stir
+  - Add grated cheese and diced squash, then season. Garnish with the fried sage leaves
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: pumpkin
-            preparation: 2.5 chunks
-            quantity: '175.00'
-        -   measurement: tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.50'
-        -   measurement: cloves
-            name: garlic
-            preparation: crushed
-            quantity: '0.75'
-        -   measurement: null
-            name: apple
-            preparation: peeled
-            quantity: '0.12'
-        -   measurement: pinch
-            name: red pepper flakes
-            preparation: null
-            quantity: '0.25'
-        -   measurement: sprigs
-            name: sage
-            preparation: null
-            quantity: '0.50'
-        name: Pumpkin chunks
-    -   ingredient:
-        -   measurement: tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: maple syrup
-            preparation: null
-            quantity: '0.50'
-        name: Pumpkin dice
-    -   ingredient:
-        -   measurement: tsp
-            name: miso
-            preparation: null
-            quantity: '0.25'
-        -   measurement: ml
-            name: stock
-            preparation: null
-            quantity: '15.00'
-        name: Pumpkin purée
-    -   ingredient:
-        -   measurement: g
-            name: rice
-            preparation: null
-            quantity: '105.00'
-        -   measurement: ml
-            name: wine
-            preparation: null
-            quantity: '30.00'
-        -   measurement: tbsp
-            name: butter
-            preparation: null
-            quantity: '1.00'
-        -   measurement: ml
-            name: stock
-            preparation: null
-            quantity: '200.00'
-        -   measurement: leaves
-            name: sage
-            preparation: null
-            quantity: '2.00'
-        -   measurement: g
-            name: parmesan
-            preparation: grated
-            quantity: '7.50'
-        name: Risotto
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: pumpkin
+      note: null
+      preparation: 2.5 chunks
+      quantity: '350.00'
+    - measurement: tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: crushed
+      quantity: '1.50'
+    - measurement: null
+      name: apple
+      note: null
+      preparation: peeled
+      quantity: '0.24'
+    - measurement: pinch
+      name: red pepper flakes
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: sprigs
+      name: sage
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Pumpkin chunks
+  - ingredient:
+    - measurement: tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: maple syrup
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Pumpkin dice
+  - ingredient:
+    - measurement: tsp
+      name: miso
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: null
+      quantity: '30.00'
+    name: Pumpkin purée
+  - ingredient:
+    - measurement: g
+      name: rice
+      note: null
+      preparation: null
+      quantity: '210.00'
+    - measurement: ml
+      name: wine
+      note: null
+      preparation: null
+      quantity: '60.00'
+    - measurement: tbsp
+      name: butter
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: null
+      quantity: '400.00'
+    - measurement: leaves
+      name: sage
+      note: null
+      preparation: null
+      quantity: '4.00'
+    - measurement: g
+      name: parmesan
+      note: null
+      preparation: grated
+      quantity: '15.00'
+    name: Risotto
+  serves: 2
 source: http://www.seriouseats.com/recipes/2014/09/pressure-cooker-butternut-squash-risotto-sage-brown-butter-quick-easy-recipe.html
 tags: []
 title: Risotto with Pumpkin, cooked in pressure cooker

@@ -1,5 +1,5 @@
 <span
   hx-get="{% url 'recipes:field_edit' recipe.id field_name %}"
   hx-swap="outerHTML"
-  class="editable field-{{ field_name }}"
+  class="editable field-{{ field_name }}"{% if not value %} data-empty{% endif %}
 >{{ value|default:"—" }}</span>

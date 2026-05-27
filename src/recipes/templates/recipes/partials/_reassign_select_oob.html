@@ -1,0 +1,6 @@
+<select name="target_group" id="reassign-target" hx-swap-oob="outerHTML:#reassign-target">
+  {% for g in recipe.ingredients_group.all %}
+  <option value="{{ g.id }}">{{ g.group_name|default:"—" }}</option>
+  {% endfor %}
+  <option value="new">New group…</option>
+</select>

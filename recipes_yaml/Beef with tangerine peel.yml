@@ -1,76 +1,89 @@
 cuisine: .chinese
 description: Chempi Niurou
 directions:
-    step:
-    - Mix beef steak, ginger, sugar, dark soy sauce in a bowl, and let stand in the
-        fridge for at least 20m
-    - soak dried tangerine peel in hot water then drain for 20m
-    - quickly stir fry the onions, then set aside in oil for 40s
-    - quickly stir fry beef, then set aside for 90s
-    - Add oil then stir fry the tangerine peel, fresh chilies, szichuan pepper, and
-        quickly set aside in oil for 90s
-    - Put onion and beef back in, add hoisin sauce, bean paste, light soy sauce for
-        40s
-    - Add the tangerine peel mix then serve for 20s
+  step:
+  - Mix beef steak, ginger, sugar, dark soy sauce in a bowl, and let stand in the
+    fridge for at least 20m
+  - soak dried tangerine peel in hot water then drain for 20m
+  - quickly stir fry the onions, then set aside in oil for 40s
+  - quickly stir fry beef, then set aside for 90s
+  - Add oil then stir fry the tangerine peel, fresh chilies, szichuan pepper, and
+    quickly set aside in oil for 90s
+  - Put onion and beef back in, add hoisin sauce, bean paste, light soy sauce for
+    40s
+  - Add the tangerine peel mix then serve for 20s
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: beef steak
-            preparation: sliced
-            quantity: '78.75'
-        -   measurement: tsp
-            name: ginger
-            preparation: grated
-            quantity: '0.50'
-        -   measurement: tsp
-            name: sugar
-            preparation: null
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: soy sauce
-            preparation: dark
-            quantity: '0.25'
-        name: Marinade
-    -   ingredient:
-        -   measurement: pieces
-            name: dried tangerine peel
-            preparation: null
-            quantity: '1.50'
-        -   measurement: null
-            name: onions
-            preparation: cut in narrow wedges
-            quantity: '0.12'
-        -   measurement: Tbsp
-            name: oil
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: chilies
-            preparation: fresh
-            quantity: '0.50'
-        -   measurement: tsp
-            name: szichuan pepper
-            preparation: null
-            quantity: '0.12'
-        -   measurement: Tbsp
-            name: oil
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: hoisin sauce
-            preparation: null
-            quantity: '0.62'
-        -   measurement: tsp
-            name: bean paste
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: soy sauce
-            preparation: light
-            quantity: '0.25'
-        name: Stir fry
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: beef steak
+      note: null
+      preparation: sliced
+      quantity: '157.50'
+    - measurement: tsp
+      name: ginger
+      note: null
+      preparation: grated
+      quantity: '1.00'
+    - measurement: tsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: Tbsp
+      name: soy sauce
+      note: null
+      preparation: dark
+      quantity: '0.50'
+    name: Marinade
+  - ingredient:
+    - measurement: pieces
+      name: dried tangerine peel
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: null
+      name: onions
+      note: null
+      preparation: cut in narrow wedges
+      quantity: '0.24'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: chilies
+      note: null
+      preparation: fresh
+      quantity: '1.00'
+    - measurement: tsp
+      name: szichuan pepper
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: hoisin sauce
+      note: null
+      preparation: null
+      quantity: '1.24'
+    - measurement: tsp
+      name: bean paste
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: soy sauce
+      note: null
+      preparation: light
+      quantity: '0.50'
+    name: Stir fry
+  serves: 2
 source: ''
 tags: []
 title: Beef with tangerine peel

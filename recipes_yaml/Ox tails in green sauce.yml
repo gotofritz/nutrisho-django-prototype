@@ -1,75 +1,87 @@
 cuisine: .italia.cremona
 description: Knuckles or similar would also work well
 directions:
-    step:
-    - Sautè stock ingredients for 3/4 mins in oil and butter, on high.
-    - Add enough water to cover everything and 2 cm more, season, and cook 2 hrs normal
-        pot / 30 mins in pressure cooker to make stock.
-    - Pressure cook the beans in water for 30 mins, then discard the water.
-    - Mix all the sauce ingredients in a food processor, season, and whiz to a sauce.
-    - Strain the stock. Discard the vegetables, and store the stock for another dish
-        (e.g., Phô)
-    - Tear the meat from the bone, in long strands if you can.
-    - Mix beans and meat, dress with oil, salt, pepper and vinegar
-    - Spread the sauce on a plate, add the meat mixture over it, and garnish with
-        chopped spring onions
+  step:
+  - Sautè stock ingredients for 3/4 mins in oil and butter, on high.
+  - Add enough water to cover everything and 2 cm more, season, and cook 2 hrs normal
+    pot / 30 mins in pressure cooker to make stock.
+  - Pressure cook the beans in water for 30 mins, then discard the water.
+  - Mix all the sauce ingredients in a food processor, season, and whiz to a sauce.
+  - Strain the stock. Discard the vegetables, and store the stock for another dish
+    (e.g., Phô)
+  - Tear the meat from the bone, in long strands if you can.
+  - Mix beans and meat, dress with oil, salt, pepper and vinegar
+  - Spread the sauce on a plate, add the meat mixture over it, and garnish with chopped
+    spring onions
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: white beans, dry
-            preparation: or a can cooked
-            quantity: '25.00'
-        name: null
-    -   ingredient:
-        -   measurement: null
-            name: ox tail
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: carrot
-            preparation: null
-            quantity: '0.25'
-        -   measurement: stick
-            name: celery
-            preparation: null
-            quantity: '0.12'
-        -   measurement: null
-            name: onion
-            preparation: null
-            quantity: '0.25'
-        -   measurement: leav
-            name: bay
-            preparation: null
-            quantity: '0.25'
-        name: Stock
-    -   ingredient:
-        -   measurement: handful
-            name: parsley
-            preparation: null
-            quantity: '0.25'
-        -   measurement: clove
-            name: garlic
-            preparation: null
-            quantity: '0.25'
-        -   measurement: fillet
-            name: anchovy
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: oil, olive
-            preparation: null
-            quantity: '0.38'
-        -   measurement: tbsp
-            name: vinegar
-            preparation: null
-            quantity: '0.38'
-        -   measurement: null
-            name: egg
-            preparation: hard boiled
-            quantity: '0.25'
-        name: Sauce
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: white beans, dry
+      note: null
+      preparation: or a can cooked
+      quantity: '100.00'
+    name: null
+  - ingredient:
+    - measurement: null
+      name: ox tail
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: carrot
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: stick
+      name: celery
+      note: null
+      preparation: null
+      quantity: '0.48'
+    - measurement: null
+      name: onion
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: leav
+      name: bay
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Stock
+  - ingredient:
+    - measurement: handful
+      name: parsley
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: fillet
+      name: anchovy
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: oil, olive
+      note: null
+      preparation: null
+      quantity: '1.52'
+    - measurement: tbsp
+      name: vinegar
+      note: null
+      preparation: null
+      quantity: '1.52'
+    - measurement: null
+      name: egg
+      note: null
+      preparation: hard boiled
+      quantity: '1.00'
+    name: Sauce
+  serves: 4
 source: Ricette Osterie D'Italia
 tags: []
 title: Ox tails in green sauce

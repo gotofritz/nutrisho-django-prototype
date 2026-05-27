@@ -1,68 +1,80 @@
 cuisine: .fusion.middle east
 description: null
 directions:
-    step:
-    - Cook the chickpeas for an hour or two with some onion and garlic, then drain
-        and discard the vegetable
-    - Mix the salad ingredients in a bowl, then spread on a paper lined baking tray
-        and bake 15-25 mins at 220°
-    - Mix the dressing ingredients in a bowl, thinning with water as required.
-    - Put the baked ingredients in a bowl, season, and pour the dressing on top
+  step:
+  - Cook the chickpeas for an hour or two with some onion and garlic, then drain and
+    discard the vegetable
+  - Mix the salad ingredients in a bowl, then spread on a paper lined baking tray
+    and bake 15-25 mins at 220°
+  - Mix the dressing ingredients in a bowl, thinning with water as required.
+  - Put the baked ingredients in a bowl, season, and pour the dressing on top
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: chickpeas, dried
-            preparation: soaked overnigh
-            quantity: '62.50'
-        -   measurement: clove
-            name: garlic
-            preparation: crushed
-            quantity: '0.25'
-        -   measurement: null
-            name: onion
-            preparation: chopped finely
-            quantity: '0.12'
-        -   measurement: tbsp
-            name: coriander leaves
-            preparation: chopped
-            quantity: '1.00'
-        -   measurement: g
-            name: pumpkin
-            preparation: cubed, 3cm, prepared weight
-            quantity: '200.00'
-        -   measurement: tsp
-            name: allspice
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.50'
-        name: Salad
-    -   ingredient:
-        -   measurement: clove
-            name: garlic
-            preparation: crushed into a paste with salt
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: lemon juice
-            preparation: null
-            quantity: '0.88'
-        -   measurement: tbsp
-            name: tahini
-            preparation: null
-            quantity: '0.75'
-        -   measurement: tbsp
-            name: water
-            preparation: null
-            quantity: '0.75'
-        -   measurement: tbsp
-            name: oil, olive
-            preparation: null
-            quantity: '0.50'
-        name: Dressing
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: chickpeas, dried
+      note: null
+      preparation: soaked overnigh
+      quantity: '125.00'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: crushed
+      quantity: '0.50'
+    - measurement: null
+      name: onion
+      note: null
+      preparation: chopped finely
+      quantity: '0.24'
+    - measurement: tbsp
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '2.00'
+    - measurement: g
+      name: pumpkin
+      note: null
+      preparation: cubed, 3cm, prepared weight
+      quantity: '400.00'
+    - measurement: tsp
+      name: allspice
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Salad
+  - ingredient:
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: crushed into a paste with salt
+      quantity: '0.50'
+    - measurement: tbsp
+      name: lemon juice
+      note: null
+      preparation: null
+      quantity: '1.76'
+    - measurement: tbsp
+      name: tahini
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: tbsp
+      name: water
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: tbsp
+      name: oil, olive
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Dressing
+  serves: 2
 source: Moro
 tags:
 - salad

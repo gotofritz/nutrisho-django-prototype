@@ -1,58 +1,67 @@
 cuisine: .iranian
 description: Kuku is an Iranian omelette. Barberries (zeresh) are extremely sharp
-    berries, and can be replaced with lemon juice.
+  berries, and can be replaced with lemon juice.
 directions:
-    step:
-    - Sauté the onion on medium low until soft
-    - Add the aubergines and cook for another 10 mins, then cool
-    - Beat together the egg mix, season, and when smooth add the aubergines and barberries
-        or lemon juice
-    - Bake in a greased 22 cm sponge cake tin, lined with greasedproof paper, for
-        30-40 mins at 190°
-    - Serve warm or cold. Keeps for two days in the fridge
+  step:
+  - Sauté the onion on medium low until soft
+  - Add the aubergines and cook for another 10 mins, then cool
+  - Beat together the egg mix, season, and when smooth add the aubergines and barberries
+    or lemon juice
+  - Bake in a greased 22 cm sponge cake tin, lined with greasedproof paper, for 30-40
+    mins at 190°
+  - Serve warm or cold. Keeps for two days in the fridge
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: onions
-            preparation: peeled
-            quantity: '0.75'
-        -   measurement: null
-            name: aubergines
-            preparation: cut into 1cm long spears
-            quantity: '0.75'
-        -   measurement: g
-            name: barberries
-            preparation: or 1 tbsp lemon juice
-            quantity: '5.00'
-        name: Fillin
-    -   ingredient:
-        -   measurement: null
-            name: eggs
-            preparation: null
-            quantity: '1.25'
-        -   measurement: tbsp
-            name: flour
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: baking powder
-            preparation: null
-            quantity: '0.38'
-        -   measurement: g
-            name: parsely
-            preparation: chopped
-            quantity: '6.25'
-        -   measurement: tsp
-            name: saffron
-            preparation: dissolved into 1 tbps hot water
-            quantity: '0.25'
-        -   measurement: cloves
-            name: garlic
-            preparation: peeled and crushed
-            quantity: '0.75'
-        name: Egg mix
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: onions
+      note: null
+      preparation: peeled
+      quantity: '1.50'
+    - measurement: null
+      name: aubergines
+      note: null
+      preparation: cut into 1cm long spears
+      quantity: '1.50'
+    - measurement: g
+      name: barberries
+      note: null
+      preparation: or 1 tbsp lemon juice
+      quantity: '10.00'
+    name: Fillin
+  - ingredient:
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: null
+      quantity: '2.50'
+    - measurement: tbsp
+      name: flour
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: baking powder
+      note: null
+      preparation: null
+      quantity: '0.76'
+    - measurement: g
+      name: parsely
+      note: null
+      preparation: chopped
+      quantity: '12.50'
+    - measurement: tsp
+      name: saffron
+      note: null
+      preparation: dissolved into 1 tbps hot water
+      quantity: '0.50'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: peeled and crushed
+      quantity: '1.50'
+    name: Egg mix
+  serves: 2
 source: Ottolenghi
 tags: []
 title: Aubergine Omelette

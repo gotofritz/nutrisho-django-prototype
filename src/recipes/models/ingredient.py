@@ -33,7 +33,7 @@ class Ingredient(models.Model):
         "vegetarian etc", choices=CONSTRAINT_CHOICES, blank=True, max_length=32
     )
     family = models.CharField(
-        "Anything that will let you find the source: ISDN, url...",
+        "Broad ingredient category (vegetable, spice, ...)",
         max_length=32,
         choices=GROUP_CHOICES,
         blank=True,

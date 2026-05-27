@@ -1,0 +1,33 @@
+<form
+  hx-post="{% url 'recipes:metadata_edit' recipe.id %}"
+  hx-target="#metadata-panel"
+  hx-swap="innerHTML"
+>
+  {% csrf_token %}
+  {% for field in form %}
+    {% if field.name == "cuisine_name" %}
+    <p>
+      {{ field.label_tag }}
+      <input
+        type="text"
+        id="{{ field.id_for_label }}"
+        name="{{ field.html_name }}"
+        value="{{ field.value|default:'' }}"
+        list="cuisines-datalist"
+        autocomplete="off"
+      >
+      <datalist id="cuisines-datalist">
+        {% for name in all_cuisines %}<option value="{{ name }}">{% endfor %}
+      </datalist>
+      {{ field.errors }}
+    </p>
+    {% else %}
+    <p>{{ field.label_tag }} {{ field }}{{ field.errors }}</p>
+    {% endif %}
+  {% endfor %}
+  <button type="submit">Save</button>
+  <button
+    type="button"
+    onclick="document.getElementById('metadata-panel').innerHTML=''"
+  >Cancel</button>
+</form>

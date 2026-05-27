@@ -1,48 +1,55 @@
 cuisine: .french
 description: Classic French steak sauce
 directions:
-    step:
-    - Sauté the shallots on high for 3 mins, stirring, and season.
-    - Add garlic and rosemary, 3 more minutes
-    - Pour in vinegar and cook until syrupy
-    - Pour in wine until reduced by two thirds
-    - Add stock and bring to boil, then lower heat and reduce by two thirds to around
-        250 ml
-    - Season, remove garlic and rosemary, and whisky in a knob of butter
-    - Add steak juices before serving and pour over steak
+  step:
+  - Sauté the shallots on high for 3 mins, stirring, and season.
+  - Add garlic and rosemary, 3 more minutes
+  - Pour in vinegar and cook until syrupy
+  - Pour in wine until reduced by two thirds
+  - Add stock and bring to boil, then lower heat and reduce by two thirds to around
+    250 ml
+  - Season, remove garlic and rosemary, and whisky in a knob of butter
+  - Add steak juices before serving and pour over steak
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: shallots
-            preparation: sliced
-            quantity: '62.50'
-        -   measurement: tbsp
-            name: oil, olive
-            preparation: null
-            quantity: '1.00'
-        -   measurement: clove
-            name: garlic
-            preparation: lightly crushed
-            quantity: '0.25'
-        -   measurement: spring
-            name: rosemary
-            preparation: null
-            quantity: '0.25'
-        -   measurement: ml
-            name: red wine
-            preparation: null
-            quantity: '100.00'
-        -   measurement: ml
-            name: stock
-            preparation: null
-            quantity: '100.00'
-        -   measurement: knob
-            name: butter
-            preparation: null
-            quantity: '0.25'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: shallots
+      note: null
+      preparation: sliced
+      quantity: '125.00'
+    - measurement: tbsp
+      name: oil, olive
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: lightly crushed
+      quantity: '0.50'
+    - measurement: spring
+      name: rosemary
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: ml
+      name: red wine
+      note: null
+      preparation: null
+      quantity: '200.00'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: null
+      quantity: '200.00'
+    - measurement: knob
+      name: butter
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: null
+  serves: 2
 source: Gordon Ramsay
 tags: []
 title: Shallot and Red Wine Sauce

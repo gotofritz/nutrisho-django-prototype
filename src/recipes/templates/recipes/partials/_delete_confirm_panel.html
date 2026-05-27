@@ -1,0 +1,9 @@
+<p>Delete <strong>{{ recipe.recipe_name }}</strong>? This cannot be undone.</p>
+<button
+  type="button"
+  onclick="document.getElementById('delete-panel').innerHTML=''"
+>Cancel</button>
+<button
+  hx-post="{% url 'recipes:delete' recipe.id %}"
+  hx-on::after-request="if(event.detail.successful) window.location='{{ next_url }}'"
+>Confirm delete</button>

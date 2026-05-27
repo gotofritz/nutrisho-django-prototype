@@ -1,55 +1,62 @@
 cuisine: .america
 description: null
 directions:
-    step:
-    - Mix the sugar, egg yolks, oil, milk and lemon juice and zest together
-    - Sieve the flour into it
-    - Whisk the egg whites until stiff and fold into the cake mixture
-    - Stir in the redcurrants
-    - drop the mixture into greased bun or muffin tins
-    - Bake for 15-20 minutes at 180°
-    - Cool on a wire rack, then dollop on a teaspoonful of creme fraiche and a few
-        redcurrants
-    - Dust the cakes with icing sugar before serving
+  step:
+  - Mix the sugar, egg yolks, oil, milk and lemon juice and zest together
+  - Sieve the flour into it
+  - Whisk the egg whites until stiff and fold into the cake mixture
+  - Stir in the redcurrants
+  - drop the mixture into greased bun or muffin tins
+  - Bake for 15-20 minutes at 180°
+  - Cool on a wire rack, then dollop on a teaspoonful of creme fraiche and a few redcurrants
+  - Dust the cakes with icing sugar before serving
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '35.00'
-        -   measurement: null
-            name: eggs
-            preparation: separated
-            quantity: '0.50'
-        -   measurement: ml
-            name: veg oil
-            preparation: null
-            quantity: '30.00'
-        -   measurement: ml
-            name: milk
-            preparation: null
-            quantity: '22.50'
-        -   measurement: null
-            name: lemon
-            preparation: zested and juiced
-            quantity: '0.12'
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '42.50'
-        name: Muffin
-    -   ingredient:
-        -   measurement: dollops
-            name: crème fraîche
-            preparation: or quark
-            quantity: '2.50'
-        -   measurement: null
-            name: icing sugar
-            preparation: null
-            quantity: null
-        name: Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '140.00'
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: separated
+      quantity: '2.00'
+    - measurement: ml
+      name: veg oil
+      note: null
+      preparation: null
+      quantity: '120.00'
+    - measurement: ml
+      name: milk
+      note: null
+      preparation: null
+      quantity: '90.00'
+    - measurement: null
+      name: lemon
+      note: null
+      preparation: zested and juiced
+      quantity: '0.48'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '170.00'
+    name: Muffin
+  - ingredient:
+    - measurement: dollops
+      name: crème fraîche
+      note: null
+      preparation: or quark
+      quantity: '10.00'
+    - measurement: null
+      name: icing sugar
+      note: null
+      preparation: null
+      quantity: null
+    name: Garnish
+  serves: 4
 source: ''
 tags: []
 title: Redcurrant muffin

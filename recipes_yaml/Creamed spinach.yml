@@ -1,33 +1,36 @@
 cuisine: null
 description: Creamed spinach is a delicious and comforting accompaniment to a piece
-    of simply grilled meat.
+  of simply grilled meat.
 directions:
-    step:
-    - Bring a pan of salted water to the boil and cook the spinach for 2-3 minutes
-        until tender then drain in a colander, refresh under a cold tap and squeeze
-        out any excess water.
-    - Blend in a food processor - as smooth or as coarse as you wish. You can get
-        the spinach to this stage in advance, then finish it at the last minute.
-    - Simmer the cream in a saucepan until it's reduced by about half, then stir in
-        the spinach, season and cook on a low heat for a minute or so, stirring every
-        so often until the spinach is hot. Serve immediately.
+  step:
+  - Bring a pan of salted water to the boil and cook the spinach for 2-3 minutes until
+    tender then drain in a colander, refresh under a cold tap and squeeze out any
+    excess water.
+  - Blend in a food processor - as smooth or as coarse as you wish. You can get the
+    spinach to this stage in advance, then finish it at the last minute.
+  - Simmer the cream in a saucepan until it's reduced by about half, then stir in
+    the spinach, season and cook on a low heat for a minute or so, stirring every
+    so often until the spinach is hot. Serve immediately.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: spinach
-            preparation: thick stalks removed and washed
-            quantity: '125.00'
-        -   measurement: ml
-            name: double cream
-            preparation: null
-            quantity: '37.50'
-        -   measurement: null
-            name: Salt and freshly ground black pepper
-            preparation: null
-            quantity: null
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: spinach
+      note: null
+      preparation: thick stalks removed and washed
+      quantity: '250.00'
+    - measurement: ml
+      name: double cream
+      note: null
+      preparation: null
+      quantity: '75.00'
+    - measurement: null
+      name: Salt and freshly ground black pepper
+      note: null
+      preparation: null
+      quantity: null
+    name: null
+  serves: 2
 source: ''
 tags: []
 title: Creamed spinach

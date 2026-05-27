@@ -1,54 +1,62 @@
 cuisine: null
 description: I've been a big fan of bread pudding since I was a kid. It was commonly
-    found in local bakers and in my gran's larder.
+  found in local bakers and in my gran's larder.
 directions:
-    step:
-    - Bring milk, cream, sugar, vanilla pod cut lengthways and seeds scraped to boil
-    - Switch off heat and let cool
-    - Butter the bread, and stack into oven dish
-    - Beat the eggs and add them to milk mixture.
-    - Pour milk mixture over bread in oven dish. Put dish in fridge overnight
-    - Put little chocolate chips or sultanas into the pudding
-    - Put oven dish into large baking tray. Fill baking tray with hot water, to make
-        a bain maire
-    - Bake 40 mins at 175°
+  step:
+  - Bring milk, cream, sugar, vanilla pod cut lengthways and seeds scraped to boil
+  - Switch off heat and let cool
+  - Butter the bread, and stack into oven dish
+  - Beat the eggs and add them to milk mixture.
+  - Pour milk mixture over bread in oven dish. Put dish in fridge overnight
+  - Put little chocolate chips or sultanas into the pudding
+  - Put oven dish into large baking tray. Fill baking tray with hot water, to make
+    a bain maire
+  - Bake 40 mins at 175°
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: ml
-            name: whole milk
-            preparation: null
-            quantity: '75.00'
-        -   measurement: ml
-            name: double cream
-            preparation: null
-            quantity: '25.00'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '50.00'
-        -   measurement: pods
-            name: vanilla
-            preparation: null
-            quantity: '0.12'
-        -   measurement: g
-            name: white bread
-            preparation: sliced, crust removed, slightly toasted
-            quantity: '75.00'
-        -   measurement: null
-            name: eggs
-            preparation: beaten
-            quantity: '1.00'
-        -   measurement: g
-            name: dark chocolate
-            preparation: OPTIONAL chips
-            quantity: '37.50'
-        -   measurement: g
-            name: sultanas
-            preparation: null
-            quantity: '12.50'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: ml
+      name: whole milk
+      note: null
+      preparation: null
+      quantity: '300.00'
+    - measurement: ml
+      name: double cream
+      note: null
+      preparation: null
+      quantity: '100.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '200.00'
+    - measurement: pods
+      name: vanilla
+      note: null
+      preparation: null
+      quantity: '0.48'
+    - measurement: g
+      name: white bread
+      note: null
+      preparation: sliced, crust removed, slightly toasted
+      quantity: '300.00'
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: beaten
+      quantity: '4.00'
+    - measurement: g
+      name: dark chocolate
+      note: null
+      preparation: OPTIONAL chips
+      quantity: '150.00'
+    - measurement: g
+      name: sultanas
+      note: null
+      preparation: null
+      quantity: '50.00'
+    name: null
+  serves: 4
 source: Mark Hix http://www.independent.co.uk/life-style/food-and-drink/recipes/bread-pudding-829822.html
 tags: []
 title: Bread pudding

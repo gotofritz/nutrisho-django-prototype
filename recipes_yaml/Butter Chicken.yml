@@ -2,107 +2,130 @@ cuisine: .asia.india
 description: Classic dish
 directions:
   step:
-    - Mix all the marinade ingredients in a small blender, mix the chicken with it, and refrigerate 2hrs to overnight
-    - Set the broiler / grill to 180° C
-    - Blend the spices in spice mill or pestle and mortar, set aside
-    - Process the aromatic ingredients except the onion in the same spice mill, set aside
-    - Sauté the onion in a mixture of veg oil and butter for 6mins
-    - Add the aromatics mix for 2mins, then remove from heat
-    - Add the spices and mix well, then add the tomatoes, mix again, and put back on the stove
-    - Season with salt and cook on medium heat
-    - Layer the chicken pieces on tray and put under the broiler/grill for 7mins, then turn them and grill another 8 mins
-    - Add the butter and cream to the sauce and blend it all with an immersion blender.
-    - Mix in the chicken pieces and cook a couple more minutes
+  - Mix all the marinade ingredients in a small blender, mix the chicken with it,
+    and refrigerate 2hrs to overnight
+  - Set the broiler / grill to 180° C
+  - Blend the spices in spice mill or pestle and mortar, set aside
+  - Process the aromatic ingredients except the onion in the same spice mill, set
+    aside
+  - Sauté the onion in a mixture of veg oil and butter for 6mins
+  - Add the aromatics mix for 2mins, then remove from heat
+  - Add the spices and mix well, then add the tomatoes, mix again, and put back on
+    the stove
+  - Season with salt and cook on medium heat
+  - Layer the chicken pieces on tray and put under the broiler/grill for 7mins, then
+    turn them and grill another 8 mins
+  - Add the butter and cream to the sauce and blend it all with an immersion blender.
+  - Mix in the chicken pieces and cook a couple more minutes
 ingredients:
   group:
-    - ingredient:
-        - measurement: g
-          name: chicken breast
-          preparation: cut in nuggets
-          quantity: "400"
-      name: Chicken
-    - ingredient:
-        - measurement: tbsp
-          name: fenugreek leaves
-          preparation: null
-          quantity: "1"
-        - measurement: ml
-          name: yogurt
-          preparation: null
-          quantity: "30"
-        - measurement: tbsp
-          name: garam masala
-          preparation: null
-          quantity: "1"
-        - measurement: tsp
-          name: salt
-          preparation: null
-          quantity: "2"
-        - measurement: g
-          name: ginger
-          preparation: grated
-          quantity: "10"
-      name: Marinade
-    - ingredient:
-        - measurement: tbsp
-          name: fenugreek leaves
-          preparation: null
-          quantity: "1"
-        - measurement: null
-          name: dried chilli
-          preparation: "!KIDS ALERT"
-          quantity: "2"
-        - measurement: null
-          name: clove
-          preparation: null
-          quantity: "1"
-        - measurement: "tsp"
-          name: cardamom
-          preparation: (seeds only)
-          quantity: "1"
-        - measurement: "tsp"
-          name: garam masala
-          preparation: null
-          quantity: "1"
-        - measurement: "tsp"
-          name: salt
-          preparation: null
-          quantity: "1"
-      name: Spices
-    - ingredient:
-        - measurement: null
-          name: Cashew Nuts
-          preparation: null
-          quantity: "8"
-        - measurement: g
-          name: Ginger
-          preparation: peeled
-          quantity: "10"
-        - measurement: cloves
-          name: garlic
-          preparation: peeled
-          quantity: "2"
-        - measurement: medium
-          name: onion
-          preparation: sliced
-          quantity: "1"
-      name: Aromatics
-    - ingredient:
-        - measurement: can
-          name: peeled tomatoes
-          preparation: null
-          quantity: "1"
-        - measurement: ml
-          name: cream
-          preparation: null
-          quantity: "60"
-        - measurement: g
-          name: butter
-          preparation: null
-          quantity: "30"
-      name: Sauce
+  - ingredient:
+    - measurement: g
+      name: chicken breast
+      note: null
+      preparation: cut in nuggets
+      quantity: '400.00'
+    name: Chicken
+  - ingredient:
+    - measurement: tbsp
+      name: fenugreek leaves
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: ml
+      name: yogurt
+      note: null
+      preparation: null
+      quantity: '30.00'
+    - measurement: tbsp
+      name: garam masala
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: g
+      name: ginger
+      note: null
+      preparation: grated
+      quantity: '10.00'
+    name: Marinade
+  - ingredient:
+    - measurement: tbsp
+      name: fenugreek leaves
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: dried chilli
+      note: null
+      preparation: '!KIDS ALERT'
+      quantity: '2.00'
+    - measurement: null
+      name: clove
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: cardamom
+      note: null
+      preparation: (seeds only)
+      quantity: '1.00'
+    - measurement: tsp
+      name: garam masala
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Spices
+  - ingredient:
+    - measurement: null
+      name: Cashew Nuts
+      note: null
+      preparation: null
+      quantity: '8.00'
+    - measurement: g
+      name: Ginger
+      note: null
+      preparation: peeled
+      quantity: '10.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: peeled
+      quantity: '2.00'
+    - measurement: medium
+      name: onion
+      note: null
+      preparation: sliced
+      quantity: '1.00'
+    name: Aromatics
+  - ingredient:
+    - measurement: can
+      name: peeled tomatoes
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: ml
+      name: cream
+      note: null
+      preparation: null
+      quantity: '60.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '30.00'
+    name: Sauce
   serves: 4
 source: various
 tags:
-  - curry
-title: Sauna Chicken
+- curry
+title: Butter Chicken

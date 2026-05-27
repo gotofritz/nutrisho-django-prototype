@@ -1,0 +1,25 @@
+{% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+<form
+  hx-post="{% url 'recipes:scale' recipe.id %}"
+  hx-target="#scale-panel"
+  hx-swap="innerHTML"
+>
+  {% csrf_token %}
+  <label for="id_multiplier">Multiply by:</label>
+  <input
+    type="number"
+    id="id_multiplier"
+    name="multiplier"
+    min="0"
+    step="any"
+    value="1"
+    style="width: 5em"
+  />
+  <button type="submit">Multiply</button>
+  <button
+    type="button"
+    onclick="document.getElementById('scale-panel').innerHTML = ''"
+  >
+    Cancel
+  </button>
+</form>

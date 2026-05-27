@@ -1,60 +1,71 @@
 cuisine: null
 description: A great veg starter, but also a great side dish with roast chicken, lamb
-    or sausages. Serves four as a side dish.
+  or sausages. Serves four as a side dish.
 directions:
-    step:
-    - Preheat the oven to 180C/350F/gas mark 4. To make the dukka, warm the cumin
-        and coriander in a small pan over a medium heat until they just begin to release
-        their fragrance, then bash using a pestle and mortar until broken up but not
-        too fine. Put the sesame seeds into the spice pan and warm until just golden.
-        Add these to the spice mix, along with the hazelnuts, chilli and salt. Bash
-        again until the nuts are broken up into small pieces, then stir in the mint.
-    - Peel the squash, cut it into thick wedges and remove the fibres and seeds. Tip
-        the squash into a bowl with the olive oil and toss until well covered. Add
-        three to four tablespoons of dukka and toss again. Tip into a roasting tin
-        and bake for 35-45 minutes, until soft and fragrant. Just before serving,
-        sprinkle over a little more of the dukka.
+  step:
+  - Preheat the oven to 180C/350F/gas mark 4. To make the dukka, warm the cumin and
+    coriander in a small pan over a medium heat until they just begin to release their
+    fragrance, then bash using a pestle and mortar until broken up but not too fine.
+    Put the sesame seeds into the spice pan and warm until just golden. Add these
+    to the spice mix, along with the hazelnuts, chilli and salt. Bash again until
+    the nuts are broken up into small pieces, then stir in the mint.
+  - Peel the squash, cut it into thick wedges and remove the fibres and seeds. Tip
+    the squash into a bowl with the olive oil and toss until well covered. Add three
+    to four tablespoons of dukka and toss again. Tip into a roasting tin and bake
+    for 35-45 minutes, until soft and fragrant. Just before serving, sprinkle over
+    a little more of the dukka.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: Tbsp
-            name: cumin seeds
-            preparation: null
-            quantity: '0.12'
-        -   measurement: Tbsp
-            name: coriander seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: sesame seeds
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: A handful of hazelnuts
-            preparation: toasted
-            quantity: null
-        -   measurement: tsp
-            name: chilli flakes
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tsp
-            name: sea salt
-            preparation: null
-            quantity: '0.12'
-        -   measurement: small
-            name: handful fresh mint leaves
-            preparation: finely shredded
-            quantity: '0.25'
-        -   measurement: kg
-            name: butternut
-            preparation: acorn or crown prince squash
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.75'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: kg
+      name: butternut
+      note: null
+      preparation: acorn or crown prince squash
+      quantity: '0.50'
+    - measurement: Tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '1.50'
+    name: Main Ingredients
+  - ingredient:
+    - measurement: Tbsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: Tbsp
+      name: coriander seeds
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: Tbsp
+      name: sesame seeds
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: A handful of hazelnuts
+      note: null
+      preparation: toasted
+      quantity: null
+    - measurement: tsp
+      name: chilli flakes
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tsp
+      name: sea salt
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: small
+      name: handful fresh mint leaves
+      note: null
+      preparation: finely shredded
+      quantity: '0.50'
+    name: Dukka
+  serves: 2
 source: ''
 tags: []
 title: Baked acorn squash with dukka

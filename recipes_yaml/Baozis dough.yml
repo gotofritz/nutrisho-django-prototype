@@ -1,29 +1,32 @@
 cuisine: .chinese
 description: Jiaozi
 directions:
-    step:
-    - sift together flour and baking powder
-    - spring the water in a bit a the time, while kneading, until you got a rubbery
-        dough
-    - cover with a damp cloth and rest 30 mins
-    - break into 2.5cm balls
+  step:
+  - sift together flour and baking powder
+  - spring the water in a bit a the time, while kneading, until you got a rubbery
+    dough
+  - cover with a damp cloth and rest 30 mins
+  - break into 2.5cm balls
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '78.75'
-        -   measurement: Tbsp
-            name: baking powder
-            preparation: null
-            quantity: '0.25'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '37.50'
-        name: Dough
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '160.00'
+    - measurement: Tbsp
+      name: baking powder
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '75.00'
+    name: Dough
+  serves: 2
 source: ''
 tags:
 - dough

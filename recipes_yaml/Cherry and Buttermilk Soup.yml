@@ -1,41 +1,46 @@
 cuisine: .polish
-description: Cherry and Buttermilk Soup
+description: null
 directions:
-    step:
-    - Place the cherries in a pot with the cinnamon bark and water. Bring the cherries
-        to a simmer and cook them for 5 minutes or until they are soft and starting
-        to fall apart. Remove from the heat and set aside to cool completely.
-    - Remove the cinnamon bark and discard. Place the cooked cherry mixture in a blender
-        or food processor and puree until smooth. Tip the mixture into a bowl and
-        whisk in the 300 mls of cold buttermilk.
-    - Place the mixture in the fridge and chill well.
-    - Ladle the soup into 4 bowls and top each with a small dollop of creme fraiche.
-        Serve immediately.
+  step:
+  - Place the cherries in a pot with the cinnamon bark and water. Bring the cherries
+    to a simmer and cook them for 5 minutes or until they are soft and starting to
+    fall apart. Remove from the heat and set aside to cool completely.
+  - Remove the cinnamon bark and discard. Place the cooked cherry mixture in a blender
+    or food processor and puree until smooth. Tip the mixture into a bowl and whisk
+    in the 300 mls of cold buttermilk.
+  - Place the mixture in the fridge and chill well.
+  - Ladle the soup into 4 bowls and top each with a small dollop of creme fraiche.
+    Serve immediately.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: kg
-            name: cherries
-            preparation: pitted
-            quantity: '0.25'
-        -   measurement: cm
-            name: cinnamon
-            preparation: null
-            quantity: '1.25'
-        -   measurement: ml
-            name: water
-            preparation: cold
-            quantity: '50.00'
-        -   measurement: ml
-            name: buttermilk
-            preparation: null
-            quantity: '75.00'
-        -   measurement: null
-            name: creme fraiche for serving
-            preparation: null
-            quantity: null
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: kg
+      name: cherries
+      note: null
+      preparation: pitted
+      quantity: '0.50'
+    - measurement: cm
+      name: cinnamon
+      note: null
+      preparation: null
+      quantity: '2.50'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: cold
+      quantity: '100.00'
+    - measurement: ml
+      name: buttermilk
+      note: null
+      preparation: null
+      quantity: '150.00'
+    - measurement: null
+      name: creme fraiche for serving
+      note: null
+      preparation: null
+      quantity: null
+    name: null
+  serves: 2
 source: ''
 tags: []
 title: Cherry and Buttermilk Soup

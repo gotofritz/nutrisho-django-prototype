@@ -1,76 +1,88 @@
 cuisine: .turkish
 description: This recipe is a great recipe for anyone wanting to improve their sense
-    of tasting, balancing and adjusting flavours. The final step of tasting and adjusting
-    the salt, pepper, chili, lemon and olive oil and teasing out the flavours of the
-    herbs and tomato is a great exercise in learning to season.
+  of tasting, balancing and adjusting flavours. The final step of tasting and adjusting
+  the salt, pepper, chili, lemon and olive oil and teasing out the flavours of the
+  herbs and tomato is a great exercise in learning to season.
 directions:
-    step:
-    - Place the beans and water in a large soup pot and bring to a boil. Add the tomatoes,
-        herbs, garlic, chili flakes, olive oil and pepper and reduce to a gentle simmer.
-        Simmer uncovered for an hour or until the beans are tender, crushing the tomatoes
-        halfway through the cooking time with a wooden spoon to encourage them to
-        disintegrate into the beans.
-    - When the beans are tender, crush the garlic cloves so that they melt into the
-        beans. Increase the heat and simmer the beans until nearly all the water has
-        evaporated and the beans have only a thick coating of sauce on them. Switch
-        off the heat and allow to cool slightly.
-    - Add the lemon juice, salt and olive oil and taste. The beans should taste peppery,
-        spicy, and dense. Adjust the lemon juice, chili, salt, pepper and olive oil
-        until the desired flavour is reached.
-    - Serve warm in shallow bowls with fresh crusty bread.
+  step:
+  - Place the beans and water in a large soup pot and bring to a boil. Add the tomatoes,
+    herbs, garlic, chili flakes, olive oil and pepper and reduce to a gentle simmer.
+    Simmer uncovered for an hour or until the beans are tender, crushing the tomatoes
+    halfway through the cooking time with a wooden spoon to encourage them to disintegrate
+    into the beans.
+  - When the beans are tender, crush the garlic cloves so that they melt into the
+    beans. Increase the heat and simmer the beans until nearly all the water has evaporated
+    and the beans have only a thick coating of sauce on them. Switch off the heat
+    and allow to cool slightly.
+  - Add the lemon juice, salt and olive oil and taste. The beans should taste peppery,
+    spicy, and dense. Adjust the lemon juice, chili, salt, pepper and olive oil until
+    the desired flavour is reached.
+  - Serve warm in shallow bowls with fresh crusty bread.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: kg
-            name: beans
-            preparation: shelling
-            quantity: '0.38'
-        -   measurement: ml
-            name: water
-            preparation: cold
-            quantity: '200.00'
-        -   measurement: null
-            name: tomatoes
-            preparation: large
-            quantity: '0.75'
-        -   measurement: handful
-            name: parsley
-            preparation: finely chopped
-            quantity: '0.25'
-        -   measurement: handful
-            name: thyme
-            preparation: lemon thyme
-            quantity: '0.25'
-        -   measurement: cloves
-            name: garlic
-            preparation: peeled but left whole
-            quantity: '2.50'
-        -   measurement: tsp
-            name: chillies
-            preparation: dried
-            quantity: '0.50'
-        -   measurement: ml
-            name: oil
-            preparation: olive
-            quantity: '18.75'
-        -   measurement: null
-            name: freshly ground black pepper
-            preparation: null
-            quantity: null
-        -   measurement: null
-            name: lemon
-            preparation: juiced
-            quantity: '0.12'
-        -   measurement: tsp
-            name: sea salt
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: a few more tablespoons of olive oil
-            preparation: null
-            quantity: null
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: kg
+      name: beans
+      note: null
+      preparation: shelling
+      quantity: '1.52'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: cold
+      quantity: '800.00'
+    - measurement: null
+      name: tomatoes
+      note: null
+      preparation: large
+      quantity: '3.00'
+    - measurement: handful
+      name: parsley
+      note: null
+      preparation: finely chopped
+      quantity: '1.00'
+    - measurement: handful
+      name: thyme
+      note: null
+      preparation: lemon thyme
+      quantity: '1.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: peeled but left whole
+      quantity: '10.00'
+    - measurement: tsp
+      name: chillies
+      note: null
+      preparation: dried
+      quantity: '2.00'
+    - measurement: ml
+      name: oil
+      note: null
+      preparation: olive
+      quantity: '75.00'
+    - measurement: null
+      name: freshly ground black pepper
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: lemon
+      note: null
+      preparation: juiced
+      quantity: '0.48'
+    - measurement: tsp
+      name: sea salt
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: a few more tablespoons of olive oil
+      note: null
+      preparation: null
+      quantity: null
+    name: null
+  serves: 4
 source: ''
 tags:
 - with bread

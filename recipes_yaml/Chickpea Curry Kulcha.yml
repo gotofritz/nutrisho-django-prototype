@@ -1,0 +1,74 @@
+cuisine: .indian.punjab
+description: Chole Kulcha is an Indian classic. This is the Kulcha part
+directions:
+  step:
+  - Make a dough with all the ingredients and let it rest covered for 2 hours
+  - Mix the stuffing ingredients well, add salt
+  - Divide into small balls, flatten them wide and put a spoonful of stuffin in the
+    middle. Fold doug over stuffing
+  - Sautè briefly then bake 20 mins or so
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '125.00'
+    - measurement: ml
+      name: yoghurt
+      note: null
+      preparation: null
+      quantity: '60.00'
+    - measurement: tsp
+      name: honey
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: baking sode
+      note: null
+      preparation: null
+      quantity: '0.12'
+    - measurement: tsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '0.12'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '6.88'
+    name: Kulcha dough
+  - ingredient:
+    - measurement: null
+      name: potato
+      note: null
+      preparation: boiled
+      quantity: '0.50'
+    - measurement: small
+      name: onion
+      note: null
+      preparation: diced
+      quantity: '0.50'
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: grated
+      quantity: '0.50'
+    - measurement: tsp
+      name: chola mix
+      note: null
+      preparation: null
+      quantity: '0.06'
+    - measurement: tsp
+      name: amchoor
+      note: null
+      preparation: null
+      quantity: '0.12'
+    name: Kulcha stuffing
+  serves: 2
+source: http://imgur.com/a/DLgo9
+tags: []
+title: 'Chickpea Curry: Kulcha'

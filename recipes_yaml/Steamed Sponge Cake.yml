@@ -1,50 +1,58 @@
 cuisine: .chinese
 description: Ma La Gao. A Dim Sum classic
 directions:
-    step:
-    - Combine the initial dough ingredients in blender and mix until smooth
-    - Add the remaining ingredients and finish off
-    - Line a steamer with heavily greased parchment paper, and pour mix inside
-    - Steam for 30 mins over simmering pot, then cool for 5 mins and serve
+  step:
+  - Combine the initial dough ingredients in blender and mix until smooth
+  - Add the remaining ingredients and finish off
+  - Line a steamer with heavily greased parchment paper, and pour mix inside
+  - Steam for 30 mins over simmering pot, then cool for 5 mins and serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '25.00'
-        -   measurement: g
-            name: honey
-            preparation: null
-            quantity: '46.25'
-        -   measurement: null
-            name: egg
-            preparation: null
-            quantity: '1.00'
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '31.25'
-        -   measurement: tsp
-            name: vanilla extract
-            preparation: null
-            quantity: '0.25'
-        name: Initial mix
-    -   ingredient:
-        -   measurement: tsp
-            name: baking powder
-            preparation: null
-            quantity: '0.62'
-        -   measurement: g
-            name: flour
-            preparation: plain
-            quantity: '58.75'
-        -   measurement: ml
-            name: milk
-            preparation: null
-            quantity: '31.25'
-        name: Dough
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '100.00'
+    - measurement: g
+      name: honey
+      note: null
+      preparation: null
+      quantity: '185.00'
+    - measurement: null
+      name: egg
+      note: null
+      preparation: null
+      quantity: '4.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '125.00'
+    - measurement: tsp
+      name: vanilla extract
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Initial mix
+  - ingredient:
+    - measurement: tsp
+      name: baking powder
+      note: null
+      preparation: null
+      quantity: '2.48'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: plain
+      quantity: '235.00'
+    - measurement: ml
+      name: milk
+      note: null
+      preparation: null
+      quantity: '125.00'
+    name: Dough
+  serves: 4
 source: ''
 tags: []
 title: Steamed Sponge Cake

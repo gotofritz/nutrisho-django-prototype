@@ -1,104 +1,45 @@
 {% load static recipe_filters %}
 {% if request.htmx %}<title hx-swap-oob="true">{{ recipe.recipe_name }}</title>{% endif %}
-{% if form %}
-{% include "../navbar.html" with template_name="recipes:edit" %}
-<form action="{% url 'recipes:edit' recipe.id %}" method="post">
-  {% csrf_token %}
-  {% else %}
-  {% include "../navbar.html" with template_name="recipes:recipe" %}
-  {% endif %}
-  <div class="recipe-contents">
-    <div class="recipe-directions">
-      <div class="recipe-title">
-        {% if form %}
-        {{ form.recipe_name }}
-        {% else %}
-        {{ recipe.recipe_name }}
-        {% endif %}
-      </div>
-      <ol>
-        {% if form %}
-        {% for step in form.get_step_fields %}
-        <li>{{ step }}</li>
-        {% endfor %}
-        {% else %}
-        {% for step in recipe.step.all %}
-        <li>{{ step.step_text }}</li>
-        {% endfor %}
-        {% endif %}
-      </ol>
+{% include "../navbar.html" with template_name="recipes:recipe" %}
+<div class="recipe-contents">
+  <div class="recipe-directions">
+    <div id="metadata-panel"></div>
+    <div class="recipe-title">
+      {% include "./_field_display.html" with field_name="recipe_name" value=recipe.recipe_name %}
     </div>
-
-    <div class="sidebar">
-      <nav>
-        {% if form %}
-        {% include "../nav_recipe_edit.html" %}
-        {% else %}
-        {% include "../nav_recipe.html" %}
-        {% endif %}
-      </nav>
-      {% if recipe.servings %}<h3 class="serves">Serves {{ recipe.servings }}</h3>{% endif %}
-      <div class="recipe-ingredients">
-        {% if form %}
-        {% for group_or_ingredient, is_group, is_first_of_ingredients, is_last_of_ingredients in form.get_groups %}
-        {% if is_group %}
-        {% if not forloop.first %}
-      </div>
-      {% endif %}
-      <div class="ingredient-group">
-        <h4 class="group-name">{{ group_or_ingredient }}</h4>
-      </div>
-      <div class="ingredients-list">
-        {% else %}
-        {% if is_first_of_ingredients %}
-        <div class="ingredient-in-group-edit">
-          {% endif %}
-          {{group_or_ingredient}}
-          {% if is_last_of_ingredients %}
-        </div>
-        {% endif %}
-
-        {% endif %}
-        {% endfor %}
-      </div>
-
-      {% else %}
-
-      {% for group in recipe.ingredients_group.all %}
-      <div class="ingredient-group">
-
-        {% if group.group_name %}
-        <h4 class="group-name">{{ group.group_name }}</h4>
-        {% endif %}
-
-        <div class="ingredients-list">
-          {% for ingredient in group.ingredient.all %}
-          <div class="ingredient-in-group-show">
-            <span class="ingredient-quantity">{{ingredient.quantity.normalize|default:""}}</span>
-            <span class="ingredient-unit"> {{ingredient.unit|default:""}}</span>
-            <span class="ingredient-name">{{ingredient.ingredient.ingredient_name}}{% if ingredient.preparation %},
-              {% endif %}</span>
-            <span class="ingredient-preparation">{{ingredient.preparation|default:""}} </span>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-
+    <ol class="recipe-steps" id="steps-list">
+      {% for step in recipe.step.all %}
+      {% include "./_step_display.html" with recipe=recipe step=step %}
       {% endfor %}
+    </ol>
+    <button
+      hx-post="{% url 'recipes:step_add' recipe.id %}"
+      hx-target=".recipe-steps"
+      hx-swap="beforeend"
+      class="btn-add"
+    >+ Add step</button>
+  </div>
 
-      {% endif %}
-
-
+  <div class="sidebar">
+    <nav class="no-print">
+      {% include "../nav_recipe.html" %}
+    </nav>
+    <div id="scale-panel"></div>
+    <div id="delete-panel"></div>
+    <h3 class="serves">Serves {% include "./_field_display.html" with field_name="servings" value=recipe.servings|default:"" %}</h3>
+    <div class="recipe-ingredients">
+      <div id="groups-list">
+        {% include "./_groups_list.html" %}
+      </div>
+      <button
+        hx-post="{% url 'recipes:group_add' recipe.id %}"
+        hx-target="#groups-list"
+        hx-swap="beforeend"
+        class="btn-add"
+      >+ Add group</button>
     </div>
     <div class="recipe-description">
-      {% if form %}
-      {{ form.short_description }}
-      {% else %}
-      {{ recipe.short_description|default:"" }}
-      {% endif %}
+      {% include "./_field_display.html" with field_name="short_description" value=recipe.short_description|default:"" %}
     </div>
   </div>
-  </div>
-  {% if form %}
-</form>
-{% endif %}
+</div>

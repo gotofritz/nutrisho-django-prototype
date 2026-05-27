@@ -11,18 +11,24 @@
 <ul id="recipe-list">
   {% for recipe in latest_recipe_list %}
   <li id="recipe-{{ recipe.id }}" class="recipe-list-item">
-    <a href="{{ recipe.get_absolute_url }}">{{ recipe.recipe_name }}</a>
+    <a href="{% url 'recipes:metadata_edit' recipe.id %}" class="list-btn">Edit metadata</a>
     <button
       hx-post="{% url 'recipes:delete' recipe.id %}"
       hx-target="#recipe-{{ recipe.id }}"
       hx-swap="outerHTML"
       hx-confirm="Delete '{{ recipe.recipe_name }}'?"
-      class="btn-delete"
+      class="list-btn btn-delete"
     >Delete</button>
+    <a href="{{ recipe.get_absolute_url }}" class="list-btn">View</a>
+    <form method="post" action="{% url 'recipes:duplicate' recipe.id %}" style="display:inline">
+      {% csrf_token %}
+      <button type="submit" class="list-btn">Duplicate</button>
+    </form>
+    <a href="{{ recipe.get_absolute_url }}" class="recipe-name">{{ recipe.recipe_name }}</a>
   </li>
   {% endfor %}
 </ul>
 {% else %}
-<p>No recipes are available.</p>
+{% include "./partials/_recipe_list_empty.html" %}
 {% endif %}
 {% endblock %}

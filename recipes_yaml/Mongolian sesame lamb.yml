@@ -1,80 +1,94 @@
 cuisine: .chinese.nw
 description: mengu zhima yangrou
 directions:
-    step:
-    - mix all the marinade ingredients, then mix in the lamb, (2) leave overnight
-        in fridge
-    - stir fry the onion 3 mins, in mixed oils, then remove (4) stir fry marinated
-        lamb, 1m, then remove (5) add stock, cornstartch mix to empty wok, 1m (6)
-        add lamb and onions back in, then pepper (7) serve with sesame seeds and chili
-        on top
+  step:
+  - mix all the marinade ingredients, then mix in the lamb, (2) leave overnight in
+    fridge
+  - stir fry the onion 3 mins, in mixed oils, then remove (4) stir fry marinated lamb,
+    1m, then remove (5) add stock, cornstartch mix to empty wok, 1m (6) add lamb and
+    onions back in, then pepper (7) serve with sesame seeds and chili on top
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: ml
-            name: soy sauce
-            preparation: light
-            quantity: '15.00'
-        -   measurement: Tbsp
-            name: hoisin
-            preparation: null
-            quantity: '0.38'
-        -   measurement: Tbsp
-            name: oil
-            preparation: sesame
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: rice wine
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: cornstarch
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: sugar
-            preparation: icing
-            quantity: '0.38'
-        -   measurement: tsp
-            name: allspice
-            preparation: ground
-            quantity: '0.12'
-        name: Marinade
-    -   ingredient:
-        -   measurement: g
-            name: lamb
-            preparation: lean
-            quantity: '125.00'
-        -   measurement: Tbsp
-            name: sesame seeds
-            preparation: dry roasted in wok
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: oil
-            preparation: null
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: oil
-            preparation: sesame
-            quantity: '0.25'
-        -   measurement: null
-            name: onions
-            preparation: large
-            quantity: '0.25'
-        -   measurement: ml
-            name: lamb stock
-            preparation: or chicken stock or water
-            quantity: '20.00'
-        -   measurement: tsp
-            name: cornstarch
-            preparation: dissolved in 1 tbls water
-            quantity: '0.25'
-        -   measurement: null
-            name: chilies
-            preparation: fresh
-            quantity: '0.75'
-        name: Lamb
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: ml
+      name: soy sauce
+      note: null
+      preparation: light
+      quantity: '30.00'
+    - measurement: Tbsp
+      name: hoisin
+      note: null
+      preparation: null
+      quantity: '0.76'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: sesame
+      quantity: '0.50'
+    - measurement: Tbsp
+      name: rice wine
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: cornstarch
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: sugar
+      note: null
+      preparation: icing
+      quantity: '0.76'
+    - measurement: tsp
+      name: allspice
+      note: null
+      preparation: ground
+      quantity: '0.24'
+    name: Marinade
+  - ingredient:
+    - measurement: g
+      name: lamb
+      note: null
+      preparation: lean
+      quantity: '250.00'
+    - measurement: Tbsp
+      name: sesame seeds
+      note: null
+      preparation: dry roasted in wok
+      quantity: '0.50'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: sesame
+      quantity: '0.50'
+    - measurement: null
+      name: onions
+      note: null
+      preparation: large
+      quantity: '0.50'
+    - measurement: ml
+      name: lamb stock
+      note: null
+      preparation: or chicken stock or water
+      quantity: '40.00'
+    - measurement: tsp
+      name: cornstarch
+      note: null
+      preparation: dissolved in 1 tbls water
+      quantity: '0.50'
+    - measurement: null
+      name: chilies
+      note: null
+      preparation: fresh
+      quantity: '1.50'
+    name: Lamb
+  serves: 2
 source: ''
 tags: []
 title: Mongolian sesame lamb

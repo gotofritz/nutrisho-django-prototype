@@ -1,78 +1,92 @@
 cuisine: .chinese
 description: cong bao niu rao
 directions:
-    step:
-    - marinade beef in bowl at least 20m
-    - in a bowl mix stock, rice wine, soy sauce, cornstartch, sugar
-    - stir fry celery, spring onions, ginger 30 sec the put aside
-    - stir fry meat 1 m
-    - put veg back in, 20 s
-    - pour sauce on top, 30 s
+  step:
+  - marinade beef in bowl at least 20m
+  - in a bowl mix stock, rice wine, soy sauce, cornstartch, sugar
+  - stir fry celery, spring onions, ginger 30 sec the put aside
+  - stir fry meat 1 m
+  - put veg back in, 20 s
+  - pour sauce on top, 30 s
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: beef steak
-            preparation: cut across grain in paper thin slices then 4 cm pieces
-            quantity: '78.75'
-        -   measurement: tsp
-            name: soy sauce
-            preparation: light
-            quantity: '0.50'
-        -   measurement: tsp
-            name: cornstarch
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: bicarbonate
-            preparation: null
-            quantity: '0.06'
-        -   measurement: Tbsp
-            name: water
-            preparation: null
-            quantity: '0.25'
-        name: Meat marinade
-    -   ingredient:
-        -   measurement: null
-            name: celery
-            preparation: thinly sliced on diagonal
-            quantity: '0.50'
-        -   measurement: cup
-            name: oil
-            preparation: null
-            quantity: '0.12'
-        -   measurement: Tbsp
-            name: ginger
-            preparation: peeled
-            quantity: '0.25'
-        -   measurement: null
-            name: spring onions
-            preparation: whole
-            quantity: '0.75'
-        name: Stir Fry
-    -   ingredient:
-        -   measurement: ml
-            name: stock
-            preparation: beef or chicken
-            quantity: '15.00'
-        -   measurement: tsp
-            name: rice wine
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: soy sauce
-            preparation: light
-            quantity: '0.50'
-        -   measurement: tsp
-            name: cornstarch
-            preparation: null
-            quantity: '0.38'
-        -   measurement: tsp
-            name: sugar
-            preparation: null
-            quantity: '0.12'
-        name: Sauce
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: beef steak
+      note: null
+      preparation: cut across grain in paper thin slices then 4 cm pieces
+      quantity: '315.00'
+    - measurement: tsp
+      name: soy sauce
+      note: null
+      preparation: light
+      quantity: '2.00'
+    - measurement: tsp
+      name: cornstarch
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: bicarbonate
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: Tbsp
+      name: water
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Meat marinade
+  - ingredient:
+    - measurement: null
+      name: celery
+      note: null
+      preparation: thinly sliced on diagonal
+      quantity: '2.00'
+    - measurement: cup
+      name: oil
+      note: null
+      preparation: null
+      quantity: '0.48'
+    - measurement: Tbsp
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '1.00'
+    - measurement: null
+      name: spring onions
+      note: null
+      preparation: whole
+      quantity: '3.00'
+    name: Stir Fry
+  - ingredient:
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: beef or chicken
+      quantity: '60.00'
+    - measurement: tsp
+      name: rice wine
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tsp
+      name: soy sauce
+      note: null
+      preparation: light
+      quantity: '2.00'
+    - measurement: tsp
+      name: cornstarch
+      note: null
+      preparation: null
+      quantity: '1.52'
+    - measurement: tsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '0.48'
+    name: Sauce
+  serves: 2
 source: ''
 tags:
 - tofu

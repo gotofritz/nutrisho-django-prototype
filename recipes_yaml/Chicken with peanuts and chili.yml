@@ -1,91 +1,107 @@
 cuisine: .chinese.sichuan
 description: Chengdu Ji
 directions:
-    step:
-    - dice chicken, same size as peanuts
-    - marinade chicken 15 m at least
-    - dice bamboo shots, bell pepper, same size as peanuts, and cut spring onions
-    - deep fry peanuts, 1m then set aside
-    - deep fry chicken, 1m then set aside
-    - remove oil, wipe wok, put 2 tbsp back in
-    - stir fry vegetables, 40 s
-    - add sauces, 10 s
-    - add chicken 30 s
-    - add cornstarch mixture, until thick, 30 s
-    - stir in peanutes (4), salt and pepper nad serve
+  step:
+  - dice chicken, same size as peanuts
+  - marinade chicken 15 m at least
+  - dice bamboo shots, bell pepper, same size as peanuts, and cut spring onions
+  - deep fry peanuts, 1m then set aside
+  - deep fry chicken, 1m then set aside
+  - remove oil, wipe wok, put 2 tbsp back in
+  - stir fry vegetables, 40 s
+  - add sauces, 10 s
+  - add chicken 30 s
+  - add cornstarch mixture, until thick, 30 s
+  - stir in peanutes (4), salt and pepper nad serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: chicken thighs
-            preparation: boneless
-            quantity: '93.75'
-        -   measurement: tsp
-            name: cornstarch
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: rice wine
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: soy sauce
-            preparation: null
-            quantity: '0.25'
-        name: Marinade
-    -   ingredient:
-        -   measurement: tsp
-            name: sichuan peppers
-            preparation: null
-            quantity: '0.06'
-        -   measurement: g
-            name: peanuts
-            preparation: null
-            quantity: '11.25'
-        name: To serve
-    -   ingredient:
-        -   measurement: g
-            name: bamboo shots
-            preparation: null
-            quantity: '18.75'
-        -   measurement: g
-            name: peppers
-            preparation: null
-            quantity: '11.25'
-        -   measurement: null
-            name: spring onions
-            preparation: whole
-            quantity: '0.50'
-        -   measurement: null
-            name: fresh chili
-            preparation: deseeded
-            quantity: '0.25'
-        -   measurement: tsp
-            name: ginger
-            preparation: peeled
-            quantity: '0.50'
-        -   measurement: tsp
-            name: garlic cloves
-            preparation: chopped
-            quantity: '0.50'
-        -   measurement: tsp
-            name: chili bean sauce
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: sugat
-            preparation: null
-            quantity: '0.38'
-        -   measurement: tsp
-            name: cornstarch
-            preparation: dissolbed in 4 tbsp stock
-            quantity: '0.50'
-        -   measurement: cup
-            name: oil. frying
-            preparation: null
-            quantity: '0.25'
-        name: Stir fry
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: chicken thighs
+      note: null
+      preparation: boneless
+      quantity: '375.00'
+    - measurement: tsp
+      name: cornstarch
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tsp
+      name: rice wine
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: soy sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Marinade
+  - ingredient:
+    - measurement: tsp
+      name: sichuan peppers
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: g
+      name: peanuts
+      note: null
+      preparation: null
+      quantity: '45.00'
+    name: To serve
+  - ingredient:
+    - measurement: g
+      name: bamboo shots
+      note: null
+      preparation: null
+      quantity: '75.00'
+    - measurement: g
+      name: peppers
+      note: null
+      preparation: null
+      quantity: '45.00'
+    - measurement: null
+      name: spring onions
+      note: null
+      preparation: whole
+      quantity: '2.00'
+    - measurement: null
+      name: fresh chili
+      note: null
+      preparation: deseeded
+      quantity: '1.00'
+    - measurement: tsp
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '2.00'
+    - measurement: tsp
+      name: garlic cloves
+      note: null
+      preparation: chopped
+      quantity: '2.00'
+    - measurement: tsp
+      name: chili bean sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: sugat
+      note: null
+      preparation: null
+      quantity: '1.52'
+    - measurement: tsp
+      name: cornstarch
+      note: null
+      preparation: dissolbed in 4 tbsp stock
+      quantity: '2.00'
+    - measurement: cup
+      name: oil. frying
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Stir fry
+  serves: 2
 source: ''
 tags:
 - savoring china

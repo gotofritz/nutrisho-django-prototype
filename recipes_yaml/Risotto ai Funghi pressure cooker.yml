@@ -1,0 +1,97 @@
+cuisine: .med.italy
+description: North Italian staple, changed for maximum umami. The pork sausage is
+  not traditional, but can add proteins.
+directions:
+  step:
+  - Slice the mushrooms and sauté them in a separate pot in an oil + butter mixture,
+    until the liquid is evaporated, 5-6mins
+  - Add the aromatics to the mushrooms and keep stirring until they are wilted, 3-4mins
+  - Add the risotto rice to the mushrooms and stir fry to toast it, 2mins
+  - If using, add the wine mix to the risotto and mushrooms and stir constantly until
+    evaporated, 3-4m
+  - Add the pressure cooker stock ingredients, close and bring to pressure. Then cook
+    4 mins
+  - Remove from heat, add the mantecatura ingredients and stir carefully but vigorously
+    for a 30 secs
+  - Cover and let it rest a couple of minutes, then serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: small
+      name: onion
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Aromatics
+  - ingredient:
+    - measurement: g
+      name: button mushrooms
+      note: null
+      preparation: sliced
+      quantity: '200.00'
+    - measurement: g
+      name: pfefferlinge
+      note: null
+      preparation: or other tasty mushrooms
+      quantity: '150.00'
+    - measurement: g
+      name: risotto rice
+      note: null
+      preparation: carnaroli or arborio
+      quantity: '160.00'
+    name: Main
+  - ingredient:
+    - measurement: tbs
+      name: red wine
+      note: null
+      preparation: null
+      quantity: '4.00'
+    - measurement: tbs
+      name: soy sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Wine Mix
+  - ingredient:
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '330.00'
+    - measurement: g
+      name: dried mushrooms
+      note: null
+      preparation: (optional)
+      quantity: '5.00'
+    - measurement: knob
+      name: miso paste
+      note: null
+      preparation: (optional)
+      quantity: '1.00'
+    - measurement: null
+      name: tomatoes
+      note: null
+      preparation: peeled and mashed (optional)
+      quantity: '0.50'
+    name: Stock
+  - ingredient:
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '30.00'
+    - measurement: g
+      name: parmesan
+      note: null
+      preparation: grated
+      quantity: '30.00'
+    name: Garnish
+  serves: 2
+source: Fritz
+tags: []
+title: Risotto ai Funghi, pressure cooker

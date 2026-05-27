@@ -1,87 +1,102 @@
 cuisine: .modern.europe
 description: null
 directions:
-    step:
-    - 'Oven: 200°'
-    - Mix olive oil, thyme and chilli in a bowl and rub all over pumpkin, including
-        peel
-    - Put pumpkin halves in oven face down, roast half an hour or so, then turn
-    - Sauté onions and leeks in butter, slowly, for at least 20 mins
-    - Take pumpkin out of oven, scoop out flesh and add to onions
-    - Add stock, salt and pepper, and remaining ingredients. Bring to boil and simmer
-        10 mins
-    - Pour into food processor. Add lemon
-    - Melt butter until brown; add thyme then add to food processor
-    - Sieve and serve
+  step:
+  - 'Oven: 200°'
+  - Mix olive oil, thyme and chilli in a bowl and rub all over pumpkin, including
+    peel
+  - Put pumpkin halves in oven face down, roast half an hour or so, then turn
+  - Sauté onions and leeks in butter, slowly, for at least 20 mins
+  - Take pumpkin out of oven, scoop out flesh and add to onions
+  - Add stock, salt and pepper, and remaining ingredients. Bring to boil and simmer
+    10 mins
+  - Pour into food processor. Add lemon
+  - Melt butter until brown; add thyme then add to food processor
+  - Sieve and serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: kg
-            name: pumpkin
-            preparation: halved, deseeded
-            quantity: '0.25'
-        -   measurement: cup
-            name: olive oil
-            preparation: null
-            quantity: '0.06'
-        -   measurement: tsp
-            name: chilli powder
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tsp
-            name: dried thyme
-            preparation: null
-            quantity: '0.25'
-        name: Pumpkin roast
-    -   ingredient:
-        -   measurement: small
-            name: onion
-            preparation: thinly sliced
-            quantity: '0.25'
-        -   measurement: small
-            name: leek
-            preparation: thinly sliced (or more onions)
-            quantity: '0.25'
-        -   measurement: l
-            name: light stock
-            preparation: or water
-            quantity: '0.25'
-        -   measurement: tsp
-            name: chilli powder
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: cinnamon powder
-            preparation: or a stick
-            quantity: '0.12'
-        -   measurement: leaves
-            name: bay
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: maple syrup
-            preparation: or honey
-            quantity: '0.50'
-        -   measurement: tsp
-            name: soy sayce
-            preparation: null
-            quantity: '0.50'
-        name: Soup
-    -   ingredient:
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '2.50'
-        -   measurement: tsp
-            name: dried thyme
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: lemon juice
-            preparation: null
-            quantity: '0.25'
-        name: Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: kg
+      name: pumpkin
+      note: null
+      preparation: halved, deseeded
+      quantity: '1.00'
+    - measurement: cup
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tsp
+      name: chilli powder
+      note: null
+      preparation: null
+      quantity: '0.48'
+    - measurement: tsp
+      name: dried thyme
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Pumpkin roast
+  - ingredient:
+    - measurement: small
+      name: onion
+      note: null
+      preparation: thinly sliced
+      quantity: '1.00'
+    - measurement: small
+      name: leek
+      note: null
+      preparation: thinly sliced (or more onions)
+      quantity: '1.00'
+    - measurement: l
+      name: light stock
+      note: null
+      preparation: or water
+      quantity: '1.00'
+    - measurement: tsp
+      name: chilli powder
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: cinnamon powder
+      note: null
+      preparation: or a stick
+      quantity: '0.48'
+    - measurement: leaves
+      name: bay
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tsp
+      name: maple syrup
+      note: null
+      preparation: or honey
+      quantity: '2.00'
+    - measurement: tsp
+      name: soy sayce
+      note: null
+      preparation: null
+      quantity: '2.00'
+    name: Soup
+  - ingredient:
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '10.00'
+    - measurement: tsp
+      name: dried thyme
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: lemon juice
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Garnish
+  serves: 4
 source: https://www.seriouseats.com/recipes/2012/12/roasted-pumpkin-soup-brown-butter-thyme-recipe.html
 tags: []
 title: Pumpkin Soup With Thyme

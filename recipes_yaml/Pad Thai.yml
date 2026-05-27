@@ -1,116 +1,123 @@
 cuisine: .thai
 description: the secret to a good pad thai is the sauce which needs to be thick and
-    slightly tart.I'd suggest making double the amount of the tamarind sauce so that
-    you have enough left over in your fridge to make a second batch of pad thai when
-    you are in a hurry. It also makes a great dipping sauce for any kind of vegetables,
-    dumplings or spring rolls.
+  slightly tart.I'd suggest making double the amount of the tamarind sauce so that
+  you have enough left over in your fridge to make a second batch of pad thai when
+  you are in a hurry. It also makes a great dipping sauce for any kind of vegetables,
+  dumplings or spring rolls.
 directions:
-    step:
-    - To make the tamarind sauce, place the tamarind pulp in a small bowl and pour
-        over the boiling water. Set aside for 20 minutes, then rub the pulp between
-        your fingers until the texture of the water is thick - similar to ketchup.
-    - Pour the tamarind and water through a fine mesh strainer with a bowl underneath
-        to catch the liquid. Press down with a teaspoon on the tamarind fibres to
-        extract as much flavour and liquid as possible, then discard the tamarind
-        pulp.
-    - Combine the tamarind water, palm sugar, fish sauce and chili paste in a small,
-        heavy based saucepan on medium heat. Bring to a gentle simmer, stirring occasionally
-        until all the palm sugar has dissolved. Continue to simmer for a further 3-5
-        minutes or until the sauce has thickened. Remove from the heat and set aside.
-    - If using dried rice noodles, soak them in warm water for approximately 15 minutes
-        or until pliable but not overly soft. Ideally with the texture of a rubber
-        band. Drain and set aside.
-    - Heat the oil in a wok over medium-high heat. Add the garlic, ginger and tofu
-        and stir-fry for 2 minutes until the tofu is crispy and lightly browned.
-    - Add the noodles and a ladleful of the tamarind sauce. Stir the noodles vigorously
-        around in your wok to keep them from sticking together. Add a splash of water
-        if necessary.
-    - When the noodles are tender, push them to one side and add the eggs. Allow them
-        to set slightly and then mix them through the noodles. Make a well in the
-        centre of the noodles and add the prawns, bean sprouts, radish and peanuts.
-        Stir vigourously for 1-2 minutes until the prawns have turned pink and are
-        cooked through. Add a little more tamarind sauce if the noodles are too dry.
-    - Turn off the heat and add the spring onion and coriander. Toss well to combine.
-    - Serve the noodles in large wide bowls with the lime wedges.
+  step:
+  - Soak tamarind pulp in boiling water for 20 min. Rub until thick , then strain,
+    pressing out all liquid; discard solids
+  - Simmer tamarind liquid with palm sugar, fish sauce, and chili paste until sugar
+    dissolves and sauce thickens (3-5 min). Set aside
+  - Soak dried rice noodles in warm water for ~15 min until pliable but still firm
+    (rubber-band texture). Drain
+  - Heat oil in a wok on medium-high. Stir-fry garlic, ginger, and tofu for 2 min
+    until tofu is lightly browned and crisp
+  - Add noodles and a ladle of tamarind sauce. Toss vigorously, adding a splash of
+    water if needed to prevent sticking
+  - When noodles are tender, push aside and scramble eggs. Mix through noodles. Add
+    prawns, bean sprouts, radish, and peanuts; stir-fry 1-2 min until prawns are pink
+    and cooked. Add more sauce if needed
+  - Remove from heat. Toss through spring onion and coriander.
+  - Divide into bowls and serve with lime wedges
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: noodles
-            preparation: rice
-            quantity: '37.50'
-        -   measurement: Tbsp
-            name: oil
-            preparation: null
-            quantity: '1.00'
-        -   measurement: cloves
-            name: garlic
-            preparation: minced
-            quantity: '0.50'
-        -   measurement: cm
-            name: ginger
-            preparation: peeled and finely grated
-            quantity: '0.75'
-        -   measurement: g
-            name: tofu
-            preparation: cut into bite-sized pieces
-            quantity: '62.50'
-        -   measurement: null
-            name: eggs
-            preparation: lightly beaten
-            quantity: '0.50'
-        -   measurement: handful
-            name: prawns
-            preparation: peeled and deveined
-            quantity: '0.25'
-        -   measurement: handful
-            name: bean sprouts
-            preparation: null
-            quantity: '0.25'
-        -   measurement: g
-            name: Chinese pickled white radish
-            preparation: minced
-            quantity: '6.25'
-        -   measurement: handful
-            name: peanuts
-            preparation: roasted
-            quantity: '0.25'
-        -   measurement: null
-            name: spring onions
-            preparation: finely sliced
-            quantity: '0.50'
-        -   measurement: handful
-            name: coriander
-            preparation: coarsely chopped
-            quantity: '0.25'
-        -   measurement: null
-            name: Wedges of lime for serving
-            preparation: null
-            quantity: null
-        name: null
-    -   ingredient:
-        -   measurement: null
-            name: grams tamarind pulp
-            preparation: null
-            quantity: '15.00'
-        -   measurement: null
-            name: mls boiling water
-            preparation: null
-            quantity: '46.25'
-        -   measurement: Tbsp
-            name: palm sugar
-            preparation: finely grated or chopped
-            quantity: '1.50'
-        -   measurement: Tbsp
-            name: fish sauce
-            preparation: null
-            quantity: '1.00'
-        -   measurement: Tbsp
-            name: chili paste or chili sauce
-            preparation: null
-            quantity: '-0.25'
-        name: Tamarind Sauce
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: noodles
+      note: null
+      preparation: rice
+      quantity: '150.00'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: null
+      quantity: '4.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: minced
+      quantity: '2.00'
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: peeled and finely grated
+      quantity: '3.00'
+    - measurement: g
+      name: tofu
+      note: null
+      preparation: cut into bite-sized pieces
+      quantity: '250.00'
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: lightly beaten
+      quantity: '2.00'
+    - measurement: handful
+      name: prawns
+      note: null
+      preparation: peeled and deveined
+      quantity: '1.00'
+    - measurement: handful
+      name: bean sprouts
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: Chinese pickled white radish
+      note: null
+      preparation: minced
+      quantity: '25.00'
+    - measurement: handful
+      name: peanuts
+      note: null
+      preparation: roasted
+      quantity: '1.00'
+    - measurement: null
+      name: spring onions
+      note: null
+      preparation: finely sliced
+      quantity: '2.00'
+    - measurement: handful
+      name: coriander
+      note: null
+      preparation: coarsely chopped
+      quantity: '1.00'
+    - measurement: null
+      name: Wedges of lime for serving
+      note: null
+      preparation: null
+      quantity: null
+    name: null
+  - ingredient:
+    - measurement: null
+      name: grams tamarind pulp
+      note: null
+      preparation: null
+      quantity: '60.00'
+    - measurement: null
+      name: mls boiling water
+      note: null
+      preparation: null
+      quantity: '185.00'
+    - measurement: Tbsp
+      name: palm sugar
+      note: null
+      preparation: finely grated or chopped
+      quantity: '6.00'
+    - measurement: Tbsp
+      name: fish sauce
+      note: null
+      preparation: null
+      quantity: '4.00'
+    - measurement: Tbsp
+      name: chili paste or chili sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Tamarind Sauce
+  serves: 2
 source: ''
 tags: []
 title: Pad Thai

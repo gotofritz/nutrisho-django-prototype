@@ -1,93 +1,106 @@
 cuisine: .italian.sicilian
 description: If made from scratch and from risotto leftovers, this is the classic
-    recipe. There is a XIII century Bahgdad coockbook with a similar dish called naranjiya.
-    They freeze well.
+  recipe. There is a XIII century Bahgdad coockbook with a similar dish called naranjiya.
+  They freeze well.
 directions:
-    step:
-    - Put the rice ingredients in a pot, bring to boil, then lower heat and cover
-        tightly until stock absorbed, 20 mins
-    - Remove from fire, spoon in egg and cheese, then spread on platter to cool
-    - 'Make the filling: sautè onion for 7 mins'
-    - Add beef and rosemary, sauté until seared, then sweat with white wine until
-        evaporated.
-    - Add passata or canned tomatoes broken with a fork, peas, and lower the heat
-        (medium low for canned tomatoes, low for passata). Cook until quite thick
-        then cool.
-    - Roll 1/12 of the rice into a ball, leaving an indentation. Fill it with the
-        ragú and wrap the rice around it to close the ball. Roll ball in flour, then
-        beatn egg, then breadcrumb.
-    - Deep fry at 180°C. Serve warm or room temperature
+  step:
+  - Put the rice ingredients in a pot, bring to boil, then lower heat and cover tightly
+    until stock absorbed, 20 mins
+  - Remove from fire, spoon in egg and cheese, then spread on platter to cool
+  - 'Make the filling: sautè onion for 7 mins'
+  - Add beef and rosemary, sauté until seared, then sweat with white wine until evaporated.
+  - Add passata or canned tomatoes broken with a fork, peas, and lower the heat (medium
+    low for canned tomatoes, low for passata). Cook until quite thick then cool.
+  - Roll 1/12 of the rice into a ball, leaving an indentation. Fill it with the ragú
+    and wrap the rice around it to close the ball. Roll ball in flour, then beatn
+    egg, then breadcrumb.
+  - Deep fry at 180°C. Serve warm or room temperature
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: rice
-            preparation: carnaroli
-            quantity: '112.50'
-        -   measurement: ml
-            name: stock
-            preparation: chicken
-            quantity: '117.50'
-        -   measurement: Tbsp
-            name: butter
-            preparation: null
-            quantity: '0.50'
-        -   measurement: pinch
-            name: saffron
-            preparation: soaked 25m
-            quantity: '0.50'
-        name: Rice
-    -   ingredient:
-        -   measurement: null
-            name: egg yolks
-            preparation: null
-            quantity: '0.50'
-        -   measurement: g
-            name: cheese
-            preparation: caciocavallo
-            quantity: '50.00'
-        name: Cooked rice
-    -   ingredient:
-        -   measurement: null
-            name: onion
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: oil
-            preparation: olive
-            quantity: '0.50'
-        -   measurement: g
-            name: beef
-            preparation: minced
-            quantity: '30.00'
-        -   measurement: ml
-            name: passata
-            preparation: or canned tomatoes
-            quantity: '25.00'
-        -   measurement: ml
-            name: wine
-            preparation: white
-            quantity: '15.00'
-        -   measurement: g
-            name: green peas
-            preparation: null
-            quantity: '15.00'
-        name: Rag\U00fa
-    -   ingredient:
-        -   measurement: null
-            name: egg whites
-            preparation: null
-            quantity: '0.50'
-        -   measurement: cup
-            name: flour
-            preparation: plain
-            quantity: '0.25'
-        -   measurement: cup
-            name: breadcrumbs
-            preparation: null
-            quantity: '0.25'
-        name: Frying
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: rice
+      note: null
+      preparation: carnaroli
+      quantity: '225.00'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: chicken
+      quantity: '235.00'
+    - measurement: Tbsp
+      name: butter
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: pinch
+      name: saffron
+      note: null
+      preparation: soaked 25m
+      quantity: '1.00'
+    name: Rice
+  - ingredient:
+    - measurement: null
+      name: egg yolks
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: cheese
+      note: null
+      preparation: caciocavallo
+      quantity: '100.00'
+    name: Cooked rice
+  - ingredient:
+    - measurement: null
+      name: onion
+      note: null
+      preparation: chopped
+      quantity: '0.50'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: olive
+      quantity: '1.00'
+    - measurement: g
+      name: beef
+      note: null
+      preparation: minced
+      quantity: '60.00'
+    - measurement: ml
+      name: passata
+      note: null
+      preparation: or canned tomatoes
+      quantity: '50.00'
+    - measurement: ml
+      name: wine
+      note: null
+      preparation: white
+      quantity: '30.00'
+    - measurement: g
+      name: green peas
+      note: null
+      preparation: null
+      quantity: '30.00'
+    name: Rag\U00fa
+  - ingredient:
+    - measurement: null
+      name: egg whites
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: cup
+      name: flour
+      note: null
+      preparation: plain
+      quantity: '0.50'
+    - measurement: cup
+      name: breadcrumbs
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: Frying
+  serves: 2
 source: ''
 tags: []
 title: Arancine, Classic version

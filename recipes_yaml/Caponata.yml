@@ -1,74 +1,85 @@
 cuisine: .italy.sicily.traditional
 description: null
 directions:
-    step:
-    - Mix salt with aubergines, put them in a colander with a weight on it for an
-        hour
-    - Dissolve the sugar in vinegar
-    - Remove filaments from celery stalks and cut them in 1cm pieces
-    - Pit the olives and cut in half
-    - Sautè onion, add tomato and purè, cook on medium 10m
-    - Season with salt and pepper, add celery, capers, olives, pine nuts, vinegar
-    - Cook until well mixed and dense, 10m
-    - Rinse the aubergines and fry with zucchini and peppers in a separate pot for
-        20m, with a couple of tbs water and seasoning
-    - Mix with the sauce, cook another 5 mins
-    - Let cool and mix basil
+  step:
+  - Mix salt with aubergines, put them in a colander with a weight on it for an hour
+  - Dissolve the sugar in vinegar
+  - Remove filaments from celery stalks and cut them in 1cm pieces
+  - Pit the olives and cut in half
+  - Sautè onion, add tomato and purè, cook on medium 10m
+  - Season with salt and pepper, add celery, capers, olives, pine nuts, vinegar
+  - Cook until well mixed and dense, 10m
+  - Rinse the aubergines and fry with zucchini and peppers in a separate pot for 20m,
+    with a couple of tbs water and seasoning
+  - Mix with the sauce, cook another 5 mins
+  - Let cool and mix basil
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: onion, red
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: stalk
-            name: celery
-            preparation: null
-            quantity: '0.25'
-        -   measurement: g
-            name: cherry tomatoes
-            preparation: null
-            quantity: '87.50'
-        -   measurement: tbsp
-            name: tomato purèe
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbso
-            name: pine nuts
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: olives
-            preparation: null
-            quantity: '2.50'
-        -   measurement: tbsp
-            name: capers
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: sugar
-            preparation: null
-            quantity: '0.25'
-        -   measurement: ml
-            name: cider vinegar
-            preparation: null
-            quantity: '25.00'
-        name: Sauce
-    -   ingredient:
-        -   measurement: large
-            name: aubergine
-            preparation: unpeeled, 1cm cube
-            quantity: '0.25'
-        -   measurement: small
-            name: zucchini
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: peppers
-            preparation: null
-            quantity: '0.50'
-        name: Vegetables
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: onion, red
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: stalk
+      name: celery
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: cherry tomatoes
+      note: null
+      preparation: null
+      quantity: '350.00'
+    - measurement: tbsp
+      name: tomato purèe
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbso
+      name: pine nuts
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: olives
+      note: null
+      preparation: null
+      quantity: '10.00'
+    - measurement: tbsp
+      name: capers
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tbsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: ml
+      name: cider vinegar
+      note: null
+      preparation: null
+      quantity: '100.00'
+    name: Sauce
+  - ingredient:
+    - measurement: large
+      name: aubergine
+      note: null
+      preparation: unpeeled, 1cm cube
+      quantity: '1.00'
+    - measurement: small
+      name: zucchini
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: peppers
+      note: null
+      preparation: null
+      quantity: '2.00'
+    name: Vegetables
+  serves: 4
 source: http://aisapori.blogspot.de/search/label/Caponata
 tags:
 - starter

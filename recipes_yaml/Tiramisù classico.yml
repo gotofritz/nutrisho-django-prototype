@@ -1,52 +1,59 @@
 cuisine: .italian.class
 description: null
 directions:
-    step:
-    - Beat the yolks with the sugar. Add the mascarpone, smoothed with a wooden spoon
-    - Whisk the egg whites with a pinch salt to soft peaks
-    - Mix the coffee with the liquor and water
-    - Dip the biscuits in the coffee quickly before they break, make a layer at bottom
-        of tray
-    - Alternate a layer of mascarpone mixture
-    - Another layer of biscuits and one of mascarpone
-    - Sprinkle bitter chocolate on top and cool a few hours before serving
+  step:
+  - Beat the yolks with the sugar. Add the mascarpone, smoothed with a wooden spoon
+  - Whisk the egg whites with a pinch salt to soft peaks
+  - Mix the coffee with the liquor and water
+  - Dip the biscuits in the coffee quickly before they break, make a layer at bottom
+    of tray
+  - Alternate a layer of mascarpone mixture
+  - Another layer of biscuits and one of mascarpone
+  - Sprinkle bitter chocolate on top and cool a few hours before serving
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: mascarpone
-            preparation: null
-            quantity: '125.00'
-        -   measurement: null
-            name: eggs
-            preparation: separate whites and yolks
-            quantity: '1.00'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '20.00'
-        name: Mascarpone mixture
-    -   ingredient:
-        -   measurement: g
-            name: savoiardi
-            preparation: null
-            quantity: '62.50'
-        -   measurement: cup
-            name: coffee
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: liquor
-            preparation: marsala, kalhua, brandy, etc
-            quantity: '0.50'
-        name: Biscuits
-    -   ingredient:
-        -   measurement: g
-            name: bitter chocolate powder
-            preparation: null
-            quantity: '7.50'
-        name: Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: mascarpone
+      note: null
+      preparation: null
+      quantity: '500.00'
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: separate whites and yolks
+      quantity: '4.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '80.00'
+    name: Mascarpone mixture
+  - ingredient:
+    - measurement: g
+      name: savoiardi
+      note: null
+      preparation: null
+      quantity: '250.00'
+    - measurement: cup
+      name: coffee
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: liquor
+      note: null
+      preparation: marsala, kalhua, brandy, etc
+      quantity: '2.00'
+    name: Biscuits
+  - ingredient:
+    - measurement: g
+      name: bitter chocolate powder
+      note: null
+      preparation: null
+      quantity: '30.00'
+    name: Garnish
+  serves: 4
 source: http://www.cookaround.com/ricetta/tiramisu-classico.html
 tags:
 - sweet

@@ -1,75 +1,89 @@
 cuisine: .fusion.british
 description: null
 directions:
-    step:
-    - Prepare the noodles and cool
-    - Lightly brown the pork and five spice
-    - Add the garlic, sugar, prawns, and peanuts
-    - Mix the dressing ingredients
-    - Mix the noddles and meat, season, and add dressing
+  step:
+  - Prepare the noodles and cool
+  - Lightly brown the pork and five spice
+  - Add the garlic, sugar, prawns, and peanuts
+  - Mix the dressing ingredients
+  - Mix the noddles and meat, season, and add dressing
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: cellophane noodles
-            preparation: null
-            quantity: '25.00'
-        -   measurement: g
-            name: pork, minced
-            preparation: null
-            quantity: '50.00'
-        -   measurement: tsp
-            name: five spice
-            preparation: null
-            quantity: '0.12'
-        -   measurement: cloves
-            name: garlic
-            preparation: crushed
-            quantity: '0.75'
-        -   measurement: null
-            name: prawns
-            preparation: peeled
-            quantity: '2.50'
-        -   measurement: tbsp
-            name: peanuts
-            preparation: crushed
-            quantity: '0.75'
-        name: Main
-    -   ingredient:
-        -   measurement: null
-            name: spring onions
-            preparation: sliced finely
-            quantity: '0.25'
-        -   measurement: sprigs
-            name: coriander
-            preparation: chopped
-            quantity: '0.50'
-        -   measurement: sprigs
-            name: mint
-            preparation: chopped
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: ginger
-            preparation: grated
-            quantity: '0.50'
-        -   measurement: null
-            name: chillies
-            preparation: sliced
-            quantity: '0.50'
-        -   measurement: null
-            name: limes
-            preparation: juiced
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: soy sauce
-            preparation: null
-            quantity: '0.25'
-        -   measurement: drizzle
-            name: olive oil
-            preparation: null
-            quantity: null
-        name: Dressing
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: cellophane noodles
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: g
+      name: pork, minced
+      note: null
+      preparation: null
+      quantity: '100.00'
+    - measurement: tsp
+      name: five spice
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: crushed
+      quantity: '1.50'
+    - measurement: null
+      name: prawns
+      note: null
+      preparation: peeled
+      quantity: '5.00'
+    - measurement: tbsp
+      name: peanuts
+      note: null
+      preparation: crushed
+      quantity: '1.50'
+    name: Main
+  - ingredient:
+    - measurement: null
+      name: spring onions
+      note: null
+      preparation: sliced finely
+      quantity: '0.50'
+    - measurement: sprigs
+      name: coriander
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: sprigs
+      name: mint
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: tbsp
+      name: ginger
+      note: null
+      preparation: grated
+      quantity: '1.00'
+    - measurement: null
+      name: chillies
+      note: null
+      preparation: sliced
+      quantity: '1.00'
+    - measurement: null
+      name: limes
+      note: null
+      preparation: juiced
+      quantity: '1.00'
+    - measurement: tbsp
+      name: soy sauce
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: drizzle
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: null
+    name: Dressing
+  serves: 2
 source: Jamie Oliver NAked chef 2
 tags: []
 title: Cellophane Noodle Salad

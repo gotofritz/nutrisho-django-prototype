@@ -1,58 +1,67 @@
 cuisine: .british.modern
 description: null
 directions:
-    step:
-    - Sprinkle the aubergines with salt and leave to drain for 30m, then wash and
-        pat dry
-    - dry roast cumin seeds, coriander seeds medium high for 1m
-    - add to the dried chilies in a mortar, and grind until fine
-    - Brush the aubergines with the olive oil and the spice mixture
-    - Put under a grill 240° for 12m
-    - mx together the yogurt, garlic, walnuts, coriander leaves, and drizzle over
-        the warm aubergines
+  step:
+  - Sprinkle the aubergines with salt and leave to drain for 30m, then wash and pat
+    dry
+  - dry roast cumin seeds, coriander seeds medium high for 1m
+  - add to the dried chilies in a mortar, and grind until fine
+  - Brush the aubergines with the olive oil and the spice mixture
+  - Put under a grill 240° for 12m
+  - mx together the yogurt, garlic, walnuts, coriander leaves, and drizzle over the
+    warm aubergines
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: aubergines
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: cumin seeds
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: coriander seeds
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: dried chilies
-            preparation: null
-            quantity: '0.00'
-        -   measurement: Tbsp
-            name: olive oil
-            preparation: null
-            quantity: '1.00'
-        name: For the Aubergines
-    -   ingredient:
-        -   measurement: Tbsp
-            name: yogurt
-            preparation: null
-            quantity: '1.25'
-        -   measurement: cloves
-            name: garlic
-            preparation: null
-            quantity: '0.50'
-        -   measurement: g
-            name: walnuts
-            preparation: null
-            quantity: '7.50'
-        -   measurement: Tbsp
-            name: coriander leaves
-            preparation: null
-            quantity: '0.50'
-        name: For the Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: aubergines
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tsp
+      name: coriander seeds
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tsp
+      name: dried chilies
+      note: null
+      preparation: null
+      quantity: '0.00'
+    - measurement: Tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '4.00'
+    name: For the Aubergines
+  - ingredient:
+    - measurement: Tbsp
+      name: yogurt
+      note: null
+      preparation: null
+      quantity: '5.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: g
+      name: walnuts
+      note: null
+      preparation: null
+      quantity: '30.00'
+    - measurement: Tbsp
+      name: coriander leaves
+      note: null
+      preparation: null
+      quantity: '2.00'
+    name: For the Garnish
+  serves: 4
 source: ''
 tags: []
 title: Baked aubergines with walnuts

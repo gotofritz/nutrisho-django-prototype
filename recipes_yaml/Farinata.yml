@@ -1,43 +1,46 @@
 cuisine: .italian.sicilian
 description: the only trick to a good farinata is to get your baking tray good and
-    hot before adding the batter and to be generous with the quantity of olive oil.
+  hot before adding the batter and to be generous with the quantity of olive oil.
 directions:
-    step:
-    - Make the farinata batter by mixing together the flour, water, salt, pepper and
-        olive oil. Place the batter somewhere warm and leave to ferment for at least
-        2 hours.
-    - Preheat your oven to 225 and place a large, shallow, rectangular baking tray
-        in the oven to heat up. Skim off any bubbles or froth from the surface of
-        your farinata batter. Remove the tray from the oven and pour in 4-5 tablespoons
-        of olive oil and swirl around until the bottom is well coated. Pour in the
-        farinata batter to the height of 1/4 inch and scatter some of the rosemary
-        on top.
-    - Place the baking tray in the oven and bake for 15 - 20 minutes or until the
-        farinata is set and golden on top and crispy underneath. Remove and allow
-        to cool slightly, then using a metal spatula, carefully slide the farinata
-        out of the pan and scatter with freshly ground pepper to taste. Farinata is
-        typically eaten in wedges, folded over itself.
+  step:
+  - Make the farinata batter by mixing together the flour, water, salt, pepper and
+    olive oil. Place the batter somewhere warm and leave to ferment for at least 2
+    hours.
+  - Preheat your oven to 225 and place a large, shallow, rectangular baking tray in
+    the oven to heat up. Skim off any bubbles or froth from the surface of your farinata
+    batter. Remove the tray from the oven and pour in 4-5 tablespoons of olive oil
+    and swirl around until the bottom is well coated. Pour in the farinata batter
+    to the height of 1/4 inch and scatter some of the rosemary on top.
+  - Place the baking tray in the oven and bake for 15 - 20 minutes or until the farinata
+    is set and golden on top and crispy underneath. Remove and allow to cool slightly,
+    then using a metal spatula, carefully slide the farinata out of the pan and scatter
+    with freshly ground pepper to taste. Farinata is typically eaten in wedges, folded
+    over itself.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: flour
-            preparation: chickpea
-            quantity: '75.00'
-        -   measurement: l
-            name: water
-            preparation: warm
-            quantity: '0.25'
-        -   measurement: ml
-            name: oil
-            preparation: olive
-            quantity: '16.25'
-        -   measurement: null
-            name: rosemary
-            preparation: null
-            quantity: null
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      note: null
+      preparation: chickpea
+      quantity: '300.00'
+    - measurement: l
+      name: water
+      note: null
+      preparation: warm
+      quantity: '1.00'
+    - measurement: ml
+      name: oil
+      note: null
+      preparation: olive
+      quantity: '65.00'
+    - measurement: null
+      name: rosemary
+      note: null
+      preparation: null
+      quantity: null
+    name: null
+  serves: 4
 source: ''
 tags: []
 title: Farinata

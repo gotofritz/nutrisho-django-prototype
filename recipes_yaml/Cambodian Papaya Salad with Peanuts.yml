@@ -1,93 +1,103 @@
 cuisine: .cambodian
 description: This salad prepared by street vendors in Cambodia is very similar to
-    the 'som tam' salad which is found in Thailand. In Cambodia they use a fermented
-    fish paste called 'prahok' which you can find in the markets sold as a thick,
-    grey sludge. Like other fermented Asian condiments like shrimp paste and fish
-    sauce, prahok is worth cultivating a taste for as it really does add a special
-    note to dishes like this which would be missed without it. If you can't find it,
-    mix together 1 part shrimp paste and 3 parts fish sauce as a substitute. In Cambodia
-    this salad is given to you in a plastic bag with a makeshift pair of chopsticks
-    to eat it with. A good papaya salad should have a little too much dressing so
-    that the papaya can soak some of the extra up. You know you have the amount right
-    if you manage to dribble dressing down the front of your shirt as you try and
-    eat it.
+  the 'som tam' salad which is found in Thailand. In Cambodia they use a fermented
+  fish paste called 'prahok' which you can find in the markets sold as a thick, grey
+  sludge. Like other fermented Asian condiments like shrimp paste and fish sauce,
+  prahok is worth cultivating a taste for as it really does add a special note to
+  dishes like this which would be missed without it. If you can't find it, mix together
+  1 part shrimp paste and 3 parts fish sauce as a substitute. In Cambodia this salad
+  is given to you in a plastic bag with a makeshift pair of chopsticks to eat it with.
+  A good papaya salad should have a little too much dressing so that the papaya can
+  soak some of the extra up. You know you have the amount right if you manage to dribble
+  dressing down the front of your shirt as you try and eat it.
 directions:
-    step:
-    - Place the peanuts in a wok or frying pan over medium heat. Shake the pan regularly
-        for a few minutes until the peanuts become hot and start to release their
-        oil, then with a wooden spoon, stir the peanuts around constantly over the
-        heat until they are golden and well toasted. Place the peanuts in a mortar
-        and pestle and pound until coarsely ground.
-    - Make the dressing by placing the dried shrimp, garlic, chili and palm sugar
-        in a mortar and pestle. Pound the mixture until the palm sugar has dissolved
-        and the ingredients have formed a smooth paste. Add the prahok and lime juice
-        and pound until well mixed. Taste and adjust with more chili, lime juice,
-        sugar and prahok until you have the right balance of hot, sour, sweet and
-        salty.
-    - Add the papaya and beans to the mortar and pestle and pound them a few times
-        to soften. Scrape the vegetables and dressing into a bowl and add the cucumber,
-        tomato and herbs. Toss well to mix.
-    - To serve, divide the salad between two bowls and scatter with the roasted peanuts.
+  step:
+  - Place the peanuts in a wok or frying pan over medium heat. Shake the pan regularly
+    for a few minutes until the peanuts become hot and start to release their oil,
+    then with a wooden spoon, stir the peanuts around constantly over the heat until
+    they are golden and well toasted. Place the peanuts in a mortar and pestle and
+    pound until coarsely ground.
+  - Make the dressing by placing the dried shrimp, garlic, chili and palm sugar in
+    a mortar and pestle. Pound the mixture until the palm sugar has dissolved and
+    the ingredients have formed a smooth paste. Add the prahok and lime juice and
+    pound until well mixed. Taste and adjust with more chili, lime juice, sugar and
+    prahok until you have the right balance of hot, sour, sweet and salty.
+  - Add the papaya and beans to the mortar and pestle and pound them a few times to
+    soften. Scrape the vegetables and dressing into a bowl and add the cucumber, tomato
+    and herbs. Toss well to mix.
+  - To serve, divide the salad between two bowls and scatter with the roasted peanuts.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: handful
-            name: peanuts
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: papaya
-            preparation: green
-            quantity: '0.12'
-        -   measurement: null
-            name: snake beans
-            preparation: or about 8 small green beans cut into bite-sized lengths
-            quantity: '0.50'
-        -   measurement: null
-            name: cucumber
-            preparation: peeled
-            quantity: '0.06'
-        -   measurement: null
-            name: tomatoes
-            preparation: greem
-            quantity: '0.25'
-        -   measurement: handful
-            name: mint
-            preparation: left whole
-            quantity: '0.25'
-        -   measurement: handful
-            name: thai basil
-            preparation: left whole
-            quantity: '0.25'
-        name: null
-    -   ingredient:
-        -   measurement: handful
-            name: small dried shrimp
-            preparation: null
-            quantity: '0.25'
-        -   measurement: cloves
-            name: garlic
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: chilli
-            preparation: fresh
-            quantity: '0.25'
-        -   measurement: tsp
-            name: sugar
-            preparation: palm
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: prahok
-            preparation: (or a pinch of shrimp paste and a splash of fish sauce mixed
-                together)
-            quantity: '-0.25'
-        -   measurement: null
-            name: limes
-            preparation: juiced
-            quantity: '0.25'
-        name: Dressing
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: handful
+      name: peanuts
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: papaya
+      note: null
+      preparation: green
+      quantity: '1.00'
+    - measurement: null
+      name: snake beans
+      note: null
+      preparation: or about 8 small green beans cut into bite-sized lengths
+      quantity: '4.00'
+    - measurement: null
+      name: cucumber
+      note: null
+      preparation: peeled
+      quantity: '0.50'
+    - measurement: null
+      name: tomatoes
+      note: null
+      preparation: greem
+      quantity: '2.00'
+    - measurement: handful
+      name: mint
+      note: null
+      preparation: left whole
+      quantity: '2.00'
+    - measurement: handful
+      name: thai basil
+      note: null
+      preparation: left whole
+      quantity: '2.00'
+    name: null
+  - ingredient:
+    - measurement: handful
+      name: small dried shrimp
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: chilli
+      note: null
+      preparation: fresh
+      quantity: '2.00'
+    - measurement: tsp
+      name: sugar
+      note: null
+      preparation: palm
+      quantity: '4.00'
+    - measurement: Tbsp
+      name: prahok
+      note: null
+      preparation: (or a pinch of shrimp paste and a splash of fish sauce mixed together)
+      quantity: '2.00'
+    - measurement: null
+      name: limes
+      note: null
+      preparation: juiced
+      quantity: '2.00'
+    name: Dressing
+  serves: 8
 source: ''
 tags: []
 title: Cambodian Papaya Salad with Peanuts

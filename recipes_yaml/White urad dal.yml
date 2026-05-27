@@ -1,63 +1,74 @@
 cuisine: .indian.punjab.traditional
 description: null
 directions:
-    step:
-    - Wash dal. If not using pressure cooker, soak 2 hours
-    - Bring to boil with crushed chillies, ground coriander, turmeric
-    - Meanwhile make a paste in mortar with garlic, ginger
-    - Fry cumin in ghee, add onion, ginger paste, chillies, cook until onion go brown
-    - Add onion paste to dal, season with salt and chopped coriander
+  step:
+  - Wash dal. If not using pressure cooker, soak 2 hours
+  - Bring to boil with crushed chillies, ground coriander, turmeric
+  - Meanwhile make a paste in mortar with garlic, ginger
+  - Fry cumin in ghee, add onion, ginger paste, chillies, cook until onion go brown
+  - Add onion paste to dal, season with salt and chopped coriander
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: urad dal
-            preparation: null
-            quantity: '37.50'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '125.00'
-        -   measurement: tbsp
-            name: crushed dried chilli
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tbsp
-            name: ground coriander
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tsp
-            name: ground turmeric
-            preparation: null
-            quantity: '0.12'
-        name: Dal
-    -   ingredient:
-        -   measurement: cm
-            name: ginger
-            preparation: grated
-            quantity: '0.62'
-        -   measurement: cloves
-            name: garlic
-            preparation: null
-            quantity: '0.75'
-        -   measurement: tbsp
-            name: cumin seeds
-            preparation: null
-            quantity: '0.12'
-        -   measurement: small
-            name: onion
-            preparation: sliced
-            quantity: '0.25'
-        -   measurement: null
-            name: chillies
-            preparation: deseeded, chopped
-            quantity: '0.75'
-        -   measurement: tbsp
-            name: coriander leaves
-            preparation: chopped
-            quantity: '0.25'
-        name: Onion Seasoning
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: urad dal
+      note: null
+      preparation: null
+      quantity: '75.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '250.00'
+    - measurement: tbsp
+      name: crushed dried chilli
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tbsp
+      name: ground coriander
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tsp
+      name: ground turmeric
+      note: null
+      preparation: null
+      quantity: '0.24'
+    name: Dal
+  - ingredient:
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: grated
+      quantity: '1.24'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: tbsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: small
+      name: onion
+      note: null
+      preparation: sliced
+      quantity: '0.50'
+    - measurement: null
+      name: chillies
+      note: null
+      preparation: deseeded, chopped
+      quantity: '1.50'
+    - measurement: tbsp
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '0.50'
+    name: Onion Seasoning
+  serves: 2
 source: Food of the Grand Trunk Road
 tags:
 - dal

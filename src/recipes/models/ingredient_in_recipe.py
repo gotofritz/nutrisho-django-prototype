@@ -8,12 +8,12 @@ from .ingredient_group import IngredientGroup
 
 class IngredientInRecipe(models.Model):
     id = models.AutoField(primary_key=True)
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.DO_NOTHING, related_name="+")
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT, related_name="+")
     substitute = models.ForeignKey(
-        Ingredient, on_delete=models.DO_NOTHING, related_name="+", blank=True, null=True
+        Ingredient, on_delete=models.PROTECT, related_name="+", blank=True, null=True
     )
-    unit = models.CharField("the unit", max_length=32, blank=True, null=True)
-    preparation = models.CharField("chopped, blanched...", max_length=128, blank=True, null=True)
+    unit = models.CharField("the unit", max_length=32, blank=True, default="")
+    preparation = models.CharField("chopped, blanched...", max_length=128, blank=True, default="")
     quantity = models.DecimalField(
         "quantity as recorded in source", decimal_places=2, max_digits=7, blank=True, null=True
     )
@@ -32,8 +32,8 @@ class IngredientInRecipe(models.Model):
 
     def natural_key(self):
         return (
-            self.ingredient_group,
-            self.quantity,
+            cast(IngredientGroup, self.ingredient_group).natural_key(),
+            str(self.quantity) if self.quantity is not None else None,
             self.unit,
             cast(Ingredient, self.ingredient).ingredient_name,
         )

@@ -1,63 +1,74 @@
 cuisine: .chinese.beijing
 description: Qingsun Xiangcai Yangrou
 directions:
-    step:
-    - combine meat and marinade in a bowl, at least 20m
-    - stir fry garlic 10s, then remove
-    - stir fry lamb, 1.5 m, then add bamboo shots, spring onions, garlic, 30 s
-    - add soy sauce, after it sizzles add cornstarch mixture, 30 s
-    - season with salt, pepper, chopped coriander
+  step:
+  - combine meat and marinade in a bowl, at least 20m
+  - stir fry garlic 10s, then remove
+  - stir fry lamb, 1.5 m, then add bamboo shots, spring onions, garlic, 30 s
+  - add soy sauce, after it sizzles add cornstarch mixture, 30 s
+  - season with salt, pepper, chopped coriander
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: lamb
-            preparation: boneless
-            quantity: '78.75'
-        -   measurement: g
-            name: tofu
-            preparation: null
-            quantity: '62.50'
-        -   measurement: Tbsp
-            name: hoisin sauce
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: vinegar
-            preparation: null
-            quantity: '0.38'
-        -   measurement: tsp
-            name: sugar
-            preparation: caster
-            quantity: '0.06'
-        name: Marinade
-    -   ingredient:
-        -   measurement: null
-            name: garlic cloves
-            preparation: sliced
-            quantity: '0.25'
-        -   measurement: g
-            name: bamboo shot
-            preparation: sliced
-            quantity: '25.00'
-        -   measurement: null
-            name: spring onions
-            preparation: whole
-            quantity: '0.50'
-        -   measurement: tsp
-            name: cornstarch
-            preparation: dissolbed 80 ml stock
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: coriander leaves
-            preparation: chopped
-            quantity: '1.50'
-        -   measurement: Tbsp
-            name: soy sauce
-            preparation: light
-            quantity: '0.38'
-        name: Cooking
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: lamb
+      note: null
+      preparation: boneless
+      quantity: '315.00'
+    - measurement: g
+      name: tofu
+      note: null
+      preparation: null
+      quantity: '250.00'
+    - measurement: Tbsp
+      name: hoisin sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: vinegar
+      note: null
+      preparation: null
+      quantity: '1.52'
+    - measurement: tsp
+      name: sugar
+      note: null
+      preparation: caster
+      quantity: '0.24'
+    name: Marinade
+  - ingredient:
+    - measurement: null
+      name: garlic cloves
+      note: null
+      preparation: sliced
+      quantity: '1.00'
+    - measurement: g
+      name: bamboo shot
+      note: null
+      preparation: sliced
+      quantity: '100.00'
+    - measurement: null
+      name: spring onions
+      note: null
+      preparation: whole
+      quantity: '2.00'
+    - measurement: tsp
+      name: cornstarch
+      note: null
+      preparation: dissolbed 80 ml stock
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '6.00'
+    - measurement: Tbsp
+      name: soy sauce
+      note: null
+      preparation: light
+      quantity: '1.52'
+    name: Cooking
+  serves: 2
 source: ''
 tags: []
 title: Lamb fillet, fried with coriander

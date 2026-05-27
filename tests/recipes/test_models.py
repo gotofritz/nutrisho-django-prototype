@@ -32,7 +32,28 @@ def test_recipe_servings_can_be_null(user):
 @pytest.mark.django_db
 def test_recipe_natural_key(user):
     recipe = Recipe.objects.create(recipe_name="Pasta Carbonara", owner=user)
-    assert recipe.natural_key() == "Pasta Carbonara"
+    assert recipe.natural_key() == (user.username, "Pasta Carbonara")
+
+
+@pytest.mark.django_db
+def test_recipe_get_by_natural_key(user):
+    Recipe.objects.create(recipe_name="Pasta Carbonara", owner=user)
+    fetched = Recipe.objects.get_by_natural_key(user.username, "Pasta Carbonara")
+    assert fetched.recipe_name == "Pasta Carbonara"
+    assert fetched.owner == user
+
+
+@pytest.mark.django_db
+def test_recipe_natural_key_two_owners_same_name(user, db):
+    """Two owners with same recipe name must have distinct natural keys."""
+    from django.contrib.auth.models import User
+
+    bob = User.objects.create_user(username="bob_nk", password="x")
+    Recipe.objects.create(recipe_name="Soup", owner=user)
+    Recipe.objects.create(recipe_name="Soup", owner=bob)
+    key_a = Recipe.objects.get(owner=user, recipe_name="Soup").natural_key()
+    key_b = Recipe.objects.get(owner=bob, recipe_name="Soup").natural_key()
+    assert key_a != key_b
 
 
 @pytest.mark.django_db
@@ -124,7 +145,7 @@ def test_ingredient_in_recipe_duplicate_index_rejected(user):
     import django.db
 
     recipe = Recipe.objects.create(recipe_name="Dup IIR Recipe", owner=user)
-    group = IngredientGroup.objects.create(recipe=recipe, group_name=None, index_in_sequence=1)
+    group = IngredientGroup.objects.create(recipe=recipe, group_name="", index_in_sequence=1)
     ing_a, _ = Ingredient.objects.get_or_create(ingredient_name="salt")
     ing_b, _ = Ingredient.objects.get_or_create(ingredient_name="pepper")
     IngredientInRecipe.objects.create(ingredient=ing_a, ingredient_group=group, index_in_sequence=1)
@@ -160,3 +181,38 @@ def test_recipe_save_preserves_blank_yaml_filename(user):
     recipe = Recipe.objects.create(recipe_name="No File Test", owner=user, yaml_filename="")
     recipe.refresh_from_db()
     assert recipe.yaml_filename == ""
+
+
+@pytest.mark.django_db
+def test_ingredient_in_recipe_protects_ingredient(user):
+    """Deleting an Ingredient still referenced by a recipe must raise ProtectedError."""
+    from django.db.models import ProtectedError
+
+    recipe = Recipe.objects.create(recipe_name="Protect Test", owner=user)
+    group = IngredientGroup.objects.create(recipe=recipe, group_name="Main", index_in_sequence=0)
+    ing = Ingredient.objects.create(ingredient_name="protected-onion")
+    IngredientInRecipe.objects.create(ingredient=ing, ingredient_group=group, index_in_sequence=0)
+    with pytest.raises(ProtectedError):
+        ing.delete()
+
+
+@pytest.mark.django_db
+def test_ingredient_in_recipe_natural_key_is_serializable(user):
+    """natural_key must not contain model instances."""
+    from django.db.models import Model
+
+    recipe = Recipe.objects.create(recipe_name="NK Test", owner=user)
+    group = IngredientGroup.objects.create(recipe=recipe, group_name="Main", index_in_sequence=0)
+    ing = Ingredient.objects.create(ingredient_name="nk-onion")
+    iir = IngredientInRecipe.objects.create(
+        ingredient=ing, ingredient_group=group, index_in_sequence=0
+    )
+    assert not any(isinstance(part, Model) for part in iir.natural_key())
+
+
+def test_char_fields_are_not_nullable():
+    """CharFields should use blank-only emptiness, never NULL (single empty state)."""
+    assert Recipe._meta.get_field("short_description").null is False
+    assert IngredientGroup._meta.get_field("group_name").null is False
+    assert IngredientInRecipe._meta.get_field("unit").null is False
+    assert IngredientInRecipe._meta.get_field("preparation").null is False

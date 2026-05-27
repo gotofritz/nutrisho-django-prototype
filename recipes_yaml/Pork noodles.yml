@@ -1,70 +1,82 @@
 cuisine: .chinese
 description: Ant climbing a tree / Mayi shang shu
 directions:
-    step:
-    - soak the fungus, 30m (2) put noodles in pot, pour boiling water over it, steep
-        10 m (3) coarsely mince pork, then marinade 10 m
-    - chop drained mushrroms, spring onions
-    - stir fry pork, mushrooms for 1 m (6) add spring onions, 80ml water, bean sauce,
-        20 s (7) lower heat, 3 m (8) add noodles, sichuan pepper, chili oil to taste,
-        2 m
+  step:
+  - soak the fungus, 30m (2) put noodles in pot, pour boiling water over it, steep
+    10 m (3) coarsely mince pork, then marinade 10 m
+  - chop drained mushrroms, spring onions
+  - stir fry pork, mushrooms for 1 m (6) add spring onions, 80ml water, bean sauce,
+    20 s (7) lower heat, 3 m (8) add noodles, sichuan pepper, chili oil to taste,
+    2 m
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: noodles
-            preparation: thin
-            quantity: '37.50'
-        name: null
-    -   ingredient:
-        -   measurement: g
-            name: pork
-            preparation: lean
-            quantity: '55.00'
-        -   measurement: tsp
-            name: ginger
-            preparation: peeled
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: soy sauce
-            preparation: light
-            quantity: '0.25'
-        -   measurement: tsp
-            name: rice wine
-            preparation: null
-            quantity: '0.50'
-        name: Marinade
-    -   ingredient:
-        -   measurement: null
-            name: dried mushrooms
-            preparation: black
-            quantity: '0.50'
-        -   measurement: cm
-            name: black fungus
-            preparation: null
-            quantity: '1.00'
-        -   measurement: Tbsp
-            name: oil
-            preparation: null
-            quantity: '0.62'
-        -   measurement: null
-            name: spring onions
-            preparation: whole
-            quantity: '0.75'
-        -   measurement: Tbsp
-            name: spicy bean sauce
-            preparation: null
-            quantity: '0.50'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '20.00'
-        -   measurement: tsp
-            name: sichuan pepper
-            preparation: null
-            quantity: '0.12'
-        name: Stir fry
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: noodles
+      note: null
+      preparation: thin
+      quantity: '75.00'
+    name: null
+  - ingredient:
+    - measurement: g
+      name: pork
+      note: null
+      preparation: lean
+      quantity: '110.00'
+    - measurement: tsp
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: soy sauce
+      note: null
+      preparation: light
+      quantity: '0.50'
+    - measurement: tsp
+      name: rice wine
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Marinade
+  - ingredient:
+    - measurement: null
+      name: dried mushrooms
+      note: null
+      preparation: black
+      quantity: '1.00'
+    - measurement: cm
+      name: black fungus
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: null
+      quantity: '1.24'
+    - measurement: null
+      name: spring onions
+      note: null
+      preparation: whole
+      quantity: '1.50'
+    - measurement: Tbsp
+      name: spicy bean sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '40.00'
+    - measurement: tsp
+      name: sichuan pepper
+      note: null
+      preparation: null
+      quantity: '0.24'
+    name: Stir fry
+  serves: 2
 source: ''
 tags: []
 title: Pork noodles

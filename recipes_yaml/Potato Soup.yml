@@ -2,64 +2,75 @@ cuisine: .europe.germany
 description: Fleischlos nach Omas Rezept
 directions:
   step:
-    - Warm oil in a pot on medium high heat
-    - Add the onions and sauté 3-4 minutes, stirring often
-    - Add the coarsely chopped suppenbund, and stir. Cook 3-4 minutes
-    - Add the coarsely chopped potatoes and carry on another 2-3 minutes
-    - Add the stock and salt and pepper
-    - "Optional: add the bay leaves, cloves and nutmeg"
-    - Cook 15-20 minutes
-    - "To test if ready: try to break the vegetables with a fork, if they break easily they are ready"
-    - Use a food processor / immersion blender to blend the soup
+  - Warm oil in a pot on medium high heat
+  - Add the onions and sauté 3-4 minutes, stirring often
+  - Add the coarsely chopped suppenbund, and stir. Cook 3-4 minutes
+  - Add the coarsely chopped potatoes and carry on another 2-3 minutes
+  - Add the stock and salt and pepper
+  - 'Optional: add the bay leaves, cloves and nutmeg'
+  - Cook 15-20 minutes
+  - 'To test if ready: try to break the vegetables with a fork, if they break easily
+    they are ready'
+  - Use a food processor / immersion blender to blend the soup
 ingredients:
   group:
-    - ingredient:
-        - measurement: g
-          name: potatoes
-          preparation: peeled, coarsely diced
-          quantity: "500"
-        - measurement: null
-          name: suppenbund
-          preparation: coarsely diced
-          quantity: "1"
-        - measurement: null
-          name: onions
-          preparation: peeled, thinly sliced
-          quantity: "3"
-        - measurement: tbsp
-          name: oil
-          preparation: null
-          quantity: "1"
-      name: Soup base
-    - ingredient:
-        - measurement: L
-          name: veg stock powder
-          preparation: mixed with water
-          quantity: "1"
-        - measurement: leaves
-          name: bay leaf
-          preparation: null
-          quantity: "2"
-        - measurement: null
-          name: cloves
-          preparation: null
-          quantity: "3"
-        - measurement: pinch
-          name: nutmeg
-          preparation: grated
-          quantity: "1"
-        - measurement: "as needed"
-          name: salt
-          preparation: null
-          quantity: ""
-        - measurement: "as needed"
-          name: pepper
-          preparation: null
-          quantity: ""
-      name: Liquid and spices
+  - ingredient:
+    - measurement: g
+      name: potatoes
+      note: null
+      preparation: peeled, coarsely diced
+      quantity: '500.00'
+    - measurement: null
+      name: suppenbund
+      note: null
+      preparation: coarsely diced
+      quantity: '1.00'
+    - measurement: null
+      name: onions
+      note: null
+      preparation: peeled, thinly sliced
+      quantity: '3.00'
+    - measurement: tbsp
+      name: oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Soup base
+  - ingredient:
+    - measurement: L
+      name: veg stock powder
+      note: null
+      preparation: mixed with water
+      quantity: '1.00'
+    - measurement: leaves
+      name: bay leaf
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: cloves
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: pinch
+      name: nutmeg
+      note: null
+      preparation: grated
+      quantity: '1.00'
+    - measurement: as needed
+      name: salt
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: as needed
+      name: pepper
+      note: null
+      preparation: null
+      quantity: null
+    name: Liquid and spices
   serves: 4
 source: https://www.youtube.com/watch?v=wo6ti22_-hc
 tags:
-  - soup
-  - vegan
+- soup
+- vegan
 title: Kartoffelsuppe

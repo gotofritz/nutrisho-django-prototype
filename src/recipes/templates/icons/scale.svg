@@ -1,0 +1,4 @@
+<svg viewBox="0 0 512 512">
+  <path d="M 0 256 C 0 114.6 114.6 0 256 0 C 397.4 0 512 114.6 512 256 C 512 397.4 397.4 512 256 512 C 114.6 512 0 397.4 0 256 Z" style=""></path>
+  <text x="256" y="340" text-anchor="middle" font-size="280" font-family="sans-serif" fill="white" font-weight="bold">×</text>
+</svg>

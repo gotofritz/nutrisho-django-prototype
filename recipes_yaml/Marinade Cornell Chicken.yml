@@ -1,61 +1,70 @@
 cuisine: .usa.traditional
 description: Only works on grills
 directions:
-    step:
-    - Purè marinade ingredients in food processor
-    - Put chicken in a bowl, cover with half the marinade, stir and cover in cling
-        filmd
-    - Chill 2 hours
-    - Dry the chicken with paper towels so that it doesn't drip, then grill
-    - Use the other half of the marinade to baste as it cooks, 35 mins (or depending
-        on chunks sizes)
+  step:
+  - Purè marinade ingredients in food processor
+  - Put chicken in a bowl, cover with half the marinade, stir and cover in cling filmd
+  - Chill 2 hours
+  - Dry the chicken with paper towels so that it doesn't drip, then grill
+  - Use the other half of the marinade to baste as it cooks, 35 mins (or depending
+    on chunks sizes)
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: ml
-            name: cider vinegar
-            preparation: null
-            quantity: '120.00'
-        -   measurement: ml
-            name: veg oil
-            preparation: null
-            quantity: '60.00'
-        -   measurement: null
-            name: egg
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: thyme
-            preparation: chopped coarsely
-            quantity: '0.12'
-        -   measurement: tsp
-            name: rosemary
-            preparation: chopped coarsely
-            quantity: '0.12'
-        -   measurement: tsp
-            name: rosemary
-            preparation: chopped coarsely
-            quantity: '0.12'
-        -   measurement: tsp
-            name: spoked paprika
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tsp
-            name: nutmeg
-            preparation: grated
-            quantity: '0.12'
-        -   measurement: tsp
-            name: grated ginger
-            preparation: null
-            quantity: '0.12'
-        name: Marinade
-    -   ingredient:
-        -   measurement: kg
-            name: chicken
-            preparation: halved, no backbone; or chunks
-            quantity: '0.25'
-        name: Meat
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: ml
+      name: cider vinegar
+      note: null
+      preparation: null
+      quantity: '240.00'
+    - measurement: ml
+      name: veg oil
+      note: null
+      preparation: null
+      quantity: '120.00'
+    - measurement: null
+      name: egg
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: thyme
+      note: null
+      preparation: chopped coarsely
+      quantity: '0.24'
+    - measurement: tsp
+      name: rosemary
+      note: null
+      preparation: chopped coarsely
+      quantity: '0.24'
+    - measurement: tsp
+      name: rosemary
+      note: null
+      preparation: chopped coarsely
+      quantity: '0.24'
+    - measurement: tsp
+      name: spoked paprika
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tsp
+      name: nutmeg
+      note: null
+      preparation: grated
+      quantity: '0.24'
+    - measurement: tsp
+      name: grated ginger
+      note: null
+      preparation: null
+      quantity: '0.24'
+    name: Marinade
+  - ingredient:
+    - measurement: kg
+      name: chicken
+      note: null
+      preparation: halved, no backbone; or chunks
+      quantity: '0.50'
+    name: Meat
+  serves: 2
 source: http://www.saveur.com/article/recipes/cornell-chicken-recipe
 tags: []
 title: 'Marinade: Cornell Chicken'

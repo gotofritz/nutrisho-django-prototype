@@ -1,52 +1,59 @@
 cuisine: .chinese
 description: null
 directions:
-    step:
-    - Stir fry broccoli for 20 s
-    - Add water and salt, cover, cook 2m
-    - Uncover and remove broccoli
-    - Keep 125 ml water and mix with soy sauce and cornstarch
-    - Beat egg whites
-    - Heat oil in wok and thicken sauce 1m
-    - Remove wok from fire
-    - Strain egg whites through sieve high above wok, to create ribbons. Don't move
-        for 30 s
-    - Season, pour over broccoli, and serve
+  step:
+  - Stir fry broccoli for 20 s
+  - Add water and salt, cover, cook 2m
+  - Uncover and remove broccoli
+  - Keep 125 ml water and mix with soy sauce and cornstarch
+  - Beat egg whites
+  - Heat oil in wok and thicken sauce 1m
+  - Remove wok from fire
+  - Strain egg whites through sieve high above wok, to create ribbons. Don't move
+    for 30 s
+  - Season, pour over broccoli, and serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: broccoli florets
-            preparation: chinese / italian individual spears are better
-            quantity: '55.00'
-        -   measurement: tsp
-            name: ginger
-            preparation: null
-            quantity: '0.25'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '62.50'
-        name: Veg
-    -   ingredient:
-        -   measurement: Tbsp
-            name: soy sauce
-            preparation: null
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: cornstarch
-            preparation: null
-            quantity: '0.38'
-        -   measurement: tsp
-            name: oil
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: egg whites
-            preparation: null
-            quantity: '0.50'
-        name: Sauce
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: broccoli florets
+      note: null
+      preparation: chinese / italian individual spears are better
+      quantity: '220.00'
+    - measurement: tsp
+      name: ginger
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '250.00'
+    name: Veg
+  - ingredient:
+    - measurement: Tbsp
+      name: soy sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: cornstarch
+      note: null
+      preparation: null
+      quantity: '1.52'
+    - measurement: tsp
+      name: oil
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: egg whites
+      note: null
+      preparation: null
+      quantity: '2.00'
+    name: Sauce
+  serves: 4
 source: ''
 tags:
 - vegetable side

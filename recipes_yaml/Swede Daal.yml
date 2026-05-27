@@ -1,85 +1,100 @@
 cuisine: .indian.fusion
 description: An anglicized dal recipe
 directions:
-    step:
-    - Sautèe onion in hot oil / butter mixture until it becomes translucent
-    - Add swede until it begins to brown a bit
-    - Add garlic, give it a couple of minutes until you can smell it
-    - Add ginger a few seconds, then lentils, water, cocount cream, cinnamon, bay
-        leaf, coriander powder
-    - Pressure cook for 20 mins
-    - Open pressure cooker, remove from stove. Add salt and lemon juice, leave covered
-        a few minutes
-    - 'Seasoning: fry cumin and black mustard seeds, when they start sizziling add
-        chilies. Add to dal and let rest a couple minutes'
-    - Garnish with chopped coriander, toasted almond flakes
+  step:
+  - Sautèe onion in hot oil / butter mixture until it becomes translucent
+  - Add swede until it begins to brown a bit
+  - Add garlic, give it a couple of minutes until you can smell it
+  - Add ginger a few seconds, then lentils, water, cocount cream, cinnamon, bay leaf,
+    coriander powder
+  - Pressure cook for 20 mins
+  - Open pressure cooker, remove from stove. Add salt and lemon juice, leave covered
+    a few minutes
+  - 'Seasoning: fry cumin and black mustard seeds, when they start sizziling add chilies.
+    Add to dal and let rest a couple minutes'
+  - Garnish with chopped coriander, toasted almond flakes
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: small
-            name: onion
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: cup
-            name: swede
-            preparation: diced
-            quantity: '0.25'
-        -   measurement: cloves
-            name: garlic
-            preparation: chopped
-            quantity: '0.50'
-        -   measurement: cm
-            name: ginger
-            preparation: grated
-            quantity: '0.25'
-        -   measurement: stick
-            name: cinnamon
-            preparation: null
-            quantity: '0.25'
-        -   measurement: leaves
-            name: bay
-            preparation: null
-            quantity: '0.50'
-        -   measurement: g
-            name: chana dal
-            preparation: null
-            quantity: '22.50'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '100.00'
-        -   measurement: ml
-            name: cocount cream
-            preparation: null
-            quantity: '50.00'
-        name: Dal
-    -   ingredient:
-        -   measurement: null
-            name: lemon
-            preparation: squeezed
-            quantity: '0.12'
-        -   measurement: tsp
-            name: cumin seeds
-            preparation: null
-            quantity: '0.38'
-        -   measurement: tsp
-            name: black mustard seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: chilies
-            preparation: deseeded and chopped
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: coriander leaves
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: handful
-            name: almond flakes
-            preparation: toasted
-            quantity: '0.25'
-        name: Seasoning and Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: small
+      name: onion
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: cup
+      name: swede
+      note: null
+      preparation: diced
+      quantity: '1.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: chopped
+      quantity: '2.00'
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: grated
+      quantity: '1.00'
+    - measurement: stick
+      name: cinnamon
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: leaves
+      name: bay
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: g
+      name: chana dal
+      note: null
+      preparation: null
+      quantity: '90.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '400.00'
+    - measurement: ml
+      name: cocount cream
+      note: null
+      preparation: null
+      quantity: '200.00'
+    name: Dal
+  - ingredient:
+    - measurement: null
+      name: lemon
+      note: null
+      preparation: squeezed
+      quantity: '0.48'
+    - measurement: tsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '1.52'
+    - measurement: tsp
+      name: black mustard seeds
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: chilies
+      note: null
+      preparation: deseeded and chopped
+      quantity: '2.00'
+    - measurement: tbsp
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: handful
+      name: almond flakes
+      note: null
+      preparation: toasted
+      quantity: '1.00'
+    name: Seasoning and Garnish
+  serves: 2
 source: http://www.abelandcole.co.uk/recipes/swede-coconut-daal
 tags: []
 title: Swede Daal

@@ -1,81 +1,93 @@
 cuisine: .european.traditional
 description: null
 directions:
-    step:
-    - Mix cream and honey in a pot, add any flavourings you may like (tea, cardamom,
-        vanilla, lemon peel, pandan leaves...) and bring to boil on medium-lo heat.
-    - 'If using vanilla pod: cut in half lengthways, scrape seeds with knife. Add
-        both scraped seed and pods to cream.'
-    - Meanwhile, beat yolks and sugar with a whisk until well mixed
-    - When the cream is just beginning to boil, remove from fire.
-    - Add a spoonful of cream to egg mixture, beat. Add another, then more and more
-        until you have added it all. At the beginning add very little otherwise you'll
-        get scrambled eggs; when you have added half or so you can add bigger amounts.
-        It's ok if the extra ingredients in the cream fall into the egg mixture
-    - Sieve the mixture into a pouring jug
-    - Put five ramekins onto a roasting tray. Split any optional fillings (soaked
-        raisins, cherries...) among the ramekins, then pour the egg mixture into them
-    - Pour warm water in a roasting tray, enough to surround the ramekins without
-        getting into them
-    - Bake 40 mins at 150°, then cool and chill
-    - Before serving, scatter sugar over the top and blow torch it
+  step:
+  - Mix cream and honey in a pot, add any flavourings you may like (tea, cardamom,
+    vanilla, lemon peel, pandan leaves...) and bring to boil on medium-lo heat.
+  - 'If using vanilla pod: cut in half lengthways, scrape seeds with knife. Add both
+    scraped seed and pods to cream.'
+  - Meanwhile, beat yolks and sugar with a whisk until well mixed
+  - When the cream is just beginning to boil, remove from fire.
+  - Add a spoonful of cream to egg mixture, beat. Add another, then more and more
+    until you have added it all. At the beginning add very little otherwise you'll
+    get scrambled eggs; when you have added half or so you can add bigger amounts.
+    It's ok if the extra ingredients in the cream fall into the egg mixture
+  - Sieve the mixture into a pouring jug
+  - Put five ramekins onto a roasting tray. Split any optional fillings (soaked raisins,
+    cherries...) among the ramekins, then pour the egg mixture into them
+  - Pour warm water in a roasting tray, enough to surround the ramekins without getting
+    into them
+  - Bake 40 mins at 150°, then cool and chill
+  - Before serving, scatter sugar over the top and blow torch it
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: ml
-            name: double cream
-            preparation: or coconut milk for a dairy free version
-            quantity: '125.00'
-        -   measurement: null
-            name: egg yolks
-            preparation: null
-            quantity: '1.25'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '7.50'
-        -   measurement: g
-            name: honey
-            preparation: null
-            quantity: '10.00'
-        -   measurement: tbsp
-            name: sugar
-            preparation: for garnishing
-            quantity: '0.25'
-        name: null
-    -   ingredient:
-        -   measurement: pod
-            name: vanilla
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: tea
-            preparation: earl grey or herbal
-            quantity: '0.25'
-        -   measurement: null
-            name: lemon
-            preparation: zest
-            quantity: '0.12'
-        -   measurement: bunch
-            name: pandan leaves
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: cardamoms
-            preparation: lightly crushed
-            quantity: '0.75'
-        name: 'Optional filling to mix with cream:'
-    -   ingredient:
-        -   measurement: g
-            name: raisins
-            preparation: soaked in brandy for 15 mins
-            quantity: '5.00'
-        -   measurement: null
-            name: cherries
-            preparation: pitted and quartered
-            quantity: '2.50'
-        name: Optional fillings to put in ramakins
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: ml
+      name: double cream
+      note: null
+      preparation: or coconut milk for a dairy free version
+      quantity: '250.00'
+    - measurement: null
+      name: egg yolks
+      note: null
+      preparation: null
+      quantity: '2.50'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '15.00'
+    - measurement: g
+      name: honey
+      note: null
+      preparation: null
+      quantity: '20.00'
+    - measurement: tbsp
+      name: sugar
+      note: null
+      preparation: for garnishing
+      quantity: '0.50'
+    name: null
+  - ingredient:
+    - measurement: pod
+      name: vanilla
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tbsp
+      name: tea
+      note: null
+      preparation: earl grey or herbal
+      quantity: '0.50'
+    - measurement: null
+      name: lemon
+      note: null
+      preparation: zest
+      quantity: '0.24'
+    - measurement: bunch
+      name: pandan leaves
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: null
+      name: cardamoms
+      note: null
+      preparation: lightly crushed
+      quantity: '1.50'
+    name: 'Optional filling to mix with cream:'
+  - ingredient:
+    - measurement: g
+      name: raisins
+      note: null
+      preparation: soaked in brandy for 15 mins
+      quantity: '10.00'
+    - measurement: null
+      name: cherries
+      note: null
+      preparation: pitted and quartered
+      quantity: '5.00'
+    name: Optional fillings to put in ramakins
+  serves: 2
 source: http://www.theguardian.com/lifeandstyle/wordofmouth/2012/sep/20/how-to-cook-perfect-creme-brulee
 tags: []
 title: Crème Brûlée

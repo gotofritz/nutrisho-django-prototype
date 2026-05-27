@@ -1,50 +1,58 @@
 cuisine: .fusion.british
 description: null
 directions:
-    step:
-    - Cook the meat to your liking, rare or medium, the let it rest.
-    - Cook greens in salted boiling water until just tender
-    - Dress with the sauce ingredients while still hot and divide into bowls
-    - Thinly slice the steak and place on the greens
+  step:
+  - Cook the meat to your liking, rare or medium, the let it rest.
+  - Cook greens in salted boiling water until just tender
+  - Dress with the sauce ingredients while still hot and divide into bowls
+  - Thinly slice the steak and place on the greens
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: steak, sirloin
-            preparation: rubbed with oil and seasoned with salt and pepper
-            quantity: '56.25'
-        -   measurement: null
-            name: pak choi
-            preparation: or any other green
-            quantity: '0.50'
-        name: Meat
-    -   ingredient:
-        -   measurement: tbsp
-            name: soy sauce
-            preparation: null
-            quantity: '2.00'
-        -   measurement: cm
-            name: ginger
-            preparation: peeled, grated
-            quantity: '0.50'
-        -   measurement: null
-            name: chilli
-            preparation: deseeded and chopped
-            quantity: '0.25'
-        -   measurement: clove
-            name: garlic
-            preparation: chopped
-            quantity: '0.12'
-        -   measurement: null
-            name: lime
-            preparation: juiced
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: oil, olive
-            preparation: or to taste
-            quantity: '0.25'
-        name: Dressing
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: steak, sirloin
+      note: null
+      preparation: rubbed with oil and seasoned with salt and pepper
+      quantity: '225.00'
+    - measurement: null
+      name: pak choi
+      note: null
+      preparation: or any other green
+      quantity: '2.00'
+    name: Meat
+  - ingredient:
+    - measurement: tbsp
+      name: soy sauce
+      note: null
+      preparation: null
+      quantity: '8.00'
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: peeled, grated
+      quantity: '2.00'
+    - measurement: null
+      name: chilli
+      note: null
+      preparation: deseeded and chopped
+      quantity: '1.00'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: chopped
+      quantity: '0.48'
+    - measurement: null
+      name: lime
+      note: null
+      preparation: juiced
+      quantity: '1.00'
+    - measurement: tbsp
+      name: oil, olive
+      note: null
+      preparation: or to taste
+      quantity: '1.00'
+    name: Dressing
+  serves: 2
 source: Jamie Oliver NAked chef 2
 tags: []
 title: Beef with Soy Sauce and Ginger

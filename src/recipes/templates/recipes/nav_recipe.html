@@ -1,3 +1,29 @@
 <div class="nav-button">
-  <a href="{% url "recipes:edit" recipe.id %}">{% include "../icons/edit.svg" %}</a>
+  <button
+    type="button"
+    onclick="panelToggle(this, 'metadata-panel', event)"
+    hx-get="{% url 'recipes:metadata_edit' recipe.id %}"
+    hx-target="#metadata-panel"
+    hx-swap="innerHTML"
+  >{% include "../icons/edit.svg" %}</button>
+</div>
+
+<div class="nav-button">
+  <button
+    type="button"
+    onclick="panelToggle(this, 'scale-panel', event)"
+    hx-get="{% url 'recipes:scale_panel' recipe.id %}"
+    hx-target="#scale-panel"
+    hx-swap="innerHTML"
+  >{% include "../icons/scale.svg" %}</button>
+</div>
+
+<div class="nav-button">
+  <button
+    type="button"
+    onclick="panelToggle(this, 'delete-panel', event)"
+    hx-get="{% url 'recipes:delete_panel' recipe.id %}"
+    hx-target="#delete-panel"
+    hx-swap="innerHTML"
+  >{% include "../icons/trash.svg" %}</button>
 </div>

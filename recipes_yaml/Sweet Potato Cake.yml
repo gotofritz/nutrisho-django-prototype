@@ -1,73 +1,85 @@
 cuisine: .fusion.british
 description: null
 directions:
-    step:
-    - Steam the sweet potato then drain in a colander for one hour
-    - Whisk the sauce ingredients until smooth then set aside
-    - Mix all the fritter ingredients by hand in a bowl
-    - With we hands, knead into walnut sized balls, then flatten into 5 cm to 1 cm
-        cakes
-    - Fry in butter, carefully until you get a nice crust, 6 minutes, turning as necessary
-    - Dry on paper towels and serve hot or cold with the sauce
+  step:
+  - Steam the sweet potato then drain in a colander for one hour
+  - Whisk the sauce ingredients until smooth then set aside
+  - Mix all the fritter ingredients by hand in a bowl
+  - With we hands, knead into walnut sized balls, then flatten into 5 cm to 1 cm cakes
+  - Fry in butter, carefully until you get a nice crust, 6 minutes, turning as necessary
+  - Dry on paper towels and serve hot or cold with the sauce
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: kg
-            name: sweet potatoes
-            preparation: cut into large chunks
-            quantity: '0.25'
-        -   measurement: tsp
-            name: soy sauce
-            preparation: null
-            quantity: '0.50'
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '25.00'
-        -   measurement: tsp
-            name: salt
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: sugar
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tbsp
-            name: spring onions
-            preparation: chopped
-            quantity: '0.75'
-        -   measurement: tbsp
-            name: chillies
-            preparation: deseeded and chopped
-            quantity: '0.25'
-        -   measurement: g
-            name: butter
-            preparation: or as needed
-            quantity: '12.50'
-        name: Fritters
-    -   ingredient:
-        -   measurement: g
-            name: yogurt
-            preparation: null
-            quantity: '12.50'
-        -   measurement: g
-            name: sour cream
-            preparation: null
-            quantity: '12.50'
-        -   measurement: tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbso
-            name: lemon juice
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: coriander leaves
-            preparation: chopped
-            quantity: '0.25'
-        name: Sauce
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: kg
+      name: sweet potatoes
+      note: null
+      preparation: cut into large chunks
+      quantity: '0.50'
+    - measurement: tsp
+      name: soy sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: tsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tbsp
+      name: spring onions
+      note: null
+      preparation: chopped
+      quantity: '1.50'
+    - measurement: tbsp
+      name: chillies
+      note: null
+      preparation: deseeded and chopped
+      quantity: '0.50'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: or as needed
+      quantity: '25.00'
+    name: Fritters
+  - ingredient:
+    - measurement: g
+      name: yogurt
+      note: null
+      preparation: null
+      quantity: '25.00'
+    - measurement: g
+      name: sour cream
+      note: null
+      preparation: null
+      quantity: '25.00'
+    - measurement: tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbso
+      name: lemon juice
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tbsp
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '0.50'
+    name: Sauce
+  serves: 2
 source: Ottolenghi
 tags: []
 title: Sweet Potato Cake

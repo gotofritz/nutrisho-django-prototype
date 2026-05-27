@@ -1,58 +1,67 @@
 cuisine: .spanish
 description: Pay attention to the way of splitting the potatoes by turning your knife
-    sideways. This creates a jagged edge which will help your potatoes to lose more
-    starch making this recipe even thicker and more delicious.
+  sideways. This creates a jagged edge which will help your potatoes to lose more
+  starch making this recipe even thicker and more delicious.
 directions:
-    step:
-    - rinse and dry the pork ribs
-    - season with salt and pepper
-    - sauté ribs, then set aside in olive oil on high heat
-    - sauté without stirring the potatoes on high heat until brown, about 4m
-    - season and simmer gently on medium low for 10m
-    - add and bring to simmer the onion, chorizo, bay leaf, smoked paprika, water
-        on medium low for 5m
-    - add ribs and simmer gently on low heat until sauce is thick, about 60m
+  step:
+  - rinse and dry the pork ribs
+  - season with salt and pepper
+  - sauté ribs, then set aside in olive oil on high heat
+  - sauté without stirring the potatoes on high heat until brown, about 4m
+  - season and simmer gently on medium low for 10m
+  - add and bring to simmer the onion, chorizo, bay leaf, smoked paprika, water on
+    medium low for 5m
+  - add ribs and simmer gently on low heat until sauce is thick, about 60m
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: Tbsp
-            name: oil
-            preparation: olive
-            quantity: '0.50'
-        -   measurement: kg
-            name: pork ribs
-            preparation: meaty
-            quantity: '0.25'
-        -   measurement: null
-            name: potatoes
-            preparation: peeled
-            quantity: '0.75'
-        -   measurement: null
-            name: onion
-            preparation: finely chopped
-            quantity: '0.25'
-        -   measurement: klinks
-            name: chorizo
-            preparation: links of dry-cured spicy chorizo
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: paprika
-            preparation: smoked
-            quantity: '0.50'
-        -   measurement: null
-            name: bay leaf
-            preparation: null
-            quantity: '0.25'
-        -   measurement: l
-            name: water
-            preparation: null
-            quantity: '0.25'
-        -   measurement: handful
-            name: parsley
-            preparation: finely chopped
-            quantity: '0.25'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: olive
+      quantity: '2.00'
+    - measurement: kg
+      name: pork ribs
+      note: null
+      preparation: meaty
+      quantity: '1.00'
+    - measurement: null
+      name: potatoes
+      note: null
+      preparation: peeled
+      quantity: '3.00'
+    - measurement: null
+      name: onion
+      note: null
+      preparation: finely chopped
+      quantity: '1.00'
+    - measurement: klinks
+      name: chorizo
+      note: null
+      preparation: links of dry-cured spicy chorizo
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: paprika
+      note: null
+      preparation: smoked
+      quantity: '2.00'
+    - measurement: null
+      name: bay leaf
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: l
+      name: water
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: handful
+      name: parsley
+      note: null
+      preparation: finely chopped
+      quantity: '1.00'
+    name: null
+  serves: 4
 source: ''
 tags: []
 title: Rioja Style Braised Potatoes with Chorizo and Pork Ribs

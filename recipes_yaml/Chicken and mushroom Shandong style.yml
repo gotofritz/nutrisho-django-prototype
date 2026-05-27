@@ -1,51 +1,59 @@
 cuisine: null
 description: null
 directions:
-    step:
-    - combine chicken breast, egg white, cornstartch and let stand, 10m
-    - squeeze the ginger through a muslin into the ginger, rice wine. Keep 1 tsp of
-        the ginger
-    - Deep fry the chicken, then stir fry with the dried mushrooms, 20s
-    - Add hoisin sauce, yellow bean paste, stir until warm, serve.
+  step:
+  - combine chicken breast, egg white, cornstartch and let stand, 10m
+  - squeeze the ginger through a muslin into the ginger, rice wine. Keep 1 tsp of
+    the ginger
+  - Deep fry the chicken, then stir fry with the dried mushrooms, 20s
+  - Add hoisin sauce, yellow bean paste, stir until warm, serve.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: chicken breast
-            preparation: diced
-            quantity: '62.50'
-        -   measurement: null
-            name: egg white
-            preparation: beaten until frothy
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: cornstartch
-            preparation: null
-            quantity: '0.38'
-        name: Batter
-    -   ingredient:
-        -   measurement: tbsp
-            name: ginger
-            preparation: grated
-            quantity: '0.25'
-        -   measurement: tsp
-            name: rice wine
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: dried mushrooms
-            preparation: soaked 25m
-            quantity: '1.00'
-        -   measurement: tbsp
-            name: hoisin sauce
-            preparation: null
-            quantity: '0.38'
-        -   measurement: tbsp
-            name: yellow bean paste
-            preparation: null
-            quantity: '0.38'
-        name: Sauce
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: chicken breast
+      note: null
+      preparation: diced
+      quantity: '125.00'
+    - measurement: null
+      name: egg white
+      note: null
+      preparation: beaten until frothy
+      quantity: '0.50'
+    - measurement: tbsp
+      name: cornstartch
+      note: null
+      preparation: null
+      quantity: '0.76'
+    name: Batter
+  - ingredient:
+    - measurement: tbsp
+      name: ginger
+      note: null
+      preparation: grated
+      quantity: '0.50'
+    - measurement: tsp
+      name: rice wine
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: null
+      name: dried mushrooms
+      note: null
+      preparation: soaked 25m
+      quantity: '2.00'
+    - measurement: tbsp
+      name: hoisin sauce
+      note: null
+      preparation: null
+      quantity: '0.76'
+    - measurement: tbsp
+      name: yellow bean paste
+      note: null
+      preparation: null
+      quantity: '0.76'
+    name: Sauce
+  serves: 2
 source: ''
 tags: []
 title: Chicken and mushroom Shandong style

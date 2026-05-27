@@ -1,186 +1,49 @@
 cuisine: .lebanon
 description: Half salad half relish, goes well with lamb
 directions:
-    step:
-    - A
-    - d
-    - d
-    - ''
-    - t
-    - h
-    - e
-    - ''
-    - i
-    - n
-    - g
-    - r
-    - e
-    - d
-    - i
-    - e
-    - n
-    - t
-    - s
-    - ''
-    - i
-    - n
-    - ''
-    - a
-    - ''
-    - b
-    - o
-    - w
-    - l
-    - ''
-    - i
-    - n
-    - ''
-    - t
-    - h
-    - i
-    - s
-    - ''
-    - o
-    - r
-    - d
-    - e
-    - r
-    - ':'
-    - ''
-    - g
-    - r
-    - a
-    - t
-    - e
-    - d
-    - ''
-    - p
-    - a
-    - r
-    - s
-    - n
-    - i
-    - p
-    - s
-    - ','
-    - ''
-    - c
-    - h
-    - o
-    - p
-    - p
-    - e
-    - d
-    - ''
-    - d
-    - a
-    - t
-    - e
-    - s
-    - ','
-    - ''
-    - c
-    - h
-    - o
-    - p
-    - p
-    - e
-    - d
-    - ''
-    - m
-    - i
-    - n
-    - t
-    - ','
-    - ''
-    - y
-    - o
-    - g
-    - h
-    - u
-    - r
-    - t
-    - ','
-    - ''
-    - l
-    - e
-    - m
-    - o
-    - n
-    - ''
-    - j
-    - u
-    - i
-    - c
-    - e
-    - ','
-    - ''
-    - h
-    - o
-    - n
-    - e
-    - y
-    - ','
-    - ''
-    - o
-    - l
-    - i
-    - v
-    - e
-    - ''
-    - o
-    - i
-    - l
-    - ','
-    - ''
-    - s
-    - a
-    - l
-    - t
-    - ''
-    - a
-    - n
-    - d
-    - ''
-    - p
-    - e
-    - p
-    - p
-    - e
-    - r
+  step:
+  - 'Add the ingredients in a bowl in this order: grated parsnips, chopped dates,
+    chopped mint, yoghurt, lemon juice, honey, olive oil, salt and pepper'
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: parsnips
-            preparation: peeled
-            quantity: '75.00'
-        -   measurement: null
-            name: dates
-            preparation: pitted and chopped
-            quantity: '1.25'
-        -   measurement: g
-            name: greek yogurt
-            preparation: null
-            quantity: '18.75'
-        -   measurement: tbsp
-            name: lemon juice
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: runny honey
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: mint
-            preparation: chopped coarsely
-            quantity: '0.25'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: parsnips
+      note: null
+      preparation: peeled
+      quantity: '300.00'
+    - measurement: null
+      name: dates
+      note: null
+      preparation: pitted and chopped
+      quantity: '5.00'
+    - measurement: g
+      name: greek yogurt
+      note: null
+      preparation: null
+      quantity: '75.00'
+    - measurement: tbsp
+      name: lemon juice
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: runny honey
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: mint
+      note: null
+      preparation: chopped coarsely
+      quantity: '1.00'
+    name: null
+  serves: 4
 source: Moro Cookbook 2
 tags:
 - yoghurt

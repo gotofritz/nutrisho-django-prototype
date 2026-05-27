@@ -1,0 +1,74 @@
+cuisine: .british
+description: Moist
+directions:
+  step:
+  - Butter and line the base of a 20cm cake tin
+  - Beat the sugar, butter, flour, ground hazelnuts, eggs and baking powder with a
+    wooden spoon, until smooth and light
+  - Stir in che chopped plums and chocolate
+  - Tip into the cake tin and smooth the top
+  - Scatter halved plums and the hazelnuts over mixture, and push in gently
+  - Bake for 40-50 mins at 180°, then turn out and cool on a wire rack
+  - Heat the jelly and brush over the cake
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '150.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '175.00'
+    - measurement: g
+      name: self raising flour
+      note: null
+      preparation: null
+      quantity: '175.00'
+    - measurement: g
+      name: ground hazelnuts
+      note: null
+      preparation: null
+      quantity: '175.00'
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: tsp
+      name: baking powder
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Mixture
+  - ingredient:
+    - measurement: g
+      name: plums
+      note: null
+      preparation: 4 halved and stoned, the rest roughly chopped
+      quantity: '500.00'
+    - measurement: g
+      name: dark chocolate
+      note: null
+      preparation: chopped
+      quantity: '50.00'
+    - measurement: tbsp
+      name: hazelnuts
+      note: null
+      preparation: null
+      quantity: '2.00'
+    name: Topping
+  - ingredient:
+    - measurement: tbsp
+      name: redcurrant jelly
+      note: null
+      preparation: or damson or plum
+      quantity: '2.00'
+    name: Garnish
+  serves: 4
+source: BBC Food
+tags: []
+title: Plum, Hazelnut & Chocolate Cake

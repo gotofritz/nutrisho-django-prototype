@@ -1,11 +1,30 @@
-<div
-  id="iir-{{ iir.id }}"
-  class="ingredient-in-group-show editable"
-  hx-get="{% url 'recipes:ingredient_edit' recipe.id iir.id %}"
-  hx-swap="outerHTML"
->
-  <span class="ingredient-quantity">{{ iir.quantity|default:"" }}</span>
-  <span class="ingredient-unit">{{ iir.unit|default:"" }}</span>
-  <span class="ingredient-name">{{ iir.ingredient.ingredient_name }}</span>
-  <span class="ingredient-preparation">{{ iir.preparation|default:"" }}</span>
+{% load recipe_filters %}
+<div id="iir-{{ iir.id }}" class="ingredient-in-group-show editable-row">
+  <div
+    class="editable ingredient-content"
+    hx-get="{% url 'recipes:ingredient_edit' recipe.id iir.id %}"
+    hx-target="closest div.ingredient-in-group-show"
+    hx-swap="outerHTML"
+  >
+    <span class="ingredient-quantity">{{ iir.quantity|format_quantity }}</span>
+    <span class="ingredient-unit">{{ iir.unit|default:"" }}</span>
+    <span class="ingredient-name">{{ iir.ingredient.ingredient_name }}</span>{% if iir.ingredient.ingredient_name and iir.preparation %},{% endif %}
+    <span class="ingredient-preparation">{{ iir.preparation|default:"" }}</span>
+    {% if iir.note %}<span class="ingredient-note">({{ iir.note }})</span>{% endif %}
+  </div>
+  <span class="ingredient-check" onclick="event.stopPropagation()">
+    <input type="checkbox" class="ingredient-select" name="ingredient_ids" value="{{ iir.id }}">
+  </span>
+  <span class="move-btns" onclick="event.stopPropagation()">
+    <button
+      hx-post="{% url 'recipes:ingredient_move_up' recipe.id iir.id %}"
+      hx-target="#iir-list-{{ iir.ingredient_group.id }}"
+      hx-swap="innerHTML"
+    >↑</button>
+    <button
+      hx-post="{% url 'recipes:ingredient_move_down' recipe.id iir.id %}"
+      hx-target="#iir-list-{{ iir.ingredient_group.id }}"
+      hx-swap="innerHTML"
+    >↓</button>
+  </span>
 </div>

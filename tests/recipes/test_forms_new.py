@@ -2,7 +2,7 @@
 
 import pytest
 
-from recipes.forms.field_forms import EDITABLE_RECIPE_FIELDS, RecipeFieldForm
+from recipes.forms.field_forms import EDITABLE_RECIPE_FIELDS, RecipeFieldForm, RecipeMetadataForm
 from recipes.forms.ingredient_forms import IngredientGroupForm, IngredientInRecipeForm
 from recipes.forms.step_form import StepForm
 from recipes.models import Recipe
@@ -61,7 +61,13 @@ def test_step_form_accepts_valid_step():
 
 def test_ingredient_form_accepts_valid_decimal_quantity():
     form = IngredientInRecipeForm(
-        data={"quantity": "2.50", "unit": "cups", "preparation": "", "note": ""}
+        data={
+            "ingredient_name": "salt",
+            "quantity": "2.50",
+            "unit": "cups",
+            "preparation": "",
+            "note": "",
+        }
     )
     assert form.is_valid()
 
@@ -82,3 +88,37 @@ def test_ingredient_group_form_accepts_blank_group_name():
 def test_ingredient_group_form_accepts_named_group():
     form = IngredientGroupForm(data={"group_name": "Sauce"})
     assert form.is_valid()
+
+
+@pytest.mark.django_db
+def test_ingredient_in_recipe_form_commit_false_does_not_create_ingredient(db):
+    """save(commit=False) must not write Ingredient to DB — side-effect free."""
+    from recipes.models import Ingredient
+
+    form = IngredientInRecipeForm(
+        data={"ingredient_name": "ghost-veggie", "quantity": "", "unit": "", "preparation": "", "note": ""}
+    )
+    assert form.is_valid()
+    form.save(commit=False)
+    assert not Ingredient.objects.filter(ingredient_name="ghost-veggie").exists()
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_form_commit_false_does_not_create_cuisine(user):
+    """save(commit=False) must not write Cuisine to DB — side-effect free."""
+    from recipes.models import Cuisine
+
+    recipe = Recipe.objects.create(recipe_name="Test", owner=user)
+    form = RecipeMetadataForm(
+        data={
+            "recipe_name": "Test",
+            "short_description": "",
+            "servings": "",
+            "source_instance": "",
+            "cuisine_name": "ghost-cuisine",
+        },
+        instance=recipe,
+    )
+    assert form.is_valid()
+    form.save(commit=False)
+    assert not Cuisine.objects.filter(cuisine="ghost-cuisine").exists()

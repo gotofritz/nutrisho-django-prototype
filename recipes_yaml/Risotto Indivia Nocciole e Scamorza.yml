@@ -1,55 +1,63 @@
 cuisine: null
 description: A recipe from a Vercelli rice grower, done with brown risotto rice
 directions:
-    step:
-    - Sautè the onion in butter. Add rice and stir for a few mins
-    - Sweat with white wine
-    - Add a couple of ladles of stock, salt, and stir in vigorously
-    - Add the endive.
-    - Carry on adding the stock one ladlef at the time, stirring in strongly, and
-        letting it stand until absorbed
-    - After 30 mins or so the risotto will be ready. It should be coocked through
-        but still firm.
-    - Turn off the heat, add the smoked cheese and parmesan, stirring vigorously,
-        and let it stand covered for a few minutes.
-    - Serve with the hazelnuts sprinkled over the top
+  step:
+  - Sautè the onion in butter. Add rice and stir for a few mins
+  - Sweat with white wine
+  - Add a couple of ladles of stock, salt, and stir in vigorously
+  - Add the endive.
+  - Carry on adding the stock one ladlef at the time, stirring in strongly, and letting
+    it stand until absorbed
+  - After 30 mins or so the risotto will be ready. It should be coocked through but
+    still firm.
+  - Turn off the heat, add the smoked cheese and parmesan, stirring vigorously, and
+    let it stand covered for a few minutes.
+  - Serve with the hazelnuts sprinkled over the top
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: onion
-            preparation: chopped finely
-            quantity: '0.25'
-        -   measurement: g
-            name: risotto, arborio, brown
-            preparation: null
-            quantity: '75.00'
-        -   measurement: tbsp
-            name: wine, white
-            preparation: null
-            quantity: '0.75'
-        -   measurement: L
-            name: stock, veg or chicken
-            preparation: null
-            quantity: '0.38'
-        -   measurement: heads
-            name: endive
-            preparation: null
-            quantity: '0.50'
-        -   measurement: g
-            name: scamorza affumicata
-            preparation: or other smoked cheese, cubed
-            quantity: '25.00'
-        -   measurement: g
-            name: parmesan
-            preparation: null
-            quantity: '12.50'
-        -   measurement: g
-            name: hazelnuts
-            preparation: toasted, ground
-            quantity: '12.50'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: small
+      name: onion
+      note: null
+      preparation: chopped finely
+      quantity: '1.00'
+    - measurement: g
+      name: risotto, arborio, brown
+      note: null
+      preparation: null
+      quantity: '190.00'
+    - measurement: tbsp
+      name: wine, white
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: ml
+      name: stock, veg or chicken
+      note: null
+      preparation: null
+      quantity: '500.00'
+    - measurement: heads
+      name: endive
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: scamorza affumicata
+      note: null
+      preparation: or other smoked cheese, cubed
+      quantity: '60.00'
+    - measurement: g
+      name: parmesan
+      note: null
+      preparation: null
+      quantity: '30.00'
+    - measurement: g
+      name: hazelnuts
+      note: null
+      preparation: toasted, ground
+      quantity: '30.00'
+    name: null
+  serves: 2
 source: http://www.speckandthecity.com/2012/01/risotto-integrale-con-invidia-belga.html
 tags: []
 title: Risotto Indivia, Nocciole, e Scamorza

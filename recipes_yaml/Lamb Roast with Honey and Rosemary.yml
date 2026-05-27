@@ -1,61 +1,70 @@
 cuisine: .fusion.spain
 description: British roast lamb done up the fashionable Moro way
 directions:
-    step:
-    - Make 10 / 12 small incisions in the lamb and push the garlic an rosemary sprigs
-        in them. Put the lamb in a baking tray
-    - Mix the coating ingredients together, and pour over the lamb
-    - Bake 30 mins at 230°
-    - Add the white wine, and roast for another half hour, adding water if too dry
-    - Remove and let rest for 20 mins
-    - Remove the fat from the tray, the put over the hob on medium. Add the wine and
-        scrape any juices off the bottom. Season with salt and pepper
-    - Slice the lamb and pour the stock over it
+  step:
+  - Make 10 / 12 small incisions in the lamb and push the garlic an rosemary sprigs
+    in them. Put the lamb in a baking tray
+  - Mix the coating ingredients together, and pour over the lamb
+  - Bake 30 mins at 230°
+  - Add the white wine, and roast for another half hour, adding water if too dry
+  - Remove and let rest for 20 mins
+  - Remove the fat from the tray, the put over the hob on medium. Add the wine and
+    scrape any juices off the bottom. Season with salt and pepper
+  - Slice the lamb and pour the stock over it
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: leg of lamb, 2.5 k
-            preparation: null
-            quantity: '0.25'
-        -   measurement: cloves
-            name: garlic
-            preparation: sliced into slivers
-            quantity: '0.75'
-        -   measurement: sprigs
-            name: roesmary
-            preparation: 3 or 4 leaves to sprig
-            quantity: '3.00'
-        -   measurement: ml
-            name: white wine
-            preparation: null
-            quantity: '18.75'
-        name: Roast
-    -   ingredient:
-        -   measurement: clove
-            name: garlic
-            preparation: crushed into a paste with salt
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: honey
-            preparation: null
-            quantity: '0.75'
-        -   measurement: tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.75'
-        -   measurement: tbsp
-            name: rosemary
-            preparation: chopped finely
-            quantity: '0.50'
-        name: Coating
-    -   ingredient:
-        -   measurement: ml
-            name: white wine
-            preparation: null
-            quantity: '18.75'
-        name: Gravy
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: leg of lamb, 2.5 k
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: sliced into slivers
+      quantity: '3.00'
+    - measurement: sprigs
+      name: roesmary
+      note: null
+      preparation: 3 or 4 leaves to sprig
+      quantity: '12.00'
+    - measurement: ml
+      name: white wine
+      note: null
+      preparation: null
+      quantity: '75.00'
+    name: Roast
+  - ingredient:
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: crushed into a paste with salt
+      quantity: '1.00'
+    - measurement: tbsp
+      name: honey
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: tbsp
+      name: rosemary
+      note: null
+      preparation: chopped finely
+      quantity: '2.00'
+    name: Coating
+  - ingredient:
+    - measurement: ml
+      name: white wine
+      note: null
+      preparation: null
+      quantity: '75.00'
+    name: Gravy
+  serves: 4
 source: Moro
 tags:
 - roast
