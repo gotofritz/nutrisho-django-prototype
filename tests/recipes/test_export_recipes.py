@@ -999,9 +999,7 @@ def test_every_persisted_field_is_categorized():
         )
         # Reverse check: nothing in our lists should reference a field that no longer exists
         stale = categorized - field_names
-        assert not stale, (
-            f"{model_name} category lists reference removed fields: {sorted(stale)}"
-        )
+        assert not stale, f"{model_name} category lists reference removed fields: {sorted(stale)}"
 
 
 @pytest.mark.django_db

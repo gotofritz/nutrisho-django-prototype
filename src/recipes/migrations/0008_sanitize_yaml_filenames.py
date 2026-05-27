@@ -71,8 +71,9 @@ def _sanitize_yaml_filenames(apps, schema_editor):
         .values("pk", "yaml_filename")
     )
     blank_rows = list(
-        Recipe.objects.filter(Q(yaml_filename="") | Q(yaml_filename__isnull=True))
-        .values("pk", "recipe_name")
+        Recipe.objects.filter(Q(yaml_filename="") | Q(yaml_filename__isnull=True)).values(
+            "pk", "recipe_name"
+        )
     )
 
     # Detect collisions before any writes; include blank rows using safe_filename fallback

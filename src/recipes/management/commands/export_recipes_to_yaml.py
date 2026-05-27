@@ -27,9 +27,7 @@ def lossy_fields(recipe: Recipe) -> list[str]:
     owner = recipe.owner  # ty: ignore[possibly-missing-attribute]
     owner_username = owner.username if owner is not None else None  # ty: ignore[possibly-missing-attribute]
     if owner_username != _IMPORTER_OWNER_USERNAME:
-        reasons.append(
-            f"owner={owner_username!r} (importer assigns {_IMPORTER_OWNER_USERNAME!r})"
-        )
+        reasons.append(f"owner={owner_username!r} (importer assigns {_IMPORTER_OWNER_USERNAME!r})")
     if recipe.source_id is not None:  # ty: ignore[unresolved-attribute]
         reasons.append(f"source FK (id={recipe.source_id})")  # ty: ignore[unresolved-attribute]
     for step in recipe.step.all():  # ty: ignore[unresolved-attribute]
@@ -40,13 +38,9 @@ def lossy_fields(recipe: Recipe) -> list[str]:
     for group in recipe.ingredients_group.all():  # ty: ignore[unresolved-attribute]
         for iir in group.ingredient.all():
             if iir.substitute_id is not None:
-                reasons.append(
-                    f"ingredient {iir.ingredient.ingredient_name!r}.substitute"
-                )
+                reasons.append(f"ingredient {iir.ingredient.ingredient_name!r}.substitute")
             if iir.note:
-                reasons.append(
-                    f"ingredient {iir.ingredient.ingredient_name!r}.note"
-                )
+                reasons.append(f"ingredient {iir.ingredient.ingredient_name!r}.note")
     return reasons
 
 
@@ -216,8 +210,7 @@ class Command(BaseCommand):
             for r, reasons in lossy_report:
                 self.stderr.write(
                     self.style.WARNING(
-                        f"Lossy export of '{r.recipe_name}': "
-                        f"dropping {', '.join(reasons)}"
+                        f"Lossy export of '{r.recipe_name}': dropping {', '.join(reasons)}"
                     )
                 )
 
