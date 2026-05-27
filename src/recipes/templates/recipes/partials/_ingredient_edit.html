@@ -1,0 +1,23 @@
+<div id="iir-{{ iir.id }}">
+  <form
+    hx-post="{% url 'recipes:ingredient_save' recipe.id iir.id %}"
+    hx-swap="outerHTML"
+    hx-target="closest div"
+  >
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <button
+      type="button"
+      hx-get="{% url 'recipes:ingredient_display' recipe.id iir.id %}"
+      hx-target="closest div"
+      hx-swap="outerHTML"
+    >Cancel</button>
+    <button
+      type="button"
+      hx-post="{% url 'recipes:ingredient_delete' recipe.id iir.id %}"
+      hx-target="closest div"
+      hx-swap="outerHTML"
+    >Delete</button>
+  </form>
+</div>

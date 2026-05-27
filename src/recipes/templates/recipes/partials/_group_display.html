@@ -1,0 +1,8 @@
+<div
+  id="group-{{ group.id }}"
+  class="ingredient-group editable"
+  hx-get="{% url 'recipes:group_edit' recipe.id group.id %}"
+  hx-swap="outerHTML"
+>
+  <h4 class="group-name">{{ group.group_name|default:"" }}</h4>
+</div>

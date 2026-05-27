@@ -1,0 +1,14 @@
+<form
+  hx-post="{% url 'recipes:field_save' recipe.id field_name %}"
+  hx-swap="outerHTML"
+>
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save</button>
+  <button
+    type="button"
+    hx-get="{% url 'recipes:field_display' recipe.id field_name %}"
+    hx-target="closest form"
+    hx-swap="outerHTML"
+  >Cancel</button>
+</form>

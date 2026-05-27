@@ -3,10 +3,23 @@
 {% block page_title %}Recipes{% endblock %}
 
 {% block content %}
+<div class="home-header">
+  <h1>Recipes</h1>
+  <a href="{% url 'recipes:new' %}" class="btn-new-recipe">New Recipe</a>
+</div>
 {% if latest_recipe_list %}
-<ul>
+<ul id="recipe-list">
   {% for recipe in latest_recipe_list %}
-  <li><a href="{{ recipe.get_absolute_url }}">{{ recipe.recipe_name }}</a></li>
+  <li id="recipe-{{ recipe.id }}" class="recipe-list-item">
+    <a href="{{ recipe.get_absolute_url }}">{{ recipe.recipe_name }}</a>
+    <button
+      hx-post="{% url 'recipes:delete' recipe.id %}"
+      hx-target="#recipe-{{ recipe.id }}"
+      hx-swap="outerHTML"
+      hx-confirm="Delete '{{ recipe.recipe_name }}'?"
+      class="btn-delete"
+    >Delete</button>
+  </li>
   {% endfor %}
 </ul>
 {% else %}

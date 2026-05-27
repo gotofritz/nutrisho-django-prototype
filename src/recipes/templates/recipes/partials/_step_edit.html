@@ -1,0 +1,23 @@
+<li id="step-{{ step.id }}">
+  <form
+    hx-post="{% url 'recipes:step_save' recipe.id step.id %}"
+    hx-swap="outerHTML"
+    hx-target="closest li"
+  >
+    {% csrf_token %}
+    {{ form.step_text }}
+    <button type="submit">Save</button>
+    <button
+      type="button"
+      hx-get="{% url 'recipes:step_display' recipe.id step.id %}"
+      hx-target="closest li"
+      hx-swap="outerHTML"
+    >Cancel</button>
+    <button
+      type="button"
+      hx-post="{% url 'recipes:step_delete' recipe.id step.id %}"
+      hx-target="closest li"
+      hx-swap="outerHTML"
+    >Delete</button>
+  </form>
+</li>

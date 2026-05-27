@@ -1,0 +1,23 @@
+<div id="group-{{ group.id }}">
+  <form
+    hx-post="{% url 'recipes:group_save' recipe.id group.id %}"
+    hx-swap="outerHTML"
+    hx-target="closest div"
+  >
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <button
+      type="button"
+      hx-get="{% url 'recipes:group_display' recipe.id group.id %}"
+      hx-target="closest div"
+      hx-swap="outerHTML"
+    >Cancel</button>
+    <button
+      type="button"
+      hx-post="{% url 'recipes:group_delete' recipe.id group.id %}"
+      hx-target="closest div"
+      hx-swap="outerHTML"
+    >Delete</button>
+  </form>
+</div>
