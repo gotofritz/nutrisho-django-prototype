@@ -985,8 +985,14 @@ def test_every_persisted_field_is_categorized():
     models = {"Recipe": Recipe, "Step": Step, "IngredientInRecipe": IngredientInRecipe}
 
     for model_name, model_cls in models.items():
+        # _meta is injected by Django's model metaclass; ty cannot see through it.
+        # Introspecting fields here is deliberate — the whole point of the test is
+        # to catch new model fields that nobody categorized, which a hardcoded list
+        # would silently miss.
         field_names = {
-            f.name for f in model_cls._meta.get_fields() if getattr(f, "concrete", False)
+            f.name
+            for f in model_cls._meta.get_fields()  # ty: ignore[possibly-missing-attribute]
+            if getattr(f, "concrete", False)
         }
         ignored = _IGNORED_FIELDS[model_name]
         lossy = _EXPECTED_LOSSY[model_name]

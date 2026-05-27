@@ -53,10 +53,10 @@ def make_yaml(
 @pytest.fixture
 def gotofritz(db):
     """Create the gotofritz user required by batch_load_yaml_recipes."""
-    try:
-        return DjangoUser.objects.get(username="gotofritz")
-    except DjangoUser.DoesNotExist:
-        return DjangoUser.objects.create_user(username="gotofritz", password="x")
+    existing = DjangoUser.objects.filter(username="gotofritz").first()
+    if existing is not None:
+        return existing
+    return DjangoUser.objects.create_user(username="gotofritz", password="x")
 
 
 def write_yaml(tmp_path: Path, data: dict, filename: str = "recipe.yml") -> Path:

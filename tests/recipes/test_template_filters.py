@@ -10,8 +10,9 @@ from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Reci
 
 def test_scale_filter_removed():
     """scale filter must not exist — quantity is full-recipe amount, not per-serving."""
-    with pytest.raises(ImportError):
-        from recipes.templatetags.recipe_filters import scale  # noqa: F401
+    from recipes.templatetags import recipe_filters
+
+    assert not hasattr(recipe_filters, "scale")
 
 
 @pytest.mark.django_db
