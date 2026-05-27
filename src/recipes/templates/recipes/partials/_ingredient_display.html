@@ -1,0 +1,11 @@
+<div
+  id="iir-{{ iir.id }}"
+  class="ingredient-in-group-show editable"
+  hx-get="{% url 'recipes:ingredient_edit' recipe.id iir.id %}"
+  hx-swap="outerHTML"
+>
+  <span class="ingredient-quantity">{{ iir.quantity|default:"" }}</span>
+  <span class="ingredient-unit">{{ iir.unit|default:"" }}</span>
+  <span class="ingredient-name">{{ iir.ingredient.ingredient_name }}</span>
+  <span class="ingredient-preparation">{{ iir.preparation|default:"" }}</span>
+</div>

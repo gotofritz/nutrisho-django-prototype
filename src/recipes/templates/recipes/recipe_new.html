@@ -1,0 +1,15 @@
+{% extends "./base.html" %}
+
+{% block page_title %}New Recipe{% endblock %}
+
+{% block content %}
+<div class="recipe-contents">
+  <h1>New Recipe</h1>
+  <form action="{% url 'recipes:new' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create Recipe</button>
+    <a href="{% url 'recipes:home' %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

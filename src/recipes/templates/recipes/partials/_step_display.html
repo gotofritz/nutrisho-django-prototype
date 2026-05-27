@@ -1,0 +1,6 @@
+<li
+  id="step-{{ step.id }}"
+  hx-get="{% url 'recipes:step_edit' recipe.id step.id %}"
+  hx-swap="outerHTML"
+  class="editable step"
+>{{ step.step_text }}</li>

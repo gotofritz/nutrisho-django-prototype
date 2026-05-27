@@ -1,0 +1,5 @@
+<span
+  hx-get="{% url 'recipes:field_edit' recipe.id field_name %}"
+  hx-swap="outerHTML"
+  class="editable field-{{ field_name }}"
+>{{ value|default:"—" }}</span>
