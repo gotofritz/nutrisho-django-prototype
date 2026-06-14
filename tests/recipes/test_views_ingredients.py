@@ -1033,3 +1033,24 @@ def test_ingredient_create_no_orphan_ingredient_on_insert_failure(auth_client, r
                 {"ingredient_name": "orphan-veggie", "quantity": "", "unit": "", "preparation": "", "note": ""},
             )
     assert not Ingredient.objects.filter(ingredient_name="orphan-veggie").exists()
+
+
+@pytest.mark.django_db
+def test_group_create_blank_name_rejected_when_race_creates_sibling(auth_client, recipe):
+    """Simulated race: competing blank group injected at parent-lock moment must be rejected."""
+    from unittest.mock import patch
+
+    from django.db.models.query import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+
+    def inject_at_parent_lock(qs, *args, **kwargs):
+        if qs.model is Recipe and not IngredientGroup.objects.filter(recipe=recipe).exists():
+            IngredientGroup.objects.create(recipe=recipe, group_name="", index_in_sequence=0)
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", inject_at_parent_lock):
+        auth_client.post(f"/recipes/{recipe.pk}/groups/create/", {"group_name": ""})
+
+    # Only the injected competitor should exist; this request must not create a second blank group
+    assert IngredientGroup.objects.filter(recipe=recipe).count() == 1

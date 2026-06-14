@@ -247,23 +247,25 @@ def recipe_group_add(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 @require_POST
 def recipe_group_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
-    existing_count = IngredientGroup.objects.filter(recipe=recipe).count()
-    form = IngredientGroupForm(data=request.POST, group_count=existing_count + 1)
-    if form.is_valid():
-        group = form.save(commit=False)
-        group.recipe = recipe
-        insert_at_index(
-            siblings=IngredientGroup.objects.filter(recipe=recipe),
-            instance=group,
-            requested_index=request.POST.get("position"),
-            lock_parent=Recipe.objects.filter(pk=recipe.pk),
-        )
-        content = render_to_string(
-            "recipes/partials/_group_block.html",
-            {"recipe": recipe, "group": group},
-            request=request,
-        )
-        return HttpResponse(content + _reassign_select_oob(recipe, request))
+    with transaction.atomic():
+        list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
+        existing_count = IngredientGroup.objects.filter(recipe=recipe).count()
+        form = IngredientGroupForm(data=request.POST, group_count=existing_count + 1)
+        if form.is_valid():
+            group = form.save(commit=False)
+            group.recipe = recipe
+            insert_at_index(
+                siblings=IngredientGroup.objects.filter(recipe=recipe),
+                instance=group,
+                requested_index=request.POST.get("position"),
+                lock_parent=None,
+            )
+            content = render_to_string(
+                "recipes/partials/_group_block.html",
+                {"recipe": recipe, "group": group},
+                request=request,
+            )
+            return HttpResponse(content + _reassign_select_oob(recipe, request))
     return render(
         request,
         "recipes/partials/_group_edit.html",
