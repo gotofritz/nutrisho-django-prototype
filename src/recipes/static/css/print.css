@@ -1,5 +1,8 @@
-.no-print {
-  display: none;
+.no-print,
+.btn-add,
+.move-btns,
+[data-empty] {
+  display: none !important;
 }
 .recipe-contents {
   box-shadow: none;
@@ -11,5 +14,5 @@
 }
 
 .sidebar {
-  padding-top: 30px;
+  padding-top: 10px;
 }

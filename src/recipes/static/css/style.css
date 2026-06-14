@@ -2,6 +2,7 @@
   --hbar: 8px solid #000;
   --drop-shadow-size: 4px 4px;
   --color-light-main: hsl(39, 100%, 50%);
+  --color-light-light: hsl(39, 40%, 50%);
   --color-light-secondary: hsl(174, 100%, 40%);
   --color-dark-main: hsl(219, 100%, 25%);
   --color-dark-secondary: hsl(174, 100%, 40%);
@@ -39,8 +40,14 @@ input[type="text"] {
   width: 100%;
 }
 
+textarea {
+  overflow: hidden;
+  resize: none;
+}
+
 .ingredient-group {
   display: block;
+  justify-content: flex-end;
   margin: 1em 0 -8px 0;
   padding-bottom: 2px;
   padding-left: 0;
@@ -108,6 +115,10 @@ input[type="text"] {
 ol {
   padding: 0;
   margin: 0 0 0 2.2em;
+}
+
+ol.recipe-steps {
+  list-style: revert;
 }
 
 .recipe-ingredients {
@@ -215,24 +226,141 @@ ol {
   display: flex;
   justify-content: end;
   height: 48px;
-  position: absolute;
-  top: -18px;
+  position: relative;
+  top: -30px;
   width: 100%;
 }
 
-.sidebar nav:hover {
-  background: var(--color-light-main);
-  height: 48px;
-  position: absolute;
-  top: -0;
-  width: 100%;
+.sidebar nav button {
+  height: 35px;
+  width: 35px;
 }
-
 .sidebar input[type="submit"] {
   display: none;
+}
+.sidebar form[hx-post] {
+  background-color: var(--color-light-light);
 }
 
 .debug {
   background: pink;
   width: inherit;
+}
+
+.recipe-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.list-btn {
+  background: var(--color-dark-main);
+  border: none;
+  border-radius: 3px;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  padding: 4px 10px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.list-btn:hover {
+  background: var(--color-light-main);
+  color: #000;
+}
+
+.list-btn.btn-delete {
+  background: #b00020;
+}
+
+.list-btn.btn-delete:hover {
+  background: #e00030;
+}
+
+.recipe-name {
+  margin-left: 8px;
+}
+
+.editable-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.step-content,
+.ingredient-content {
+  flex: 1;
+}
+
+.move-btns {
+  display: inline-flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.move-btns button {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+  padding: 1px 4px;
+}
+
+.move-btns button:hover {
+  background: #eee;
+}
+
+.ingredient-check {
+  flex: 0 0 auto;
+  margin-right: 2px;
+}
+
+.ingredient-check input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.reassign-panel {
+  background: var(--color-light-main);
+  border-bottom: 2px solid var(--color-dark-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.reassign-panel[hidden] {
+  display: none;
+}
+
+.reassign-panel select,
+.reassign-panel input[type="text"] {
+  font-size: 12px;
+  width: auto;
+}
+
+.reassign-panel button {
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Block reorder/reassign while any draft edit form is open in the same list.
+   Uses CSS :has() to detect .is-editing descendants without JS. */
+#steps-list:has(.is-editing) .move-btns button,
+.ingredients-list:has(.is-editing) .move-btns button,
+#groups-list:has(.is-editing) .move-btns button {
+  cursor: not-allowed;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+#groups-list:has(.is-editing) .reassign-panel form button[type="submit"] {
+  cursor: not-allowed;
+  opacity: 0.4;
+  pointer-events: none;
 }

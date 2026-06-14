@@ -1,5 +1,6 @@
 """Tests for export_recipes_to_yaml management command."""
 
+import sys
 from decimal import Decimal
 
 import pytest
@@ -30,7 +31,7 @@ def build_recipe(user, name="Test Recipe", servings=4, cuisine_name=None, source
         servings=servings,
     )
     Step.objects.create(recipe=recipe, step_text="Chop everything", index_in_sequence=1)
-    group = IngredientGroup.objects.create(recipe=recipe, group_name=None, index_in_sequence=1)
+    group = IngredientGroup.objects.create(recipe=recipe, group_name="", index_in_sequence=1)
     ing, _ = Ingredient.objects.get_or_create(ingredient_name="salt")
     IngredientInRecipe.objects.create(
         ingredient=ing,
@@ -46,7 +47,7 @@ def build_recipe(user, name="Test Recipe", servings=4, cuisine_name=None, source
 @pytest.mark.django_db
 def test_empty_db_writes_no_files(user, tmp_path):
     """With no recipes in DB, no YAML files are written."""
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
     assert list(tmp_path.iterdir()) == []
 
 
@@ -54,7 +55,7 @@ def test_empty_db_writes_no_files(user, tmp_path):
 def test_single_recipe_produces_expected_yaml(user, tmp_path):
     """A single recipe with one group/ingredient produces correct YAML schema."""
     build_recipe(user, name="Ajo Blanco", servings=2, cuisine_name=".spain.andalusia")
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     out_file = tmp_path / "Ajo Blanco.yml"
     assert out_file.exists()
@@ -87,11 +88,23 @@ def test_id_flag_exports_only_that_recipe(user, tmp_path):
     """--id flag exports only the specified recipe."""
     r1 = build_recipe(user, name="Recipe One")
     build_recipe(user, name="Recipe Two")
-    call_command("export_recipes_to_yaml", str(tmp_path), id=r1.pk)
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz", ids=[r1.pk])
 
     files = list(tmp_path.iterdir())
     assert len(files) == 1
     assert files[0].name == "Recipe One.yml"
+
+
+@pytest.mark.django_db
+def test_multiple_id_flags_export_all_specified(user, tmp_path):
+    """Repeated --id flags each export their recipe."""
+    r1 = build_recipe(user, name="Alpha")
+    r2 = build_recipe(user, name="Beta")
+    build_recipe(user, name="Gamma")
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz", ids=[r1.pk, r2.pk])
+
+    names = {f.name for f in tmp_path.iterdir()}
+    assert names == {"Alpha.yml", "Beta.yml"}
 
 
 @pytest.mark.django_db
@@ -104,7 +117,7 @@ def test_missing_only_skips_existing_files(user, tmp_path):
     existing = tmp_path / "Already Exported.yml"
     existing.write_text("placeholder: true\n")
 
-    call_command("export_recipes_to_yaml", str(tmp_path), missing_only=True)
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz", missing_only=True)
 
     # existing file should be untouched
     with existing.open() as f:
@@ -119,7 +132,7 @@ def test_missing_only_skips_existing_files(user, tmp_path):
 def test_special_chars_in_name_produce_safe_filename(user, tmp_path):
     """Recipe names with / : \\ produce safe filenames with _ substitution."""
     build_recipe(user, name="Soupe/Gratinée: A Classic")
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     expected = tmp_path / "SoupeGratinée A Classic.yml"
     assert expected.exists()
@@ -132,7 +145,7 @@ def test_round_trip_export_then_import(user, tmp_path):
     original_id = recipe.pk
 
     # Export
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     # Delete from DB
     Recipe.objects.filter(pk=original_id).delete()
@@ -143,7 +156,7 @@ def test_round_trip_export_then_import(user, tmp_path):
 
     DjangoUser.objects.get_or_create(username="gotofritz", defaults={"password": "x"})
 
-    call_command("batch_load_yaml_recipes", str(tmp_path))
+    call_command("batch_load_yaml_recipes", str(tmp_path), user="gotofritz")
 
     reimported = Recipe.objects.get(recipe_name="Round Trip Dish")
     assert reimported.servings == 3
@@ -165,7 +178,7 @@ def test_filename_collision_raises_error(user, tmp_path):
     build_recipe(user, name="A:B")
 
     with pytest.raises(CommandError, match="collision"):
-        call_command("export_recipes_to_yaml", str(tmp_path))
+        call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
 
 @pytest.mark.django_db
@@ -178,7 +191,7 @@ def test_missing_only_skips_collision_for_already_exported(user, tmp_path):
     (tmp_path / "AB.yml").write_text("placeholder: true\n")
 
     # Should NOT raise — both recipes are skipped before collision check
-    call_command("export_recipes_to_yaml", str(tmp_path), missing_only=True)
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz", missing_only=True)
     assert (tmp_path / "AB.yml").read_text() == "placeholder: true\n"
 
 
@@ -189,7 +202,7 @@ def test_export_uses_stored_yaml_filename(user, tmp_path):
     recipe.yaml_filename = "baba_ganoush.yml"
     recipe.save(update_fields=["yaml_filename"])
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     assert (tmp_path / "baba_ganoush.yml").exists()
     assert not (tmp_path / "Easy Baba Ganoush Recipe.yml").exists()
@@ -205,7 +218,7 @@ def test_missing_only_skips_stored_filename(user, tmp_path):
     existing = tmp_path / "baba_ganoush.yml"
     existing.write_text("placeholder: true\n")
 
-    call_command("export_recipes_to_yaml", str(tmp_path), missing_only=True)
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz", missing_only=True)
 
     assert existing.read_text() == "placeholder: true\n"
 
@@ -215,7 +228,7 @@ def test_export_falls_back_to_safe_filename_when_no_stored_name(user, tmp_path):
     """Export falls back to safe_filename(recipe_name) when yaml_filename is unset."""
     build_recipe(user, name="My New Soup")
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     assert (tmp_path / "My New Soup.yml").exists()
 
@@ -229,7 +242,7 @@ def test_case_only_name_difference_raises_collision(user, tmp_path):
     build_recipe(user, name="soup")
 
     with pytest.raises(CommandError, match="collision"):
-        call_command("export_recipes_to_yaml", str(tmp_path))
+        call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
 
 @pytest.mark.django_db
@@ -239,7 +252,7 @@ def test_traversal_in_stored_filename_is_contained(user, tmp_path):
     recipe.yaml_filename = "../evil.yml"
     recipe.save(update_fields=["yaml_filename"])
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     # File must be inside tmp_path, not one level up
     assert (tmp_path / "evil.yml").exists()
@@ -253,7 +266,7 @@ def test_absolute_stored_filename_is_contained(user, tmp_path):
     recipe.yaml_filename = "/etc/passwd.yml"
     recipe.save(update_fields=["yaml_filename"])
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     assert (tmp_path / "passwd.yml").exists()
 
@@ -387,7 +400,7 @@ def test_blank_yaml_filename_backfilled_on_first_export(user, tmp_path):
     recipe = build_recipe(user, name="Backfill Me")
     assert recipe.yaml_filename == ""
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     recipe.refresh_from_db()
     assert recipe.yaml_filename != ""
@@ -406,7 +419,7 @@ def test_missing_only_uses_stable_filename_after_recipe_rename(user, tmp_path):
     recipe = build_recipe(user, name="Original Name")
 
     # First export — this should store the filename on the recipe
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
     recipe.refresh_from_db()
     original_file = tmp_path / recipe.yaml_filename
 
@@ -415,7 +428,7 @@ def test_missing_only_uses_stable_filename_after_recipe_rename(user, tmp_path):
     recipe.save(update_fields=["recipe_name"])
 
     # Second export with --missing-only: must NOT write a new "New Name After Rename.yml"
-    call_command("export_recipes_to_yaml", str(tmp_path), missing_only=True)
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz", missing_only=True)
 
     # Original file still present (exported first time)
     assert original_file.exists()
@@ -446,7 +459,7 @@ def test_windows_path_in_stored_filename_is_sanitized(user, tmp_path):
     recipe.yaml_filename = r"C:\tmp\foo:bar.yml"
     recipe.save(update_fields=["yaml_filename"])
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     assert (tmp_path / "foobar.yml").exists()
 
@@ -458,7 +471,7 @@ def test_backslash_traversal_in_stored_filename_is_contained(user, tmp_path):
     recipe.yaml_filename = r"..\evil.yml"
     recipe.save(update_fields=["yaml_filename"])
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     assert (tmp_path / "evil.yml").exists()
     assert not (tmp_path.parent / "evil.yml").exists()
@@ -489,7 +502,7 @@ def test_recipe_with_dot_yaml_stored_filename_exports_correctly(user, tmp_path):
     recipe.yaml_filename = "my_recipe.yaml"
     recipe.save(update_fields=["yaml_filename"])
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     assert (tmp_path / "my_recipe.yaml").exists()
     assert not (tmp_path / "my_recipe.yaml.yml").exists()
@@ -500,7 +513,7 @@ def test_recipe_with_dot_yaml_stored_filename_exports_correctly(user, tmp_path):
 def test_export_encodes_unicode_correctly(user, tmp_path):
     """Export writes UTF-8 so non-ASCII recipe data survives round-trip."""
     build_recipe(user, name="Sauté d'Agneau", cuisine_name="française")
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     out_file = tmp_path / "Sauté dAgneau.yml"
     assert out_file.exists()
@@ -514,7 +527,7 @@ def test_export_encodes_unicode_correctly(user, tmp_path):
 def test_null_servings_omitted_from_export_yaml(user, tmp_path):
     """Recipe with servings=None exports without a 'serves' key (not 'serves: null')."""
     build_recipe(user, name="Unknown Serves Dish", servings=None)
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     out_file = tmp_path / "Unknown Serves Dish.yml"
     assert out_file.exists()
@@ -531,11 +544,11 @@ def test_round_trip_null_servings_stays_null(user, tmp_path):
     recipe = build_recipe(user, name="Null Serves Round Trip", servings=None)
     original_id = recipe.pk
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
     Recipe.objects.filter(pk=original_id).delete()
 
     DjangoUser.objects.get_or_create(username="gotofritz", defaults={"password": "x"})
-    call_command("batch_load_yaml_recipes", str(tmp_path))
+    call_command("batch_load_yaml_recipes", str(tmp_path), user="gotofritz")
 
     reimported = Recipe.objects.get(recipe_name="Null Serves Round Trip")
     assert reimported.servings is None
@@ -551,7 +564,7 @@ def test_tags_exported_in_sorted_order(user, tmp_path):
         tag, _ = Tag.objects.get_or_create(tag=t)
         tag.recipe.add(recipe)  # ty: ignore[unresolved-attribute]
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     out_file = tmp_path / "Tagged Dish.yml"
     with out_file.open() as f:
@@ -562,13 +575,13 @@ def test_tags_exported_in_sorted_order(user, tmp_path):
 
 
 @pytest.mark.django_db
-def test_null_description_exports_as_null_not_empty_string(user, tmp_path):
-    """Recipe with short_description=None exports description as null, not ''."""
+def test_empty_description_exports_as_null_not_empty_string(user, tmp_path):
+    """Recipe with empty short_description exports description as null, not ''."""
     recipe = build_recipe(user, name="No Desc Dish")
-    recipe.short_description = None
+    recipe.short_description = ""
     recipe.save(update_fields=["short_description"])
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     out_file = tmp_path / "No Desc Dish.yml"
     with out_file.open() as f:
@@ -577,23 +590,27 @@ def test_null_description_exports_as_null_not_empty_string(user, tmp_path):
 
 
 @pytest.mark.django_db
-def test_round_trip_null_description_stays_null(user, tmp_path):
-    """Export then re-import preserves short_description=None (not corrupted to '')."""
+def test_round_trip_empty_description_stays_empty(user, tmp_path):
+    """Export then re-import keeps an empty short_description empty.
+
+    Empty CharFields are stored as "" (never NULL) and serialized to YAML
+    null on export; import coerces null back to "".
+    """
     from django.contrib.auth.models import User as DjangoUser
 
     recipe = build_recipe(user, name="Null Desc Dish")
-    recipe.short_description = None
+    recipe.short_description = ""
     recipe.save(update_fields=["short_description"])
     original_id = recipe.pk
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
     Recipe.objects.filter(pk=original_id).delete()
 
     DjangoUser.objects.get_or_create(username="gotofritz", defaults={"password": "x"})
-    call_command("batch_load_yaml_recipes", str(tmp_path))
+    call_command("batch_load_yaml_recipes", str(tmp_path), user="gotofritz")
 
     reimported = Recipe.objects.get(recipe_name="Null Desc Dish")
-    assert reimported.short_description is None
+    assert reimported.short_description == ""
 
 
 @pytest.mark.django_db
@@ -606,7 +623,7 @@ def test_missing_only_skips_dot_yaml_extension_file(user, tmp_path):
     existing = tmp_path / "yaml_ext.yaml"
     existing.write_text("placeholder: true\n")
 
-    call_command("export_recipes_to_yaml", str(tmp_path), missing_only=True)
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz", missing_only=True)
 
     # Original .yaml file untouched (skipped)
     assert existing.read_text() == "placeholder: true\n"
@@ -633,11 +650,14 @@ def test_missing_only_skips_uppercase_yaml_extension_file(user, tmp_path):
     existing = tmp_path / "upper_ext.YAML"
     existing.write_text("placeholder: true\n")
 
-    call_command("export_recipes_to_yaml", str(tmp_path), missing_only=True)
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz", missing_only=True)
 
     assert existing.read_text() == "placeholder: true\n"
-    assert not (tmp_path / "upper_ext.yaml").exists()
-    assert not (tmp_path / "upper_ext.yml").exists()
+    # On case-sensitive FS: verify no new file with different case was created.
+    # On macOS (case-insensitive) these paths alias to the same inode, so skip.
+    if sys.platform != "darwin":
+        assert not (tmp_path / "upper_ext.yaml").exists()
+        assert not (tmp_path / "upper_ext.yml").exists()
 
 
 def test_safe_filename_empty_stem_fallback():
@@ -662,7 +682,7 @@ def test_sanitize_stored_filename_empty_stem_fallback():
 def test_all_stripped_title_uses_recipe_id_as_filename(user, tmp_path):
     """Recipe whose title strips to empty stem exports as 'recipe-<pk>.yml'."""
     recipe = build_recipe(user, name="!!!")
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
     files = list(tmp_path.iterdir())
     assert len(files) == 1
     assert files[0].name == f"recipe-{recipe.pk}.yml"
@@ -679,20 +699,23 @@ def test_missing_only_skips_case_insensitive_filename_match(user, tmp_path):
     existing = tmp_path / "ajo blanco soup.yml"
     existing.write_text("placeholder\n")
 
-    call_command("export_recipes_to_yaml", str(tmp_path), missing_only=True)
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz", missing_only=True)
 
     # File must be unchanged — recipe was skipped via casefold match
     assert existing.read_text() == "placeholder\n"
-    assert not (tmp_path / "Ajo Blanco Soup.yml").exists()
+    # On case-sensitive FS: verify no new file with different case was created.
+    # On macOS (case-insensitive) these paths alias to the same inode, so skip.
+    if sys.platform != "darwin":
+        assert not (tmp_path / "Ajo Blanco Soup.yml").exists()
 
 
 @pytest.mark.django_db
 def test_second_export_to_same_directory_refreshes_files(user, tmp_path):
     """Exporting twice to the same directory overwrites files; must not raise collision error."""
     build_recipe(user, name="Refresh Me", servings=2)
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
     # Second export must succeed (overwrite), not raise CommandError
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
     files = list(tmp_path.iterdir())
     assert len(files) == 1
 
@@ -701,7 +724,7 @@ def test_second_export_to_same_directory_refreshes_files(user, tmp_path):
 def test_exported_yaml_has_no_id_field(user, tmp_path):
     """Exported YAML must not include 'id' — importer always inserts fresh rows."""
     build_recipe(user, name="No ID Recipe")
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
     with (tmp_path / "No ID Recipe.yml").open() as f:
         data = yaml.safe_load(f)
     assert "id" not in data
@@ -716,7 +739,7 @@ def test_output_dir_is_file_raises_command_error(user, tmp_path):
     file_path.write_text("data\n")
 
     with pytest.raises(CommandError, match="not a directory"):
-        call_command("export_recipes_to_yaml", str(file_path))
+        call_command("export_recipes_to_yaml", str(file_path), user="gotofritz")
 
 
 @pytest.mark.django_db
@@ -725,7 +748,7 @@ def test_id_not_found_raises_command_error(user, tmp_path):
     from django.core.management.base import CommandError
 
     with pytest.raises(CommandError, match="99999"):
-        call_command("export_recipes_to_yaml", str(tmp_path), id=99999)
+        call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz", ids=[99999])
 
 
 @pytest.mark.django_db
@@ -739,7 +762,7 @@ def test_case_rename_overwrites_existing_file_not_creates_duplicate(user, tmp_pa
     old_file = tmp_path / "SOUP.yml"
     old_file.write_text("old: true\n")
 
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     files = [f for f in tmp_path.iterdir() if f.is_file()]
     # Must not leave two files; only one YAML file in the dir
@@ -762,7 +785,7 @@ def test_target_path_is_directory_raises_command_error(user, tmp_path):
     (tmp_path / "dir_collision.yml").mkdir()
 
     with pytest.raises(CommandError, match="not a regular file"):
-        call_command("export_recipes_to_yaml", str(tmp_path))
+        call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
 
 def test_sanitize_stored_filename_reserved_with_dotted_segments():
@@ -777,6 +800,9 @@ def test_sanitize_stored_filename_reserved_with_dotted_segments():
 
 
 @pytest.mark.django_db
+@pytest.mark.skipif(
+    sys.platform == "darwin", reason="macOS case-insensitive FS cannot hold two case-variant files"
+)
 def test_existing_case_collision_in_output_dir_raises_command_error(user, tmp_path):
     """When output_dir already contains two files differing only in case, raises CommandError."""
     from django.core.management.base import CommandError
@@ -786,7 +812,7 @@ def test_existing_case_collision_in_output_dir_raises_command_error(user, tmp_pa
     build_recipe(user, name="Anything")
 
     with pytest.raises(CommandError, match="[Cc]ollide|[Aa]mbiguous|[Cc]ollision"):
-        call_command("export_recipes_to_yaml", str(tmp_path))
+        call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
 
 @pytest.mark.django_db
@@ -797,7 +823,7 @@ def test_non_yaml_files_differing_in_case_do_not_abort_export(user, tmp_path):
     build_recipe(user, name="Fine Recipe")
 
     # Must not raise — the collision check must be limited to .yml/.yaml files
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
     assert (tmp_path / "Fine Recipe.yml").exists()
 
@@ -805,23 +831,23 @@ def test_non_yaml_files_differing_in_case_do_not_abort_export(user, tmp_path):
 # --- Lossy round-trip detection -----------------------------------------------
 #
 # The YAML schema is a strict subset of the model: owner, source FK,
-# Step.duration, Step.extra_info, IngredientInRecipe.substitute, and
-# IngredientInRecipe.note are not represented. Without intervention,
-# export → delete → re-import silently drops these. The exporter refuses
-# by default and accepts --force to acknowledge the loss.
+# Step.duration, Step.extra_info, and IngredientInRecipe.substitute are not
+# represented. Without intervention, export → delete → re-import silently
+# drops these. The exporter refuses by default and accepts --force to
+# acknowledge the loss.
 
 
 @pytest.mark.django_db
-def test_export_refuses_recipe_with_non_gotofritz_owner(tmp_path):
-    """owner != gotofritz is lossy (importer hardcodes gotofritz); export refuses."""
+def test_export_any_user_recipe_is_not_lossy(tmp_path):
+    """owner is no longer lossy: --user round-trips ownership for any username."""
     from django.contrib.auth.models import User as DjangoUser
-    from django.core.management.base import CommandError
 
     other = DjangoUser.objects.create_user(username="alice", password="x")
     build_recipe(other, name="Alice Recipe")
 
-    with pytest.raises(CommandError, match="owner"):
-        call_command("export_recipes_to_yaml", str(tmp_path))
+    # Must NOT raise — alice's recipe should export cleanly
+    call_command("export_recipes_to_yaml", str(tmp_path), user="alice")
+    assert (tmp_path / "Alice Recipe.yml").exists()
 
 
 @pytest.mark.django_db
@@ -837,7 +863,7 @@ def test_export_refuses_recipe_with_source_fk(user, tmp_path):
     recipe.save(update_fields=["source"])
 
     with pytest.raises(CommandError, match="source"):
-        call_command("export_recipes_to_yaml", str(tmp_path))
+        call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
 
 @pytest.mark.django_db
@@ -853,7 +879,7 @@ def test_export_refuses_step_with_duration(user, tmp_path):
     step.save(update_fields=["duration"])
 
     with pytest.raises(CommandError, match="duration"):
-        call_command("export_recipes_to_yaml", str(tmp_path))
+        call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
 
 @pytest.mark.django_db
@@ -867,7 +893,7 @@ def test_export_refuses_step_with_extra_info(user, tmp_path):
     step.save(update_fields=["extra_info"])
 
     with pytest.raises(CommandError, match="extra_info"):
-        call_command("export_recipes_to_yaml", str(tmp_path))
+        call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
 
 @pytest.mark.django_db
@@ -882,21 +908,7 @@ def test_export_refuses_iir_with_substitute(user, tmp_path):
     iir.save(update_fields=["substitute"])
 
     with pytest.raises(CommandError, match="substitute"):
-        call_command("export_recipes_to_yaml", str(tmp_path))
-
-
-@pytest.mark.django_db
-def test_export_refuses_iir_with_note(user, tmp_path):
-    """IngredientInRecipe with non-empty note is lossy; export refuses."""
-    from django.core.management.base import CommandError
-
-    recipe = build_recipe(user, name="Noted Recipe")
-    iir = recipe.ingredients_group.first().ingredient.first()  # ty: ignore[unresolved-attribute]
-    iir.note = "fresh ground"
-    iir.save(update_fields=["note"])
-
-    with pytest.raises(CommandError, match="note"):
-        call_command("export_recipes_to_yaml", str(tmp_path))
+        call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
 
 @pytest.mark.django_db
@@ -907,7 +919,7 @@ def test_force_flag_allows_lossy_export(user, tmp_path, capsys):
     step.extra_info = "ignore me"
     step.save(update_fields=["extra_info"])
 
-    call_command("export_recipes_to_yaml", str(tmp_path), force=True)
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz", force=True)
 
     assert (tmp_path / "Forced Recipe.yml").exists()
     captured = capsys.readouterr()
@@ -918,10 +930,27 @@ def test_force_flag_allows_lossy_export(user, tmp_path, capsys):
 
 
 @pytest.mark.django_db
+def test_iir_note_exported_in_yaml(user, tmp_path):
+    """IngredientInRecipe.note is written to YAML and no longer lossy."""
+    recipe = build_recipe(user, name="Noted Recipe")
+    iir = recipe.ingredients_group.first().ingredient.first()  # ty: ignore[unresolved-attribute]
+    iir.note = "fresh ground"
+    iir.save(update_fields=["note"])
+
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
+
+    import yaml
+
+    data = yaml.safe_load((tmp_path / "Noted Recipe.yml").read_text())
+    ingredient = data["ingredients"]["group"][0]["ingredient"][0]
+    assert ingredient["note"] == "fresh ground"
+
+
+@pytest.mark.django_db
 def test_recipe_with_default_owner_and_no_extras_exports_cleanly(user, tmp_path):
-    """Non-lossy recipe (gotofritz owner, no source/duration/extras) exports without --force."""
+    """Non-lossy recipe (no source/duration/extras) exports without --force."""
     build_recipe(user, name="Clean Recipe")
-    call_command("export_recipes_to_yaml", str(tmp_path))
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
     assert (tmp_path / "Clean Recipe.yml").exists()
 
 
@@ -948,6 +977,7 @@ _IGNORED_FIELDS: dict[str, set[str]] = {
         "source_instance",  # serialized as 'source'
         "cuisine",  # serialized as 'cuisine' (FK → name)
         "servings",  # serialized as ingredients.serves
+        "owner",  # round-tripped via --user CLI arg on both export and import
     },
     "Step": {
         "id",
@@ -963,14 +993,15 @@ _IGNORED_FIELDS: dict[str, set[str]] = {
         "unit",  # serialized as 'measurement'
         "preparation",  # serialized as 'preparation'
         "quantity",  # serialized as 'quantity'
+        "note",  # serialized as 'note'
     },
 }
 
 # Fields that lossy_fields() must catch. Each entry is the model field name.
 _EXPECTED_LOSSY: dict[str, set[str]] = {
-    "Recipe": {"owner", "source"},
+    "Recipe": {"source"},
     "Step": {"duration", "extra_info"},
-    "IngredientInRecipe": {"substitute", "note"},
+    "IngredientInRecipe": {"substitute"},
 }
 
 
@@ -1037,7 +1068,7 @@ def test_lossy_fields_function_catches_every_expected_lossy_field():
         duration=timedelta(minutes=1),
         extra_info="extra",
     )
-    group = IngredientGroup.objects.create(recipe=recipe, group_name=None, index_in_sequence=1)
+    group = IngredientGroup.objects.create(recipe=recipe, group_name="", index_in_sequence=1)
     ing, _ = Ingredient.objects.get_or_create(ingredient_name="x")
     sub, _ = Ingredient.objects.get_or_create(ingredient_name="y")
     IngredientInRecipe.objects.create(
@@ -1045,18 +1076,15 @@ def test_lossy_fields_function_catches_every_expected_lossy_field():
         substitute=sub,
         ingredient_group=group,
         index_in_sequence=1,
-        note="some note",
     )
 
     reasons_text = " ".join(lossy_fields(recipe))
     # Recipe-level
-    assert "owner" in reasons_text
     assert "source" in reasons_text
     # Step-level
     assert "duration" in reasons_text
     assert "extra_info" in reasons_text
     # IIR-level
     assert "substitute" in reasons_text
-    assert "note" in reasons_text
     # silence unused-warning for step (kept for clarity that all paths populated)
     del step

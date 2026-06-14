@@ -1,90 +1,100 @@
 cuisine: .chinese.sichuan
 description: Kipurou Ningmengjiang
 directions:
-    step:
-    - cut chicken in strips and marinade at least 20 m, turning occasionally
-    - coat the chicken with first lot of cornstarch
-    - make batter with other cornstarch and remaining ingredients (use water if too
-        thick)
-    - coat chicken and deep fry in really hot oil, 5m
-    - remove oil, wipe wok, pour back 2 tbsp oil
-    - put sauce ingredients minus cornstarch into wok, bring to boil, then reduce,
-        30s
-    - add cornstarch, 30 s
-    - pour over chicken and serve
+  step:
+  - cut chicken in strips and marinade at least 20 m, turning occasionally
+  - coat the chicken with first lot of cornstarch
+  - make batter with other cornstarch and remaining ingredients (use water if too
+    thick)
+  - coat chicken and deep fry in really hot oil, 5m
+  - remove oil, wipe wok, pour back 2 tbsp oil
+  - put sauce ingredients minus cornstarch into wok, bring to boil, then reduce, 30s
+  - add cornstarch, 30 s
+  - pour over chicken and serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: chicken breast
-            preparation: null
-            quantity: '87.50'
-        -   measurement: tsp
-            name: rice wine
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: salt
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tsp
-            name: soy sauce
-            preparation: light
-            quantity: '0.50'
-        name: Meat marinade
-    -   ingredient:
-        -   measurement: Tbsp
-            name: cornstarch
-            preparation: null
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: cornstarch
-            preparation: null
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: flour
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: egg
-            preparation: beaten lightly
-            quantity: '0.25'
-        -   measurement: cups
-            name: oil
-            preparation: frying
-            quantity: '0.50'
-        name: Batter
-    -   ingredient:
-        -   measurement: null
-            name: lemon
-            preparation: juiced
-            quantity: '0.25'
-        -   measurement: null
-            name: lemon
-            preparation: sliced
-            quantity: '0.25'
-        -   measurement: tsp
-            name: rice vinegar
-            preparation: null
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: sugar
-            preparation: null
-            quantity: '0.50'
-        -   measurement: ml
-            name: stock
-            preparation: chicken
-            quantity: '15.00'
-        -   measurement: tsp
-            name: oil
-            preparation: sesame
-            quantity: '0.38'
-        -   measurement: tsp
-            name: cornstarch
-            preparation: dissolved in 1 tbs water
-            quantity: '0.38'
-        name: Sauce
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: chicken breast
+      note: null
+      preparation: null
+      quantity: '350.00'
+    - measurement: tsp
+      name: rice wine
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '0.48'
+    - measurement: tsp
+      name: soy sauce
+      note: null
+      preparation: light
+      quantity: '2.00'
+    name: Meat marinade
+  - ingredient:
+    - measurement: Tbsp
+      name: cornstarch
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: cornstarch
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: flour
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: egg
+      note: null
+      preparation: beaten lightly
+      quantity: '1.00'
+    - measurement: cups
+      name: oil
+      note: null
+      preparation: frying
+      quantity: '2.00'
+    name: Batter
+  - ingredient:
+    - measurement: null
+      name: lemon
+      note: null
+      preparation: sliced
+      quantity: '1.00'
+    - measurement: tsp
+      name: rice vinegar
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: chicken
+      quantity: '60.00'
+    - measurement: tsp
+      name: oil
+      note: null
+      preparation: sesame
+      quantity: '1.52'
+    - measurement: tsp
+      name: cornstarch
+      note: null
+      preparation: dissolved in 1 tbs water
+      quantity: '1.52'
+    name: Sauce
+  serves: 2
 source: ''
 tags: []
 title: Chicken Breast With Lemon Sauce

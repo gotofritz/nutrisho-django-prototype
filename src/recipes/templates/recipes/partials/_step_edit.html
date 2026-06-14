@@ -1,12 +1,19 @@
-<li id="step-{{ step.id }}">
+<li{% if step %} id="step-{{ step.id }}"{% endif %} class="is-editing">
   <form
+    {% if step %}
     hx-post="{% url 'recipes:step_save' recipe.id step.id %}"
+    {% else %}
+    hx-post="{% url 'recipes:step_create' recipe.id %}"
+    hx-on::config-request="event.detail.parameters.position = Array.prototype.indexOf.call(this.closest('ol').querySelectorAll(':scope > li'), this.closest('li'))"
+    {% endif %}
     hx-swap="outerHTML"
     hx-target="closest li"
   >
     {% csrf_token %}
     {{ form.step_text }}
+    {{ form.step_text.errors }}
     <button type="submit">Save</button>
+    {% if step %}
     <button
       type="button"
       hx-get="{% url 'recipes:step_display' recipe.id step.id %}"
@@ -19,5 +26,8 @@
       hx-target="closest li"
       hx-swap="outerHTML"
     >Delete</button>
+    {% else %}
+    <button type="button" onclick="this.closest('li').remove()">Cancel</button>
+    {% endif %}
   </form>
 </li>

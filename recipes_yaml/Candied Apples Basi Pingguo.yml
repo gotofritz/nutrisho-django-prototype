@@ -1,0 +1,75 @@
+cuisine: .chinese
+description: At least 1500 years old
+directions:
+  step:
+  - Cute apples in 1cm wedges, then soak in slightly salted water for 10m. Pat dry
+    and leave on a tray.
+  - Make batter by beating egg, adding flour, then corn starch and water
+  - dip apple into batter, deep fry 1.5m then set aside
+  - Make toffee by melting sugar with oil, adding water carefully, then mixing in
+    apple
+  - Serve with a bowl of iced water - people dip them in to solidify toffee
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: apple
+      note: null
+      preparation: cored
+      quantity: '2.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: plain
+      quantity: '50.00'
+    name: Apples
+  - ingredient:
+    - measurement: null
+      name: egg
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: g
+      name: cornstarch
+      note: null
+      preparation: null
+      quantity: '45.00'
+    - measurement: mls
+      name: water
+      note: null
+      preparation: null
+      quantity: '125.00'
+    name: Batter
+  - ingredient:
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '75.00'
+    - measurement: tsp
+      name: oil
+      note: null
+      preparation: sesame
+      quantity: '2.00'
+    - measurement: '5'
+      name: tsp
+      note: null
+      preparation: water
+      quantity: '1.00'
+    name: Toffee
+  - ingredient:
+    - measurement: null
+      name: iced water
+      note: null
+      preparation: with ice cubes
+      quantity: null
+    name: Serve
+  serves: 4
+source: ''
+tags: []
+title: Candied Apples / Basi Pingguo

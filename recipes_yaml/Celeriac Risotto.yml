@@ -1,0 +1,97 @@
+cuisine: Italian
+description: An unusual risotto with celeriac, enriched with cooked pears and toasted
+  seeds.
+directions:
+  step:
+  - Place the pears upright in a small saucepan with the other ingredients and a pinch
+    of salt, add enough water to cover them halfway
+  - Cook over low heat for 40 minutes until very tender
+  - Cook the diced celery root with a pinch of salt for 20-25 minutes on low heat
+  - Blend the celery root with the cooking liquids
+  - Toast pumpkin and sunflower seeds in a dry pan for 1 minute, then add 1 tablespoon
+    of soy sauce. Let the liquid evaporate and remove from heat
+  - Prepare the risotto, plain just sweating with wine and cooking with salted boiling
+    water
+  - Remove from heat, add the celery root cream, butter and cheese. Gently mix and
+    serve in bowls
+  - Garnish the risotto with pear wedges and toasted seeds
+ingredients:
+  group:
+  - ingredient:
+    - measurement: ''
+      name: pears
+      note: null
+      preparation: ''
+      quantity: '2.00'
+    - measurement: ''
+      name: cloves
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: ml
+      name: white wine
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: tsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Pears
+  - ingredient:
+    - measurement: g
+      name: celeriac
+      note: null
+      preparation: cubed
+      quantity: '100.00'
+    - measurement: g
+      name: milk
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: g
+      name: water
+      note: null
+      preparation: null
+      quantity: '50.00'
+    name: Celeriac
+  - ingredient:
+    - measurement: g
+      name: carnaroli rice
+      note: null
+      preparation: null
+      quantity: '180.00'
+    - measurement: tbsp
+      name: parmesan
+      note: null
+      preparation: grated
+      quantity: '1.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '8.00'
+    name: Risotto
+  - ingredient:
+    - measurement: g
+      name: pumpkin seeds
+      note: null
+      preparation: null
+      quantity: '12.00'
+    - measurement: g
+      name: sunflower seeds
+      note: null
+      preparation: null
+      quantity: '12.00'
+    - measurement: tbsp
+      name: soya sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Garnish
+  serves: 2
+source: https://www.lacucinaitaliana.it/ricetta/primi/risotto-al-sedano-rapa/
+tags:
+- risotto
+title: Celeriac Risotto

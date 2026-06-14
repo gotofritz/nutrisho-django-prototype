@@ -1,0 +1,88 @@
+cuisine: .thai
+description: null
+directions:
+  step:
+  - deep fry chicken, potatoes, and shallots separately, pat dry
+  - put the chicken in a pan and just cover with coconut milk, and bring to boil
+  - add cardamom pods, peanuts, bay leaves, 10 mins
+  - add the potatoes an onions
+  - in another pot cook coconut cream and curry paste, low heat, 10 m. use juice from
+    (4) if it gets too dry
+  - when dry, add sugar until caramelized
+  - add fish sauce and tamarind water
+  - add (7) to (4), add the pineapple / apple juice, and serve
+ingredients:
+  group:
+  - ingredient:
+    - measurement: null
+      name: shallots
+      note: null
+      preparation: small
+      quantity: '8.00'
+    - measurement: l
+      name: coconut milk
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: cardamom pods
+      note: null
+      preparation: roasted
+      quantity: '5.00'
+    - measurement: ml
+      name: coconut cream
+      note: null
+      preparation: null
+      quantity: '750.00'
+    - measurement: Tbsp
+      name: sugar
+      note: null
+      preparation: palm
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: fish sauce
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: lump
+      name: tamarind pulp
+      note: null
+      preparation: turned intoo 3-5 tbsp tamarind water
+      quantity: '1.00'
+    - measurement: null
+      name: bay leaves
+      note: null
+      preparation: roasted
+      quantity: '4.00'
+    - measurement: null
+      name: peanuts
+      note: null
+      preparation: roasted
+      quantity: '75.00'
+    - measurement: null
+      name: pineapple juice
+      note: null
+      preparation: or apple
+      quantity: '250.00'
+    - measurement: Tbsp
+      name: mussuman curry paste
+      note: see separate recipe
+      preparation: null
+      quantity: '4.00'
+    name: Curry Paste
+  - ingredient:
+    - measurement: null
+      name: chicken legs
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: medium
+      name: potates
+      note: null
+      preparation: null
+      quantity: '4.00'
+    name: Meat
+  serves: 4
+source: ''
+tags: []
+title: Thai Mussuman chicken curry

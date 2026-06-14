@@ -37,7 +37,7 @@ tasks:
       - "{{.VENV}}/python manage.py makemigrations"
       - "{{.VENV}}/python manage.py migrate"
       - "{{.VENV}}/python manage.py addinitialuser"
-      - "{{.VENV}}/python manage.py batch_load_yaml_recipes recipes_yaml/"
+      - "{{.VENV}}/python manage.py batch_load_yaml_recipes recipes_yaml/ --user gotofritz"
 
   createsuperuser:
     desc: "Create a superuser"
@@ -110,7 +110,7 @@ tasks:
     env:
       DJANGO_SETTINGS_MODULE: nutrisho.settings.dev
     cmds:
-      - "{{.VENV}}/python manage.py export_recipes_to_yaml recipes_yaml/ {{.CLI_ARGS}}"
+      - "{{.VENV}}/python manage.py export_recipes_to_yaml recipes_yaml/ --user gotofritz {{.CLI_ARGS}}"
 
   # Task to run tests using pytest with coverage reporting
   test:

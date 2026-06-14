@@ -1,91 +1,108 @@
 cuisine: .italian.neaples
 description: null
 directions:
-    step:
-    - DOUGH. Make the dough by mixing the butter, sugar, half the eggs, pinch of salt
-        dissolved in water.
-    - Add flour and remaining eggs. Let dough rest overnight in fridge.
-    - FILLING. Cook milk, wheat, butter, pinch of salt for 10 mins on low
-    - Sieve ricotta and mix with sugar, then add to wheat mixture
-    - Add eggs and flavourings
-    - CAKE. Roll dough at 0.5 cm, and cover a cake tin bottom and sides. Put filling
-        in, and make a grid with 6 strips of dough
-    - Bake 55 min at 180°
+  step:
+  - DOUGH. Make the dough by mixing the butter, sugar, half the eggs, pinch of salt
+    dissolved in water.
+  - Add flour and remaining eggs. Let dough rest overnight in fridge.
+  - FILLING. Cook milk, wheat, butter, pinch of salt for 10 mins on low
+  - Sieve ricotta and mix with sugar, then add to wheat mixture
+  - Add eggs and flavourings
+  - CAKE. Roll dough at 0.5 cm, and cover a cake tin bottom and sides. Put filling
+    in, and make a grid with 6 strips of dough
+  - Bake 55 min at 180°
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '312.50'
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '125.00'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '42.50'
-        -   measurement: g
-            name: egg
-            preparation: null
-            quantity: '62.50'
-        -   measurement: null
-            name: lemon
-            preparation: zested
-            quantity: '0.25'
-        -   measurement: null
-            name: orange
-            preparation: zested
-            quantity: '0.25'
-        name: Dough
-    -   ingredient:
-        -   measurement: g
-            name: cooked wheat
-            preparation: null
-            quantity: '50.00'
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '25.00'
-        -   measurement: ml
-            name: milk
-            preparation: null
-            quantity: '62.50'
-        -   measurement: g
-            name: ricotta
-            preparation: null
-            quantity: '62.50'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '42.50'
-        -   measurement: g
-            name: eggs
-            preparation: null
-            quantity: '18.75'
-        -   measurement: g
-            name: egg yolks
-            preparation: null
-            quantity: '18.75'
-        -   measurement: g
-            name: candied fruit
-            preparation: null
-            quantity: '18.75'
-        -   measurement: pod
-            name: vanilla
-            preparation: null
-            quantity: '0.12'
-        -   measurement: drops
-            name: orange blossom water
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: cinnamon
-            preparation: powder
-            quantity: '0.25'
-        name: Filling
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '1250.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '500.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '170.00'
+    - measurement: g
+      name: egg
+      note: null
+      preparation: null
+      quantity: '250.00'
+    - measurement: null
+      name: lemon
+      note: null
+      preparation: zested
+      quantity: '1.00'
+    - measurement: null
+      name: orange
+      note: null
+      preparation: zested
+      quantity: '1.00'
+    name: Dough
+  - ingredient:
+    - measurement: g
+      name: cooked wheat
+      note: null
+      preparation: null
+      quantity: '200.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '100.00'
+    - measurement: ml
+      name: milk
+      note: null
+      preparation: null
+      quantity: '250.00'
+    - measurement: g
+      name: ricotta
+      note: null
+      preparation: null
+      quantity: '250.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '170.00'
+    - measurement: g
+      name: eggs
+      note: null
+      preparation: null
+      quantity: '75.00'
+    - measurement: g
+      name: egg yolks
+      note: null
+      preparation: null
+      quantity: '75.00'
+    - measurement: g
+      name: candied fruit
+      note: null
+      preparation: null
+      quantity: '75.00'
+    - measurement: pod
+      name: vanilla
+      note: null
+      preparation: null
+      quantity: '0.48'
+    - measurement: drops
+      name: orange blossom water
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tsp
+      name: cinnamon
+      note: null
+      preparation: powder
+      quantity: '1.00'
+    name: Filling
+  serves: 4
 source: ''
 tags: []
 title: Pastiera 2

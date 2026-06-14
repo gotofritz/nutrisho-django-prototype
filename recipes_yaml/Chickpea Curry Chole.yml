@@ -1,0 +1,158 @@
+cuisine: .indian.punjab
+description: Chole Kulcha is an Indian classic. this is the Chole (chickpea) part
+directions:
+  step:
+  - Lightly roast masala seeds. When fragrant, add the powders for a few seconds.
+    Cool down, then grind. Store up to 3 months
+  - Pressure cook the chickpeas for 45 minutes with the spices and salt. After cooking
+    drain, and keep the water
+  - Sauté seeds, add ginger, shortly after assafoetida and 2 secs later onions. Cook
+    a few minutes
+  - Add the tomates and cook until the liquid has evaporated
+  - Add 2 tsp of the spice mix. Stir in well then ad a bit of water and dry it out.
+    Add water again and dry it out again
+  - Add in the chickpeas. Stir vigorously
+  - Add amchoor and garam masala, mix, and add in enough cooking water to just cover
+    chickpeas. Reduce
+ingredients:
+  group:
+  - ingredient:
+    - measurement: tsp
+      name: fennel seeds
+      note: null
+      preparation: null
+      quantity: '0.25'
+    - measurement: tsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '0.25'
+    - measurement: tsp
+      name: black peppercorn
+      note: null
+      preparation: null
+      quantity: '0.03'
+    - measurement: tsp
+      name: pomegranate seeds
+      note: null
+      preparation: null
+      quantity: '0.12'
+    - measurement: tsp
+      name: mace
+      note: null
+      preparation: null
+      quantity: '0.25'
+    - measurement: stick
+      name: cinnamon
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: green cardamom
+      note: null
+      preparation: null
+      quantity: '0.25'
+    - measurement: null
+      name: cloves
+      note: null
+      preparation: null
+      quantity: '0.25'
+    - measurement: tsp
+      name: chili powder
+      note: null
+      preparation: null
+      quantity: '0.12'
+    - measurement: tsp
+      name: coriander powder
+      note: null
+      preparation: null
+      quantity: '0.25'
+    - measurement: tsp
+      name: turmeric
+      note: null
+      preparation: null
+      quantity: '0.25'
+    name: Masala powder
+  - ingredient:
+    - measurement: cup
+      name: dried chickpeas
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: stick
+      name: cinnamon
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: leaf
+      name: bay
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: cloves
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: black peppercorn
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: cut in 3
+      quantity: '1.50'
+    - measurement: null
+      name: tea bag
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Chickpeas
+  - ingredient:
+    - measurement: medium
+      name: tomatoes
+      note: null
+      preparation: peeled
+      quantity: '1.00'
+    - measurement: medium
+      name: onions
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: large
+      name: chili
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: chopped
+      quantity: '2.00'
+    - measurement: tsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '0.12'
+    - measurement: pinch
+      name: asafoetida
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: amchoor
+      note: null
+      preparation: null
+      quantity: '0.25'
+    - measurement: pinch
+      name: garam masala
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Curry
+  serves: 2
+source: http://imgur.com/a/DLgo9
+tags: []
+title: 'Chickpea Curry: Chole'

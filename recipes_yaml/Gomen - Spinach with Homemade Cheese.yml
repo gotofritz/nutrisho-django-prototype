@@ -1,56 +1,64 @@
 cuisine: .iranian
 description: This is one of the most delicious ways I know to eat spinach. Spicy,
-    buttery and nutty, I could eat endless bowls full of gomen without tiring.
+  buttery and nutty, I could eat endless bowls full of gomen without tiring.
 directions:
-    step:
-    - grind dried chilies, black mustard seeds, salt to a fine powder
-    - warm yogurt on low heat until it curdles
-    - remove from heat and let cool, then tip in colander to drain and leave in fridge
-    - cook spinach in pot, covered, on medium heat until wilted
-    - remove lid and keep cooking until water evaporates
-    - add olive oil, salt and keep cooking until slightly dried
-    - Tip into a bowl and add cheese broken with a fork, mit'mita, and butter
+  step:
+  - grind dried chilies, black mustard seeds, salt to a fine powder
+  - warm yogurt on low heat until it curdles
+  - remove from heat and let cool, then tip in colander to drain and leave in fridge
+  - cook spinach in pot, covered, on medium heat until wilted
+  - remove lid and keep cooking until water evaporates
+  - add olive oil, salt and keep cooking until slightly dried
+  - Tip into a bowl and add cheese broken with a fork, mit'mita, and butter
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: Tbsp
-            name: dried chilies
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: black mustard seeds
-            preparation: null
-            quantity: '0.00'
-        -   measurement: tsp
-            name: salt
-            preparation: null
-            quantity: '0.00'
-        name: For the mit'mita
-    -   ingredient:
-        -   measurement: g
-            name: yogurt
-            preparation: null
-            quantity: '125.00'
-        name: For the cheese
-    -   ingredient:
-        -   measurement: g
-            name: spinach
-            preparation: null
-            quantity: '125.00'
-        -   measurement: Tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: salt
-            preparation: null
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: butter
-            preparation: null
-            quantity: '0.25'
-        name: For the spinach
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: Tbsp
+      name: dried chilies
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: black mustard seeds
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: For the mit'mita
+  - ingredient:
+    - measurement: g
+      name: yogurt
+      note: null
+      preparation: null
+      quantity: '250.00'
+    name: For the cheese
+  - ingredient:
+    - measurement: g
+      name: spinach
+      note: null
+      preparation: null
+      quantity: '250.00'
+    - measurement: Tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: butter
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: For the spinach
+  serves: 4
 source: ''
 tags: []
 title: Gomen - Spinach with Homemade Cheese

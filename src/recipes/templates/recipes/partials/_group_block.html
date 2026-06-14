@@ -1,0 +1,14 @@
+<div class="group-block" id="group-block-{{ group.id }}">
+  {% include "./_group_display.html" %}
+  <div class="ingredients-list" id="iir-list-{{ group.id }}">
+    {% for iir in group.ingredient.all %}
+    {% include "./_ingredient_display.html" with recipe=recipe iir=iir %}
+    {% endfor %}
+    <button
+      hx-post="{% url 'recipes:ingredient_add_to_group' recipe.id group.id %}"
+      hx-target="this"
+      hx-swap="beforebegin"
+      class="btn-add"
+    >+ Add ingredient</button>
+  </div>
+</div>

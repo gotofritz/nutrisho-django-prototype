@@ -1,39 +1,44 @@
 cuisine: .japan.modern
 description: A furkake is a topping for other bland dishes, especially rice.
 directions:
-    step:
-    - Dry cook the carrots in a pan on medium low, about 20 mins
-    - Add the soya sauce until it evaporates
-    - Add the sugar
-    - Make a hole in the middle to make room for the sesame. Add and toast until they
-        start popping, then mix with the carrots
-    - Add chilli flakes and salt to taste
-    - Store for up to a week in fridge
+  step:
+  - Dry cook the carrots in a pan on medium low, about 20 mins
+  - Add the soya sauce until it evaporates
+  - Add the sugar
+  - Make a hole in the middle to make room for the sesame. Add and toast until they
+    start popping, then mix with the carrots
+  - Add chilli flakes and salt to taste
+  - Store for up to a week in fridge
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: carrots
-            preparation: grated
-            quantity: '1.00'
-        -   measurement: tbsp
-            name: sesame seeds
-            preparation: null
-            quantity: '1.00'
-        -   measurement: tbsp
-            name: light soy sauce
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: sugar
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tbsp
-            name: nanami tohgarashi
-            preparation: or chili flakes
-            quantity: '0.06'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: carrots
+      note: null
+      preparation: grated
+      quantity: '2.00'
+    - measurement: tbsp
+      name: sesame seeds
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tbsp
+      name: light soy sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tbsp
+      name: nanami tohgarashi
+      note: null
+      preparation: or chili flakes
+      quantity: '0.12'
+    name: null
+  serves: 2
 source: http://justbento.com/handbook/johbisai/homemade-furikake-no-2-carrot-and-sesame
 tags:
 - relish

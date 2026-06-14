@@ -1,100 +1,117 @@
 cuisine: .chinese.sichuan
 description: Suan La Tang
 directions:
-    step:
-    - marinate meat 10 m
-    - cover bean curd in water 10 m
-    - drain mushrooms, keep 250 ml of water, sieved and julienne mushrooms and add
-        to it
-    - add stock, bamboo shots, ginger, marinated meat, dark soy sauce, vinegar, chili
-        oil, salt , pepper
-    - bring to boil and simmer 2 m
-    - stir in cornstartch mixture 2 m
-    - stir in drained bean curd and squid, 1 m
-    - add egg in thin stream, then remove from fire and let stand 20 s, then stir
-        lightly
-    - add garnish and serve
+  step:
+  - marinate meat 10 m
+  - cover bean curd in water 10 m
+  - drain mushrooms, keep 250 ml of water, sieved and julienne mushrooms and add to
+    it
+  - add stock, bamboo shots, ginger, marinated meat, dark soy sauce, vinegar, chili
+    oil, salt , pepper
+  - bring to boil and simmer 2 m
+  - stir in cornstartch mixture 2 m
+  - stir in drained bean curd and squid, 1 m
+  - add egg in thin stream, then remove from fire and let stand 20 s, then stir lightly
+  - add garnish and serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: chicken breast
-            preparation: or pork
-            quantity: '31.25'
-        -   measurement: tsp
-            name: soy sauce
-            preparation: light
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: ginger
-            preparation: peeled
-            quantity: '0.25'
-        name: For the marinade
-    -   ingredient:
-        -   measurement: g
-            name: tofu
-            preparation: soft
-            quantity: '55.00'
-        -   measurement: null
-            name: dried mushrooms
-            preparation: soaked 25m
-            quantity: '1.25'
-        -   measurement: cm
-            name: black fungus
-            preparation: soaked 25m
-            quantity: '1.25'
-        -   measurement: ml
-            name: stock
-            preparation: null
-            quantity: '187.50'
-        -   measurement: g
-            name: bamboo shots
-            preparation: julienned thinly
-            quantity: '7.50'
-        -   measurement: tsp
-            name: ginger
-            preparation: peeled
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: soy sauce
-            preparation: dark
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: rice vinegar
-            preparation: null
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: chili oil
-            preparation: null
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: cornstarch
-            preparation: dissolved in 80 ml water
-            quantity: '0.50'
-        -   measurement: g
-            name: squid
-            preparation: julienned thinly
-            quantity: '15.00'
-        -   measurement: null
-            name: egg
-            preparation: beaten lightly
-            quantity: '0.25'
-        name: For the soup
-    -   ingredient:
-        -   measurement: tsp
-            name: oil
-            preparation: sesame
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: spring onions
-            preparation: green bits only
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: coriander
-            preparation: chopped
-            quantity: '0.25'
-        name: Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: chicken breast
+      note: null
+      preparation: or pork
+      quantity: '125.00'
+    - measurement: tsp
+      name: soy sauce
+      note: null
+      preparation: light
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '1.00'
+    name: For the marinade
+  - ingredient:
+    - measurement: g
+      name: tofu
+      note: null
+      preparation: soft
+      quantity: '220.00'
+    - measurement: null
+      name: dried mushrooms
+      note: null
+      preparation: soaked 25m
+      quantity: '5.00'
+    - measurement: cm
+      name: black fungus
+      note: null
+      preparation: soaked 25m
+      quantity: '5.00'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: null
+      quantity: '750.00'
+    - measurement: g
+      name: bamboo shots
+      note: null
+      preparation: julienned thinly
+      quantity: '30.00'
+    - measurement: tsp
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: soy sauce
+      note: null
+      preparation: dark
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: rice vinegar
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: chili oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: cornstarch
+      note: null
+      preparation: dissolved in 80 ml water
+      quantity: '2.00'
+    - measurement: g
+      name: squid
+      note: null
+      preparation: julienned thinly
+      quantity: '60.00'
+    - measurement: null
+      name: egg
+      note: null
+      preparation: beaten lightly
+      quantity: '1.00'
+    name: For the soup
+  - ingredient:
+    - measurement: tsp
+      name: oil
+      note: null
+      preparation: sesame
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: spring onions
+      note: null
+      preparation: green bits only
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: coriander
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    name: Garnish
+  serves: 4
 source: ''
 tags: []
 title: Hot and sour soup

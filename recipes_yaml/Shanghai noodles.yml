@@ -1,82 +1,93 @@
 cuisine: .chinese.shanghai
 description: Shanghai Mian
 directions:
-    step:
-    - mix all marinade ingredients, until sugar dissolves and add thinly sliced pork.
-        Stand at least 10 m
-    - bring a half filled pot to a boil, add the noodles and bring back to boil. Add
-        250ml water and bring back to boil, then add 125 ml water and bring back to
-        boil
-    - when noodles are barely tender drain, rinse in hot water and drain
-    - chop all garlic, julienne spring onion, separate white and green of cabbage
-        and slice thinly separately
-    - sieve pork but keep liquid
-    - stir fry (hi heat) pork, 40 s, then set aside
-    - add garlic, spring onion, white part of cabbage, 30 s
-    - meanwhile put seame oil on medium low fire
-    - add pork, marinade, green part of cabbage, 20 s
-    - add noodles and cornstarch, 40 s
-    - fry garlic in sesame oil, 15 s
-    - serve noodles with sesame oil / garlic mix poured on top
+  step:
+  - mix all marinade ingredients, until sugar dissolves and add thinly sliced pork.
+    Stand at least 10 m
+  - bring a half filled pot to a boil, add the noodles and bring back to boil. Add
+    250ml water and bring back to boil, then add 125 ml water and bring back to boil
+  - when noodles are barely tender drain, rinse in hot water and drain
+  - chop all garlic, julienne spring onion, separate white and green of cabbage and
+    slice thinly separately
+  - sieve pork but keep liquid
+  - stir fry (hi heat) pork, 40 s, then set aside
+  - add garlic, spring onion, white part of cabbage, 30 s
+  - meanwhile put seame oil on medium low fire
+  - add pork, marinade, green part of cabbage, 20 s
+  - add noodles and cornstarch, 40 s
+  - fry garlic in sesame oil, 15 s
+  - serve noodles with sesame oil / garlic mix poured on top
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: pork tenderloin
-            preparation: null
-            quantity: '55.00'
-        -   measurement: Tbsp
-            name: soy sauce
-            preparation: dark
-            quantity: '1.00'
-        -   measurement: Tbsp
-            name: oyster sauce
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: ginger
-            preparation: peeled
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: sugar
-            preparation: null
-            quantity: '0.25'
-        name: Marinade
-    -   ingredient:
-        -   measurement: g
-            name: noodles
-            preparation: thick
-            quantity: '125.00'
-        name: Noodles
-    -   ingredient:
-        -   measurement: null
-            name: garlic
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: spring onions
-            preparation: whole
-            quantity: '0.25'
-        -   measurement: g
-            name: cabbage
-            preparation: napa
-            quantity: '58.75'
-        -   measurement: tsp
-            name: cornstarch
-            preparation: dissolbed in 125 ml stock
-            quantity: '0.50'
-        name: Stir Fry
-    -   ingredient:
-        -   measurement: Tbsp
-            name: oil
-            preparation: sesame
-            quantity: '0.25'
-        -   measurement: null
-            name: garlic
-            preparation: null
-            quantity: '0.50'
-        name: Serving
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: pork tenderloin
+      note: null
+      preparation: null
+      quantity: '220.00'
+    - measurement: Tbsp
+      name: soy sauce
+      note: null
+      preparation: dark
+      quantity: '4.00'
+    - measurement: Tbsp
+      name: oyster sauce
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tsp
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Marinade
+  - ingredient:
+    - measurement: g
+      name: noodles
+      note: null
+      preparation: thick
+      quantity: '500.00'
+    name: Noodles
+  - ingredient:
+    - measurement: null
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: spring onions
+      note: null
+      preparation: whole
+      quantity: '1.00'
+    - measurement: g
+      name: cabbage
+      note: null
+      preparation: napa
+      quantity: '235.00'
+    - measurement: tsp
+      name: cornstarch
+      note: null
+      preparation: dissolbed in 125 ml stock
+      quantity: '2.00'
+    name: Stir Fry
+  - ingredient:
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: sesame
+      quantity: '1.00'
+    - measurement: null
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '2.00'
+    name: Serving
+  serves: 2
 source: ''
 tags: []
 title: Shanghai noodles

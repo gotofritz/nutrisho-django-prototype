@@ -1,47 +1,54 @@
 cuisine: .french
 description: Classic base
 directions:
-    step:
-    - Melt the butter
-    - Add to the remaining ingredients in food processor and whiz
-    - Leave in fridge overnight (or at least an hour)
-    - To cook, coat hot pan with butter with a brush
-    - Swirl around to cover, then flip after 30 seconds or so
+  step:
+  - Melt the butter
+  - Add to the remaining ingredients in food processor and whiz
+  - Leave in fridge overnight (or at least an hour)
+  - To cook, coat hot pan with butter with a brush
+  - Swirl around to cover, then flip after 30 seconds or so
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: eggs
-            preparation: null
-            quantity: '0.50'
-        -   measurement: ml
-            name: milk
-            preparation: null
-            quantity: '45.00'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '27.50'
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '31.25'
-        -   measurement: g
-            name: butter
-            preparation: melted
-            quantity: '11.25'
-        -   measurement: pinch
-            name: salt
-            preparation: null
-            quantity: '0.25'
-        name: Base
-    -   ingredient:
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '8.75'
-        name: Sweet version
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: ml
+      name: milk
+      note: null
+      preparation: null
+      quantity: '180.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '110.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '125.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: melted
+      quantity: '45.00'
+    - measurement: pinch
+      name: salt
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Base
+  - ingredient:
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '35.00'
+    name: Sweet version
+  serves: 4
 source: http://www.foodnetwork.com/recipes/alton-brown/crepes-recipe.html
 tags: []
 title: Crêpe base

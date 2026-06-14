@@ -1,71 +1,83 @@
 cuisine: .indian
 description: null
 directions:
-    step:
-    - dice potatoes 1.5 cm, chop the coriander, peel the ginger and chilli
-    - sautè spices (not assafoetida) in ghee until they begin to brown 2m
-    - add assafoetida if using a few secs
-    - add the potatoes, sautè until browned, a few mins
-    - add ground spices, and sprinkle stock or water
-    - stir, put heat on low, cover, cook stirring only once or twice for 15 m
-    - uncover, add garam masala if using, salt to taste, chopped herbs, and serve
+  step:
+  - dice potatoes 1.5 cm, chop the coriander, peel the ginger and chilli
+  - sautè spices (not assafoetida) in ghee until they begin to brown 2m
+  - add assafoetida if using a few secs
+  - add the potatoes, sautè until browned, a few mins
+  - add ground spices, and sprinkle stock or water
+  - stir, put heat on low, cover, cook stirring only once or twice for 15 m
+  - uncover, add garam masala if using, salt to taste, chopped herbs, and serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: Tbsp
-            name: ghee
-            preparation: null
-            quantity: '0.75'
-        -   measurement: null
-            name: chillies
-            preparation: dried
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: ginger
-            preparation: peeled
-            quantity: '0.12'
-        -   measurement: tsp
-            name: cumin seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: black mustard seeds (optional)
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tsp
-            name: assafoetida (optional)
-            preparation: null
-            quantity: '0.06'
-        name: Initial mix
-    -   ingredient:
-        -   measurement: g
-            name: potatoes
-            preparation: null
-            quantity: '112.50'
-        -   measurement: tsp
-            name: turmeric
-            preparation: null
-            quantity: '0.12'
-        -   measurement: Tbsp
-            name: ground coriander
-            preparation: null
-            quantity: '0.12'
-        -   measurement: Tbsp
-            name: stock
-            preparation: veg
-            quantity: '-0.50'
-        name: Cooking
-    -   ingredient:
-        -   measurement: Tbsp
-            name: coriander leaves
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: garam masala (optional)
-            preparation: null
-            quantity: '0.12'
-        name: Serving
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: Tbsp
+      name: ghee
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: null
+      name: chillies
+      note: null
+      preparation: dried
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '0.24'
+    - measurement: tsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: black mustard seeds (optional)
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tsp
+      name: assafoetida (optional)
+      note: null
+      preparation: null
+      quantity: '0.12'
+    name: Initial mix
+  - ingredient:
+    - measurement: g
+      name: potatoes
+      note: null
+      preparation: null
+      quantity: '225.00'
+    - measurement: tsp
+      name: turmeric
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: Tbsp
+      name: ground coriander
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: Tbsp
+      name: stock
+      note: null
+      preparation: veg
+      quantity: '1.00'
+    name: Cooking
+  - ingredient:
+    - measurement: Tbsp
+      name: coriander leaves
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: garam masala (optional)
+      note: null
+      preparation: null
+      quantity: '0.24'
+    name: Serving
+  serves: 2
 source: ''
 tags: []
 title: Potato curry, dry

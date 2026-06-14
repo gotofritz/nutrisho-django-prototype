@@ -1,87 +1,100 @@
 cuisine: .france.traditional
 description: Meat stock is essential (beef if you can, else chicken), and you'll also
-    need 2 oven proof bowls
+  need 2 oven proof bowls
 directions:
-    step:
-    - Sautè the onion with the sugar in the butter, on high fire, for roughly 8 mins,
-        until translucent
-    - Lower heat and cook slowly for 45 mins or more, stirring occasionally, until
-        golden brown and mushy. Add a little water and scrape any burnt bits off the
-        bottom if it all gets too dry and they stick
-    - Add sherry (or chinese rice wine, or marsala wine), reduce until alcohol evaporates
-    - Add stock, salt and pepper, and remaining soup ingredients. Simmer on medium
-        for 20 mins
-    - Stir in finish off ingredients and turn off fire
-    - Cut garlic clove in half and rub on toasts, then butter them
-    - 'For each of the two oven proof bowls: layer a bit of soup of the bottom, then
-        one toast, one quarter of the cheese, half the soup, another toast, cover
-        with cheese'
-    - Grill under a broiler until the cheese is brown in spots, and serve with garnish
+  step:
+  - Sautè the onion with the sugar in the butter, on high fire, for roughly 8 mins,
+    until translucent
+  - Lower heat and cook slowly for 45 mins or more, stirring occasionally, until golden
+    brown and mushy. Add a little water and scrape any burnt bits off the bottom if
+    it all gets too dry and they stick
+  - Add sherry (or chinese rice wine, or marsala wine), reduce until alcohol evaporates
+  - Add stock, salt and pepper, and remaining soup ingredients. Simmer on medium for
+    20 mins
+  - Stir in finish off ingredients and turn off fire
+  - Cut garlic clove in half and rub on toasts, then butter them
+  - 'For each of the two oven proof bowls: layer a bit of soup of the bottom, then
+    one toast, one quarter of the cheese, half the soup, another toast, cover with
+    cheese'
+  - Grill under a broiler until the cheese is brown in spots, and serve with garnish
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: onions, mixed red and yellow
-            preparation: thickly sliced
-            quantity: '175.00'
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '10.00'
-        -   measurement: pinch
-            name: sugar
-            preparation: null
-            quantity: '0.25'
-        name: Onions
-    -   ingredient:
-        -   measurement: ml
-            name: sherry
-            preparation: null
-            quantity: '15.00'
-        -   measurement: ml
-            name: meat stock
-            preparation: null
-            quantity: '200.00'
-        -   measurement: sprig
-            name: thyme
-            preparation: null
-            quantity: '0.25'
-        -   measurement: leaf
-            name: bay
-            preparation: null
-            quantity: '0.25'
-        name: Soup
-    -   ingredient:
-        -   measurement: tsp
-            name: fish sauce
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: vinegar
-            preparation: null
-            quantity: '0.25'
-        name: Finish off
-    -   ingredient:
-        -   measurement: slices
-            name: bread
-            preparation: toasted
-            quantity: '1.00'
-        -   measurement: clove
-            name: garlic
-            preparation: null
-            quantity: '0.25'
-        -   measurement: g
-            name: gruyere
-            preparation: grated
-            quantity: '75.00'
-        name: Serving
-    -   ingredient:
-        -   measurement: tbsp
-            name: chives or spring onions
-            preparation: chopped
-            quantity: '0.25'
-        name: Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: onions, mixed red and yellow
+      note: null
+      preparation: thickly sliced
+      quantity: '350.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '20.00'
+    - measurement: pinch
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: Onions
+  - ingredient:
+    - measurement: ml
+      name: sherry
+      note: null
+      preparation: null
+      quantity: '30.00'
+    - measurement: ml
+      name: meat stock
+      note: null
+      preparation: null
+      quantity: '400.00'
+    - measurement: sprig
+      name: thyme
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: leaf
+      name: bay
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: Soup
+  - ingredient:
+    - measurement: tsp
+      name: fish sauce
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: vinegar
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: Finish off
+  - ingredient:
+    - measurement: slices
+      name: bread
+      note: null
+      preparation: toasted
+      quantity: '2.00'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: g
+      name: gruyere
+      note: null
+      preparation: grated
+      quantity: '150.00'
+    name: Serving
+  - ingredient:
+    - measurement: tbsp
+      name: chives or spring onions
+      note: null
+      preparation: chopped
+      quantity: '0.50'
+    name: Garnish
+  serves: 2
 source: https://www.seriouseats.com/french-onion-soup-recipe
 tags:
 - soups

@@ -14,7 +14,7 @@ def test_delete_recipe_reports_recipe_count_not_cascade(user):
     recipe = Recipe.objects.create(recipe_name="Delete Me", owner=user)
     Step.objects.create(recipe=recipe, step_text="Step 1", index_in_sequence=1)
     Step.objects.create(recipe=recipe, step_text="Step 2", index_in_sequence=2)
-    group = IngredientGroup.objects.create(recipe=recipe, group_name=None, index_in_sequence=1)
+    group = IngredientGroup.objects.create(recipe=recipe, group_name="", index_in_sequence=1)
     ing = Ingredient.objects.create(ingredient_name="salt")
     IngredientInRecipe.objects.create(ingredient=ing, ingredient_group=group, index_in_sequence=1)
 

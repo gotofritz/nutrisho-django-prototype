@@ -1,12 +1,18 @@
-<div id="group-{{ group.id }}">
+<div{% if group %} id="group-{{ group.id }}"{% endif %} class="is-editing">
   <form
+    {% if group %}
     hx-post="{% url 'recipes:group_save' recipe.id group.id %}"
+    {% else %}
+    hx-post="{% url 'recipes:group_create' recipe.id %}"
+    hx-on::config-request="event.detail.parameters.position = Array.prototype.indexOf.call(this.closest('#groups-list').querySelectorAll(':scope > div:not(.reassign-panel)'), this.closest('div'))"
+    {% endif %}
     hx-swap="outerHTML"
     hx-target="closest div"
   >
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Save</button>
+    {% if group %}
     <button
       type="button"
       hx-get="{% url 'recipes:group_display' recipe.id group.id %}"
@@ -16,8 +22,11 @@
     <button
       type="button"
       hx-post="{% url 'recipes:group_delete' recipe.id group.id %}"
-      hx-target="closest div"
+      hx-target="closest .group-block"
       hx-swap="outerHTML"
     >Delete</button>
+    {% else %}
+    <button type="button" onclick="this.closest('div').remove()">Cancel</button>
+    {% endif %}
   </form>
 </div>

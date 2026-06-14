@@ -1,64 +1,72 @@
 cuisine: .italian.modern
 description: null
 directions:
-    step:
-    - Sautè garlic in olive oil, then add fennel seeds powder and fennel slices.
-    - Season and add cover. Cook on low for 20 mins
-    - Sautè chopped onions in olive oil
-    - When translucent add rice and stir a few minutes. Sweat with wine.
-    - When evaporated add first ladle of broth. Keep stirring and adding broth as
-        needed.
-    - After 10 minutes add the fennel. Carry on cooking until end, ladeling broth
-        and stirring
-    - Mix in the butter, cheese, lemon zest and juice, stir in vigorously and let
-        rest covered a few minutes
-    - Serve with a dusting of chilli powder and fennel tops, with grated parmesan
-        on the side
+  step:
+  - Sautè garlic in olive oil, then add fennel seeds powder and fennel slices.
+  - Season and add cover. Cook on low for 20 mins
+  - Sautè chopped onions in olive oil
+  - When translucent add rice and stir a few minutes. Sweat with wine.
+  - When evaporated add first ladle of broth. Keep stirring and adding broth as needed.
+  - After 10 minutes add the fennel. Carry on cooking until end, ladeling broth and
+    stirring
+  - Mix in the butter, cheese, lemon zest and juice, stir in vigorously and let rest
+    covered a few minutes
+  - Serve with a dusting of chilli powder and fennel tops, with grated parmesan on
+    the side
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: tsp
-            name: fenel seeds
-            preparation: crushed to powder
-            quantity: '0.06'
-        -   measurement: cloves
-            name: garlic
-            preparation: sliced
-            quantity: '0.50'
-        -   measurement: bulbs
-            name: fennel
-            preparation: julienned (keep tops)
-            quantity: '0.50'
-        name: Fennel
-    -   ingredient:
-        -   measurement: g
-            name: carnaroli rice
-            preparation: null
-            quantity: '47.50'
-        -   measurement: null
-            name: onions
-            preparation: chopped finely
-            quantity: '0.12'
-        -   measurement: ml
-            name: broth
-            preparation: null
-            quantity: '150.00'
-        name: Risotto
-    -   ingredient:
-        -   measurement: tbsp
-            name: ricotta
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: lime
-            preparation: zested and chopped
-            quantity: '0.12'
-        -   measurement: knob
-            name: butter
-            preparation: null
-            quantity: '0.25'
-        name: Mantecazione
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: tsp
+      name: fenel seeds
+      note: null
+      preparation: crushed to powder
+      quantity: '0.12'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: sliced
+      quantity: '1.00'
+    - measurement: bulbs
+      name: fennel
+      note: null
+      preparation: julienned (keep tops)
+      quantity: '1.00'
+    name: Fennel
+  - ingredient:
+    - measurement: g
+      name: carnaroli rice
+      note: null
+      preparation: null
+      quantity: '95.00'
+    - measurement: null
+      name: onions
+      note: null
+      preparation: chopped finely
+      quantity: '0.24'
+    - measurement: ml
+      name: broth
+      note: null
+      preparation: null
+      quantity: '300.00'
+    name: Risotto
+  - ingredient:
+    - measurement: tbsp
+      name: ricotta
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: lime
+      note: null
+      preparation: zested and chopped
+      quantity: '0.24'
+    - measurement: knob
+      name: butter
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: Mantecazione
+  serves: 2
 source: http://www.jamieoliver.com/recipes/rice-recipes/fennel-risotto-with-ricotta-and-dried-chilli-risotto-ai-finocchi-con-ricotta-e-peperoncino/
 tags:
 - risotto

@@ -1,52 +1,59 @@
 cuisine: .italian.quick
 description: A quick and easy version of the famous sauce
 directions:
-    step:
-    - Sautè the chopped vegetables in olive oil and butter in the pressure cooker
-        for a few minutes untile wilted
-    - Add bacon and give it another couple of minutes
-    - Add the mince, cook it until browned, stirringly costantly
-    - Add the tomates. If it's not passata but cans, blend with the immersion blender
-        first
-    - Add the milk, salt and pepper, and close the pressure cooker
-    - Close the pressure cooker and start heating the pasta water
-    - By the time the pasta water has boiled and the pasta cooked, it should be ready.
-        But it can cook for longer if need be
+  step:
+  - Sautè the chopped vegetables in olive oil and butter in the pressure cooker for
+    a few minutes untile wilted
+  - Add bacon and give it another couple of minutes
+  - Add the mince, cook it until browned, stirringly costantly
+  - Add the tomates. If it's not passata but cans, blend with the immersion blender
+    first
+  - Add the milk, salt and pepper, and close the pressure cooker
+  - Close the pressure cooker and start heating the pasta water
+  - By the time the pasta water has boiled and the pasta cooked, it should be ready.
+    But it can cook for longer if need be
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: onion
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: small
-            name: carrot
-            preparation: peeled and chopped
-            quantity: '0.25'
-        -   measurement: stalk
-            name: celery
-            preparation: peeled and chopped
-            quantity: '0.12'
-        -   measurement: g
-            name: bacon
-            preparation: chopped
-            quantity: '7.50'
-        name: Veg
-    -   ingredient:
-        -   measurement: g
-            name: mince
-            preparation: null
-            quantity: '100.00'
-        -   measurement: ml
-            name: passata
-            preparation: or one can tomatoes
-            quantity: '75.00'
-        -   measurement: ml
-            name: milk
-            preparation: null
-            quantity: '15.00'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: onion
+      note: null
+      preparation: chopped
+      quantity: '1.25'
+    - measurement: small
+      name: carrot
+      note: null
+      preparation: peeled and chopped
+      quantity: '1.25'
+    - measurement: stalk
+      name: celery
+      note: null
+      preparation: peeled and chopped
+      quantity: '0.60'
+    - measurement: g
+      name: bacon
+      note: null
+      preparation: chopped
+      quantity: '37.50'
+    name: Veg
+  - ingredient:
+    - measurement: g
+      name: mince
+      note: null
+      preparation: null
+      quantity: '500.00'
+    - measurement: ml
+      name: passata
+      note: null
+      preparation: or one can tomatoes
+      quantity: '375.00'
+    - measurement: ml
+      name: milk
+      note: null
+      preparation: null
+      quantity: '75.00'
+    name: null
+  serves: 5
 source: ''
 tags: []
 title: Ragù, Pressure Cooker

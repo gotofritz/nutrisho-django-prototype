@@ -1,0 +1,9 @@
+{% for iir in group.ingredient.all %}
+{% include "./_ingredient_display.html" with recipe=recipe iir=iir %}
+{% endfor %}
+<button
+  hx-post="{% url 'recipes:ingredient_add_to_group' recipe.id group.id %}"
+  hx-target="this"
+  hx-swap="beforebegin"
+  class="btn-add"
+>+ Add ingredient</button>

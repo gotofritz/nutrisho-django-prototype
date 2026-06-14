@@ -1,52 +1,59 @@
 cuisine: .italian.sicilian
 description: null
 directions:
-    step:
-    - soak breadcrumbs in milk for 15m
-    - add ground beef, egg, parsley, pecorino cheese and orm into croquettes the size
-        of lipstick
-    - sear the meatballs (dip in a deep frier if you have one) on high heat until
-        seared, about 1m
-    - lower heat and cook gently
-    - saute onion in olive oil until translucent, about 6m
-    - add passata and onions to meatballs, cook on medium heat for 10m
-    - process almonds to a coarse powder
-    - add to meatballs and increase heat to high, until it starts boiling, about 1m
+  step:
+  - soak breadcrumbs in milk for 15m
+  - add ground beef, egg, parsley, pecorino cheese and orm into croquettes the size
+    of lipstick
+  - sear the meatballs (dip in a deep frier if you have one) on high heat until seared,
+    about 1m
+  - lower heat and cook gently
+  - saute onion in olive oil until translucent, about 6m
+  - add passata and onions to meatballs, cook on medium heat for 10m
+  - process almonds to a coarse powder
+  - add to meatballs and increase heat to high, until it starts boiling, about 1m
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: breadcrumbs
-            preparation: null
-            quantity: '10.00'
-        -   measurement: g
-            name: beef
-            preparation: grouund
-            quantity: '150.00'
-        -   measurement: null
-            name: egg
-            preparation: beaten
-            quantity: '0.25'
-        -   measurement: mls
-            name: cheese
-            preparation: pecorino
-            quantity: '10.00'
-        name: Meatballs
-    -   ingredient:
-        -   measurement: null
-            name: onion
-            preparation: sliced
-            quantity: '0.25'
-        -   measurement: g
-            name: almonds
-            preparation: blanched
-            quantity: '45.00'
-        -   measurement: ml
-            name: passata
-            preparation: null
-            quantity: '37.50'
-        name: Sauce
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: breadcrumbs
+      note: null
+      preparation: null
+      quantity: '20.00'
+    - measurement: g
+      name: beef
+      note: null
+      preparation: grouund
+      quantity: '300.00'
+    - measurement: null
+      name: egg
+      note: null
+      preparation: beaten
+      quantity: '0.50'
+    - measurement: mls
+      name: cheese
+      note: null
+      preparation: pecorino
+      quantity: '20.00'
+    name: Meatballs
+  - ingredient:
+    - measurement: null
+      name: onion
+      note: null
+      preparation: sliced
+      quantity: '0.50'
+    - measurement: g
+      name: almonds
+      note: null
+      preparation: blanched
+      quantity: '90.00'
+    - measurement: ml
+      name: passata
+      note: null
+      preparation: null
+      quantity: '75.00'
+    name: Sauce
+  serves: 2
 source: ''
 tags: []
 title: Polpette Con Mandorle

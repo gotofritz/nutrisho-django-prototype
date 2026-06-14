@@ -1,43 +1,44 @@
 cuisine: .chinese
 description: You Yuan
 directions:
-    step:
-    - sift 315g flour into a bowl, make a well in the middle, and pour 250ml boiling
-        water
-    - work quickly into a dough
-    - make a ball and brush lightly with sesame oil. rest covered 5m
-    - knead some more until rubbery, rub with more sesame oil, place in plastic bag
-        60m
-    - roll into a log 25 cm long and split into 6
-    - roll each into a very thin 18 cm disk, rub with sesame oil, sprinkle salt, 3
-        chopped spring onions each
-    - roll into a cigar
-    - twist into a tight coil
-    - flatten coil into a 13cm disk
-    - shallo fry 3m oin each side
+  step:
+  - Sift flour into a bowl, make a well in the middle, and pour 250ml boiling water
+  - Work quickly into a dough
+  - Make a ball and brush lightly with sesame oil. Rest covered 5m
+  - Knead some more until rubbery, rub with more sesame oil, place in plastic bag
+    1hr
+  - Roll into a log 25 cm long and split into 6
+  - Roll each into a very thin 18 cm disk, rub with sesame oil, sprinkle salt, add
+    3 chopped spring onions each
+  - Roll into a cigar, twist into a tight coil, the flatten into a 13cm disk
+  - Shallow fry 3m on each side
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: flour
-            preparation: plain
-            quantity: '78.75'
-        -   measurement: ml
-            name: water
-            preparation: boiling
-            quantity: '62.50'
-        -   measurement: null
-            name: untitled ingredient
-            preparation: null
-            quantity: null
-        name: Pastry
-    -   ingredient:
-        -   measurement: g
-            name: spring onions
-            preparation: chopped
-            quantity: '27.50'
-        name: Stuffing
-    serves: 1
-source: ''
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      note: null
+      preparation: plain
+      quantity: '315.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: boiling
+      quantity: '250.00'
+    - measurement: null
+      name: untitled ingredient
+      note: null
+      preparation: null
+      quantity: null
+    name: Pastry
+  - ingredient:
+    - measurement: g
+      name: spring onions
+      note: null
+      preparation: chopped
+      quantity: '110.00'
+    name: Stuffing
+  serves: 4
+source: https://www.okonomikitchen.com/cheats-easy-scallion-pancakes/
 tags: []
 title: Spring onion pastries

@@ -1,48 +1,52 @@
 cuisine: .british.traditional
 description: Classic light sponge cake, normally done with self raising flour but
-    this is without.
+  this is without.
 directions:
-    step:
-    - Grease a 20 cm baking tin. Sprinkle a bit of flour over it and shake it, to
-        ensure the flour covers the tin evenly. Once covered, shake off excess flour
-        over the sink.
-    - Beat the eggs
-    - Cream together the sugar and butter at room temperature, then add the beaten
-        egg.
-    - Mix the flour, baking powder, and salt, and sift into the mixture, mixing as
-        you add it.
-    - Spoon the cake mixture into the greased baking tin, and bake at 180° for 20
-        mins
-    - Cool over a rack, then slice in half and fill with jam and whipped cream
+  step:
+  - Grease a 20 cm baking tin. Sprinkle a bit of flour over it and shake it, to ensure
+    the flour covers the tin evenly. Once covered, shake off excess flour over the
+    sink.
+  - Beat the eggs
+  - Cream together the sugar and butter at room temperature, then add the beaten egg.
+  - Mix the flour, baking powder, and salt, and sift into the mixture, mixing as you
+    add it.
+  - Spoon the cake mixture into the greased baking tin, and bake at 180° for 20 mins
+  - Cool over a rack, then slice in half and fill with jam and whipped cream
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: G
-            name: butter
-            preparation: room temperature
-            quantity: '43.75'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '42.50'
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '43.75'
-        -   measurement: null
-            name: eggs
-            preparation: null
-            quantity: '0.75'
-        -   measurement: tsp
-            name: baking powder
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: salt
-            preparation: null
-            quantity: '0.12'
-        name: Dough
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: G
+      name: butter
+      note: null
+      preparation: room temperature
+      quantity: '262.50'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '255.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '262.50'
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: null
+      quantity: '4.50'
+    - measurement: tsp
+      name: baking powder
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: tsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '0.72'
+    name: Dough
+  serves: 6
 source: ''
 tags: []
 title: Victoria Sponge Cake

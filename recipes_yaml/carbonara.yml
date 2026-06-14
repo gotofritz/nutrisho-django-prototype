@@ -1,59 +1,59 @@
-title: Carbonara
 cuisine: Italian
-description: ""
-source: ""
-ingredients:
-  group:
-    - ingredient:
-        - measurement: "g"
-          name: salt
-          quantity: "20"
-          preparation: ""
-        - measurement: "L"
-          name: water
-          quantity: "2"
-          preparation: ""
-      name: Pasta water
-    - ingredient:
-        - measurement: "g"
-          name: spaghetti
-          quantity: "200"
-          preparation: ""
-        - measurement: ""
-          name: egg yolks
-          quantity: "3"
-          preparation: ""
-        - measurement: "g"
-          name: bacon or guanciale or pancetta
-          quantity: "100"
-          preparation: cut in 0.5 x 2cm pieces
-        - measurement: "g (roughly)"
-          name: "parmesan or pecorino cheese"
-          quantity: "30"
-          preparation: grated
-        - measurement: "tbsps"
-          name: "olive oil"
-          quantity: "0.5"
-          preparation: ""
-      name: main
-  serves: 1
+description: ''
 directions:
   step:
-    - >-
-      Bring salted water to a boil in a large pot
-    - >-
-      Meanwhile in a skillet large enough to hold the completed pasta
-      dish, sauté pancetta until crispy, then remove pan from heat
-    - Cook pasta 2 mins less than package instructions.
-    - >-
-      Meanwhile, In a bowl, whisk egg yolks, cheese, and pepper to
-      cookie-dough consistency
-    - Stir a couple of spoonfuls of pasta water into eggs to temper it
-    - >-
-      Return bacon to medium-low heat. Add al dente pasta and drizzle
-      water in spoonfuls, tossing until it's done.
-    - >-
-      Cook for 2-3 mins, then remove skillet from heat and add the egg
-      mix.
-    - Toss quickly to coat the pasta without scrambling the eggs
+  - Bring salted water to a boil in a large pot
+  - Meanwhile in a skillet large enough to hold the completed pasta dish, sauté pancetta
+    until crispy, then remove pan from heat
+  - Cook pasta 2 mins less than package instructions.
+  - Meanwhile, In a bowl, whisk egg yolks, cheese, and pepper to cookie-dough consistency
+  - Stir a couple of spoonfuls of pasta water into eggs to temper it
+  - Return bacon to medium-low heat. Add al dente pasta and drizzle water in spoonfuls,
+    tossing until it's done.
+  - Cook for 2-3 mins, then remove skillet from heat and add the egg mix.
+  - Toss quickly to coat the pasta without scrambling the eggs
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: salt
+      note: null
+      preparation: ''
+      quantity: '20.00'
+    - measurement: L
+      name: water
+      note: null
+      preparation: ''
+      quantity: '2.00'
+    name: Pasta water
+  - ingredient:
+    - measurement: g
+      name: spaghetti
+      note: null
+      preparation: ''
+      quantity: '200.00'
+    - measurement: ''
+      name: egg yolks
+      note: null
+      preparation: ''
+      quantity: '3.00'
+    - measurement: g
+      name: bacon or guanciale or pancetta
+      note: null
+      preparation: cut in 0.5 x 2cm pieces
+      quantity: '100.00'
+    - measurement: g (roughly)
+      name: parmesan or pecorino cheese
+      note: null
+      preparation: grated
+      quantity: '30.00'
+    - measurement: tbsps
+      name: olive oil
+      note: null
+      preparation: ''
+      quantity: '0.50'
+    name: main
+  serves: 2
+source: ''
 tags: []
+title: Carbonara

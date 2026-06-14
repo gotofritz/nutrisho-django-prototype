@@ -1,11 +1,12 @@
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import render
 
 from recipes.models import Recipe
+from recipes.views._types import AuthedRequest
 
 
-def home(request):
-    latest_recipe_list = Recipe.objects.order_by("-created_date")
-    context = {
-        "latest_recipe_list": latest_recipe_list,
-    }
-    return render(request, "recipes/home.html", context)
+@login_required
+def home(request: AuthedRequest) -> HttpResponse:
+    latest_recipe_list = Recipe.objects.filter(owner=request.user).order_by("-created_date")
+    return render(request, "recipes/home.html", {"latest_recipe_list": latest_recipe_list})

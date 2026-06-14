@@ -1,62 +1,71 @@
 cuisine: .chinese.sizchuan
 description: '*we used lettuce stem but also good would be green papaya, cucumber,
-    carrot, lotus root, daikon radish or any other crunchy and slightly watery vegetable
-    One 2 inch chunk of ginger root, peeled and minced superfine (''like mud'' as
-    Feng would say)'
+  carrot, lotus root, daikon radish or any other crunchy and slightly watery vegetable
+  One 2 inch chunk of ginger root, peeled and minced superfine (''like mud'' as Feng
+  would say)'
 directions:
-    step:
-    - Mix the finely minced ginger with the salt, splash of boiling water and sesame
-        oil and set aside while you chop the vegetables.
-    - Peel your vegetables and slice off any rounded edges so that they sit nice and
-        flat on your chopping board. Slice them first into thin slices, then carefully
-        line up your slices and chop into fine matchsticks. Scatter on a plate.
-    - Scoop out 2 tbsp of the wet ginger from your ginger/water mixture and place
-        in a small bowl. Add the 2 tbsp of water, vinegar and salt and stir. Add the
-        sesame oil and stir gently.
-    - Pour over the vegetables and either leave for 20 minutes for the vegetables
-        to soak up some of the liquid and 'pickle' slightly or eat straight away.
-        This would also be a great dish to bring along for picnics.
+  step:
+  - Mix the finely minced ginger with the salt, splash of boiling water and sesame
+    oil and set aside while you chop the vegetables.
+  - Peel your vegetables and slice off any rounded edges so that they sit nice and
+    flat on your chopping board. Slice them first into thin slices, then carefully
+    line up your slices and chop into fine matchsticks. Scatter on a plate.
+  - Scoop out 2 tbsp of the wet ginger from your ginger/water mixture and place in
+    a small bowl. Add the 2 tbsp of water, vinegar and salt and stir. Add the sesame
+    oil and stir gently.
+  - Pour over the vegetables and either leave for 20 minutes for the vegetables to
+    soak up some of the liquid and 'pickle' slightly or eat straight away. This would
+    also be a great dish to bring along for picnics.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: raw vegetables*
-            preparation: see note
-            quantity: '62.50'
-        -   measurement: cm
-            name: ginger
-            preparation: peeled and minced superfine ('like mud' as Feng would say)
-            quantity: '1.25'
-        -   measurement: tsp
-            name: fine sea salt
-            preparation: null
-            quantity: '0.38'
-        -   measurement: splash
-            name: water
-            preparation: boiling
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: oil
-            preparation: null
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: water
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsp
-            name: vinegar
-            preparation: rice
-            quantity: '0.25'
-        -   measurement: null
-            name: pinch of fine sea salt
-            preparation: null
-            quantity: null
-        -   measurement: tsp
-            name: oil
-            preparation: sesame
-            quantity: '0.12'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: raw vegetables*
+      note: null
+      preparation: see note
+      quantity: '250.00'
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: peeled and minced superfine ('like mud' as Feng would say)
+      quantity: '5.00'
+    - measurement: tsp
+      name: fine sea salt
+      note: null
+      preparation: null
+      quantity: '1.52'
+    - measurement: splash
+      name: water
+      note: null
+      preparation: boiling
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: water
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tsp
+      name: vinegar
+      note: null
+      preparation: rice
+      quantity: '1.00'
+    - measurement: null
+      name: pinch of fine sea salt
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: tsp
+      name: oil
+      note: null
+      preparation: sesame
+      quantity: '0.48'
+    name: null
+  serves: 4
 source: ''
 tags:
 - pic nick

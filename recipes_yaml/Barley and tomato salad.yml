@@ -1,70 +1,83 @@
 cuisine: .fusion.british
 description: null
 directions:
-    step:
-    - Sauté the garlic for 2 mins in olive oil, on medium heat.
-    - Add the remaining ingredients and cook on low for 50 mins or so until the barley
-        is tender but still al dente. Add water from tine to time to keep it moise
-    - Put in bowls and scatter the garnish ingredients on top
+  step:
+  - Sauté the garlic for 2 mins in olive oil, on medium heat.
+  - Add the remaining ingredients and cook on low for 50 mins or so until the barley
+    is tender but still al dente. Add water from tine to time to keep it moise
+  - Put in bowls and scatter the garnish ingredients on top
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.75'
-        -   measurement: heads
-            name: garlic
-            preparation: cloves peeled and quartered
-            quantity: '0.50'
-        -   measurement: g
-            name: tomates
-            preparation: peeled and chopped
-            quantity: '187.50'
-        -   measurement: g
-            name: passata
-            preparation: null
-            quantity: '62.50'
-        -   measurement: tsp
-            name: smoky paprika
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: chilli flakes
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: thyme
-            preparation: null
-            quantity: '0.25'
-        -   measurement: strips
-            name: lemon zest
-            preparation: null
-            quantity: '1.00'
-        -   measurement: tsp
-            name: salt
-            preparation: null
-            quantity: '0.25'
-        -   measurement: g
-            name: barley
-            preparation: rinsed
-            quantity: '67.50'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '50.00'
-        name: Barly
-    -   ingredient:
-        -   measurement: g
-            name: feta
-            preparation: crumbled
-            quantity: '50.00'
-        -   measurement: g
-            name: coriander leaves
-            preparation: chopped
-            quantity: '5.00'
-        name: Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: heads
+      name: garlic
+      note: null
+      preparation: cloves peeled and quartered
+      quantity: '1.00'
+    - measurement: g
+      name: tomates
+      note: null
+      preparation: peeled and chopped
+      quantity: '375.00'
+    - measurement: g
+      name: passata
+      note: null
+      preparation: null
+      quantity: '125.00'
+    - measurement: tsp
+      name: smoky paprika
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: chilli flakes
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tbsp
+      name: thyme
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: strips
+      name: lemon zest
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: g
+      name: barley
+      note: null
+      preparation: rinsed
+      quantity: '135.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '100.00'
+    name: Barly
+  - ingredient:
+    - measurement: g
+      name: feta
+      note: null
+      preparation: crumbled
+      quantity: '100.00'
+    - measurement: g
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '10.00'
+    name: Garnish
+  serves: 2
 source: Ottolenghi
 tags: []
 title: Barley and tomato salad

@@ -1,54 +1,62 @@
 cuisine: .chinese
 description: Cha shao bao
 directions:
-    step:
-    - 'prepare starter: mix powders together, slowly stir water in, cover with cling
-        film and rest 3 hours'
-    - mix flour and baking powder into a bowl, make a well in the centger (3) add
-        oil / melted lard if using (4) add starter and work into dough (5) add water
-        and work into dough
-    - roll dough into a log 50 cm long, cut 2.5 cm pieces (7) with each piece, roll
-        into a ball, flatten on table, then roll out in 7,5 cm disks thicker at the
-        center (8) place filling in center and twist tops (9) steam 8 m or so
+  step:
+  - 'prepare starter: mix powders together, slowly stir water in, cover with cling
+    film and rest 3 hours'
+  - mix flour and baking powder into a bowl, make a well in the centger (3) add oil
+    / melted lard if using (4) add starter and work into dough (5) add water and work
+    into dough
+  - roll dough into a log 50 cm long, cut 2.5 cm pieces (7) with each piece, roll
+    into a ball, flatten on table, then roll out in 7,5 cm disks thicker at the center
+    (8) place filling in center and twist tops (9) steam 8 m or so
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: flour
-            preparation: plain
-            quantity: '38.75'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '15.00'
-        -   measurement: tsp
-            name: yeast
-            preparation: dry
-            quantity: '0.38'
-        -   measurement: ml
-            name: water
-            preparation: lukewarm
-            quantity: '45.00'
-        name: Dough starter
-    -   ingredient:
-        -   measurement: g
-            name: flour
-            preparation: plain
-            quantity: '57.50'
-        -   measurement: tsp
-            name: baking powder
-            preparation: null
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: lard
-            preparation: melted
-            quantity: '0.38'
-        -   measurement: ml
-            name: water
-            preparation: lukewarm
-            quantity: '20.00'
-        name: Dough
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      note: null
+      preparation: plain
+      quantity: '155.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '60.00'
+    - measurement: tsp
+      name: yeast
+      note: null
+      preparation: dry
+      quantity: '1.50'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: lukewarm
+      quantity: '180.00'
+    name: Dough starter
+  - ingredient:
+    - measurement: g
+      name: flour
+      note: null
+      preparation: plain
+      quantity: '230.00'
+    - measurement: tsp
+      name: baking powder
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: lard
+      note: null
+      preparation: melted
+      quantity: '1.50'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: lukewarm
+      quantity: '80.00'
+    name: Dough
+  serves: 4
 source: ''
 tags: []
 title: Baozi dough - spongy

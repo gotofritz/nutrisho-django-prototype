@@ -16,10 +16,61 @@
     <link rel="stylesheet" href="{% static 'css/output.css' %}" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print" />
+    <script src="{% static 'django_htmx/htmx.min.js' %}" defer></script>
     {% django_htmx_script %}
+    <meta name="htmx-config" content='{"responseHandling":[{"code":"204","swap":false},{"code":"[23]..","swap":true},{"code":"422","swap":true},{"code":".*","swap":false,"error":true}]}'>
+    <script>
+      function _resizeTextarea(el) {
+        el.style.height = 'auto';
+        el.style.height = el.scrollHeight + 'px';
+      }
+      function _initTextareas(root) {
+        (root || document).querySelectorAll('textarea').forEach(_resizeTextarea);
+      }
+      document.addEventListener('DOMContentLoaded', function() { _initTextareas(); });
+      document.addEventListener('htmx:afterSettle', function(e) {
+        _initTextareas(e.detail.elt);
+        var panel = document.getElementById('reassign-panel');
+        if (panel && document.querySelectorAll('.ingredient-select:checked').length === 0) {
+          panel.hidden = true;
+        }
+      });
+      document.addEventListener('input', function(e) {
+        if (e.target.tagName === 'TEXTAREA') _resizeTextarea(e.target);
+      });
+      function panelToggle(btn, panelId, event) {
+        var panel = document.getElementById(panelId);
+        if (panel && panel.innerHTML.trim()) {
+          panel.innerHTML = '';
+          event.stopImmediatePropagation();
+        }
+      }
+    </script>
   </head>
 
-  <body hx-boost="true">
+  <body hx-boost="true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% block content %}{% endblock %}
+    <script>
+      document.addEventListener('change', function (e) {
+        if (e.target.matches('.ingredient-select')) {
+          var n = document.querySelectorAll('.ingredient-select:checked').length;
+          var panel = document.getElementById('reassign-panel');
+          if (panel) panel.hidden = n < 1;
+        }
+        if (e.target.id === 'reassign-target') {
+          var ni = document.getElementById('new-group-name');
+          if (ni) ni.hidden = e.target.value !== 'new';
+        }
+      });
+      document.addEventListener('click', function (e) {
+        if (e.target.id === 'reassign-cancel') {
+          document.querySelectorAll('.ingredient-select:checked').forEach(function (cb) {
+            cb.checked = false;
+          });
+          var panel = document.getElementById('reassign-panel');
+          if (panel) panel.hidden = true;
+        }
+      });
+    </script>
   </body>
 </html>

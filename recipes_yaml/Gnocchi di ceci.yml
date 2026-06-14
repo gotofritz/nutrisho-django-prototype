@@ -1,66 +1,77 @@
 cuisine: .italian
 description: Chickpea gnocchi with wild mushrooms
 directions:
-    step:
-    - boil the chickpeas until cooked, then put in a blender with a bit of the water
-    - add the boiled potatoes to the chickpeas
-    - add the flour and 1 egg yolk, make into a dough
-    - roll out into tubes, cut into small pieces, use a forc to make gnocchi
-    - sautè onion, garlic, rosemary and bay leaves
-    - add the wild mushrooms and sautè
-    - boil water with sage in it for 10 mins, then cook the gnocchi in it
-    - toss in sauce, add a bit raw olive oil, serve
+  step:
+  - boil the chickpeas until cooked, then put in a blender with a bit of the water
+  - add the boiled potatoes to the chickpeas
+  - add the flour and 1 egg yolk, make into a dough
+  - roll out into tubes, cut into small pieces, use a forc to make gnocchi
+  - sautè onion, garlic, rosemary and bay leaves
+  - add the wild mushrooms and sautè
+  - boil water with sage in it for 10 mins, then cook the gnocchi in it
+  - toss in sauce, add a bit raw olive oil, serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: chickpeas
-            preparation: dry
-            quantity: '50.00'
-        -   measurement: g
-            name: potatoes
-            preparation: boiled
-            quantity: '75.00'
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '25.00'
-        -   measurement: null
-            name: egg yolk
-            preparation: null
-            quantity: '0.25'
-        name: For the gnocchi
-    -   ingredient:
-        -   measurement: Tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.75'
-        -   measurement: null
-            name: onions
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: null
-            name: garlic cloves
-            preparation: null
-            quantity: '0.25'
-        -   measurement: handful
-            name: rosemary
-            preparation: null
-            quantity: null
-        -   measurement: null
-            name: bay leaves
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: sage leaves
-            preparation: null
-            quantity: '2.50'
-        -   measurement: g
-            name: wild mushrroms
-            preparation: dried and soaked or fresh
-            quantity: '25.00'
-        name: For the sauce
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: chickpeas
+      note: null
+      preparation: dry
+      quantity: '100.00'
+    - measurement: g
+      name: potatoes
+      note: null
+      preparation: boiled
+      quantity: '150.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: null
+      name: egg yolk
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: For the gnocchi
+  - ingredient:
+    - measurement: Tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: null
+      name: onions
+      note: null
+      preparation: chopped
+      quantity: '0.50'
+    - measurement: null
+      name: garlic cloves
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: handful
+      name: rosemary
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: bay leaves
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: sage leaves
+      note: null
+      preparation: null
+      quantity: '5.00'
+    - measurement: g
+      name: wild mushrroms
+      note: null
+      preparation: dried and soaked or fresh
+      quantity: '50.00'
+    name: For the sauce
+  serves: 2
 source: ''
 tags: []
 title: Gnocchi di ceci

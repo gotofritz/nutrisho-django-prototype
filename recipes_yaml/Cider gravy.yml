@@ -1,86 +1,98 @@
 cuisine: null
 description: Everyone seems to be obsessed with pouring wine into their gravy and
-    sauces, but cider works equally as well and is a brilliant match with goose, pork
-    and turkey. There is absolutely no point in messing around at the last minute
-    trying to make gravy. It's much better to make it ahead to ensure that you get
-    a really good flavour. If you want to de-glaze your roasting pan, just use a little
-    bit more cider and scrape the bottom, then add it to this delicious gravy.
+  sauces, but cider works equally as well and is a brilliant match with goose, pork
+  and turkey. There is absolutely no point in messing around at the last minute trying
+  to make gravy. It's much better to make it ahead to ensure that you get a really
+  good flavour. If you want to de-glaze your roasting pan, just use a little bit more
+  cider and scrape the bottom, then add it to this delicious gravy.
 directions:
-    step:
-    - Preheat the oven to 200C/gas mark 6. Roast the bones and the vegetables for
-        about 15-20 minutes until lightly coloured, giving them a good stir every
-        so often. When they are a nice golden-brown colour, add the tomato purée,
-        then the flour and stir well with the bones and vegetables in the roasting
-        pan. Return the pan to the oven for another 10 minutes or so.
-    - Remove the roasting tray from the oven and add the cider, a little of the stock
-        and give it a good stir over a low flame. This will remove any residue from
-        the tray and begin the thickening process. Transfer everything into a large
-        saucepan, cover with the rest of the beef or chicken stock (and some cold
-        water if the stock doesn't cover the bones) and add the peppercorns, thyme
-        and bay leaf.
-    - Bring to the boil, skim off any scum that forms and simmer very gently for about
-        1 hours. The gravy may need topping up with water to keep the ingredients
-        covered. Skim occasionally, as required.
-    - Strain the gravy through a fine-meshed sieve and remove any fat with a ladle.
-        Check its strength and reduce it if necessary. If the gravy is not thick enough,
-        dilute some cornflour in a little cold water and stir in.
+  step:
+  - Preheat the oven to 200C/gas mark 6. Roast the bones and the vegetables for about
+    15-20 minutes until lightly coloured, giving them a good stir every so often.
+    When they are a nice golden-brown colour, add the tomato purée, then the flour
+    and stir well with the bones and vegetables in the roasting pan. Return the pan
+    to the oven for another 10 minutes or so.
+  - Remove the roasting tray from the oven and add the cider, a little of the stock
+    and give it a good stir over a low flame. This will remove any residue from the
+    tray and begin the thickening process. Transfer everything into a large saucepan,
+    cover with the rest of the beef or chicken stock (and some cold water if the stock
+    doesn't cover the bones) and add the peppercorns, thyme and bay leaf.
+  - Bring to the boil, skim off any scum that forms and simmer very gently for about
+    1 hours. The gravy may need topping up with water to keep the ingredients covered.
+    Skim occasionally, as required.
+  - Strain the gravy through a fine-meshed sieve and remove any fat with a ladle.
+    Check its strength and reduce it if necessary. If the gravy is not thick enough,
+    dilute some cornflour in a little cold water and stir in.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: kg
-            name: chicken wings
-            preparation: chopped into small pieces
-            quantity: '0.25'
-        -   measurement: ml
-            name: cider
-            preparation: null
-            quantity: '75.00'
-        -   measurement: medium
-            name: onions
-            preparation: peeled
-            quantity: '0.50'
-        -   measurement: medium
-            name: carrots
-            preparation: peeled and roughly chopped
-            quantity: '0.75'
-        -   measurement: null
-            name: A couple of sticks of celery
-            preparation: roughly chopped
-            quantity: null
-        -   measurement: large
-            name: leek
-            preparation: trimmed
-            quantity: '0.25'
-        -   measurement: null
-            name: cloves of garlic
-            preparation: peeled and chopped
-            quantity: '-0.25'
-        -   measurement: tsp
-            name: tomato pur\U00e9e
-            preparation: null
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: plain flour
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: litres chicken or beef stock (a good cube will do)
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: black peppercorns
-            preparation: null
-            quantity: '2.50'
-        -   measurement: null
-            name: A few sprigs of thyme
-            preparation: null
-            quantity: null
-        -   measurement: null
-            name: bay leaf
-            preparation: null
-            quantity: '0.25'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: kg
+      name: chicken wings
+      note: null
+      preparation: chopped into small pieces
+      quantity: '0.50'
+    - measurement: ml
+      name: cider
+      note: null
+      preparation: null
+      quantity: '150.00'
+    - measurement: medium
+      name: onions
+      note: null
+      preparation: peeled
+      quantity: '1.00'
+    - measurement: medium
+      name: carrots
+      note: null
+      preparation: peeled and roughly chopped
+      quantity: '1.50'
+    - measurement: null
+      name: A couple of sticks of celery
+      note: null
+      preparation: roughly chopped
+      quantity: null
+    - measurement: large
+      name: leek
+      note: null
+      preparation: trimmed
+      quantity: '0.50'
+    - measurement: null
+      name: cloves of garlic
+      note: null
+      preparation: peeled and chopped
+      quantity: '0.50'
+    - measurement: tsp
+      name: tomato pur\U00e9e
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: plain flour
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: null
+      name: litres chicken or beef stock (a good cube will do)
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: black peppercorns
+      note: null
+      preparation: null
+      quantity: '5.00'
+    - measurement: null
+      name: A few sprigs of thyme
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: bay leaf
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: null
+  serves: 2
 source: ''
 tags: []
 title: Cider gravy

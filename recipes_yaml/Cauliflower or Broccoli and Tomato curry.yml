@@ -1,73 +1,83 @@
 cuisine: .indian.maharashtra
 description: Gobhi Tamatar Sabji
 directions:
-    step:
-    - Make a cross cut at the bottom of the tomatoes, soak in boiling water a couple
-        of minutes, then rinse in fresh water and peel. Cut into eights
-    - Melt the ghee or oil / butter mixture over medium high heat. Fry the grated
-        ginger, chopped chilies, cumin seeds, mustard seeds until the mustard seeds
-        begin to pop.
-    - Stir in cauliflower, ground coriander, turmeric, salt and stir a coupe of minutes
-    - Add the tomatoes, lower heat and cook with a tight fitting lid for 15 - 20 mins,
-        shaking the pan occasionally. The moisture in the tomatoes should be enough
-        to cook the cauliflowers.
-    - Remove the lid and increase the heat. Toss the cauliflower over high heat for
-        a minute or so. Sprinkle garam masala and chopped herbs, and serve
+  step:
+  - Make a cross cut at the bottom of the tomatoes, soak in boiling water a couple
+    of minutes, then rinse in fresh water and peel. Cut into eights
+  - Melt the ghee or oil / butter mixture over medium high heat. Fry the grated ginger,
+    chopped chilies, cumin seeds, mustard seeds until the mustard seeds begin to pop.
+  - Stir in cauliflower, ground coriander, turmeric, salt and stir a coupe of minutes
+  - Add the tomatoes, lower heat and cook with a tight fitting lid for 15 - 20 mins,
+    shaking the pan occasionally. The moisture in the tomatoes should be enough to
+    cook the cauliflowers.
+  - Remove the lid and increase the heat. Toss the cauliflower over high heat for
+    a minute or so. Sprinkle garam masala and chopped herbs, and serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: tomatoes
-            preparation: medium
-            quantity: '125.00'
-        name: Tomatoes
-    -   ingredient:
-        -   measurement: Tbsp
-            name: ghee
-            preparation: or oil and butter mixture
-            quantity: '0.75'
-        -   measurement: cm
-            name: ginger
-            preparation: peeled
-            quantity: '0.62'
-        -   measurement: null
-            name: chilies
-            preparation: fresh
-            quantity: '0.50'
-        -   measurement: tsp
-            name: cumin seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: black mustard seeds
-            preparation: null
-            quantity: '0.12'
-        name: Spice mix
-    -   ingredient:
-        -   measurement: null
-            name: cauliflower
-            preparation: cut in florets
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: ground coriander
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: turmeric
-            preparation: null
-            quantity: '0.12'
-        name: Cauliflower
-    -   ingredient:
-        -   measurement: Tbsp
-            name: coriander leaves
-            preparation: chopped
-            quantity: '0.75'
-        -   measurement: tsp
-            name: garam masala
-            preparation: null
-            quantity: '0.25'
-        name: Serving
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: tomatoes
+      note: null
+      preparation: medium
+      quantity: '250.00'
+    name: Tomatoes
+  - ingredient:
+    - measurement: Tbsp
+      name: ghee
+      note: null
+      preparation: or oil and butter mixture
+      quantity: '1.50'
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '1.24'
+    - measurement: null
+      name: chilies
+      note: null
+      preparation: fresh
+      quantity: '1.00'
+    - measurement: tsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: black mustard seeds
+      note: null
+      preparation: null
+      quantity: '0.24'
+    name: Spice mix
+  - ingredient:
+    - measurement: null
+      name: cauliflower
+      note: null
+      preparation: cut in florets
+      quantity: '0.50'
+    - measurement: Tbsp
+      name: ground coriander
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: turmeric
+      note: null
+      preparation: null
+      quantity: '0.24'
+    name: Cauliflower
+  - ingredient:
+    - measurement: Tbsp
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '1.50'
+    - measurement: tsp
+      name: garam masala
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: Serving
+  serves: 2
 source: ''
 tags: []
 title: Cauliflower or Broccoli and Tomato curry

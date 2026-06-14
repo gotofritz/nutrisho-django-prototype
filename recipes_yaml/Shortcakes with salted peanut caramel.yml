@@ -1,69 +1,80 @@
 cuisine: .american
 description: null
 directions:
-    step:
-    - Cream sugar and butter in a bowl, then mix in peanut butter until smooth
-    - Sift over the flour and knead into a ball. Rest in the fridge, covered in cling
-        film, for 15 mins
-    - Roll out the dough and cut 24 biscuits. Put on baking tray and chill 15 mins
-    - Bake at 170° for 12 - 15 mins.
-    - Cool for 5 minutes, the place in a rack until room temperature
-    - For the caramel, heat sugar and caramel until boiling and golden
-    - Remove from heat and add butter, then cream
-    - Simmer for another minute then add the peanuts and let cool
-    - USe the caramel to create biscuit sandwiches
-    - Melt the chocolate in a bowl over boiling water, then drizzle over the biscuits
+  step:
+  - Cream sugar and butter in a bowl, then mix in peanut butter until smooth
+  - Sift over the flour and knead into a ball. Rest in the fridge, covered in cling
+    film, for 15 mins
+  - Roll out the dough and cut 24 biscuits. Put on baking tray and chill 15 mins
+  - Bake at 170° for 12 - 15 mins.
+  - Cool for 5 minutes, the place in a rack until room temperature
+  - For the caramel, heat sugar and caramel until boiling and golden
+  - Remove from heat and add butter, then cream
+  - Simmer for another minute then add the peanuts and let cool
+  - USe the caramel to create biscuit sandwiches
+  - Melt the chocolate in a bowl over boiling water, then drizzle over the biscuits
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '62.50'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '62.50'
-        -   measurement: tbsp
-            name: peanut butter, crunchy
-            preparation: null
-            quantity: '0.50'
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '93.75'
-        name: Biscuits
-    -   ingredient:
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '37.50'
-        -   measurement: tbsp
-            name: water
-            preparation: null
-            quantity: '0.75'
-        -   measurement: ml
-            name: double cream
-            preparation: null
-            quantity: '12.50'
-        -   measurement: g
-            name: butter
-            preparation: cubed
-            quantity: '12.50'
-        -   measurement: tsp
-            name: salt flakes
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: salted peanutes
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: g
-            name: dark chocolate
-            preparation: null
-            quantity: '18.75'
-        name: Caramel
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '375.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '375.00'
+    - measurement: tbsp
+      name: peanut butter, crunchy
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '562.50'
+    name: Biscuits
+  - ingredient:
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '225.00'
+    - measurement: tbsp
+      name: water
+      note: null
+      preparation: null
+      quantity: '4.50'
+    - measurement: ml
+      name: double cream
+      note: null
+      preparation: null
+      quantity: '75.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: cubed
+      quantity: '75.00'
+    - measurement: tsp
+      name: salt flakes
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: tbsp
+      name: salted peanutes
+      note: null
+      preparation: chopped
+      quantity: '1.50'
+    - measurement: g
+      name: dark chocolate
+      note: null
+      preparation: null
+      quantity: '112.50'
+    name: Caramel
+  serves: 6
 source: BBC
 tags:
 - buiscits

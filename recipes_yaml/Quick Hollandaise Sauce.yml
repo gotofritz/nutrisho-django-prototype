@@ -1,0 +1,52 @@
+cuisine: eu.france
+description: A quick hollandaise sauce made with an immersion blender for smooth emulsification.
+directions:
+  step:
+  - Combine egg yolks, water, lemon juice, and salt in a cup just wide enough for
+    an immersion blender
+  - Melt butter over high heat until foaming stops, then transfer to a measuring cup
+  - With the blender running at the bottom of the cup, slowly stream in hot butter
+    until emulsified and thick
+  - Adjust texture with warm water if too thick
+  - Season with salt and cayenne or hot sauce
+  - Serve immediately, or keep warm up to 1 hour. Do not cool and reheat.
+ingredients:
+  group:
+  - ingredient:
+    - measurement: ''
+      name: egg yolks
+      note: null
+      preparation: ''
+      quantity: '4.00'
+    - measurement: tsp
+      name: water
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: lemon
+      note: null
+      preparation: juiced
+      quantity: '1.00'
+    - measurement: pinch
+      name: salt
+      note: null
+      preparation: ''
+      quantity: '1.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '113.00'
+    - measurement: pinch
+      name: cayenne
+      note: null
+      preparation: optional
+      quantity: '1.00'
+    name: Base Ingredients
+  serves: 2
+source: https://www.seriouseats.com/foolproof-2-minute-hollandaise-recipe
+tags:
+- breakfast
+- sauce
+title: Quick Hollandaise Sauce

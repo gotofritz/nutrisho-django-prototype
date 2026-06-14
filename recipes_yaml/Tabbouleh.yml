@@ -1,187 +1,69 @@
 cuisine: .middle east
 description: null
 directions:
-    step:
-    - M
-    - i
-    - x
-    - ''
-    - l
-    - e
-    - m
-    - o
-    - n
-    - ''
-    - j
-    - u
-    - i
-    - c
-    - e
-    - ''
-    - a
-    - n
-    - d
-    - ''
-    - b
-    - u
-    - l
-    - g
-    - u
-    - r
-    - ''
-    - a
-    - n
-    - d
-    - ''
-    - l
-    - e
-    - a
-    - g
-    - e
-    - ''
-    - i
-    - n
-    - ''
-    - f
-    - r
-    - i
-    - d
-    - g
-    - e
-    - ''
-    - w
-    - h
-    - i
-    - l
-    - e
-    - ''
-    - y
-    - o
-    - u
-    - ''
-    - p
-    - r
-    - e
-    - p
-    - a
-    - r
-    - e
-    - ''
-    - t
-    - h
-    - e
-    - ''
-    - r
-    - e
-    - m
-    - a
-    - i
-    - n
-    - i
-    - n
-    - g
-    - ''
-    - i
-    - n
-    - g
-    - r
-    - e
-    - d
-    - i
-    - e
-    - n
-    - t
-    - s
-    - .
-    - ''
-    - A
-    - d
-    - d
-    - ''
-    - a
-    - l
-    - l
-    - ''
-    - t
-    - h
-    - e
-    - ''
-    - o
-    - t
-    - h
-    - e
-    - r
-    - ''
-    - i
-    - n
-    - g
-    - r
-    - e
-    - d
-    - i
-    - e
-    - n
-    - t
-    - s
-    - ''
-    - i
-    - n
-    - ''
-    - o
-    - r
-    - d
-    - e
-    - r
-    - .
+  step:
+  - Mix lemon juice and bulgur and leave in fridge while you prepare the remaining
+    ingredients. Add all the other ingredients in order.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: Tbsp
-            name: lemon juice
-            preparation: null
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: bulgur
-            preparation: null
-            quantity: '0.50'
-        -   measurement: bunches
-            name: parsley
-            preparation: chopped finely
-            quantity: '1.00'
-        -   measurement: null
-            name: tomatoes
-            preparation: peeled
-            quantity: '1.00'
-        -   measurement: null
-            name: onion
-            preparation: onion
-            quantity: '0.25'
-        -   measurement: tsp
-            name: allspice
-            preparation: crushed
-            quantity: '0.25'
-        -   measurement: tsp
-            name: sumac
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: cinnamon
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: fresh chillies
-            preparation: deseeded
-            quantity: '0.50'
-        -   measurement: cl
-            name: oil
-            preparation: oilve
-            quantity: '5.00'
-        -   measurement: Tbsp
-            name: mint
-            preparation: ripped
-            quantity: '0.25'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: Tbsp
+      name: lemon juice
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: bulgur
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: bunches
+      name: parsley
+      note: null
+      preparation: chopped finely
+      quantity: '4.00'
+    - measurement: null
+      name: tomatoes
+      note: null
+      preparation: peeled
+      quantity: '4.00'
+    - measurement: null
+      name: onion
+      note: null
+      preparation: onion
+      quantity: '1.00'
+    - measurement: tsp
+      name: allspice
+      note: null
+      preparation: crushed
+      quantity: '1.00'
+    - measurement: tsp
+      name: sumac
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: cinnamon
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: fresh chillies
+      note: null
+      preparation: deseeded
+      quantity: '2.00'
+    - measurement: cl
+      name: oil
+      note: null
+      preparation: oilve
+      quantity: '20.00'
+    - measurement: Tbsp
+      name: mint
+      note: null
+      preparation: ripped
+      quantity: '1.00'
+    name: null
+  serves: 4
 source: ''
 tags: []
 title: Tabbouleh

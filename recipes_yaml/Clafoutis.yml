@@ -1,55 +1,62 @@
 cuisine: .french.classic
 description: Classic French Cherry Dessert
 directions:
-    step:
-    - Wash and rinse the cherries. In theory, they shouldn't be pitted.
-    - Beat the egg as for an omlette, add a pinch of salt and then the sugar
-    - Sift the flour over the mixture, mix until smooth
-    - Melt the butter, let it cool a little, and add to the mixture. Thin with the
-        milk.
-    - Butter a baking dish, scatter the cheeries in it, and pour the mix over it.
-        Sprinkle a few knob of butter on top
-    - Bake 210° for 20 mins until it begins to brown
-    - Sprinkle vanilla sugar and serve
+  step:
+  - Wash and rinse the cherries. In theory, they shouldn't be pitted.
+  - Beat the egg as for an omlette, add a pinch of salt and then the sugar
+  - Sift the flour over the mixture, mix until smooth
+  - Melt the butter, let it cool a little, and add to the mixture. Thin with the milk.
+  - Butter a baking dish, scatter the cheeries in it, and pour the mix over it. Sprinkle
+    a few knob of butter on top
+  - Bake 210° for 20 mins until it begins to brown
+  - Sprinkle vanilla sugar and serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: eggs
-            preparation: null
-            quantity: '1.00'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '31.25'
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '20.00'
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '15.00'
-        -   measurement: ml
-            name: milk
-            preparation: null
-            quantity: '62.50'
-        name: Dough
-    -   ingredient:
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '5.00'
-        -   measurement: g
-            name: black cherries
-            preparation: null
-            quantity: '125.00'
-        -   measurement: packet
-            name: vanilla sugar
-            preparation: null
-            quantity: '0.25'
-        name: Misc
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: null
+      quantity: '4.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '125.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '80.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '60.00'
+    - measurement: ml
+      name: milk
+      note: null
+      preparation: null
+      quantity: '250.00'
+    name: Dough
+  - ingredient:
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '20.00'
+    - measurement: g
+      name: black cherries
+      note: null
+      preparation: null
+      quantity: '500.00'
+    - measurement: packet
+      name: vanilla sugar
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Misc
+  serves: 4
 source: http://cuisine.larousse.fr/recettes/detail/clafoutis
 tags: []
 title: Clafoutis

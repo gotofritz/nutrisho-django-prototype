@@ -10,3 +10,6 @@ class Cuisine(models.Model):
 
     def natural_key(self):
         return self.cuisine
+
+    def __str__(self) -> str:
+        return str(self.cuisine)

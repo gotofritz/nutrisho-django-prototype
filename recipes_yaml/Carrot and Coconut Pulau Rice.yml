@@ -1,61 +1,71 @@
 cuisine: .indian
 description: null
 directions:
-    step:
-    - clean rice, then soak in the right amount of warm water for 10 m
-    - drain and keep the water, air dry 15-20 m
-    - stir fry in ghee the spices a few secs
-    - add rice, a few secs
-    - add water and remaining ingredients, boiluntil done
+  step:
+  - clean rice, then soak in the right amount of warm water for 10 m
+  - drain and keep the water, air dry 15-20 m
+  - stir fry in ghee the spices a few secs
+  - add rice, a few secs
+  - add water and remaining ingredients, boiluntil done
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: rice
-            preparation: basmati
-            quantity: '23.75'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '100.00'
-        name: null
-    -   ingredient:
-        -   measurement: Tbsp
-            name: ghee
-            preparation: null
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: sesame seeds
-            preparation: null
-            quantity: '0.38'
-        -   measurement: null
-            name: cloves
-            preparation: null
-            quantity: '1.50'
-        -   measurement: null
-            name: peppercorns
-            preparation: black
-            quantity: '1.50'
-        -   measurement: cm
-            name: cinnamon
-            preparation: null
-            quantity: '1.00'
-        -   measurement: Tbsp
-            name: coconut
-            preparation: grated
-            quantity: '0.75'
-        name: Fried Base
-    -   ingredient:
-        -   measurement: g
-            name: carrots
-            preparation: shredded
-            quantity: '57.50'
-        -   measurement: g
-            name: currants
-            preparation: null
-            quantity: '7.50'
-        name: Boiling
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: rice
+      note: null
+      preparation: basmati
+      quantity: '190.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '800.00'
+    name: null
+  - ingredient:
+    - measurement: Tbsp
+      name: ghee
+      note: null
+      preparation: null
+      quantity: '4.00'
+    - measurement: Tbsp
+      name: sesame seeds
+      note: null
+      preparation: null
+      quantity: '3.04'
+    - measurement: null
+      name: cloves
+      note: null
+      preparation: null
+      quantity: '12.00'
+    - measurement: null
+      name: peppercorns
+      note: null
+      preparation: black
+      quantity: '12.00'
+    - measurement: cm
+      name: cinnamon
+      note: null
+      preparation: null
+      quantity: '8.00'
+    - measurement: Tbsp
+      name: coconut
+      note: null
+      preparation: grated
+      quantity: '6.00'
+    name: Fried Base
+  - ingredient:
+    - measurement: g
+      name: carrots
+      note: null
+      preparation: shredded
+      quantity: '460.00'
+    - measurement: g
+      name: currants
+      note: null
+      preparation: null
+      quantity: '60.00'
+    name: Boiling
+  serves: 1
 source: ''
 tags: []
 title: Carrot and Coconut Pulau Rice

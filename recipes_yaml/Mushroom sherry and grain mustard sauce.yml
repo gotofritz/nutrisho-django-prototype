@@ -1,58 +1,68 @@
 cuisine: .british
 description: Steak sauce from Gordon Ramsay
 directions:
-    step:
-    - Sauté the mushrooms, garlic and thyme, stirring
-    - Pour in 100 ml sherry and reduce, 3 minutes
-    - Add the vinegar and reduce a few seconds more
-    - Add 50 ml sherry and stock, bring to boil, simmer for 3 minuts
-    - Renove garlic and thyme, and mix in crème fraîche and mustard
-    - Add parsley and steak juices before ladling over a steak
+  step:
+  - Sauté the mushrooms, garlic and thyme, stirring
+  - Pour in 100 ml sherry and reduce, 3 minutes
+  - Add the vinegar and reduce a few seconds more
+  - Add 50 ml sherry and stock, bring to boil, simmer for 3 minuts
+  - Renove garlic and thyme, and mix in crème fraîche and mustard
+  - Add parsley and steak juices before ladling over a steak
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: tbsp
-            name: oil, olive
-            preparation: null
-            quantity: '0.75'
-        -   measurement: g
-            name: mushrooms
-            preparation: quartere
-            quantity: '50.00'
-        -   measurement: clove
-            name: garlic
-            preparation: lightly squashed
-            quantity: '0.25'
-        -   measurement: sprig
-            name: thyme
-            preparation: null
-            quantity: '0.25'
-        -   measurement: ml
-            name: sherry
-            preparation: or chinese rice wine
-            quantity: '37.50'
-        -   measurement: tbsp
-            name: vinegar
-            preparation: null
-            quantity: '0.25'
-        -   measurement: ml
-            name: stock
-            preparation: null
-            quantity: '37.50'
-        -   measurement: tbsp
-            name: crème fraîche
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: grain mustard
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: parsley
-            preparation: chopped finely
-            quantity: '0.50'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: tbsp
+      name: oil, olive
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: g
+      name: mushrooms
+      note: null
+      preparation: quartere
+      quantity: '100.00'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: lightly squashed
+      quantity: '0.50'
+    - measurement: sprig
+      name: thyme
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: ml
+      name: sherry
+      note: null
+      preparation: or chinese rice wine
+      quantity: '75.00'
+    - measurement: tbsp
+      name: vinegar
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: null
+      quantity: '75.00'
+    - measurement: tbsp
+      name: crème fraîche
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: grain mustard
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tbsp
+      name: parsley
+      note: null
+      preparation: chopped finely
+      quantity: '1.00'
+    name: null
+  serves: 2
 source: Gordon Ramsay
 tags: []
 title: Mushroom, sherry and grain mustard sauce

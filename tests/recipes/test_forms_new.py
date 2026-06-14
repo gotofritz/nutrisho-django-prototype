@@ -2,7 +2,7 @@
 
 import pytest
 
-from recipes.forms.field_forms import EDITABLE_RECIPE_FIELDS, RecipeFieldForm
+from recipes.forms.field_forms import EDITABLE_RECIPE_FIELDS, RecipeFieldForm, RecipeMetadataForm
 from recipes.forms.ingredient_forms import IngredientGroupForm, IngredientInRecipeForm
 from recipes.forms.step_form import StepForm
 from recipes.models import Recipe
@@ -61,7 +61,13 @@ def test_step_form_accepts_valid_step():
 
 def test_ingredient_form_accepts_valid_decimal_quantity():
     form = IngredientInRecipeForm(
-        data={"quantity": "2.50", "unit": "cups", "preparation": "", "note": ""}
+        data={
+            "ingredient_name": "salt",
+            "quantity": "2.50",
+            "unit": "cups",
+            "preparation": "",
+            "note": "",
+        }
     )
     assert form.is_valid()
 
@@ -82,3 +88,149 @@ def test_ingredient_group_form_accepts_blank_group_name():
 def test_ingredient_group_form_accepts_named_group():
     form = IngredientGroupForm(data={"group_name": "Sauce"})
     assert form.is_valid()
+
+
+@pytest.mark.django_db
+def test_ingredient_in_recipe_form_commit_false_does_not_create_ingredient(db):
+    """save(commit=False) must not write Ingredient to DB — side-effect free."""
+    from recipes.models import Ingredient
+
+    form = IngredientInRecipeForm(
+        data={
+            "ingredient_name": "ghost-veggie",
+            "quantity": "",
+            "unit": "",
+            "preparation": "",
+            "note": "",
+        }
+    )
+    assert form.is_valid()
+    form.save(commit=False)
+    assert not Ingredient.objects.filter(ingredient_name="ghost-veggie").exists()
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_form_commit_false_does_not_create_cuisine(user):
+    """save(commit=False) must not write Cuisine to DB — side-effect free."""
+    from recipes.models import Cuisine
+
+    recipe = Recipe.objects.create(recipe_name="Test", owner=user)
+    form = RecipeMetadataForm(
+        data={
+            "recipe_name": "Test",
+            "short_description": "",
+            "servings": "",
+            "source_instance": "",
+            "cuisine_name": "ghost-cuisine",
+        },
+        instance=recipe,
+    )
+    assert form.is_valid()
+    form.save(commit=False)
+    assert not Cuisine.objects.filter(cuisine="ghost-cuisine").exists()
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_form_commit_false_clears_cuisine_when_blank(user):
+    """save(commit=False) with blank cuisine_name must set recipe.cuisine = None in-memory."""
+    from recipes.models import Cuisine
+
+    cuisine = Cuisine.objects.create(cuisine="Italian")
+    recipe = Recipe.objects.create(recipe_name="Test", owner=user, cuisine=cuisine)
+    form = RecipeMetadataForm(
+        data={
+            "recipe_name": "Test",
+            "short_description": "",
+            "servings": "",
+            "source_instance": "",
+            "cuisine_name": "",
+        },
+        instance=recipe,
+    )
+    assert form.is_valid()
+    result = form.save(commit=False)
+    assert result.cuisine is None
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_form_commit_false_sets_existing_cuisine(user):
+    """save(commit=False) with existing cuisine must set recipe.cuisine in-memory without write."""
+    from recipes.models import Cuisine
+
+    cuisine = Cuisine.objects.create(cuisine="Thai")
+    recipe = Recipe.objects.create(recipe_name="Test", owner=user)
+    form = RecipeMetadataForm(
+        data={
+            "recipe_name": "Test",
+            "short_description": "",
+            "servings": "",
+            "source_instance": "",
+            "cuisine_name": "Thai",
+        },
+        instance=recipe,
+    )
+    assert form.is_valid()
+    result = form.save(commit=False)
+    assert result.cuisine == cuisine
+
+
+@pytest.mark.django_db
+def test_ingredient_form_commit_false_sets_existing_ingredient(user):
+    """save(commit=False) with existing ingredient must set iir.ingredient in-memory."""
+    from recipes.models import Ingredient
+
+    ing = Ingredient.objects.create(ingredient_name="basil")
+    form = IngredientInRecipeForm(
+        data={"ingredient_name": "basil", "quantity": "", "unit": "", "preparation": "", "note": ""}
+    )
+    assert form.is_valid()
+    iir = form.save(commit=False)
+    assert iir.ingredient == ing
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_form_commit_false_new_cuisine_resolved_via_helper(user):
+    """resolve_pending_cuisine() must create Cuisine row and assign FK before save()."""
+    from recipes.models import Cuisine
+
+    recipe = Recipe.objects.create(recipe_name="Test", owner=user)
+    form = RecipeMetadataForm(
+        data={
+            "recipe_name": "Test",
+            "short_description": "",
+            "servings": "",
+            "source_instance": "",
+            "cuisine_name": "brand-new-cuisine",
+        },
+        instance=recipe,
+    )
+    assert form.is_valid()
+    result = form.save(commit=False)
+    assert not Cuisine.objects.filter(cuisine="brand-new-cuisine").exists()
+    form.resolve_pending_cuisine(result)
+    assert result.cuisine is not None
+    assert result.cuisine.cuisine == "brand-new-cuisine"  # type: ignore[union-attr]
+    assert Cuisine.objects.filter(cuisine="brand-new-cuisine").exists()
+
+
+@pytest.mark.django_db
+def test_ingredient_form_commit_false_new_ingredient_resolved_via_helper():
+    """resolve_pending_ingredient() must create Ingredient row and assign FK before save()."""
+    from recipes.models import Ingredient
+
+    form = IngredientInRecipeForm(
+        data={
+            "ingredient_name": "brand-new-spice",
+            "quantity": "",
+            "unit": "",
+            "preparation": "",
+            "note": "",
+        }
+    )
+    assert form.is_valid()
+    iir = form.save(commit=False)
+    assert not Ingredient.objects.filter(ingredient_name="brand-new-spice").exists()
+    form.resolve_pending_ingredient(iir)
+    assert iir.ingredient is not None
+    assert iir.ingredient.ingredient_name == "brand-new-spice"  # type: ignore[union-attr]
+    assert Ingredient.objects.filter(ingredient_name="brand-new-spice").exists()

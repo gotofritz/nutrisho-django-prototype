@@ -1,0 +1,78 @@
+cuisine: .chinese.cantonese
+description: Do shi pau gu
+directions:
+  step:
+  - Marinate pork in shallow dish in fridge up to 4 hours
+  - braise in oven, turning occasionally, 1.5 hr at 160C, covered
+  - uncover, raise heat to 190C, another 20m
+  - skim fat and serve
+  - 'optional: to make a thicker sauce, pour juices into hot wok, add half cornstarch
+    mixture, bring to boil, cook 2m adding remaining half as required'
+ingredients:
+  group:
+  - ingredient:
+    - measurement: kg
+      name: pork
+      note: null
+      preparation: belly on bone or meaty ribs
+      quantity: '1.00'
+    - measurement: g
+      name: spring onions
+      note: null
+      preparation: whole
+      quantity: '90.00'
+    - measurement: Tbsp
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: garlic cloves
+      note: null
+      preparation: chopped
+      quantity: '1.52'
+    - measurement: Tbsp
+      name: fresh chili
+      note: null
+      preparation: deseeded
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: black bean sauce
+      note: null
+      preparation: or 45g salted black beans
+      quantity: '2.00'
+    - measurement: Tbsp
+      name: sugar
+      note: null
+      preparation: brown
+      quantity: '1.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '180.00'
+    - measurement: ml
+      name: rice wine
+      note: null
+      preparation: null
+      quantity: '80.00'
+    - measurement: ml
+      name: soy sauce
+      note: null
+      preparation: light
+      quantity: '60.00'
+    - measurement: Tbsp
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: cornstarch
+      note: null
+      preparation: dissolved in 1.5 tbsp water (optional)
+      quantity: '1.00'
+    name: Pork marinade
+  serves: 4
+source: ''
+tags: []
+title: Pork ribs in black beans and chili

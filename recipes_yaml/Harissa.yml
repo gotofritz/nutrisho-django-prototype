@@ -1,40 +1,46 @@
 cuisine: null
 description: null
 directions:
-    step:
-    - soak chillies in warm water 40 mins
-    - drain and squeeze out water
-    - whizz everything, store in hars with a thin layer of olive oil on top up to
-        1 month in the fridge
+  step:
+  - soak chillies in warm water 40 mins
+  - drain and squeeze out water
+  - whizz everything, store in hars with a thin layer of olive oil on top up to 1
+    month in the fridge
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: dried chillies
-            preparation: deseeded
-            quantity: '2.00'
-        -   measurement: null
-            name: garlic cloves
-            preparation: crushed
-            quantity: '0.50'
-        -   measurement: tsp
-            name: salt
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tsp
-            name: ground cumin
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: ground coriander
-            preparation: null
-            quantity: '0.12'
-        -   measurement: ml
-            name: olive oil
-            preparation: null
-            quantity: '30.00'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: dried chillies
+      note: null
+      preparation: deseeded
+      quantity: '4.00'
+    - measurement: null
+      name: garlic cloves
+      note: null
+      preparation: crushed
+      quantity: '1.00'
+    - measurement: tsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tsp
+      name: ground cumin
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: ground coriander
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: ml
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '60.00'
+    name: null
+  serves: 2
 source: ''
 tags: []
 title: Harissa

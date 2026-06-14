@@ -1,14 +1,6 @@
-title: Roast swede and purple sprouting broccoli curry
-source: Meera Sodha
 cuisine: Vegetables
 description: A hearty and flavorful curry made with roasted swede and purple sprouting
   broccoli, using coconut milk and aromatic spices.
-tags:
-- vegan
-- curry
-- roasted vegetables
-- vegetarian
-- gluten-free
 directions:
   step:
   - Heat the oven to 220C (200C fan)/425F/gas 7. Toss the swede wedges with three
@@ -27,54 +19,72 @@ directions:
   - Finely slice the Thai basil leaves, fold half of them into the curry, then scatter
     the rest over the top. Serve warm with rice or flatbreads.
 ingredients:
-  serves: '4'
   group:
-  - name: Main
-    ingredient:
-    - name: swede
-      quantity: '2'
-      measurement: medium
+  - ingredient:
+    - measurement: medium
+      name: swede
+      note: null
       preparation: peeled, halved and cut into wedges of 2cm at their widest point
-    - name: onion
-      quantity: '1'
-      measurement: large
+      quantity: '2.00'
+    - measurement: large
+      name: onion
+      note: null
       preparation: peeled and finely sliced
-    - name: garlic
-      quantity: '6'
-      measurement: cloves
+      quantity: '1.00'
+    - measurement: cloves
+      name: garlic
+      note: null
       preparation: peeled and minced
-    - name: ginger
-      quantity: '6'
-      measurement: cm x 2cm piece
+      quantity: '6.00'
+    - measurement: cm x 2cm piece
+      name: ginger
+      note: null
       preparation: peeled and very finely chopped
-    - name: kashmiri chilli powder
-      quantity: 1½
-      measurement: tsp
+      quantity: '6.00'
+    - measurement: tsp
+      name: kashmiri chilli powder
+      note: null
       preparation: ''
-    - name: ground turmeric
-      quantity: '1'
-      measurement: tsp
+      quantity: '1.50'
+    - measurement: tsp
+      name: ground turmeric
+      note: null
       preparation: ''
-    - name: tomatoes
-      quantity: '400'
-      measurement: g
+      quantity: '1.00'
+    - measurement: g
+      name: tomatoes
+      note: null
       preparation: tin finely chopped, or rustic pomodoro
-    - name: coconut milk
-      quantity: '2'
-      measurement: tins
+      quantity: '400.00'
+    - measurement: tins
+      name: coconut milk
+      note: null
       preparation: ''
-    - name: sprouting broccoli
-      quantity: '400'
-      measurement: g
+      quantity: '2.00'
+    - measurement: g
+      name: sprouting broccoli
+      note: null
       preparation: florets kept whole, the rest cut into 2cm pieces
-    - name: Thai basil
-      quantity: '20'
-      measurement: g
+      quantity: '400.00'
+    - measurement: g
+      name: Thai basil
+      note: null
       preparation: bunch, leaves picked
-  - name: Garnish
-    ingredient:
-    - name: Rice or flatbreads
-      quantity: null
-      measurement: null
+      quantity: '20.00'
+    name: Main
+  - ingredient:
+    - measurement: null
+      name: Rice or flatbreads
+      note: null
       preparation: to serve
-
+      quantity: null
+    name: Garnish
+  serves: 4
+source: Meera Sodha
+tags:
+- curry
+- gluten-free
+- roasted vegetables
+- vegan
+- vegetarian
+title: Roast swede and purple sprouting broccoli curry

@@ -1,63 +1,73 @@
 cuisine: .indian.modern
 description: I love celeriac in soups and salads but have never quite tried it Indian
-    way. Actually have never thought about it. So decided to try it the simple dish
-    that can never be messed up or flopped - dal and trust me it turned out to be
-    absolutely delicious.
+  way. Actually have never thought about it. So decided to try it the simple dish
+  that can never be messed up or flopped - dal and trust me it turned out to be absolutely
+  delicious.
 directions:
-    step:
-    - Wash the dals and soak for 10 mins
-    - Mix with the celeriac and pressure cook for 30 mins
-    - Sauté mustard seeds, when they splatter add cumin seeds, and chilies
-    - Add onions until caramelized
-    - Add the onion mixture to the dal, add sambar and salt
-    - Cook for 10 mins more on low heat then serve
+  step:
+  - Wash the dals and soak for 10 mins
+  - Mix with the celeriac and pressure cook for 30 mins
+  - Sauté mustard seeds, when they splatter add cumin seeds, and chilies
+  - Add onions until caramelized
+  - Add the onion mixture to the dal, add sambar and salt
+  - Cook for 10 mins more on low heat then serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: dal, moong
-            preparation: null
-            quantity: '25.00'
-        -   measurement: g
-            name: dal, toor
-            preparation: null
-            quantity: '17.50'
-        -   measurement: g
-            name: celeriac
-            preparation: cubed
-            quantity: '37.50'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '150.00'
-        name: Dal
-    -   ingredient:
-        -   measurement: tsp
-            name: ghee
-            preparation: or oil / butter mixture
-            quantity: '0.50'
-        -   measurement: tsp
-            name: mustard seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: cumin seeds
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: chilies, green
-            preparation: deseeded, chopped
-            quantity: '0.75'
-        -   measurement: tsp
-            name: sambhar
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: onion
-            preparation: chopped, finely
-            quantity: '0.25'
-        name: Spice mix
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: dal, moong
+      note: null
+      preparation: null
+      quantity: '100.00'
+    - measurement: g
+      name: dal, toor
+      note: null
+      preparation: null
+      quantity: '70.00'
+    - measurement: g
+      name: celeriac
+      note: null
+      preparation: cubed
+      quantity: '150.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '600.00'
+    name: Dal
+  - ingredient:
+    - measurement: tsp
+      name: ghee
+      note: null
+      preparation: or oil / butter mixture
+      quantity: '2.00'
+    - measurement: tsp
+      name: mustard seeds
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: chilies, green
+      note: null
+      preparation: deseeded, chopped
+      quantity: '3.00'
+    - measurement: tsp
+      name: sambhar
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: onion
+      note: null
+      preparation: chopped, finely
+      quantity: '1.00'
+    name: Spice mix
+  serves: 2
 source: http://lakshmisweblog.blogspot.de/2012/01/celeriac-with-lentils-indian-dal.html
 tags: []
 title: Celeriac dal

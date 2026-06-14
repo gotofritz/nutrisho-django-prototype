@@ -1,60 +1,70 @@
 cuisine: .turkish
 description: null
 directions:
-    step:
-    - Preheat the oven temperature to 160C.
-    - Place the pistachios in a food processor and process until finely ground. Add
-        the remaining ingredients and process until smooth.
-    - Pour the batter into a prepared 8 inch cake tin and bake for 35-45 minutes or
-        until a skewer inserted into the centre of the cake comes out clean. Remove
-        the cake and allow to cool for 10 minutes, then turn out onto a rack and cool
-        to room temperature.
-    - Cut the cake into wedges and serve with a dollop of the creme fraiche.
+  step:
+  - Preheat the oven temperature to 160C.
+  - Place the pistachios in a food processor and process until finely ground. Add
+    the remaining ingredients and process until smooth.
+  - Pour the batter into a prepared 8 inch cake tin and bake for 35-45 minutes or
+    until a skewer inserted into the centre of the cake comes out clean. Remove the
+    cake and allow to cool for 10 minutes, then turn out onto a rack and cool to room
+    temperature.
+  - Cut the cake into wedges and serve with a dollop of the creme fraiche.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: pistacchios
-            preparation: shelled
-            quantity: '50.00'
-        -   measurement: g
-            name: flour
-            preparation: plain
-            quantity: '12.50'
-        -   measurement: g
-            name: flour
-            preparation: polenta
-            quantity: '12.50'
-        -   measurement: tsp
-            name: baking powder
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: eggs
-            preparation: null
-            quantity: '0.75'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '50.00'
-        -   measurement: g
-            name: butter
-            preparation: melted
-            quantity: '25.00'
-        -   measurement: ml
-            name: oil
-            preparation: olive
-            quantity: '25.00'
-        -   measurement: null
-            name: oranges
-            preparation: zested
-            quantity: '0.25'
-        -   measurement: null
-            name: creme fraiche for serving
-            preparation: null
-            quantity: null
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: pistacchios
+      note: null
+      preparation: shelled
+      quantity: '200.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: plain
+      quantity: '50.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: polenta
+      quantity: '50.00'
+    - measurement: tsp
+      name: baking powder
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '200.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: melted
+      quantity: '100.00'
+    - measurement: ml
+      name: oil
+      note: null
+      preparation: olive
+      quantity: '100.00'
+    - measurement: null
+      name: oranges
+      note: null
+      preparation: zested
+      quantity: '1.00'
+    - measurement: null
+      name: creme fraiche for serving
+      note: null
+      preparation: null
+      quantity: null
+    name: null
+  serves: 4
 source: ''
 tags: []
 title: Pistachio Olive Oil Cake

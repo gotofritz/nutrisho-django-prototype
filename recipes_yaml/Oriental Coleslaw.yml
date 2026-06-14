@@ -1,67 +1,79 @@
 cuisine: .fusion.australia
 description: Fusion way of hiding the cabbageness of cabbage
 directions:
-    step:
-    - Whisk together the dressing ingredients
-    - In a large bowl mix the salad ingredients, pour over the dressing, and then
-        add the garnish
+  step:
+  - Whisk together the dressing ingredients
+  - In a large bowl mix the salad ingredients, pour over the dressing, and then add
+    the garnish
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: tbsp
-            name: soy sauce
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: honey
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tbsp
-            name: ginger
-            preparation: grated
-            quantity: '0.12'
-        -   measurement: clove
-            name: garlic
-            preparation: chopped finely
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: vinegar, white wine
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: sesame oil
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.25'
-        name: Dressing
-    -   ingredient:
-        -   measurement: null
-            name: red cabbage, small
-            preparation: thinkly sliced
-            quantity: '0.12'
-        -   measurement: null
-            name: spring onions
-            preparation: julienne
-            quantity: '1.50'
-        -   measurement: null
-            name: carrots
-            preparation: grated
-            quantity: '0.50'
-        name: Salad
-    -   ingredient:
-        -   measurement: null
-            name: lime
-            preparation: juiced
-            quantity: '0.12'
-        -   measurement: tsp
-            name: coriander leaves
-            preparation: chopped
-            quantity: '0.25'
-        name: Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: tbsp
+      name: soy sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: honey
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tbsp
+      name: ginger
+      note: null
+      preparation: grated
+      quantity: '0.50'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: chopped finely
+      quantity: '1.00'
+    - measurement: tbsp
+      name: vinegar, white wine
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: sesame oil
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Dressing
+  - ingredient:
+    - measurement: null
+      name: red cabbage, small
+      note: null
+      preparation: thinkly sliced
+      quantity: '0.50'
+    - measurement: null
+      name: spring onions
+      note: null
+      preparation: julienne
+      quantity: '6.00'
+    - measurement: null
+      name: carrots
+      note: null
+      preparation: grated
+      quantity: '2.00'
+    name: Salad
+  - ingredient:
+    - measurement: null
+      name: lime
+      note: null
+      preparation: juiced
+      quantity: '0.48'
+    - measurement: tsp
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    name: Garnish
+  serves: 4
 source: That ozzie chap
 tags: []
-title: Oriental Coleslaw
+title: Fusion Coleslaw

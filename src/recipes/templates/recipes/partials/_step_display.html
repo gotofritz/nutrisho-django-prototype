@@ -1,6 +1,23 @@
-<li
-  id="step-{{ step.id }}"
-  hx-get="{% url 'recipes:step_edit' recipe.id step.id %}"
-  hx-swap="outerHTML"
-  class="editable step"
->{{ step.step_text }}</li>
+{% load recipe_filters %}
+<li id="step-{{ step.id }}" class="step">
+  <div class="editable-row">
+    <span
+      class="editable step-content"
+      hx-get="{% url 'recipes:step_edit' recipe.id step.id %}"
+      hx-target="closest li"
+      hx-swap="outerHTML"
+    >{{ step.step_text|safe_step_html }}</span>
+    <span class="move-btns" onclick="event.stopPropagation()">
+      <button
+        hx-post="{% url 'recipes:step_move_up' recipe.id step.id %}"
+        hx-target="#steps-list"
+        hx-swap="innerHTML"
+      >↑</button>
+      <button
+        hx-post="{% url 'recipes:step_move_down' recipe.id step.id %}"
+        hx-target="#steps-list"
+        hx-swap="innerHTML"
+      >↓</button>
+    </span>
+  </div>
+</li>

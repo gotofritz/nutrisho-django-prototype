@@ -1,100 +1,118 @@
 cuisine: .arab.yemen
 description: null
 directions:
-    step:
-    - Sauté onion in olive oil on medium heat until soft, about 5m
-    - 'IF MAKING OWN SPICE MIX: dry roast spice ingredients 4-5m then grind'
-    - Raise heat, add cinnamon and cardamom to onion for a few seconds
-    - Add chicken and potatoes until browned, about 5m
-    - Blend tomatoes, garlic, water in a food processor
-    - Add spice mix stirring well, then add spice mix
-    - Add brow rice, turmeric, fresh chilies, and enough water to cover rice by one
-        inch.
-    - Close pressure cooker, build pressure up and cook 20 mins (or 10 mins on timer,
-        leaving pot on stove to cool down naturally)
+  step:
+  - Sauté onion in olive oil on medium heat until soft, about 5m
+  - 'IF MAKING OWN SPICE MIX: dry roast spice ingredients 4-5m then grind'
+  - Raise heat, add cinnamon and cardamom to onion for a few seconds
+  - Add chicken and potatoes until browned, about 5m
+  - Blend tomatoes, garlic, water in a food processor
+  - Add spice mix stirring well, then add spice mix
+  - Add brow rice, turmeric, fresh chilies, and enough water to cover rice by one
+    inch.
+  - Close pressure cooker, build pressure up and cook 20 mins (or 10 mins on timer,
+    leaving pot on stove to cool down naturally)
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: tsp
-            name: cumin seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: coriander seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: pods
-            name: cardamom
-            preparation: null
-            quantity: '0.75'
-        -   measurement: tsp
-            name: peppercorn
-            preparation: black
-            quantity: '0.50'
-        -   measurement: tsp
-            name: caraway
-            preparation: null
-            quantity: '0.25'
-        -   measurement: cm
-            name: turmeric
-            preparation: dried
-            quantity: '0.75'
-        name: Hawaij spice mix (can be replaced with ready made Zatar or such)
-    -   ingredient:
-        -   measurement: null
-            name: onion
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: oil
-            preparation: olive
-            quantity: '1.00'
-        -   measurement: cm
-            name: cinnamon
-            preparation: null
-            quantity: '5.00'
-        -   measurement: pods
-            name: cardamom
-            preparation: bruised
-            quantity: '2.50'
-        -   measurement: null
-            name: chicken
-            preparation: skinned and joint into 8
-            quantity: '0.25'
-        name: Chicken
-    -   ingredient:
-        -   measurement: null
-            name: tomatoes
-            preparation: peeled
-            quantity: '0.75'
-        -   measurement: cloves
-            name: garlic
-            preparation: peeled
-            quantity: '3.50'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '87.50'
-        -   measurement: null
-            name: potatoes
-            preparation: peeled and cut into 2cm slices
-            quantity: '0.50'
-        name: Sauce
-    -   ingredient:
-        -   measurement: g
-            name: brown rice
-            preparation: optionally + wild rice
-            quantity: '112.50'
-        -   measurement: tsp
-            name: turmeric
-            preparation: null
-            quantity: '0.75'
-        -   measurement: null
-            name: chilies
-            preparation: fresh
-            quantity: '1.50'
-        name: Rice
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: tsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: coriander seeds
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: pods
+      name: cardamom
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: tsp
+      name: peppercorn
+      note: null
+      preparation: black
+      quantity: '2.00'
+    - measurement: tsp
+      name: caraway
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: cm
+      name: turmeric
+      note: null
+      preparation: dried
+      quantity: '3.00'
+    name: Hawaij spice mix
+  - ingredient:
+    - measurement: null
+      name: onion
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: olive
+      quantity: '4.00'
+    - measurement: cm
+      name: cinnamon
+      note: null
+      preparation: null
+      quantity: '20.00'
+    - measurement: pods
+      name: cardamom
+      note: null
+      preparation: bruised
+      quantity: '10.00'
+    - measurement: null
+      name: chicken
+      note: null
+      preparation: skinned and joint into 8
+      quantity: '1.00'
+    name: Chicken
+  - ingredient:
+    - measurement: null
+      name: tomatoes
+      note: null
+      preparation: peeled
+      quantity: '3.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: peeled
+      quantity: '14.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '350.00'
+    - measurement: null
+      name: potatoes
+      note: null
+      preparation: peeled and cut into 2cm slices
+      quantity: '2.00'
+    name: Sauce
+  - ingredient:
+    - measurement: g
+      name: brown rice
+      note: null
+      preparation: optionally + wild rice
+      quantity: '450.00'
+    - measurement: tsp
+      name: turmeric
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: null
+      name: chilies
+      note: null
+      preparation: fresh
+      quantity: '6.00'
+    name: Rice
+  serves: 4
 source: ''
 tags: []
 title: Arabian Paella (Kebsa)

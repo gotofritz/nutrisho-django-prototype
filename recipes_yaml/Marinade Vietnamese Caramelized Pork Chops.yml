@@ -1,68 +1,79 @@
 cuisine: .vietnamese.modern
 description: The meat is very thing
 directions:
-    step:
-    - Heat sugar in a heavy bottomed saucepan over medium-high heat, swirling pan
-        often, until sugar dissolves and turns to liquid caramel
-    - Remove from heat and add boiling water
-    - Bring back to fire, swirling gently until dissolved
-    - Remove from fire and let cool
-    - Mix in food processor with all other marinade ingredients
-    - Pound chops thin, then put in a baking dish
-    - Pour marinade over meat and chill overnight, covered
+  step:
+  - Heat sugar in a heavy bottomed saucepan over medium-high heat, swirling pan often,
+    until sugar dissolves and turns to liquid caramel
+  - Remove from heat and add boiling water
+  - Bring back to fire, swirling gently until dissolved
+  - Remove from fire and let cool
+  - Mix in food processor with all other marinade ingredients
+  - Pound chops thin, then put in a baking dish
+  - Pour marinade over meat and chill overnight, covered
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: pork chops
-            preparation: null
-            quantity: '125.00'
-        name: Meat
-    -   ingredient:
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '28.00'
-        -   measurement: ml
-            name: boiling water
-            preparation: null
-            quantity: '15.00'
-        name: Caramel
-    -   ingredient:
-        -   measurement: tbsp
-            name: sugar
-            preparation: null
-            quantity: '0.50'
-        -   measurement: g
-            name: shallots
-            preparation: sliced
-            quantity: '37.50'
-        -   measurement: stick
-            name: lemongrass
-            preparation: sliced
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: peanut oil
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tsbp
-            name: soy sauce
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: fish sauce
-            preparation: null
-            quantity: '0.38'
-        -   measurement: tbsp
-            name: black pepper
-            preparation: ground
-            quantity: '0.25'
-        -   measurement: cloves
-            name: garlic
-            preparation: pounded
-            quantity: '2.00'
-        name: Marinade
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: pork chops
+      note: null
+      preparation: null
+      quantity: '375.00'
+    name: Meat
+  - ingredient:
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '84.00'
+    - measurement: ml
+      name: boiling water
+      note: null
+      preparation: null
+      quantity: '45.00'
+    name: Caramel
+  - ingredient:
+    - measurement: tbsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: g
+      name: shallots
+      note: null
+      preparation: sliced
+      quantity: '112.50'
+    - measurement: stick
+      name: lemongrass
+      note: null
+      preparation: sliced
+      quantity: '0.75'
+    - measurement: tbsp
+      name: peanut oil
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: tsbp
+      name: soy sauce
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: tbsp
+      name: fish sauce
+      note: null
+      preparation: null
+      quantity: '1.14'
+    - measurement: tbsp
+      name: black pepper
+      note: null
+      preparation: ground
+      quantity: '0.75'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: pounded
+      quantity: '6.00'
+    name: Marinade
+  serves: 2
 source: http://www.saveur.com/article/Recipes/vietnamese-pork-chops
 tags:
 - grill

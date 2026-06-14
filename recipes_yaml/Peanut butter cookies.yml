@@ -1,43 +1,49 @@
 cuisine: .american
 description: Easy
 directions:
-    step:
-    - Mix all ingredients together and knead into a smooth dough
-    - Form into individual walnut sized balls
-    - Place on a baking tray lined with greaseproof paper and lightly flatten with
-        a fork
-    - Bake 10 mins at 180°
-    - Cool on a wire rack for 10 mins
-    - Dust with icing sugar
+  step:
+  - Mix all ingredients together and knead into a smooth dough
+  - Form into individual walnut sized balls
+  - Place on a baking tray lined with greaseproof paper and lightly flatten with a
+    fork
+  - Bake 10 mins at 180°
+  - Cool on a wire rack for 10 mins
+  - Dust with icing sugar
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '17.50'
-        -   measurement: tbsp
-            name: sugar
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: crunchy peanut butter
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: egg yolk
-            preparation: null
-            quantity: '0.25'
-        -   measurement: g
-            name: butter
-            preparation: room temperature
-            quantity: '12.50'
-        -   measurement: null
-            name: icing sugar
-            preparation: for dusting
-            quantity: null
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '105.00'
+    - measurement: tbsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: tbsp
+      name: crunchy peanut butter
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: null
+      name: egg yolk
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: room temperature
+      quantity: '75.00'
+    - measurement: null
+      name: icing sugar
+      note: null
+      preparation: for dusting
+      quantity: null
+    name: null
+  serves: 6
 source: Paul Ranking
 tags: []
 title: Peanut butter cookies

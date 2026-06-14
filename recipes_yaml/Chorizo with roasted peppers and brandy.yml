@@ -1,51 +1,57 @@
 cuisine: null
 description: null
 directions:
-    step:
-    - 1. Skin the peppers either by charring them over a flame, or baking them.
-    - 2. Sear the peppers briefly in a little olive oil over high fire, then set aside.
-    - 3. Sprinkle over a couple of pinches of salt and two dashes of garlic oil, allow
-        them to cool, and then cover the dish with cling film and leave to marinate
-        in the fridge for two hours.
-    - 4. Remove from fridge and slice thinly
-    - 5. Fry half the chorizo in olive oil over high fire until they start to brown
-        and seeping fat, then add half the peppers for 20 secs, stirring vigorously.
-        Add the spirit, it will ignite, for 10 secs, then toss in half the parsley.
-    - 6. Set aside and cook other batch the same way. Add 1st bach at very end and
-        serve
+  step:
+  - 1. Skin the peppers either by charring them over a flame, or baking them.
+  - 2. Sear the peppers briefly in a little olive oil over high fire, then set aside.
+  - 3. Sprinkle over a couple of pinches of salt and two dashes of garlic oil, allow
+    them to cool, and then cover the dish with cling film and leave to marinate in
+    the fridge for two hours.
+  - 4. Remove from fridge and slice thinly
+  - 5. Fry half the chorizo in olive oil over high fire until they start to brown
+    and seeping fat, then add half the peppers for 20 secs, stirring vigorously. Add
+    the spirit, it will ignite, for 10 secs, then toss in half the parsley.
+  - 6. Set aside and cook other batch the same way. Add 1st bach at very end and serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: medium
-            name: red peppers
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: olive oil
-            preparation: null
-            quantity: null
-        -   measurement: null
-            name: Maldon sea salt
-            preparation: to taste
-            quantity: null
-        -   measurement: null
-            name: garlic-infused olive oil
-            preparation: null
-            quantity: null
-        -   measurement: null
-            name: spicy rosario chorizo sausages
-            preparation: cut into slices 2cm thick
-            quantity: '2.00'
-        -   measurement: ml
-            name: brandy
-            preparation: null
-            quantity: '12.50'
-        -   measurement: null
-            name: sprigs flat-leaf parsley
-            preparation: coarsely chopped
-            quantity: '0.50'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: medium
+      name: red peppers
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: Maldon sea salt
+      note: null
+      preparation: to taste
+      quantity: null
+    - measurement: null
+      name: garlic-infused olive oil
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: spicy rosario chorizo sausages
+      note: null
+      preparation: cut into slices 2cm thick
+      quantity: '8.00'
+    - measurement: ml
+      name: brandy
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: null
+      name: sprigs flat-leaf parsley
+      note: null
+      preparation: coarsely chopped
+      quantity: '2.00'
+    name: null
+  serves: 4
 source: ''
 tags: []
 title: Chorizo with roasted peppers and brandy

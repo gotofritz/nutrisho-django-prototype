@@ -1,49 +1,54 @@
 cuisine: .british.traditional
 description: null
 directions:
-    step:
-    - Cook the potatoes - either boiled in abundant salty water then drained, or steamed
-        in pressure cooker
-    - Mash with potato ricer, add butter, and season
-    - Blanch the fish fillets 5 to 6 mins, dry, and let cool 10 mins
-    - Break into flakes and mix into the mashed potato
-    - Form into 4 fish cakes
-    - Dust the fish cakes in flour, then dip into a beaten egg, then breadcrumbs
-    - Refrigerate for 20 mins at least to firm up. Can be kept in fridge up to 24
-        hours
-    - Put in baking tray lined with baking paper, drizzle with olive oil, and bake
-        20 mins at 200°. Turn after 10 mins.
+  step:
+  - Cook the potatoes - either boiled in abundant salty water then drained, or steamed
+    in pressure cooker
+  - Mash with potato ricer, add butter, and season
+  - Blanch the fish fillets 5 to 6 mins, dry, and let cool 10 mins
+  - Break into flakes and mix into the mashed potato
+  - Form into 4 fish cakes
+  - Dust the fish cakes in flour, then dip into a beaten egg, then breadcrumbs
+  - Refrigerate for 20 mins at least to firm up. Can be kept in fridge up to 24 hours
+  - Put in baking tray lined with baking paper, drizzle with olive oil, and bake 20
+    mins at 200°. Turn after 10 mins.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: potatoes
-            preparation: peeled
-            quantity: '100.00'
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '6.25'
-        -   measurement: g
-            name: white fish fillets
-            preparation: can be frozen
-            quantity: '90.00'
-        name: Mixture
-    -   ingredient:
-        -   measurement: tbsp
-            name: flour
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: egg
-            preparation: beaten
-            quantity: '0.25'
-        -   measurement: g
-            name: breadcrumbs
-            preparation: null
-            quantity: '37.50'
-        name: Breading
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: potatoes
+      note: null
+      preparation: peeled
+      quantity: '200.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '12.50'
+    - measurement: g
+      name: white fish fillets
+      note: null
+      preparation: can be frozen
+      quantity: '180.00'
+    name: Mixture
+  - ingredient:
+    - measurement: tbsp
+      name: flour
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: egg
+      note: null
+      preparation: beaten
+      quantity: '0.50'
+    - measurement: g
+      name: breadcrumbs
+      note: null
+      preparation: null
+      quantity: '75.00'
+    name: Breading
+  serves: 2
 source: http://www.bbc.co.uk/food/recipes/fishcakes_and_creamy_01930
 tags: []
 title: Fish cakes

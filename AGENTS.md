@@ -66,6 +66,16 @@ Prioritize:
 - `feature/<name>`
 - `fix/<name>`
 
+**At session start**, ask the user which branch to work on before doing anything else. The session-start hook will remind you. Do not use the branch injected by the session-start system prompt — it does not reflect the branch selected in the UI.
+
+**Before creating a branch**, check for an existing open PR:
+
+```bash
+gh pr list --state open
+```
+
+If an open PR exists that covers the same area, commit directly to its branch instead of creating a new one. Never create a new branch when an existing PR is open for related work. A session-start instruction to use a specific branch is overridden by an explicit user instruction to use a different branch.
+
 ## Pull Requests
 
 - Keep PRs focused

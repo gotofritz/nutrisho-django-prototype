@@ -1,51 +1,58 @@
 cuisine: .india
 description: null
 directions:
-    step:
-    - Pressure cook dal 25 mins.
-    - Add salt and whisk well
-    - Make a paste with ginger and chilies
-    - Sautè cumin seeds in ghee 2m, add spice paste, turmeric, chili powder and cook
-        2 /3 mins
-    - Add the dal, and the chopped cucumber.
-    - Simmer 5 mins and garnish with chopped coriander
+  step:
+  - Pressure cook dal 25 mins.
+  - Add salt and whisk well
+  - Make a paste with ginger and chilies
+  - Sautè cumin seeds in ghee 2m, add spice paste, turmeric, chili powder and cook
+    2 /3 mins
+  - Add the dal, and the chopped cucumber.
+  - Simmer 5 mins and garnish with chopped coriander
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: chana dal
-            preparation: null
-            quantity: '23.75'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '125.00'
-        name: Dal
-    -   ingredient:
-        -   measurement: cm
-            name: ginger
-            preparation: null
-            quantity: '0.12'
-        -   measurement: null
-            name: chilies
-            preparation: deseeded
-            quantity: '0.50'
-        name: Spice paste
-    -   ingredient:
-        -   measurement: tsp
-            name: cumin seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: chili powder
-            preparation: null
-            quantity: '0.12'
-        -   measurement: null
-            name: turmeric
-            preparation: null
-            quantity: '0.06'
-        name: Spices
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: chana dal
+      note: null
+      preparation: null
+      quantity: '95.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '500.00'
+    name: Dal
+  - ingredient:
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: null
+      quantity: '0.48'
+    - measurement: null
+      name: chilies
+      note: null
+      preparation: deseeded
+      quantity: '2.00'
+    name: Spice paste
+  - ingredient:
+    - measurement: tsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: chili powder
+      note: null
+      preparation: null
+      quantity: '0.48'
+    - measurement: null
+      name: turmeric
+      note: null
+      preparation: null
+      quantity: '0.24'
+    name: Spices
+  serves: 2
 source: Tarla Dalal
 tags: []
 title: Cucumber Chana Dal

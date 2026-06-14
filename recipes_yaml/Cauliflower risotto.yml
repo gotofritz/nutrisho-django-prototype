@@ -1,70 +1,78 @@
 cuisine: .italian
 description: The breadcrumbs take center stage and hide the boring cauliflower taste.
 directions:
-    step:
-    - Heat the stock, adding the cauliflower florets
-    - Sauté the onion in a mixture of olive oil and butter for 5m
-    - Stir in the rice until slightly toasted, about 2m
-    - Sweat with white wine, then carry on the risotto as usual
-    - After about 10 mins fish out the cauliflower florets from the stock and add
-        them to the rice. Continue cooking the risotto breaking up the cauliflower
-        bits as you stir it.
-    - When the risotto is almost ready remove the pot from the fire, stir in the cheese
-        or butter violently then cover the pot and leave to rest for a few minutes
-        cheese
-    - Mix together breadcrumbs, dried chilies for 20s
-    - Sauté the anchovies filets, breaking them with a fork. in olive oil on high
-        heat
-    - Add the breadcrumb mixture, and stir until browned
-    - Ladle the risotto on plates and sprinkle the breadcrumbs on top
+  step:
+  - Heat the stock, adding the cauliflower florets
+  - Sauté the onion in a mixture of olive oil and butter for 5m
+  - Stir in the rice until slightly toasted, about 2m
+  - Sweat with white wine, then carry on the risotto as usual
+  - After about 10 mins fish out the cauliflower florets from the stock and add them
+    to the rice. Continue cooking the risotto breaking up the cauliflower bits as
+    you stir it.
+  - When the risotto is almost ready remove the pot from the fire, stir in the cheese
+    or butter violently then cover the pot and leave to rest for a few minutes cheese
+  - Mix together breadcrumbs, dried chilies for 20s
+  - Sauté the anchovies filets, breaking them with a fork. in olive oil on high heat
+  - Add the breadcrumb mixture, and stir until browned
+  - Ladle the risotto on plates and sprinkle the breadcrumbs on top
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: cauliflower
-            preparation: small
-            quantity: '0.25'
-        -   measurement: ml
-            name: stock
-            preparation: veg
-            quantity: '225.00'
-        -   measurement: null
-            name: onion
-            preparation: chopped finely
-            quantity: '0.12'
-        -   measurement: g
-            name: rice
-            preparation: carnaroli or arborio
-            quantity: '45.00'
-        -   measurement: Tbsp
-            name: wine
-            preparation: white
-            quantity: '0.25'
-        -   measurement: g
-            name: cheese
-            preparation: cubed; mild pecorino or cheddar or something in between (optional).
-                Or just butter.
-            quantity: '5.00'
-        name: Risotto
-    -   ingredient:
-        -   measurement: Tbsp
-            name: breadcrumbs
-            preparation: null
-            quantity: '0.75'
-        -   measurement: null
-            name: chilies
-            preparation: dried
-            quantity: '0.50'
-        -   measurement: null
-            name: anchovies filets
-            preparation: null
-            quantity: '0.75'
-        -   measurement: Tbsp
-            name: oil
-            preparation: olive
-            quantity: '0.25'
-        name: Breadcrum garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: cauliflower
+      note: null
+      preparation: small
+      quantity: '0.50'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: veg
+      quantity: '450.00'
+    - measurement: null
+      name: onion
+      note: null
+      preparation: chopped finely
+      quantity: '0.24'
+    - measurement: g
+      name: rice
+      note: null
+      preparation: carnaroli or arborio
+      quantity: '90.00'
+    - measurement: Tbsp
+      name: wine
+      note: null
+      preparation: white
+      quantity: '0.50'
+    - measurement: g
+      name: cheese
+      note: null
+      preparation: cubed; mild pecorino or cheddar or something in between (optional).
+        Or just butter.
+      quantity: '10.00'
+    name: Risotto
+  - ingredient:
+    - measurement: Tbsp
+      name: breadcrumbs
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: null
+      name: chilies
+      note: null
+      preparation: dried
+      quantity: '1.00'
+    - measurement: null
+      name: anchovies filets
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: olive
+      quantity: '0.50'
+    name: Breadcrum garnish
+  serves: 2
 source: ''
 tags: []
 title: Cauliflower risotto

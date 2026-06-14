@@ -1,84 +1,98 @@
 cuisine: .thai.quick
 description: A generic thay curry
 directions:
-    step:
-    - Heat the oil with a small amount of coconut milk mixed in, if using, then stir
-        in the coconut paste
-    - Add some soya sauce. For a non vegetarian curry also add sugar and fish sauce
-    - Add the ingredients that need frying (potatoes, peppers, chichken, nuts) and
-        sautè until scorched.
-    - If using an egg, steam it over the rice
-    - 'Add the rest of the coconut milk, and / or, the stock. Bear in mind: no coconut
-        milk means a jungle curry, and these are hotter than those with coconut milk.'
-    - Cook 10 mins to reduce the liquid
-    - Meanwhile fry the meat, if using, in oil
-    - Add the frozen veg, tofu, meat, if using, and cook another 5 mins
-    - Add the eggt, if using, just before serving
+  step:
+  - Heat the oil with a small amount of coconut milk mixed in, if using, then stir
+    in the coconut paste
+  - Add some soya sauce. For a non vegetarian curry also add sugar and fish sauce
+  - Add the ingredients that need frying (potatoes, peppers, chichken, nuts) and sautè
+    until scorched.
+  - If using an egg, steam it over the rice
+  - 'Add the rest of the coconut milk, and / or, the stock. Bear in mind: no coconut
+    milk means a jungle curry, and these are hotter than those with coconut milk.'
+  - Cook 10 mins to reduce the liquid
+  - Meanwhile fry the meat, if using, in oil
+  - Add the frozen veg, tofu, meat, if using, and cook another 5 mins
+  - Add the eggt, if using, just before serving
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: dollops
-            name: curry paste
-            preparation: null
-            quantity: '0.50'
-        -   measurement: cans
-            name: coconut milk
-            preparation: or a mixture of coconut milk and stock
-            quantity: '0.50'
-        -   measurement: dash
-            name: soya sauce
-            preparation: null
-            quantity: '0.25'
-        -   measurement: dash
-            name: fish sauce (optional)
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: sugar (optional)
-            preparation: null
-            quantity: '0.25'
-        name: Base
-    -   ingredient:
-        -   measurement: g
-            name: peanuts
-            preparation: or cashew nuts
-            quantity: '10.00'
-        -   measurement: null
-            name: sweet potatos (optional)
-            preparation: sliced
-            quantity: '0.25'
-        -   measurement: null
-            name: bell pepper (optional)
-            preparation: julienned
-            quantity: '0.25'
-        -   measurement: null
-            name: aubergine (optional)
-            preparation: 1 cm thick spears
-            quantity: '0.25'
-        -   measurement: null
-            name: chicken thights (optional)
-            preparation: skinned, optionally floured
-            quantity: '1.00'
-        name: Need frying
-    -   ingredient:
-        -   measurement: g
-            name: tofu, (optional)
-            preparation: diced 2 cm
-            quantity: '56.25'
-        -   measurement: g
-            name: frozen peas (optional)
-            preparation: null
-            quantity: '12.50'
-        -   measurement: g
-            name: frozen green beans (optional)
-            preparation: null
-            quantity: '12.50'
-        -   measurement: g
-            name: beef or pork
-            preparation: as a steak or slices
-            quantity: '50.00'
-        name: Later ingredients
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: dollops
+      name: curry paste
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: cans
+      name: coconut milk
+      note: null
+      preparation: or a mixture of coconut milk and stock
+      quantity: '2.00'
+    - measurement: dash
+      name: soya sauce
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: dash
+      name: fish sauce (optional)
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: sugar (optional)
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Base
+  - ingredient:
+    - measurement: g
+      name: peanuts
+      note: null
+      preparation: or cashew nuts
+      quantity: '40.00'
+    - measurement: null
+      name: sweet potatos (optional)
+      note: null
+      preparation: sliced
+      quantity: '1.00'
+    - measurement: null
+      name: bell pepper (optional)
+      note: null
+      preparation: julienned
+      quantity: '1.00'
+    - measurement: null
+      name: aubergine (optional)
+      note: null
+      preparation: 1 cm thick spears
+      quantity: '1.00'
+    - measurement: null
+      name: chicken thights (optional)
+      note: null
+      preparation: skinned, optionally floured
+      quantity: '4.00'
+    name: Need frying
+  - ingredient:
+    - measurement: g
+      name: tofu, (optional)
+      note: null
+      preparation: diced 2 cm
+      quantity: '225.00'
+    - measurement: g
+      name: frozen peas (optional)
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: g
+      name: frozen green beans (optional)
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: g
+      name: beef or pork
+      note: null
+      preparation: as a steak or slices
+      quantity: '200.00'
+    name: Later ingredients
+  serves: 4
 source: ''
 tags: []
 title: Quick and easy Thai Curry

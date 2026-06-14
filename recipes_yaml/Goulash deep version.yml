@@ -1,111 +1,131 @@
 cuisine: .hungary
 description: Hungarian-American version, doesn't really work in pressure cooker as
-    meats get stuck
+  meats get stuck
 directions:
-    step:
-    - Put onion and fat together in large pot, cook on medium until translucent
-    - Add carrots, water, red pepper and cook until liquid is reduced, 10 mins
-    - Meanwhile mix the dry flour ingredients in a large bowl and swirl the meat pieces
-        in it to coat them. Keep excess flour
-    - When liquid in onion mixture is evaporated and veg are beginning to fry, turn
-        up heat, and start adding meat a bit at the time, stirring
-    - Lower heat and leave 5 mins
-    - Add water, scrape bottom of pan, and cook 1.5h
-    - Prepare a slurry by mixing the excess flour with a bit of water
-    - Add the slurry, tomato, water, parsely and bay leaf tied together, potato, to
-        the stew and cook another 30 mins
-    - Before serving warm up the butter and add paprika, stir a bit and add to soup
+  step:
+  - Put onion and fat together in large pot, cook on medium until translucent
+  - Add carrots, water, red pepper and cook until liquid is reduced, 10 mins
+  - Meanwhile mix the dry flour ingredients in a large bowl and swirl the meat pieces
+    in it to coat them. Keep excess flour
+  - When liquid in onion mixture is evaporated and veg are beginning to fry, turn
+    up heat, and start adding meat a bit at the time, stirring
+  - Lower heat and leave 5 mins
+  - Add water, scrape bottom of pan, and cook 1.5h
+  - Prepare a slurry by mixing the excess flour with a bit of water
+  - Add the slurry, tomato, water, parsely and bay leaf tied together, potato, to
+    the stew and cook another 30 mins
+  - Before serving warm up the butter and add paprika, stir a bit and add to soup
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: onions
-            preparation: chopped finely
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: seed oil
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: butter
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: carrot
-            preparation: sliced
-            quantity: '0.12'
-        -   measurement: null
-            name: red pepper
-            preparation: sliced
-            quantity: '0.12'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '27.50'
-        name: Veg base
-    -   ingredient:
-        -   measurement: g
-            name: beef, shin
-            preparation: cubed
-            quantity: '125.00'
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '15.00'
-        -   measurement: tsp
-            name: paprika
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: salt
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: black pepper
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tsp
-            name: caraway
-            preparation: ground
-            quantity: '0.25'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '15.00'
-        name: Meat and Flour
-    -   ingredient:
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '150.00'
-        -   measurement: null
-            name: tomato
-            preparation: peeled, chopped
-            quantity: '0.25'
-        -   measurement: g
-            name: potatoes
-            preparation: large cubes
-            quantity: '75.00'
-        -   measurement: leaf
-            name: bay
-            preparation: null
-            quantity: '0.25'
-        -   measurement: bunch
-            name: parsley
-            preparation: null
-            quantity: '0.25'
-        name: Veg soup
-    -   ingredient:
-        -   measurement: tbsp
-            name: butter
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: paprika
-            preparation: null
-            quantity: '0.50'
-        name: Final garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: onions
+      note: null
+      preparation: chopped finely
+      quantity: '2.00'
+    - measurement: tbsp
+      name: seed oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: butter
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: carrot
+      note: null
+      preparation: sliced
+      quantity: '0.48'
+    - measurement: null
+      name: red pepper
+      note: null
+      preparation: sliced
+      quantity: '0.48'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '110.00'
+    name: Veg base
+  - ingredient:
+    - measurement: g
+      name: beef, shin
+      note: null
+      preparation: cubed
+      quantity: '500.00'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '60.00'
+    - measurement: tsp
+      name: paprika
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tbsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: black pepper
+      note: null
+      preparation: null
+      quantity: '0.48'
+    - measurement: tsp
+      name: caraway
+      note: null
+      preparation: ground
+      quantity: '1.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '60.00'
+    name: Meat and Flour
+  - ingredient:
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '600.00'
+    - measurement: null
+      name: tomato
+      note: null
+      preparation: peeled, chopped
+      quantity: '1.00'
+    - measurement: g
+      name: potatoes
+      note: null
+      preparation: large cubes
+      quantity: '300.00'
+    - measurement: leaf
+      name: bay
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: bunch
+      name: parsley
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Veg soup
+  - ingredient:
+    - measurement: tbsp
+      name: butter
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: paprika
+      note: null
+      preparation: null
+      quantity: '2.00'
+    name: Final garnish
+  serves: 4
 source: "Louis SzathmaÌ\x81ry \"The chef's secret cook book \""
 tags: []
 title: Goulash, deep version

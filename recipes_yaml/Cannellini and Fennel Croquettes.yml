@@ -1,61 +1,70 @@
 cuisine: .italian
 description: null
 directions:
-    step:
-    - Soak the beans overnight then cook with a bay leaf and an onion.
-    - Drain and discard the onion and bay leaf.
-    - Sauté the herbs and garlic in olive oil at low heat
-    - Add the beans, and sauté on high for 4 mins until mushy.
-    - Season with salt and pepper, remove herbs and garlic, and whizz in a food processor.
-    - Steam the fennel, or boil in salty water, for 15 mins.
-    - Drain and chop finely with a knife.
-    - Add the beans, eggs, bread crumbs, and cream.
-    - Mix and form into croquettes. IF they are to soft and sticky put in the fridge.
-    - Pass the croquettes in beaten egg, then cover in breadcrumbs.
-    - Deep fry in veg oil and pat with kitchen paper before serving
+  step:
+  - Soak the beans overnight then cook with a bay leaf and an onion.
+  - Drain and discard the onion and bay leaf.
+  - Sauté the herbs and garlic in olive oil at low heat
+  - Add the beans, and sauté on high for 4 mins until mushy.
+  - Season with salt and pepper, remove herbs and garlic, and whizz in a food processor.
+  - Steam the fennel, or boil in salty water, for 15 mins.
+  - Drain and chop finely with a knife.
+  - Add the beans, eggs, bread crumbs, and cream.
+  - Mix and form into croquettes. IF they are to soft and sticky put in the fridge.
+  - Pass the croquettes in beaten egg, then cover in breadcrumbs.
+  - Deep fry in veg oil and pat with kitchen paper before serving
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: onion
-            preparation: quartered
-            quantity: '0.25'
-        -   measurement: leaf
-            name: bay
-            preparation: null
-            quantity: '0.25'
-        -   measurement: g
-            name: cannellini
-            preparation: dried
-            quantity: '50.00'
-        -   measurement: leaves
-            name: sage
-            preparation: null
-            quantity: '2.00'
-        -   measurement: branch
-            name: rosemary
-            preparation: null
-            quantity: '0.25'
-        name: Beans
-    -   ingredient:
-        -   measurement: bulbs
-            name: fennel
-            preparation: sliced, thinly
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: breadcrumb
-            preparation: null
-            quantity: '0.50'
-        -   measurement: null
-            name: eggs
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: cream
-            preparation: or to taste
-            quantity: '0.50'
-        name: Fennel
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: onion
+      note: null
+      preparation: quartered
+      quantity: '1.00'
+    - measurement: leaf
+      name: bay
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: cannellini
+      note: null
+      preparation: dried
+      quantity: '200.00'
+    - measurement: leaves
+      name: sage
+      note: null
+      preparation: null
+      quantity: '8.00'
+    - measurement: branch
+      name: rosemary
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Beans
+  - ingredient:
+    - measurement: bulbs
+      name: fennel
+      note: null
+      preparation: sliced, thinly
+      quantity: '2.00'
+    - measurement: tbsp
+      name: breadcrumb
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tbsp
+      name: cream
+      note: null
+      preparation: or to taste
+      quantity: '2.00'
+    name: Fennel
+  serves: 4
 source: http://www.ricettefacilieveloci.it/ricette-piatti-unici/crocchette-di-finocchi-e-fagioli-cannellini.html
 tags:
 - snacks

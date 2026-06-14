@@ -1,87 +1,100 @@
 cuisine: .western
 description: null
 directions:
-    step:
-    - Put the salt and spices in a small pot, and just enough of the water to reach
-        to about 2 cm above the mixture. Boil until the salt is dissolved then remove
-        from heat
-    - Mix with the rest of the water and lemon juice, and let cool
-    - Put the chicken breasts in a glass container or tupperware, and cover them with
-        the brine. Marinade 4 hr in the fridge
-    - If you leave them too long in the water by mistake, throw away the brine and
-        soak again 4 hr in plain water
-    - Take out the breasts from the brine, and pat them dry
-    - 'Prepare the breading trays: flour in the first, well beaten eggs mixed with
-        some milk in the second, all the breadcrumbs ingredients whizzed in a food
-        processor in the third'
-    - Cut the breasts into chunks approximately the size of a fig, then coat them
-        in flour, shake, dip them in the egg mixture, shake, finally coat them in
-        the breading mixture
-    - Can be deep fried when fresh
-    - To cook from frozen, bake 18 min at 180°
+  step:
+  - Put the salt and spices in a small pot, and just enough of the water to reach
+    to about 2 cm above the mixture. Boil until the salt is dissolved then remove
+    from heat
+  - Mix with the rest of the water and lemon juice, and let cool
+  - Put the chicken breasts in a glass container or tupperware, and cover them with
+    the brine. Marinade 4 hr in the fridge
+  - If you leave them too long in the water by mistake, throw away the brine and soak
+    again 4 hr in plain water
+  - Take out the breasts from the brine, and pat them dry
+  - 'Prepare the breading trays: flour in the first, well beaten eggs mixed with some
+    milk in the second, all the breadcrumbs ingredients whizzed in a food processor
+    in the third'
+  - Cut the breasts into chunks approximately the size of a fig, then coat them in
+    flour, shake, dip them in the egg mixture, shake, finally coat them in the breading
+    mixture
+  - Can be deep fried when fresh
+  - To cook from frozen, bake 18 min at 180°
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: L
-            name: water
-            preparation: null
-            quantity: '0.38'
-        -   measurement: g
-            name: salt
-            preparation: null
-            quantity: '25.00'
-        -   measurement: tbsp
-            name: ginger powder
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: paprika
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: ground pepper
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: lemon
-            preparation: squeezed
-            quantity: '0.50'
-        name: Brine
-    -   ingredient:
-        -   measurement: kg
-            name: chicke breasts
-            preparation: null
-            quantity: '0.25'
-        name: Meat
-    -   ingredient:
-        -   measurement: g
-            name: plain corn flakes
-            preparation: null
-            quantity: '37.50'
-        -   measurement: g
-            name: breadcrumbs
-            preparation: null
-            quantity: '18.75'
-        -   measurement: tbsp
-            name: veg oil
-            preparation: null
-            quantity: '0.75'
-        name: Breadcrumbs mixture
-    -   ingredient:
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '17.50'
-        -   measurement: null
-            name: eggs
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: milk
-            preparation: null
-            quantity: '0.50'
-        name: Breading
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: L
+      name: water
+      note: null
+      preparation: null
+      quantity: '0.76'
+    - measurement: g
+      name: salt
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: tbsp
+      name: ginger powder
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: paprika
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: ground pepper
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: lemon
+      note: null
+      preparation: squeezed
+      quantity: '1.00'
+    name: Brine
+  - ingredient:
+    - measurement: kg
+      name: chicke breasts
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: Meat
+  - ingredient:
+    - measurement: g
+      name: plain corn flakes
+      note: null
+      preparation: null
+      quantity: '75.00'
+    - measurement: g
+      name: breadcrumbs
+      note: null
+      preparation: null
+      quantity: '37.50'
+    - measurement: tbsp
+      name: veg oil
+      note: null
+      preparation: null
+      quantity: '1.50'
+    name: Breadcrumbs mixture
+  - ingredient:
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '35.00'
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: milk
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Breading
+  serves: 2
 source: ''
 tags: []
 title: Chicken Nuggets from Brined Breast

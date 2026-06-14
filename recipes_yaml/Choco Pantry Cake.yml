@@ -1,51 +1,59 @@
 cuisine: .british
 description: Super easy
 directions:
-    step:
-    - Grease and line a 20cm cake tin
-    - Melt butter and chocolate for 30 secs in microwave
-    - Add jam, sugar, salt, and eggs
-    - Soft flour and baking powder
-    - Mix all the above together
-    - Bake at 180° for 40-50 mins
-    - Take out and cool
+  step:
+  - Grease and line a 20cm cake tin
+  - Melt butter and chocolate for 30 secs in microwave
+  - Add jam, sugar, salt, and eggs
+  - Soft flour and baking powder
+  - Mix all the above together
+  - Bake at 180° for 40-50 mins
+  - Take out and cool
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '27.50'
-        -   measurement: g
-            name: chocolate
-            preparation: bar or powder
-            quantity: '27.50'
-        -   measurement: g
-            name: jam
-            preparation: null
-            quantity: '32.50'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '25.00'
-        -   measurement: pinch
-            name: salt
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: eggs
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: baking powder
-            preparation: null
-            quantity: '0.38'
-        -   measurement: g
-            name: flour
-            preparation: null
-            quantity: '31.25'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '110.00'
+    - measurement: g
+      name: chocolate
+      note: null
+      preparation: bar or powder
+      quantity: '110.00'
+    - measurement: g
+      name: jam
+      note: null
+      preparation: null
+      quantity: '130.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '100.00'
+    - measurement: pinch
+      name: salt
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tbsp
+      name: baking powder
+      note: null
+      preparation: null
+      quantity: '1.52'
+    - measurement: g
+      name: flour
+      note: null
+      preparation: null
+      quantity: '125.00'
+    name: null
+  serves: 4
 source: Nigella
 tags: []
 title: Choco Pantry Cake

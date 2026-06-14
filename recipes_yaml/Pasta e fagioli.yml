@@ -1,70 +1,81 @@
 cuisine: .italian
 description: The percentage of stock and passata can vary - you can make it with no
-    passata or no stock, or any ratio of the two
+  passata or no stock, or any ratio of the two
 directions:
-    step:
-    - soak cannellini beans overnight, then change water and cook with a pinch of
-        bicarbonate 10 mins high heat and 40 mins medium low
-    - sauté the onions in olive oil at medium-high heat until caramelized, like hot
-        dog onions, 10m. Add rosemary or other herbs if using
-    - Meanwhile cook the pasta as normal
-    - if using bacon / sausage, add and saute another 3 mins, and add chilli powder
-        for last 30 secs. Otherwise add chopped chilies 3m
-    - sweat with white wine if using, 2 mins then add a third of the beans and mash
-        with a fork, then add the remaining beans and the passata if using
-    - keep cooking adding a bit of pasta water every so often to keep liquid, or stock
-        if using
-    - when the pasta is ready season sauce with salt and pepper and add pasta to it.
-        Sprinkle teared basil leaves on it and serve
+  step:
+  - soak cannellini beans overnight, then change water and cook with a pinch of bicarbonate
+    10 mins high heat and 40 mins medium low
+  - sauté the onions in olive oil at medium-high heat until caramelized, like hot
+    dog onions, 10m. Add rosemary or other herbs if using
+  - Meanwhile cook the pasta as normal
+  - if using bacon / sausage, add and saute another 3 mins, and add chilli powder
+    for last 30 secs. Otherwise add chopped chilies 3m
+  - sweat with white wine if using, 2 mins then add a third of the beans and mash
+    with a fork, then add the remaining beans and the passata if using
+  - keep cooking adding a bit of pasta water every so often to keep liquid, or stock
+    if using
+  - when the pasta is ready season sauce with salt and pepper and add pasta to it.
+    Sprinkle teared basil leaves on it and serve
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: pasta
-            preparation: ditaloni
-            quantity: '75.00'
-        -   measurement: Tbsp
-            name: oil
-            preparation: oilve
-            quantity: '0.25'
-        -   measurement: null
-            name: onion
-            preparation: or shallots
-            quantity: '0.25'
-        -   measurement: sprigs
-            name: rosemary
-            preparation: (optional)
-            quantity: '0.25'
-        -   measurement: g
-            name: bacon
-            preparation: diced (optional) or sausage
-            quantity: '20.00'
-        -   measurement: tsp
-            name: chili powder
-            preparation: (optional)
-            quantity: '0.12'
-        -   measurement: null
-            name: chilies. fresh
-            preparation: deseeded
-            quantity: '0.75'
-        -   measurement: ml
-            name: passata
-            preparation: (optional)
-            quantity: '50.00'
-        -   measurement: g
-            name: beans
-            preparation: dry
-            quantity: '60.00'
-        -   measurement: ml
-            name: stock
-            preparation: optional
-            quantity: '25.00'
-        -   measurement: a few
-            name: basil leaves
-            preparation: ripped
-            quantity: null
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: pasta
+      note: null
+      preparation: ditaloni
+      quantity: '150.00'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: oilve
+      quantity: '0.50'
+    - measurement: null
+      name: onion
+      note: null
+      preparation: or shallots
+      quantity: '0.50'
+    - measurement: sprigs
+      name: rosemary
+      note: null
+      preparation: (optional)
+      quantity: '0.50'
+    - measurement: g
+      name: bacon
+      note: null
+      preparation: diced (optional) or sausage
+      quantity: '40.00'
+    - measurement: tsp
+      name: chili powder
+      note: null
+      preparation: (optional)
+      quantity: '0.24'
+    - measurement: null
+      name: chilies. fresh
+      note: null
+      preparation: deseeded
+      quantity: '1.50'
+    - measurement: ml
+      name: passata
+      note: null
+      preparation: (optional)
+      quantity: '100.00'
+    - measurement: g
+      name: beans
+      note: null
+      preparation: dry
+      quantity: '120.00'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: optional
+      quantity: '50.00'
+    - measurement: a few
+      name: basil leaves
+      note: null
+      preparation: ripped
+      quantity: null
+    name: null
+  serves: 2
 source: ''
 tags: []
 title: Pasta e fagioli

@@ -1,48 +1,53 @@
 cuisine: .japanese
 description: Onigiri are classic bento box fodder of rice triangles, here they are
-    fried with negimiso. The same applied to tofu. They are two separate snacks, don't
-    eat together.
+  fried with negimiso. The same applied to tofu. They are two separate snacks, don't
+  eat together.
 directions:
-    step:
-    - 'NEGIMISO YAKI ONIGIRI (fried rice triangles): cook the rice in a rice cooker.'
-    - Sprinkle your hand with salt and form into a triangle while still hot. They
-        freeze weell
-    - Smear negimiso onto one side of triangle.
-    - Put the onigiri negimiso side down on the pan, and cook a few seconds
-    - Place on a nori square, shiny side of nori down, and fold the corners to wrap
-        the triangle. The nori should stick to the rice.
-    - NEGIMISO YAKI DOFU (fried tofu)
-    - Cut the tofu into bite size square slices, and dry roast both sides until you
-        can see some charring.
-    - Spread negimiso on one side, and dry fry on the negimiso side for a few of seconds
-    - Eat with plain rice
+  step:
+  - 'NEGIMISO YAKI ONIGIRI (fried rice triangles): cook the rice in a rice cooker.'
+  - Sprinkle your hand with salt and form into a triangle while still hot. They freeze
+    weell
+  - Smear negimiso onto one side of triangle.
+  - Put the onigiri negimiso side down on the pan, and cook a few seconds
+  - Place on a nori square, shiny side of nori down, and fold the corners to wrap
+    the triangle. The nori should stick to the rice.
+  - NEGIMISO YAKI DOFU (fried tofu)
+  - Cut the tofu into bite size square slices, and dry roast both sides until you
+    can see some charring.
+  - Spread negimiso on one side, and dry fry on the negimiso side for a few of seconds
+  - Eat with plain rice
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: cup
-            name: rice
-            preparation: japanese or risotto
-            quantity: '0.25'
-        -   measurement: tsp
-            name: negimiso
-            preparation: null
-            quantity: '0.50'
-        -   measurement: small square
-            name: nori
-            preparation: null
-            quantity: '0.25'
-        name: Negimiso yaki onigiri
-    -   ingredient:
-        -   measurement: block
-            name: tofu
-            preparation: sliced and cut into 3cm squares
-            quantity: '0.12'
-        -   measurement: tsp
-            name: negimiso
-            preparation: null
-            quantity: '0.50'
-        name: Negimiso yaki dofu
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: cup
+      name: rice
+      note: null
+      preparation: japanese or risotto
+      quantity: '1.00'
+    - measurement: tsp
+      name: negimiso
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: small square
+      name: nori
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Negimiso yaki onigiri
+  - ingredient:
+    - measurement: block
+      name: tofu
+      note: null
+      preparation: sliced and cut into 3cm squares
+      quantity: '0.48'
+    - measurement: tsp
+      name: negimiso
+      note: null
+      preparation: null
+      quantity: '2.00'
+    name: Negimiso yaki dofu
+  serves: 4
 source: http://justbento.com/handbook/recipe-collection-mains/negimiso-bento-recipes-misoyaki-tofu-misoyaki-onigiri-misoyaki-rice
 tags: []
 title: Fried Onigiri and Tofu

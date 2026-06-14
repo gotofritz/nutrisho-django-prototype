@@ -1,56 +1,64 @@
 cuisine: .spain.traditional
 description: Classic ancestor of creme brulé
 directions:
-    step:
-    - Flavour the milk by simmering all the ingredients together for a few minutes.
-        Sieve and keep the milk
-    - Beat together egg, sugar, cornstarch
-    - Slowly add the milk.
-    - Slowly simmer mixture, stirring constantly, until it begins to thicken
-    - Pour in individual ramekins and cool in fridge
-    - To serve, sprinkle sugar on top and caramelize under a broiler. You can also
-        serve cold without the caramelizing.
+  step:
+  - Flavour the milk by simmering all the ingredients together for a few minutes.
+    Sieve and keep the milk
+  - Beat together egg, sugar, cornstarch
+  - Slowly add the milk.
+  - Slowly simmer mixture, stirring constantly, until it begins to thicken
+  - Pour in individual ramekins and cool in fridge
+  - To serve, sprinkle sugar on top and caramelize under a broiler. You can also serve
+    cold without the caramelizing.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: ml
-            name: milk
-            preparation: null
-            quantity: '112.50'
-        -   measurement: stick
-            name: cinnamon
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: lemon rind
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: vanilla extract
-            preparation: or 1 stick
-            quantity: '0.25'
-        name: Flavoured Milk
-    -   ingredient:
-        -   measurement: null
-            name: egg yolks
-            preparation: null
-            quantity: '1.00'
-        -   measurement: tbsp
-            name: corn starch
-            preparation: null
-            quantity: '0.25'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '32.50'
-        name: Mixture
-    -   ingredient:
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '12.50'
-        name: Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: ml
+      name: milk
+      note: null
+      preparation: null
+      quantity: '225.00'
+    - measurement: stick
+      name: cinnamon
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: null
+      name: lemon rind
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: vanilla extract
+      note: null
+      preparation: or 1 stick
+      quantity: '0.50'
+    name: Flavoured Milk
+  - ingredient:
+    - measurement: null
+      name: egg yolks
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tbsp
+      name: corn starch
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '65.00'
+    name: Mixture
+  - ingredient:
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '25.00'
+    name: Garnish
+  serves: 2
 source: ''
 tags: []
 title: Catalan Cream

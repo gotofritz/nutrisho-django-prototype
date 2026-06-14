@@ -1,55 +1,63 @@
 cuisine: .british
 description: Chickpeas are a great meaty convenience food to keep in the larder, either
-    dried or canned. Chickpeas do vary in quality massively so the rule of thumb is
-    generally you get what you pay for. Although this is a great vegetarian dish it
-    can be enjoyed by anyone, even add some meat (such as chorizo) to it if you wish
-    or simply serve it in the middle of the table as a side dish.
+  dried or canned. Chickpeas do vary in quality massively so the rule of thumb is
+  generally you get what you pay for. Although this is a great vegetarian dish it
+  can be enjoyed by anyone, even add some meat (such as chorizo) to it if you wish
+  or simply serve it in the middle of the table as a side dish.
 directions:
-    step:
-    - Put shallots, thyme, garlic, vegetable stock in a pan, season and bring to the
-        boil and simmer until the shallots are tender, about 20m
-    - Remove the shallots and garlic with a slotted spoon, add the swede, carrots
-        and simmer until they are tender
-    - add the chickpeas, shallots and garlic and continue simmering for for 5m
-    - If you wish to thicken the liquid slightly, liquidise a small ladleful and add
-        back to the casserole. Season, add the parsley and serve.
+  step:
+  - Put shallots, thyme, garlic, vegetable stock in a pan, season and bring to the
+    boil and simmer until the shallots are tender, about 20m
+  - Remove the shallots and garlic with a slotted spoon, add the swede, carrots and
+    simmer until they are tender
+  - add the chickpeas, shallots and garlic and continue simmering for for 5m
+  - If you wish to thicken the liquid slightly, liquidise a small ladleful and add
+    back to the casserole. Season, add the parsley and serve.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: shallots
-            preparation: small
-            quantity: '6.00'
-        -   measurement: sprigs
-            name: thyme
-            preparation: null
-            quantity: '0.75'
-        -   measurement: cloves
-            name: garlic
-            preparation: null
-            quantity: '2.00'
-        -   measurement: ml
-            name: vegetable stock
-            preparation: null
-            quantity: '62.50'
-        -   measurement: null
-            name: swede
-            preparation: peeled
-            quantity: '0.25'
-        -   measurement: null
-            name: carrots
-            preparation: trimmed
-            quantity: '0.50'
-        -   measurement: g
-            name: chickpeas
-            preparation: cooked
-            quantity: '62.50'
-        -   measurement: Tbsp
-            name: parsley
-            preparation: chopped
-            quantity: '0.50'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: shallots
+      note: null
+      preparation: small
+      quantity: '12.00'
+    - measurement: sprigs
+      name: thyme
+      note: null
+      preparation: null
+      quantity: '1.50'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '4.00'
+    - measurement: ml
+      name: vegetable stock
+      note: null
+      preparation: null
+      quantity: '125.00'
+    - measurement: null
+      name: swede
+      note: null
+      preparation: peeled
+      quantity: '0.50'
+    - measurement: null
+      name: carrots
+      note: null
+      preparation: trimmed
+      quantity: '1.00'
+    - measurement: g
+      name: chickpeas
+      note: null
+      preparation: cooked
+      quantity: '125.00'
+    - measurement: Tbsp
+      name: parsley
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    name: null
+  serves: 2
 source: ''
 tags: []
 title: Chickpea and autumn vegetable casserole

@@ -1,72 +1,82 @@
 cuisine: .mexican
 description: null
 directions:
-    step:
-    - grill tomatoes, chilies, about 10 cm away from a hot grill until blistered,
-        then turn, about 6m
-    - Cool the vegetables, then coarsely chop them in a food processor with their
-        juices
-    - sauté onion in oil on medium heat until brown, about 10m
-    - Increase heat, when hot add tomato chili mixture, until it sizzles, about 5m
-    - Add chicken stock, gently simmer until thick (but not too thick), about 15m
-    - Season
-    - Meanwhile prepare or reheat the tortillas, and fry the eggs sunny side up eggs
-        in oil
-    - Place two of the tortillas on each plate, then slide the eggs on them.
-    - Spoon the sauce over the eggs, garnish with coriander, onion, mexican cheese
+  step:
+  - grill tomatoes, chilies, about 10 cm away from a hot grill until blistered, then
+    turn, about 6m
+  - Cool the vegetables, then coarsely chop them in a food processor with their juices
+  - sauté onion in oil on medium heat until brown, about 10m
+  - Increase heat, when hot add tomato chili mixture, until it sizzles, about 5m
+  - Add chicken stock, gently simmer until thick (but not too thick), about 15m
+  - Season
+  - Meanwhile prepare or reheat the tortillas, and fry the eggs sunny side up eggs
+    in oil
+  - Place two of the tortillas on each plate, then slide the eggs on them.
+  - Spoon the sauce over the eggs, garnish with coriander, onion, mexican cheese
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: tomatoes
-            preparation: null
-            quantity: '2.00'
-        -   measurement: g
-            name: chilies
-            preparation: stemmed
-            quantity: '5.00'
-        -   measurement: null
-            name: onion
-            preparation: sliced thin
-            quantity: '0.12'
-        -   measurement: tbps
-            name: oil
-            preparation: null
-            quantity: '0.25'
-        -   measurement: ml
-            name: stock
-            preparation: chicken
-            quantity: '87.50'
-        name: Salsa de jitomate cocida
-    -   ingredient:
-        -   measurement: null
-            name: eggs
-            preparation: null
-            quantity: '1.00'
-        -   measurement: Tbsp
-            name: oil
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: tortillas
-            preparation: null
-            quantity: '1.00'
-        name: Eggs
-    -   ingredient:
-        -   measurement: Tbsp
-            name: coriander
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: null
-            name: onion
-            preparation: sliced thin
-            quantity: '0.06'
-        -   measurement: lump
-            name: cheese
-            preparation: mexican
-            quantity: '0.25'
-        name: Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: tomatoes
+      note: null
+      preparation: null
+      quantity: '8.00'
+    - measurement: g
+      name: chilies
+      note: null
+      preparation: stemmed
+      quantity: '20.00'
+    - measurement: null
+      name: onion
+      note: null
+      preparation: sliced thin
+      quantity: '0.50'
+    - measurement: tbps
+      name: oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: chicken
+      quantity: '350.00'
+    name: Salsa de jitomate cocida
+  - ingredient:
+    - measurement: null
+      name: eggs
+      note: null
+      preparation: null
+      quantity: '4.00'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: null
+      name: tortillas
+      note: null
+      preparation: null
+      quantity: '4.00'
+    name: Eggs
+  - ingredient:
+    - measurement: Tbsp
+      name: coriander
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: null
+      name: onion
+      note: null
+      preparation: sliced thin
+      quantity: '0.24'
+    - measurement: lump
+      name: cheese
+      note: null
+      preparation: mexican
+      quantity: '1.00'
+    name: Garnish
+  serves: 4
 source: ''
 tags: []
 title: Huevos Rancheros

@@ -1,42 +1,73 @@
-title: Pici with Cavolo Nero, Pecorino Toscano and Pepper
-source: Davide Caranchini, chef of the restaurant Materia in Cernobbio
 cuisine: Italian
-description: A rich and decisive first course combining fresh pici pasta with cavolo nero, pecorino toscano, and pepper.
-tags:
-  - pasta
-  - first course
-  - Italian
-  - vegetarian
+description: A rich and decisive first course combining fresh pici pasta with cavolo
+  nero, pecorino toscano, and pepper.
 directions:
   step:
-    - Collect the pepper in a container, cover with cold water, and leave in the refrigerator for 12 hours. Drain the grains and pass them through a extractor, thus obtaining a very concentrated pepper juice (alternatively, blend the pepper with a spoonful of water and pass everything through a fine sieve lined with muslin). Store in the refrigerator.
-    - Cut the pecorino into slices and let them soak in milk for a couple of hours. Transfer everything into a saucepan and melt over a bain-marie, continuously stirring to avoid forming lumps. Keep this fondue warm.
-    - Wash the cavolo nero leaves carefully and pass them through an extractor or blend them with 1-2 spoonfuls of water and then strain through a sieve. Transfer the juice into the blender jar and create an emulsion by slowly adding 50 g of oil. Adjust with salt and store in the fridge until needed.
-    - Cook the pici in abundant salted water, drain in a pan with the cavolo nero emulsion and toss everything over a hot flame for a few minutes.
-    - Form pasta nests, distribute them on plates and top with the pecorino fondue and a few drops of pepper juice. Alternatively, simply finish with generous freshly ground pepper before serving.
+  - Collect the pepper in a container, cover with cold water, and leave in the refrigerator
+    for 12 hours. Drain the grains and pass them through a extractor, thus obtaining
+    a very concentrated pepper juice (alternatively, blend the pepper with a spoonful
+    of water and pass everything through a fine sieve lined with muslin). Store in
+    the refrigerator.
+  - Cut the pecorino into slices and let them soak in milk for a couple of hours.
+    Transfer everything into a saucepan and melt over a bain-marie, continuously stirring
+    to avoid forming lumps. Keep this fondue warm.
+  - Wash the cavolo nero leaves carefully and pass them through an extractor or blend
+    them with 1-2 spoonfuls of water and then strain through a sieve. Transfer the
+    juice into the blender jar and create an emulsion by slowly adding 50 g of oil.
+    Adjust with salt and store in the fridge until needed.
+  - Cook the pici in abundant salted water, drain in a pan with the cavolo nero emulsion
+    and toss everything over a hot flame for a few minutes.
+  - Form pasta nests, distribute them on plates and top with the pecorino fondue and
+    a few drops of pepper juice. Alternatively, simply finish with generous freshly
+    ground pepper before serving.
 ingredients:
-  serves: "6 people portions"
   group:
-    - name: Main
-      ingredient:
-        - name: fresh pici
-          quantity: 600
-          measurement: g
-        - name: cavolo nero, washed
-          quantity: 500
-          measurement: g
-        - name: pecorino toscano
-          quantity: 250
-          measurement: g
-        - name: black pepper grains
-          quantity: 200
-          measurement: g
-        - name: milk
-          quantity: 150
-          measurement: g
-        - name: salt
-          quantity: null
-          measurement: null
-        - name: extra virgin olive oil
-          quantity: null
-          measurement: null
+  - ingredient:
+    - measurement: g
+      name: cavolo nero, washed
+      note: null
+      preparation: null
+      quantity: '180.00'
+    - measurement: g
+      name: pecorino toscano
+      note: null
+      preparation: null
+      quantity: '80.00'
+    - measurement: g
+      name: black pepper grains
+      note: null
+      preparation: null
+      quantity: '65.00'
+    - measurement: g
+      name: milk
+      note: null
+      preparation: null
+      quantity: '50.00'
+    - measurement: null
+      name: salt
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: null
+      name: extra virgin olive oil
+      note: null
+      preparation: null
+      quantity: null
+    name: Main
+  - ingredient:
+    - measurement: g
+      name: fresh pici
+      note: null
+      preparation: null
+      quantity: '200.00'
+    name: Pasta
+  - ingredient: []
+    name: ''
+  serves: 2
+source: Davide Caranchini, chef of the restaurant Materia in Cernobbio
+tags:
+- Italian
+- first course
+- pasta
+- vegetarian
+title: Pici with Cavolo Nero, Pecorino Toscano and Pepper

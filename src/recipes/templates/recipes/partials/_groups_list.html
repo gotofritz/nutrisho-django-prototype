@@ -1,0 +1,30 @@
+{% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+<div id="reassign-panel" class="reassign-panel" hidden>
+  <form
+    hx-post="{% url 'recipes:ingredient_reassign' recipe.id %}"
+    hx-target="#groups-list"
+    hx-swap="innerHTML"
+    hx-include=".ingredient-select:checked"
+  >
+    {% csrf_token %}
+    <label for="reassign-target">Move to:</label>
+    <select name="target_group" id="reassign-target">
+      {% for g in recipe.ingredients_group.all %}
+      <option value="{{ g.id }}">{{ g.group_name|default:"—" }}</option>
+      {% endfor %}
+      <option value="new">New group…</option>
+    </select>
+    <input
+      type="text"
+      name="new_group_name"
+      id="new-group-name"
+      placeholder="New group name"
+      hidden
+    >
+    <button type="submit">Move</button>
+    <button type="button" id="reassign-cancel">Cancel</button>
+  </form>
+</div>
+{% for group in recipe.ingredients_group.all %}
+{% include "./_group_block.html" with recipe=recipe group=group %}
+{% endfor %}

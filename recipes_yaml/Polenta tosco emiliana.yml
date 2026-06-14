@@ -1,51 +1,59 @@
 cuisine: .italian.tuscany
 description: null
 directions:
-    step:
-    - Cook the polenta for 45 minutes. It should be a bit runny
-    - Pour into a greased baking dish
-    - Mix all the other ingredients with a fork in a bowl, tip over the polenta, and
-        slightly push them in.
-    - Bake at 210° for 15 mins
+  step:
+  - Cook the polenta for 45 minutes. It should be a bit runny
+  - Pour into a greased baking dish
+  - Mix all the other ingredients with a fork in a bowl, tip over the polenta, and
+    slightly push them in.
+  - Bake at 210° for 15 mins
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: l
-            name: boiling water
-            preparation: null
-            quantity: '0.50'
-        -   measurement: g
-            name: polenta, coarse
-            preparation: null
-            quantity: '87.50'
-        -   measurement: tbsp
-            name: coarse salt
-            preparation: null
-            quantity: '0.25'
-        name: Polenta
-    -   ingredient:
-        -   measurement: tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.25'
-        -   measurement: g
-            name: sausage
-            preparation: skinned and crumbled
-            quantity: '75.00'
-        -   measurement: g
-            name: salt pork
-            preparation: chopped
-            quantity: '22.50'
-        -   measurement: tbsp
-            name: rosemary
-            preparation: chopped finely
-            quantity: '0.12'
-        -   measurement: clove
-            name: garlic
-            preparation: chopped finely
-            quantity: '0.25'
-        name: Filling
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: l
+      name: boiling water
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: polenta, coarse
+      note: null
+      preparation: null
+      quantity: '175.00'
+    - measurement: tbsp
+      name: coarse salt
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: Polenta
+  - ingredient:
+    - measurement: tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: g
+      name: sausage
+      note: null
+      preparation: skinned and crumbled
+      quantity: '150.00'
+    - measurement: g
+      name: salt pork
+      note: null
+      preparation: chopped
+      quantity: '45.00'
+    - measurement: tbsp
+      name: rosemary
+      note: null
+      preparation: chopped finely
+      quantity: '0.24'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: chopped finely
+      quantity: '0.50'
+    name: Filling
+  serves: 2
 source: Polenta Riso Zuppe
 tags: []
 title: Polenta tosco emiliana

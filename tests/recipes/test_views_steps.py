@@ -7,8 +7,10 @@ from recipes.models import Recipe, Step
 
 
 @pytest.fixture
-def client():
-    return Client()
+def auth_client(user):
+    c = Client()
+    c.force_login(user)
+    return c
 
 
 @pytest.fixture
@@ -29,58 +31,58 @@ def two_steps(recipe):
 
 
 @pytest.mark.django_db
-def test_step_display_get_returns_200(client, recipe, step):
-    response = client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
+def test_step_display_get_returns_200(auth_client, recipe, step):
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_step_display_no_form_elements(client, recipe, step):
-    response = client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
+def test_step_display_no_form_elements(auth_client, recipe, step):
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
     content = response.content.decode()
     assert "<form" not in content
 
 
 @pytest.mark.django_db
-def test_step_display_shows_step_text(client, recipe, step):
-    response = client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
+def test_step_display_shows_step_text(auth_client, recipe, step):
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
     assert step.step_text.encode() in response.content
 
 
 @pytest.mark.django_db
-def test_step_display_404_wrong_recipe(client, user, db):
+def test_step_display_404_wrong_recipe(auth_client, user, db):
     other = Recipe.objects.create(recipe_name="Other", owner=user)
     step = Step.objects.create(recipe=other, step_text="x", index_in_sequence=0)
     recipe = Recipe.objects.create(recipe_name="Mine", owner=user)
-    response = client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
-def test_step_edit_get_returns_200(client, recipe, step):
-    response = client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/edit/")
+def test_step_edit_get_returns_200(auth_client, recipe, step):
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/edit/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_step_edit_has_form_with_value(client, recipe, step):
-    response = client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/edit/")
+def test_step_edit_has_form_with_value(auth_client, recipe, step):
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/edit/")
     content = response.content.decode()
     assert "<form" in content
     assert step.step_text in content
 
 
 @pytest.mark.django_db
-def test_step_edit_cancel_button_points_to_display(client, recipe, step):
-    response = client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/edit/")
+def test_step_edit_cancel_button_points_to_display(auth_client, recipe, step):
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/edit/")
     content = response.content.decode()
     display_url = f"/recipes/{recipe.pk}/steps/{step.pk}/"
     assert display_url in content
 
 
 @pytest.mark.django_db
-def test_step_save_post_valid_saves_and_returns_display(client, recipe, step):
-    response = client.post(
+def test_step_save_post_valid_saves_and_returns_display(auth_client, recipe, step):
+    response = auth_client.post(
         f"/recipes/{recipe.pk}/steps/{step.pk}/save/",
         {"step_text": "Updated step text"},
     )
@@ -92,8 +94,8 @@ def test_step_save_post_valid_saves_and_returns_display(client, recipe, step):
 
 
 @pytest.mark.django_db
-def test_step_save_post_invalid_returns_form(client, recipe, step):
-    response = client.post(
+def test_step_save_post_invalid_returns_form(auth_client, recipe, step):
+    response = auth_client.post(
         f"/recipes/{recipe.pk}/steps/{step.pk}/save/",
         {"step_text": ""},
     )
@@ -103,36 +105,352 @@ def test_step_save_post_invalid_returns_form(client, recipe, step):
 
 
 @pytest.mark.django_db
-def test_step_delete_removes_step(client, recipe, step):
+def test_step_delete_removes_step(auth_client, recipe, step):
     step_id = step.pk
-    response = client.post(f"/recipes/{recipe.pk}/steps/{step_id}/delete/")
+    response = auth_client.post(f"/recipes/{recipe.pk}/steps/{step_id}/delete/")
     assert response.status_code == 200
     assert not Step.objects.filter(pk=step_id).exists()
 
 
 @pytest.mark.django_db
-def test_step_delete_reorders_remaining(client, recipe, two_steps):
+def test_step_delete_reorders_remaining(auth_client, recipe, two_steps):
     first, second = two_steps
-    client.post(f"/recipes/{recipe.pk}/steps/{first.pk}/delete/")
+    auth_client.post(f"/recipes/{recipe.pk}/steps/{first.pk}/delete/")
     second.refresh_from_db()
     assert second.index_in_sequence == 0
 
 
 @pytest.mark.django_db
-def test_step_add_creates_step(client, recipe):
-    response = client.post(f"/recipes/{recipe.pk}/steps/add/")
+def test_step_add_does_not_create_step(auth_client, recipe):
+    """Add only renders a blank form; the row is created on Save (create)."""
+    response = auth_client.post(f"/recipes/{recipe.pk}/steps/add/")
     assert response.status_code == 200
-    assert Step.objects.filter(recipe=recipe).count() == 1
+    assert Step.objects.filter(recipe=recipe).count() == 0
 
 
 @pytest.mark.django_db
-def test_step_add_returns_edit_partial(client, recipe):
-    response = client.post(f"/recipes/{recipe.pk}/steps/add/")
+def test_step_add_form_posts_to_create_url(auth_client, recipe):
+    response = auth_client.post(f"/recipes/{recipe.pk}/steps/add/")
+    assert f"/recipes/{recipe.pk}/steps/create/" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_step_create_valid_creates_step(auth_client, recipe):
+    response = auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Chop onions"})
+    assert response.status_code == 200
+    step = Step.objects.get(recipe=recipe)
+    assert step.step_text == "Chop onions"
+    assert step.index_in_sequence == 0
+    assert "Chop onions" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_step_create_appends_after_existing(auth_client, recipe, two_steps):
+    auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Third"})
+    step = Step.objects.get(recipe=recipe, step_text="Third")
+    assert step.index_in_sequence == 2
+
+
+@pytest.mark.django_db
+def test_step_create_inserts_at_posted_position(auth_client, recipe, two_steps):
+    """Two drafts saved in reverse order keep their on-screen positions."""
+    # Drafts were opened at DOM positions 2 and 3; the later one is saved first.
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Fourth", "position": "3"}
+    )
+    auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Third", "position": "2"})
+    third = Step.objects.get(recipe=recipe, step_text="Third")
+    fourth = Step.objects.get(recipe=recipe, step_text="Fourth")
+    assert third.index_in_sequence == 2
+    assert fourth.index_in_sequence == 3
+
+
+@pytest.mark.django_db
+def test_step_create_position_shifts_existing_rows(auth_client, recipe, two_steps):
+    """Inserting before existing rows shifts them up instead of colliding."""
+    first, second = two_steps
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Newcomer", "position": "0"}
+    )
+    first.refresh_from_db()
+    second.refresh_from_db()
+    newcomer = Step.objects.get(recipe=recipe, step_text="Newcomer")
+    assert newcomer.index_in_sequence == 0
+    assert first.index_in_sequence == 1
+    assert second.index_in_sequence == 2
+
+
+@pytest.mark.django_db
+def test_step_create_position_missing_or_invalid_appends(auth_client, recipe, two_steps):
+    auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "NoPos"})
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "BadPos", "position": "x"}
+    )
+    assert Step.objects.get(recipe=recipe, step_text="NoPos").index_in_sequence == 2
+    assert Step.objects.get(recipe=recipe, step_text="BadPos").index_in_sequence == 3
+
+
+@pytest.mark.django_db
+def test_step_create_position_beyond_end_clamps_to_append(auth_client, recipe, two_steps):
+    """Position counting unsaved sibling drafts clamps to the next free index."""
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Clamped", "position": "9"}
+    )
+    assert Step.objects.get(recipe=recipe, step_text="Clamped").index_in_sequence == 2
+
+
+@pytest.mark.django_db
+def test_step_add_form_sends_position(auth_client, recipe):
+    """Draft form carries the hx-on hook that posts its DOM position on save."""
+    response = auth_client.post(f"/recipes/{recipe.pk}/steps/add/")
+    content = response.content.decode()
+    assert "hx-on::config-request" in content
+    assert "position" in content
+
+
+@pytest.mark.django_db
+def test_step_create_appends_after_one_based_imported_rows(auth_client, recipe):
+    """YAML importer seeds 1-based indexes; a draft saved at the visual end
+    must append after the last row, not slip in front of it."""
+    Step.objects.create(recipe=recipe, step_text="Imported 1", index_in_sequence=1)
+    Step.objects.create(recipe=recipe, step_text="Imported 2", index_in_sequence=2)
+    # Two rows on screen → draft at DOM position 2
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Appended", "position": "2"}
+    )
+    ordered = list(
+        Step.objects.filter(recipe=recipe)
+        .order_by("index_in_sequence")
+        .values_list("step_text", flat=True)
+    )
+    assert ordered == ["Imported 1", "Imported 2", "Appended"]
+
+
+@pytest.mark.django_db
+def test_step_create_inserts_first_among_one_based_imported_rows(auth_client, recipe):
+    Step.objects.create(recipe=recipe, step_text="Imported 1", index_in_sequence=1)
+    Step.objects.create(recipe=recipe, step_text="Imported 2", index_in_sequence=2)
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Newcomer", "position": "0"}
+    )
+    ordered = list(
+        Step.objects.filter(recipe=recipe)
+        .order_by("index_in_sequence")
+        .values_list("step_text", flat=True)
+    )
+    assert ordered == ["Newcomer", "Imported 1", "Imported 2"]
+
+
+@pytest.mark.django_db
+def test_step_create_invalid_creates_nothing_returns_form(auth_client, recipe):
+    response = auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": ""})
+    assert response.status_code == 200
+    assert Step.objects.filter(recipe=recipe).count() == 0
+    assert "<form" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_step_add_textarea_has_placeholder(auth_client, recipe):
+    response = auth_client.post(f"/recipes/{recipe.pk}/steps/add/")
+    content = response.content.decode()
+    assert "placeholder=" in content
+    assert "New step" in content
+
+
+@pytest.mark.django_db
+def test_step_add_returns_edit_partial(auth_client, recipe):
+    response = auth_client.post(f"/recipes/{recipe.pk}/steps/add/")
     content = response.content.decode()
     assert "<form" in content
 
 
 @pytest.mark.django_db
-def test_step_save_get_not_allowed(client, recipe, step):
-    response = client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/save/")
+def test_step_save_get_not_allowed(auth_client, recipe, step):
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/save/")
     assert response.status_code == 405
+
+
+@pytest.mark.django_db
+def test_step_display_renders_allowed_html_tags(auth_client, recipe):
+    step = Step.objects.create(
+        recipe=recipe,
+        step_text="<b>bold</b> and <i>italic</i> and <s>strike</s> and <u>under</u>",
+        index_in_sequence=0,
+    )
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
+    content = response.content.decode()
+    assert "<b>bold</b>" in content
+    assert "<i>italic</i>" in content
+    assert "<s>strike</s>" in content
+    assert "<u>under</u>" in content
+
+
+@pytest.mark.django_db
+def test_step_display_strips_disallowed_html_tags(auth_client, recipe):
+    step = Step.objects.create(
+        recipe=recipe,
+        step_text="<script>evil()</script> normal text",
+        index_in_sequence=0,
+    )
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
+    content = response.content.decode()
+    assert "<script>" not in content
+    assert "evil()" in content
+
+
+@pytest.mark.django_db
+def test_step_display_escapes_text_outside_tags(auth_client, recipe):
+    step = Step.objects.create(
+        recipe=recipe,
+        step_text="<b>bold</b> & normal <unknown>text</unknown>",
+        index_in_sequence=0,
+    )
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
+    content = response.content.decode()
+    assert "<b>bold</b>" in content
+    assert "&amp;" in content
+    assert "<unknown>" not in content
+
+
+@pytest.fixture
+def three_steps(recipe):
+    s0 = Step.objects.create(recipe=recipe, step_text="First", index_in_sequence=0)
+    s1 = Step.objects.create(recipe=recipe, step_text="Second", index_in_sequence=1)
+    s2 = Step.objects.create(recipe=recipe, step_text="Third", index_in_sequence=2)
+    return s0, s1, s2
+
+
+@pytest.mark.django_db
+def test_step_move_up_swaps_indexes(auth_client, recipe, three_steps):
+    s0, s1, _ = three_steps
+    auth_client.post(f"/recipes/{recipe.pk}/steps/{s1.pk}/move-up/")
+    s0.refresh_from_db()
+    s1.refresh_from_db()
+    assert s1.index_in_sequence == 0
+    assert s0.index_in_sequence == 1
+
+
+@pytest.mark.django_db
+def test_step_move_down_swaps_indexes(auth_client, recipe, three_steps):
+    s0, s1, _ = three_steps
+    auth_client.post(f"/recipes/{recipe.pk}/steps/{s0.pk}/move-down/")
+    s0.refresh_from_db()
+    s1.refresh_from_db()
+    assert s0.index_in_sequence == 1
+    assert s1.index_in_sequence == 0
+
+
+@pytest.mark.django_db
+def test_step_move_up_at_first_is_noop(auth_client, recipe, three_steps):
+    s0, _, _ = three_steps
+    response = auth_client.post(f"/recipes/{recipe.pk}/steps/{s0.pk}/move-up/")
+    assert response.status_code == 200
+    s0.refresh_from_db()
+    assert s0.index_in_sequence == 0
+
+
+@pytest.mark.django_db
+def test_step_move_down_at_last_is_noop(auth_client, recipe, three_steps):
+    _, _, s2 = three_steps
+    response = auth_client.post(f"/recipes/{recipe.pk}/steps/{s2.pk}/move-down/")
+    assert response.status_code == 200
+    s2.refresh_from_db()
+    assert s2.index_in_sequence == 2
+
+
+@pytest.mark.django_db
+def test_step_move_returns_steps_list(auth_client, recipe, three_steps):
+    _, s1, _ = three_steps
+    response = auth_client.post(f"/recipes/{recipe.pk}/steps/{s1.pk}/move-up/")
+    content = response.content.decode()
+    assert "First" in content
+    assert "Second" in content
+    assert "Third" in content
+
+
+@pytest.mark.django_db
+def test_step_edit_partial_has_is_editing_class(auth_client, recipe):
+    """Edit template must render is-editing class so CSS can block move buttons."""
+    step = Step.objects.create(recipe=recipe, step_text="Edit me", index_in_sequence=0)
+    response = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/edit/")
+    assert "is-editing" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_step_create_recipe_deleted_concurrently_returns_404(auth_client, recipe):
+    """step_create must abort with 404 if recipe is deleted after get_object_or_404."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+    deleted = []
+
+    def delete_recipe_at_lock(qs, *args, **kwargs):
+        if qs.model is Recipe and not deleted:
+            deleted.append(True)
+            Recipe.objects.filter(pk=recipe.pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", delete_recipe_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/steps/create/",
+            {"step_text": "Simmer for 30 minutes"},
+        )
+
+    assert response.status_code == 404
+    assert not Step.objects.filter(step_text="Simmer for 30 minutes").exists()
+
+
+@pytest.mark.django_db
+def test_step_save_step_deleted_concurrently_returns_404(auth_client, recipe, step):
+    """recipe_step_save must return 404 if step is deleted after get_object_or_404."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+    deleted = []
+
+    def delete_step_at_lock(qs, *args, **kwargs):
+        if qs.model is Step and not deleted:
+            deleted.append(True)
+            Step.objects.filter(pk=step.pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", delete_step_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/steps/{step.pk}/save/",
+            {"step_text": "Updated text"},
+        )
+
+    assert response.status_code == 404
+    assert not Step.objects.filter(pk=step.pk).exists()
+
+
+@pytest.mark.django_db
+def test_step_save_preserves_concurrent_index_change(auth_client, recipe, step):
+    """recipe_step_save must not undo a concurrent reorder by writing stale index_in_sequence."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+    moved = []
+
+    def reorder_at_lock(qs, *args, **kwargs):
+        if qs.model is Step and not moved:
+            moved.append(True)
+            Step.objects.filter(pk=step.pk).update(index_in_sequence=5)
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", reorder_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/steps/{step.pk}/save/",
+            {"step_text": "Updated text"},
+        )
+
+    assert response.status_code == 200
+    step.refresh_from_db()
+    assert step.index_in_sequence == 5  # concurrent reorder preserved
+    assert step.step_text == "Updated text"  # form edit applied

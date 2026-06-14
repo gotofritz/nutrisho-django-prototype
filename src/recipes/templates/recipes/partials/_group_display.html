@@ -1,8 +1,23 @@
 <div
   id="group-{{ group.id }}"
-  class="ingredient-group editable"
-  hx-get="{% url 'recipes:group_edit' recipe.id group.id %}"
-  hx-swap="outerHTML"
+  class="ingredient-group editable-row"
 >
-  <h4 class="group-name">{{ group.group_name|default:"" }}</h4>
+  <h4
+    class="editable group-name"
+    hx-get="{% url 'recipes:group_edit' recipe.id group.id %}"
+    hx-target="closest div.ingredient-group"
+    hx-swap="outerHTML"
+  >{{ group.group_name|default:"—" }}</h4>
+  <span class="move-btns" onclick="event.stopPropagation()">
+    <button
+      hx-post="{% url 'recipes:group_move_up' recipe.id group.id %}"
+      hx-target="#groups-list"
+      hx-swap="innerHTML"
+    >↑</button>
+    <button
+      hx-post="{% url 'recipes:group_move_down' recipe.id group.id %}"
+      hx-target="#groups-list"
+      hx-swap="innerHTML"
+    >↓</button>
+  </span>
 </div>

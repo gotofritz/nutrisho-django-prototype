@@ -1,47 +1,53 @@
 cuisine: .italian.classic
 description: Classic country pasta dish, can be soupy or dry, with or without tomatoes
 directions:
-    step:
-    - Sautè the onions, celery and carrots in olive oil
-    - Add the lentils, stock, tomatoes. Stir and close the pressure cooker
-    - Cook 15 - 20 mins, depending on the lentils, from when it begins to steam.
-    - 'SOUP: to make a soup, uncover the pressure cooker and add pastina and chilies
-        in the same pot, and extra water if needed.'
-    - 'DRY: while the lentils cook, cook the pasta separately.'
-    - 'DRY: in another pot, sautè some garlic and chili in plenty of olive oil'
-    - 'DRY: remove the garlic (as desired) from the oil, drain the lentils and mix
-        them with the pasta in the olive oil'
+  step:
+  - Sautè the onions, celery and carrots in olive oil
+  - Add the lentils, stock, tomatoes. Stir and close the pressure cooker
+  - Cook 15 - 20 mins, depending on the lentils, from when it begins to steam.
+  - 'SOUP: to make a soup, uncover the pressure cooker and add pastina and chilies
+    in the same pot, and extra water if needed.'
+  - 'DRY: while the lentils cook, cook the pasta separately.'
+  - 'DRY: in another pot, sautè some garlic and chili in plenty of olive oil'
+  - 'DRY: remove the garlic (as desired) from the oil, drain the lentils and mix them
+    with the pasta in the olive oil'
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: lentils
-            preparation: european varieties, no red lentils
-            quantity: '37.50'
-        -   measurement: stick
-            name: celery (optional)
-            preparation: diced small
-            quantity: '0.12'
-        -   measurement: null
-            name: carrots (optional)
-            preparation: diced small
-            quantity: '0.12'
-        -   measurement: null
-            name: tomates (optional)
-            preparation: halved and each half quartered
-            quantity: '0.50'
-        -   measurement: g
-            name: pasta
-            preparation: pastina for soup, orecchiette for dry
-            quantity: '45.00'
-        name: Dry or soup
-    -   ingredient:
-        -   measurement: cloves
-            name: garlic
-            preparation: either whole (if you want to take them out) or chopped fine
-            quantity: '0.50'
-        name: Dry only
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: lentils
+      note: null
+      preparation: european varieties, no red lentils
+      quantity: '75.00'
+    - measurement: stick
+      name: celery (optional)
+      note: null
+      preparation: diced small
+      quantity: '0.24'
+    - measurement: null
+      name: carrots (optional)
+      note: null
+      preparation: diced small
+      quantity: '0.24'
+    - measurement: null
+      name: tomates (optional)
+      note: null
+      preparation: halved and each half quartered
+      quantity: '1.00'
+    - measurement: g
+      name: pasta
+      note: null
+      preparation: pastina for soup, orecchiette for dry
+      quantity: '90.00'
+    name: Dry or soup
+  - ingredient:
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: either whole (if you want to take them out) or chopped fine
+      quantity: '1.00'
+    name: Dry only
+  serves: 2
 source: http://www.ledolciricette.it/2013/04/15/pasta-e-lenticchie/10656
 tags:
 - quick

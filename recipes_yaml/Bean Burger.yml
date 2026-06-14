@@ -1,75 +1,87 @@
 cuisine: .vegetarian.western
 description: null
 directions:
-    step:
-    - Boil the potatoes, take out
-    - In the same water boil the broad beans 5 mins, take out and skin
-    - Mash potatoes and half the black beans, then add broad beans and remaining black
-        beans
-    - Sautè onion and pepper until soft
-    - Add garlic and chillies and cook a further 3 mins
-    - Remove from fire, stir in paprika
-    - Dry roast the spices and add to mash
-    - Add sautèd veg to mash, togheter with lime juice and chopped coriander
-    - Form patties and chill 30 mins
-    - Roll in corn meal and fry
+  step:
+  - Boil the potatoes, take out
+  - In the same water boil the broad beans 5 mins, take out and skin
+  - Mash potatoes and half the black beans, then add broad beans and remaining black
+    beans
+  - Sautè onion and pepper until soft
+  - Add garlic and chillies and cook a further 3 mins
+  - Remove from fire, stir in paprika
+  - Dry roast the spices and add to mash
+  - Add sautèd veg to mash, togheter with lime juice and chopped coriander
+  - Form patties and chill 30 mins
+  - Roll in corn meal and fry
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: potatoes
-            preparation: diced
-            quantity: '50.00'
-        -   measurement: g
-            name: broad beans
-            preparation: null
-            quantity: '12.50'
-        -   measurement: g
-            name: black beans
-            preparation: null
-            quantity: '100.00'
-        -   measurement: null
-            name: lime
-            preparation: juiced
-            quantity: '0.12'
-        -   measurement: tbsp
-            name: corn flour
-            preparation: (not starch!)
-            quantity: '0.50'
-        name: Base
-    -   ingredient:
-        -   measurement: null
-            name: onion
-            preparation: fine dice
-            quantity: '0.25'
-        -   measurement: null
-            name: pepper
-            preparation: fine dice
-            quantity: '0.12'
-        -   measurement: cloves
-            name: garlic
-            preparation: chopped
-            quantity: '0.50'
-        -   measurement: null
-            name: chilli
-            preparation: deseeded, chopped
-            quantity: '0.25'
-        -   measurement: tsp
-            name: smoked paprika
-            preparation: null
-            quantity: '0.50'
-        name: Sautéd base
-    -   ingredient:
-        -   measurement: tsp
-            name: cumin seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: coriander seeds
-            preparation: null
-            quantity: '0.25'
-        name: Spices
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: potatoes
+      note: null
+      preparation: diced
+      quantity: '100.00'
+    - measurement: g
+      name: broad beans
+      note: null
+      preparation: null
+      quantity: '25.00'
+    - measurement: g
+      name: black beans
+      note: null
+      preparation: null
+      quantity: '200.00'
+    - measurement: null
+      name: lime
+      note: null
+      preparation: juiced
+      quantity: '0.24'
+    - measurement: tbsp
+      name: corn flour
+      note: null
+      preparation: (not starch!)
+      quantity: '1.00'
+    name: Base
+  - ingredient:
+    - measurement: null
+      name: onion
+      note: null
+      preparation: fine dice
+      quantity: '0.50'
+    - measurement: null
+      name: pepper
+      note: null
+      preparation: fine dice
+      quantity: '0.24'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: null
+      name: chilli
+      note: null
+      preparation: deseeded, chopped
+      quantity: '0.50'
+    - measurement: tsp
+      name: smoked paprika
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Sautéd base
+  - ingredient:
+    - measurement: tsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: coriander seeds
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: Spices
+  serves: 2
 source: http://www.theguardian.com/lifeandstyle/wordofmouth/2013/aug/22/how-to-make-perfect-bean-burgers
 tags: []
 title: Bean Burger

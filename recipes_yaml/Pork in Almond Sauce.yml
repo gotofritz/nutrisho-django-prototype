@@ -1,61 +1,71 @@
 cuisine: .spain.andalusia
 description: Main or tapas. This is an Andalusian version
 directions:
-    step:
-    - Fry almond and bread in olive oil, until golden, 3 m
-    - Remove from oil with slotted spoon, set aside on kitchen paper
-    - Sautè the pork in the same oil a little
-    - Add all meat ingredients, season, and simmer for about 1 hr
-    - Take onion and tomato and 4 tbsp sauce from pot and put in foot processor
-    - Add fried bread, 4 cloves garlic and whizz
-    - Add back to meat, season and cook for another 20 m, adding water if too dry
+  step:
+  - Fry almond and bread in olive oil, until golden, 3 m
+  - Remove from oil with slotted spoon, set aside on kitchen paper
+  - Sautè the pork in the same oil a little
+  - Add all meat ingredients, season, and simmer for about 1 hr
+  - Take onion and tomato and 4 tbsp sauce from pot and put in foot processor
+  - Add fried bread, 4 cloves garlic and whizz
+  - Add back to meat, season and cook for another 20 m, adding water if too dry
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: almonds
-            preparation: not peeled
-            quantity: '12.50'
-        -   measurement: g
-            name: white bread
-            preparation: no crust, roughly diced
-            quantity: '12.50'
-        -   measurement: cloves
-            name: garlic
-            preparation: peeled
-            quantity: '1.00'
-        name: Sauce
-    -   ingredient:
-        -   measurement: kg
-            name: pork shoulder
-            preparation: diced 2cm
-            quantity: '0.25'
-        -   measurement: head
-            name: garlic
-            preparation: cut in half widthways
-            quantity: '0.25'
-        -   measurement: tsp
-            name: sweet paprika
-            preparation: null
-            quantity: '0.25'
-        -   measurement: small
-            name: onions
-            preparation: halved
-            quantity: '0.50'
-        -   measurement: large
-            name: tomato
-            preparation: halved
-            quantity: '0.25'
-        -   measurement: leaves
-            name: bay
-            preparation: null
-            quantity: '0.50'
-        -   measurement: ml
-            name: white wine
-            preparation: null
-            quantity: '100.00'
-        name: Meat
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: almonds
+      note: null
+      preparation: not peeled
+      quantity: '12.50'
+    - measurement: g
+      name: white bread
+      note: null
+      preparation: no crust, roughly diced
+      quantity: '12.50'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: peeled
+      quantity: '1.00'
+    name: Sauce
+  - ingredient:
+    - measurement: kg
+      name: pork shoulder
+      note: null
+      preparation: diced 2cm
+      quantity: '0.25'
+    - measurement: head
+      name: garlic
+      note: null
+      preparation: cut in half widthways
+      quantity: '0.25'
+    - measurement: tsp
+      name: sweet paprika
+      note: null
+      preparation: null
+      quantity: '0.25'
+    - measurement: small
+      name: onions
+      note: null
+      preparation: halved
+      quantity: '0.50'
+    - measurement: large
+      name: tomato
+      note: null
+      preparation: halved
+      quantity: '0.25'
+    - measurement: leaves
+      name: bay
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: ml
+      name: white wine
+      note: null
+      preparation: null
+      quantity: '100.00'
+    name: Meat
+  serves: 1
 source: Moro 2
 tags: []
 title: Pork in Almond Sauce

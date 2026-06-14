@@ -1,54 +1,62 @@
 cuisine: null
 description: null
 directions:
-    step:
-    - Place the sake or plum wine in a small saucepan and simmer gently over medium
-        head until reduced by half. Combine with the lemon juice and zest, vinegar,
-        and olive oil and whisk to combine.
-    - Meanwhile, place the hazelnuts in a dry frying pan over low-medium heat and
-        toast, shaking the pan occasionally for 4-5 minutes or until fragrant and
-        nutty smelling.
+  step:
+  - Place the sake or plum wine in a small saucepan and simmer gently over medium
+    head until reduced by half. Combine with the lemon juice and zest, vinegar, and
+    olive oil and whisk to combine.
+  - Meanwhile, place the hazelnuts in a dry frying pan over low-medium heat and toast,
+    shaking the pan occasionally for 4-5 minutes or until fragrant and nutty smelling.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: ml
-            name: sweet sake
-            preparation: or plum wine
-            quantity: '62.50'
-        -   measurement: null
-            name: nashi pear
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: pomegranate
-            preparation: kernels
-            quantity: '0.25'
-        -   measurement: null
-            name: lemon
-            preparation: zested
-            quantity: '0.25'
-        -   measurement: Tbsp
-            name: vinegar
-            preparation: rice
-            quantity: '0.50'
-        -   measurement: Tbsp
-            name: oil
-            preparation: olive
-            quantity: '1.50'
-        -   measurement: handful
-            name: lamb's lettuce
-            preparation: or baby spinach
-            quantity: '0.25'
-        -   measurement: null
-            name: chicory
-            preparation: null
-            quantity: '0.25'
-        -   measurement: handful
-            name: hazelnuts
-            preparation: null
-            quantity: '0.25'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: ml
+      name: sweet sake
+      note: null
+      preparation: or plum wine
+      quantity: '125.00'
+    - measurement: null
+      name: nashi pear
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: null
+      name: pomegranate
+      note: null
+      preparation: kernels
+      quantity: '0.50'
+    - measurement: null
+      name: lemon
+      note: null
+      preparation: zested
+      quantity: '0.50'
+    - measurement: Tbsp
+      name: vinegar
+      note: null
+      preparation: rice
+      quantity: '1.00'
+    - measurement: Tbsp
+      name: oil
+      note: null
+      preparation: olive
+      quantity: '3.00'
+    - measurement: handful
+      name: lamb's lettuce
+      note: null
+      preparation: or baby spinach
+      quantity: '0.50'
+    - measurement: null
+      name: chicory
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: handful
+      name: hazelnuts
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: null
+  serves: 2
 source: ''
 tags: []
 title: Salad of Nashi Pear, Pomegranate, Chicory and Hazelnuts

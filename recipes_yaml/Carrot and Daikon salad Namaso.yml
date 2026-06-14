@@ -1,57 +1,66 @@
 cuisine: .japanese
 description: Traditional new year salad (red and white symbolize luck)
 directions:
-    step:
-    - Rub the vegetables with salt, and let drain for a short while
-    - Squeeze all the water out firmly, and put vegetables in a bowl
-    - If you are using an optional fruit, add it to the squeezed vegetables
-    - Add the vinegar, lemon juice, and sugar, and mix.
-    - Add the julienned lemon peel
-    - Let it rest in the fridge overnight
-    - Keeps for at least a week
+  step:
+  - Rub the vegetables with salt, and let drain for a short while
+  - Squeeze all the water out firmly, and put vegetables in a bowl
+  - If you are using an optional fruit, add it to the squeezed vegetables
+  - Add the vinegar, lemon juice, and sugar, and mix.
+  - Add the julienned lemon peel
+  - Let it rest in the fridge overnight
+  - Keeps for at least a week
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: null
-            name: carrot, large
-            preparation: julienned
-            quantity: '0.25'
-        -   measurement: chunk
-            name: daikon
-            preparation: julienned; 3 times the amount of carrots
-            quantity: '0.25'
-        -   measurement: small
-            name: persimmon
-            preparation: julienned (optional)
-            quantity: '0.25'
-        -   measurement: null
-            name: dates
-            preparation: chopped finely (optional)
-            quantity: '1.00'
-        -   measurement: tbsp
-            name: salt
-            preparation: null
-            quantity: '0.25'
-        name: Salad
-    -   ingredient:
-        -   measurement: tbsp
-            name: sugar
-            preparation: (if using optional fruit use less sugar)
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: rice vinegar
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: lemon
-            preparation: juiced
-            quantity: '0.50'
-        -   measurement: null
-            name: lemon peel
-            preparation: julienned
-            quantity: '0.06'
-        name: Dressing
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: null
+      name: carrot, large
+      note: null
+      preparation: julienned
+      quantity: '1.00'
+    - measurement: chunk
+      name: daikon
+      note: null
+      preparation: julienned; 3 times the amount of carrots
+      quantity: '1.00'
+    - measurement: small
+      name: persimmon
+      note: null
+      preparation: julienned (optional)
+      quantity: '1.00'
+    - measurement: null
+      name: dates
+      note: null
+      preparation: chopped finely (optional)
+      quantity: '4.00'
+    - measurement: tbsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '1.00'
+    name: Salad
+  - ingredient:
+    - measurement: tbsp
+      name: sugar
+      note: null
+      preparation: (if using optional fruit use less sugar)
+      quantity: '1.00'
+    - measurement: tbsp
+      name: rice vinegar
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: tbsp
+      name: lemon
+      note: null
+      preparation: juiced
+      quantity: '2.00'
+    - measurement: null
+      name: lemon peel
+      note: null
+      preparation: julienned
+      quantity: '0.24'
+    name: Dressing
+  serves: 4
 source: http://justbento.com/handbook/johbisai/two-color-namasu-make-ahead-daikon-radish-salad
 tags: []
 title: Carrot and Daikon salad (Namaso)

@@ -1,51 +1,58 @@
 cuisine: .iranian
 description: Eat with fresh bread spread with salted butter or feta cheese.
 directions:
-    step:
-    - Bring to boil carrots in water, then reduce and cook uncovered 35 m, until mixture
-        is almost completely dry and sticky.
-    - Bring to boil sugar in water, whisking a few times to encourage the sugar to
-        dissolve then crumble saffron in, and pour the mixture over the carrots.
-    - Simmer on low hear for further 40 minutes until fat bubbles of air form on the
-        surface as it cooks. Add rosewater for last 10 minutes. Remove the carrots
-        from the heat and allow to cool
-    - Dry roast cardamom pods 3-4 minutes, crack them open and crush the black seeds
-        to a fine powder, discarding the green husks. Stir into the jam to cool completely.
-    - When cool, place the jam in sterilised jars or store in bowls tightly covered
-        in cling film in the fridge.
+  step:
+  - Bring to boil carrots in water, then reduce and cook uncovered 35 m, until mixture
+    is almost completely dry and sticky.
+  - Bring to boil sugar in water, whisking a few times to encourage the sugar to dissolve
+    then crumble saffron in, and pour the mixture over the carrots.
+  - Simmer on low hear for further 40 minutes until fat bubbles of air form on the
+    surface as it cooks. Add rosewater for last 10 minutes. Remove the carrots from
+    the heat and allow to cool
+  - Dry roast cardamom pods 3-4 minutes, crack them open and crush the black seeds
+    to a fine powder, discarding the green husks. Stir into the jam to cool completely.
+  - When cool, place the jam in sterilised jars or store in bowls tightly covered
+    in cling film in the fridge.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: carrots
-            preparation: sweet carrots
-            quantity: '150.00'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '81.25'
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '68.75'
-        -   measurement: ml
-            name: water
-            preparation: null
-            quantity: '62.50'
-        -   measurement: pinch
-            name: saffron
-            preparation: null
-            quantity: '0.25'
-        -   measurement: ml
-            name: rose water
-            preparation: more or less
-            quantity: '15.00'
-        -   measurement: null
-            name: cardamom pods
-            preparation: optional
-            quantity: '0.25'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: carrots
+      note: null
+      preparation: sweet carrots
+      quantity: '300.00'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '162.50'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '137.50'
+    - measurement: ml
+      name: water
+      note: null
+      preparation: null
+      quantity: '125.00'
+    - measurement: pinch
+      name: saffron
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: ml
+      name: rose water
+      note: null
+      preparation: more or less
+      quantity: '30.00'
+    - measurement: null
+      name: cardamom pods
+      note: null
+      preparation: optional
+      quantity: '0.50'
+    name: null
+  serves: 2
 source: ''
 tags:
 - dessert

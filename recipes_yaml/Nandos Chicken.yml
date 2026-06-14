@@ -1,0 +1,85 @@
+cuisine: null
+description: It has, in fact, absolutely zero connections with Nando's. Cooking time
+  depend on size of pieces
+directions:
+  step:
+  - Put all the marinade ingredients in a food processor and whiz to a paste
+  - Put the chicken in a ziplock bag, and pour the marinade over it. Close and massage
+    the bag to spread the marinade evenly
+  - Rest between 2 and 24 hours in the fridge
+  - '<u>AIRFRYER</u>: Run the preheat cycle, then spray the basket with oil, place
+    the chicken pieces in the basket, and cook on the chicken cycle'
+  - '<u>OVEN</u>: Preheat to 190°, then cook the thighs for 20-25 mins. Turn the pieces
+    over, and give them another 10 mins'
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: chicken thighs, with skin
+      note: null
+      preparation: null
+      quantity: '600.00'
+    name: Meat
+  - ingredient:
+    - measurement: ml
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '30.00'
+    - measurement: g
+      name: lemon juice
+      note: null
+      preparation: null
+      quantity: '15.00'
+    - measurement: g
+      name: soya sauce
+      note: null
+      preparation: null
+      quantity: '30.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '26.00'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: peeled
+      quantity: '1.00'
+    - measurement: small
+      name: onion
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: paprika
+      note: null
+      preparation: null
+      quantity: '2.50'
+    - measurement: g
+      name: mustard powder
+      note: optional
+      preparation: null
+      quantity: '2.50'
+    - measurement: pinch
+      name: chilli powder
+      note: optional
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: ground pepper
+      note: null
+      preparation: null
+      quantity: '2.50'
+    - measurement: g
+      name: salt
+      note: null
+      preparation: null
+      quantity: '6.00'
+    name: Marinade
+  - ingredient: []
+    name: ''
+  serves: 2
+source: ''
+tags: []
+title: Nando's Chicken

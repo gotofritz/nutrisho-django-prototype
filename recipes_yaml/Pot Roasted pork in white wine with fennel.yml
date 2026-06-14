@@ -1,67 +1,77 @@
 cuisine: null
 description: null
 directions:
-    step:
-    - preheat oveh 200°C
-    - tie up pork loin with 2 or 3 pieces of string, any way, then season and roll
-        in the fennel seeds
-    - fry the meat on stove in butter + olive oil until golden, couple of mins
-    - add the garlic, herbs, fennel, wine, cover cook loosely with some wet greaseproof
-        paper and cook in oven until a meat thermometer in meet shows 66°C, about
-        1hr
-    - remove meat and rest on a plate, then away from heat stir in butter and make
-        gravy, scraping bits off the bottom
+  step:
+  - preheat oveh 200°C
+  - tie up pork loin with 2 or 3 pieces of string, any way, then season and roll in
+    the fennel seeds
+  - fry the meat on stove in butter + olive oil until golden, couple of mins
+  - add the garlic, herbs, fennel, wine, cover cook loosely with some wet greaseproof
+    paper and cook in oven until a meat thermometer in meet shows 66°C, about 1hr
+  - remove meat and rest on a plate, then away from heat stir in butter and make gravy,
+    scraping bits off the bottom
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: kg
-            name: pork loin
-            preparation: off the bone
-            quantity: '0.38'
-        -   measurement: to taste
-            name: salt
-            preparation: null
-            quantity: null
-        -   measurement: to taste
-            name: pepper
-            preparation: null
-            quantity: null
-        -   measurement: Tbsp
-            name: fennel seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '2.50'
-        -   measurement: Tbsp
-            name: olive oil
-            preparation: null
-            quantity: '0.25'
-        name: For frying meat
-    -   ingredient:
-        -   measurement: null
-            name: garlic cloves
-            preparation: skin on
-            quantity: '2.00'
-        -   measurement: handful
-            name: rosemary
-            preparation: leaves picked
-            quantity: '0.25'
-        -   measurement: null
-            name: bay leaves
-            preparation: null
-            quantity: '1.00'
-        -   measurement: null
-            name: fennel
-            preparation: sliced
-            quantity: '0.25'
-        -   measurement: ml
-            name: wine
-            preparation: white
-            quantity: '187.50'
-        name: For baking meat
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: kg
+      name: pork loin
+      note: null
+      preparation: off the bone
+      quantity: '0.75'
+    - measurement: to taste
+      name: salt
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: to taste
+      name: pepper
+      note: null
+      preparation: null
+      quantity: null
+    - measurement: Tbsp
+      name: fennel seeds
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '5.00'
+    - measurement: Tbsp
+      name: olive oil
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: For frying meat
+  - ingredient:
+    - measurement: null
+      name: garlic cloves
+      note: null
+      preparation: skin on
+      quantity: '4.00'
+    - measurement: handful
+      name: rosemary
+      note: null
+      preparation: leaves picked
+      quantity: '0.50'
+    - measurement: null
+      name: bay leaves
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: null
+      name: fennel
+      note: null
+      preparation: sliced
+      quantity: '0.50'
+    - measurement: ml
+      name: wine
+      note: null
+      preparation: white
+      quantity: '375.00'
+    name: For baking meat
+  serves: 2
 source: ''
 tags: []
 title: Pot Roasted pork in white wine with fennel

@@ -1,68 +1,79 @@
 cuisine: .indian.uttar pradesh
 description: A light lunch normally served with chapatis and a kachambar. For a more
-    substantial one, serve with light soup and wafer
+  substantial one, serve with light soup and wafer
 directions:
-    step:
-    - Sauté cumin seeds and ginger in ghee, then add curry leaves
-    - After a few seconds add the cauliflower florets, turmeric, cayenne, and fresh
-        herbs.
-    - Stir fry on high for a few minutes.
-    - Add fresh peas and liquid, bring to a simmer then cover and lower heat
-    - Cook 15 to 20 mins until tender
-    - Turn off fire and mix in salt, yogurt, and fresh herbs
+  step:
+  - Sauté cumin seeds and ginger in ghee, then add curry leaves
+  - After a few seconds add the cauliflower florets, turmeric, cayenne, and fresh
+    herbs.
+  - Stir fry on high for a few minutes.
+  - Add fresh peas and liquid, bring to a simmer then cover and lower heat
+  - Cook 15 to 20 mins until tender
+  - Turn off fire and mix in salt, yogurt, and fresh herbs
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: tsp
-            name: ginger
-            preparation: scraped
-            quantity: '0.12'
-        -   measurement: tsp
-            name: cumin seeds
-            preparation: null
-            quantity: '0.38'
-        -   measurement: tbsp
-            name: ghee
-            preparation: or oil and butter mixture
-            quantity: '1.00'
-        name: Spice base
-    -   ingredient:
-        -   measurement: kg
-            name: cauliflower
-            preparation: (a large one)
-            quantity: '0.38'
-        -   measurement: tsp
-            name: turmeric
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tsp
-            name: cayenne
-            preparation: null
-            quantity: '0.50'
-        -   measurement: tbsp
-            name: coriander leaves
-            preparation: chopped
-            quantity: '0.50'
-        -   measurement: g
-            name: peas
-            preparation: frozen or fresh
-            quantity: '62.50'
-        -   measurement: ml
-            name: stock
-            preparation: or water
-            quantity: '20.00'
-        name: Main
-    -   ingredient:
-        -   measurement: ml
-            name: yogurt
-            preparation: null
-            quantity: '20.00'
-        -   measurement: tbsp
-            name: coriander leaves
-            preparation: chopped
-            quantity: '0.25'
-        name: Garnish
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: tsp
+      name: ginger
+      note: null
+      preparation: scraped
+      quantity: '0.24'
+    - measurement: tsp
+      name: cumin seeds
+      note: null
+      preparation: null
+      quantity: '0.76'
+    - measurement: tbsp
+      name: ghee
+      note: null
+      preparation: or oil and butter mixture
+      quantity: '2.00'
+    name: Spice base
+  - ingredient:
+    - measurement: kg
+      name: cauliflower
+      note: null
+      preparation: (a large one)
+      quantity: '0.76'
+    - measurement: tsp
+      name: turmeric
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tsp
+      name: cayenne
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tbsp
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '1.00'
+    - measurement: g
+      name: peas
+      note: null
+      preparation: frozen or fresh
+      quantity: '125.00'
+    - measurement: ml
+      name: stock
+      note: null
+      preparation: or water
+      quantity: '40.00'
+    name: Main
+  - ingredient:
+    - measurement: ml
+      name: yogurt
+      note: null
+      preparation: null
+      quantity: '40.00'
+    - measurement: tbsp
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '0.50'
+    name: Garnish
+  serves: 2
 source: Hare Krishna
 tags:
 - sabji

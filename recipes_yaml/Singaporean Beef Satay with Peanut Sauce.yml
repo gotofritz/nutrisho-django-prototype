@@ -1,0 +1,114 @@
+cuisine: null
+description: null
+directions:
+  step:
+  - Put all the marinade ingredients in the small spice mill and blend to a paste
+  - Cut the meat into small, roughly postage stamp sized pieces, and put in a ziplock
+    back. Pour the marinade over it and close the back. Massage the bag so that it
+    spreads evenly
+  - Rest 2 to 24 hours in the fridge
+  - When ready to cook, put all the sauce ingredients except the lime juice in a pot
+    and boil down, on medium, stirring from time to time. 10-15m
+  - Swewer the meat pieces, threading enough meat pieces to fill a 20 cm skewer
+  - Preheat the airfryer to 205°
+  - Cook the skewers in batches at 205° for 6-7 mins
+  - Mix the lime juice with the peanut sauce and serve on the side
+ingredients:
+  group:
+  - ingredient:
+    - measurement: g
+      name: Veal or Beef
+      note: null
+      preparation: null
+      quantity: '500.00'
+    name: Meat
+  - ingredient:
+    - measurement: g
+      name: vegetable oil
+      note: null
+      preparation: null
+      quantity: '23.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '30.00'
+    - measurement: g
+      name: fish sauce
+      note: null
+      preparation: null
+      quantity: '13.00'
+    - measurement: clove
+      name: garlic
+      note: null
+      preparation: peeled
+      quantity: '1.00'
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '1.00'
+    - measurement: g
+      name: ground cumin
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: ground coriander
+      note: null
+      preparation: null
+      quantity: '2.00'
+    - measurement: g
+      name: soya sauce
+      note: null
+      preparation: null
+      quantity: '15.00'
+    - measurement: stalk
+      name: lemongrass
+      note: optional
+      preparation: chopped
+      quantity: '1.00'
+    name: Marinade
+  - ingredient: []
+    name: ''
+  - ingredient:
+    - measurement: g
+      name: peanut sauce
+      note: null
+      preparation: null
+      quantity: '30.00'
+    - measurement: g
+      name: soya sauce
+      note: null
+      preparation: null
+      quantity: '10.00'
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '15.00'
+    - measurement: g
+      name: ground coriander
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: ml
+      name: coconut milk
+      note: or water
+      preparation: null
+      quantity: '150.00'
+    - measurement: g
+      name: chilli powder
+      note: to taste
+      preparation: null
+      quantity: '1.00'
+    - measurement: g
+      name: lime juice
+      note: null
+      preparation: null
+      quantity: '20.00'
+    name: Peanut Sauce
+  serves: 2
+source: ''
+tags: []
+title: Singaporean Beef Satay with Peanut Sauce

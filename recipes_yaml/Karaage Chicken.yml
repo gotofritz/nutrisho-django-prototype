@@ -1,55 +1,63 @@
 cuisine: .asia.japan
-description: Korean staple originally from Japan who got the idea from China, but only became a staple when they could import large quantity of chicken from the US
+description: Korean staple originally from Japan who got the idea from China, but
+  only became a staple when they could import large quantity of chicken from the US
 directions:
   step:
-    - Cut chicken in pieces roughly the size of a ping pong ball, keeping skin on if any
-    - Whiz all the Marinade ingredients in the small food processor
-    - Remove blade, add the chicken pieces and coat meat with marinade. Tip into bowl
-    - Let it rest 2hr to overnight in the fridge. Remove from fridge 30 m before using
-    - Heat oil to 160° - 170°C
-    - Drain chicken from marinade, but keep the liquid
-    - Add corn starch to marinate and work into a paste. Roll chicken pieces in it
-    - When oil is hot enough deep fry in batches, roughly 2m per batch
-    - Take out, let it rest a few minutes, then fry again for 2m
-
+  - Cut chicken in pieces roughly the size of a ping pong ball, keeping skin on if
+    any
+  - Whiz all the Marinade ingredients in the small food processor
+  - Remove blade, add the chicken pieces and coat meat with marinade. Tip into bowl
+  - Let it rest 2hr to overnight in the fridge. Remove from fridge 30 m before using
+  - Heat oil to 160° - 170°C
+  - Drain chicken from marinade, but keep the liquid
+  - Add corn starch to marinate and work into a paste. Roll chicken pieces in it
+  - When oil is hot enough deep fry in batches, roughly 2m per batch
+  - Take out, let it rest a few minutes, then fry again for 2m
 ingredients:
-  serves: "2"
   group:
-    - ingredient:
-        - measurement: g
-          name: chicken thigh, with skin
-          preparation: deboned
-          quantity: "300"
-      name: Meat
-    - ingredient:
-        - measurement: tbsp
-          name: sake
-          preparation: null
-          quantity: "1"
-        - measurement: cm
-          name: ginger
-          preparation: peeled
-          quantity: "1"
-        - measurement: tbsp
-          name: lemon juice
-          preparation: null
-          quantity: "1"
-        - measurement: tsp
-          name: gochujang
-          preparation: (!KIDS)
-          quantity: "0.5"
-        - measurement: tbsp
-          name: soya sauce
-          preparation: null
-          quantity: "2"
-      name: Marinade
-    - ingredient:
-        - measurement: tbsp
-          name: corn starch
-          preparation: null
-          quantity: "4"
-      name: Dry Batter
+  - ingredient:
+    - measurement: g
+      name: chicken thigh, with skin
+      note: null
+      preparation: deboned
+      quantity: '300.00'
+    name: Meat
+  - ingredient:
+    - measurement: tbsp
+      name: sake
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: cm
+      name: ginger
+      note: null
+      preparation: peeled
+      quantity: '1.00'
+    - measurement: tbsp
+      name: lemon juice
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: tsp
+      name: gochujang
+      note: null
+      preparation: (!KIDS)
+      quantity: '0.50'
+    - measurement: tbsp
+      name: soya sauce
+      note: null
+      preparation: null
+      quantity: '2.00'
+    name: Marinade
+  - ingredient:
+    - measurement: tbsp
+      name: corn starch
+      note: null
+      preparation: null
+      quantity: '4.00'
+    name: Dry Batter
+  serves: 2
 source: Cooking with dog
 tags:
-  - main
+- main
 title: Karaage Chicken

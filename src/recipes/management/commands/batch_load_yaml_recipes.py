@@ -5,6 +5,7 @@ from pathlib import Path
 
 import yaml
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.management.base import BaseCommand, CommandError
 from django.core.validators import DecimalValidator
@@ -18,6 +19,60 @@ from recipes.models.recipe import Recipe
 from recipes.models.step import Step
 from recipes.models.tag import Tag
 from recipes.utils.filename import safe_filename, sanitize_stored_filename
+
+_UNICODE_FRACTIONS = {
+    "½": "1/2",
+    "⅓": "1/3",
+    "⅔": "2/3",
+    "¼": "1/4",
+    "¾": "3/4",
+    "⅕": "1/5",
+    "⅖": "2/5",
+    "⅗": "3/5",
+    "⅘": "4/5",
+    "⅙": "1/6",
+    "⅚": "5/6",
+    "⅛": "1/8",
+    "⅜": "3/8",
+    "⅝": "5/8",
+    "⅞": "7/8",
+}
+
+_MIXED_UNICODE_RE = re.compile(
+    r"(\d*)\s*(" + "|".join(re.escape(k) for k in _UNICODE_FRACTIONS) + ")"
+)
+
+
+def _normalize_quantity(raw: str) -> str:
+    """Convert Unicode vulgar fractions and mixed numbers to plain decimal strings.
+
+    E.g. '1½' → '1.5', '½' → '0.5', '¾' → '0.75'.
+    """
+
+    def _replace_unicode_frac(m: re.Match) -> str:
+        whole = m.group(1) or "0"
+        num_str, den_str = _UNICODE_FRACTIONS[m.group(2)].split("/")
+        return str(Decimal(whole) + Decimal(num_str) / Decimal(den_str))
+
+    s = _MIXED_UNICODE_RE.sub(_replace_unicode_frac, str(raw).strip())
+
+    # "1 1/2" style mixed number
+    mixed = re.fullmatch(r"(\d+)\s+(\d+)/(\d+)", s)
+    if mixed:
+        whole, num, den = int(mixed.group(1)), int(mixed.group(2)), int(mixed.group(3))
+        if den == 0:
+            raise InvalidOperation(f"zero denominator in fraction: {s!r}")
+        return str(Decimal(whole) + Decimal(num) / Decimal(den))
+
+    # "3/4" plain fraction
+    frac = re.fullmatch(r"(\d+)/(\d+)", s)
+    if frac:
+        den = int(frac.group(2))
+        if den == 0:
+            raise InvalidOperation(f"zero denominator in fraction: {s!r}")
+        return str(Decimal(int(frac.group(1))) / Decimal(den))
+
+    return s
 
 
 class Command(BaseCommand):
@@ -54,7 +109,7 @@ class Command(BaseCommand):
                     continue
                 name = ingredient_raw.get("name", "?")
                 try:
-                    d = Decimal(str(qty))
+                    d = Decimal(_normalize_quantity(qty))
                 except InvalidOperation as exc:
                     raise CommandError(
                         f"{source_path}: invalid quantity {qty!r} for ingredient '{name}'"
@@ -70,6 +125,11 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("paths", nargs="+", type=str, help="Path to recipe")
+        parser.add_argument(
+            "--user",
+            required=True,
+            help="Username of the recipe owner (must already exist in the database)",
+        )
         parser.add_argument(
             "--dry-run",
             action="store_true",
@@ -103,6 +163,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         dry_run = options["dry_run"]
+        username = options["user"]
+        try:
+            owner: User = User.objects.get(username=username)
+        except ObjectDoesNotExist:
+            raise CommandError(f"User '{username}' not found in the database.")
 
         # Collect files
         files_to_load: list[Path] = []
@@ -150,14 +215,16 @@ class Command(BaseCommand):
 
         # Phase 2: check DB conflicts for the whole batch at once
         existing = set(
-            Recipe.objects.filter(recipe_name__in=seen_names).values_list("recipe_name", flat=True)
+            Recipe.objects.filter(owner=owner, recipe_name__in=seen_names).values_list(
+                "recipe_name", flat=True
+            )
         )
         if existing:
             conflicts = ", ".join(f"'{n}'" for n in sorted(existing))
-            raise CommandError(f"Recipes already exist in DB: {conflicts}")
+            raise CommandError(f"Recipes already exist in DB for this owner: {conflicts}")
 
         existing_filenames: set[str] = set()
-        for row in Recipe.objects.values("pk", "yaml_filename", "recipe_name"):
+        for row in Recipe.objects.filter(owner=owner).values("pk", "yaml_filename", "recipe_name"):
             stored = row["yaml_filename"] or ""
             pk_fallback = f"recipe-{row['pk']}"
             if stored:
@@ -179,22 +246,17 @@ class Command(BaseCommand):
             return
 
         # Phase 3: write — single transaction so partial failures roll back the whole batch
-        _user: User | None = None
         with transaction.atomic():
             for source_path, recipe_dict, serves, recipe_name, yaml_filename in payloads:
-                if _user is None:
-                    _user = User.objects.get(username="gotofritz")
-                user: User = _user
-
                 if recipe_dict["cuisine"]:
                     cuisine, _ = Cuisine.objects.get_or_create(cuisine=recipe_dict["cuisine"])
                 else:
                     cuisine = None
 
                 recipe = Recipe.objects.create(
-                    owner=user,
+                    owner=owner,
                     recipe_name=recipe_name,
-                    short_description=Command.clean(recipe_dict["description"]),
+                    short_description=Command.clean(recipe_dict["description"]) or "",
                     source_instance=recipe_dict["source"] or "",
                     cuisine=cuisine,
                     servings=serves,
@@ -217,7 +279,7 @@ class Command(BaseCommand):
                     group = IngredientGroup.objects.create(
                         recipe=recipe,
                         index_in_sequence=i + 1,
-                        group_name=Command.clean(group_dict.get("name")),
+                        group_name=Command.clean(group_dict.get("name")) or "",
                     )
                     if not isinstance(group_dict["ingredient"], list):
                         group_dict["ingredient"] = [group_dict["ingredient"]]
@@ -231,9 +293,10 @@ class Command(BaseCommand):
                             ingredient=ingredient,
                             ingredient_group=group,
                             index_in_sequence=j + 1,
-                            unit=ingredient_raw.get("measurement"),
-                            preparation=ingredient_raw.get("preparation"),
+                            unit=ingredient_raw.get("measurement") or "",
+                            preparation=ingredient_raw.get("preparation") or "",
                             quantity=ingredient_raw.get("quantity"),
+                            note=ingredient_raw.get("note") or "",
                         )
 
                 tags_raw = recipe_dict["tags"]

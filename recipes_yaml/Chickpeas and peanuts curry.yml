@@ -1,78 +1,91 @@
 cuisine: .fusion.asia
 description: The chickpeas are from souther india, the peanuts in soya from Malaysia
 directions:
-    step:
-    - Boil the chickpeas for an hour
-    - Boil the peanuts and other ingredients for three hours, then drain
-    - Sauté the mustard and coriander seeds
-    - Add the chickpeas, peanuts, and remaining spices. Cook for 5 mins
-    - Remove from fire and add grated coconut, lemon juice, coriander leaves, and
-        season.
+  step:
+  - Boil the chickpeas for an hour
+  - Boil the peanuts and other ingredients for three hours, then drain
+  - Sauté the mustard and coriander seeds
+  - Add the chickpeas, peanuts, and remaining spices. Cook for 5 mins
+  - Remove from fire and add grated coconut, lemon juice, coriander leaves, and season.
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: chickpeas
-            preparation: dried
-            quantity: '37.50'
-        -   measurement: g
-            name: coconut
-            preparation: grated (fresh if you can)
-            quantity: '7.50'
-        -   measurement: tbsp
-            name: lemon juicew
-            preparation: null
-            quantity: '0.25'
-        -   measurement: null
-            name: chilli
-            preparation: chopped
-            quantity: '0.25'
-        -   measurement: tbsp
-            name: coriander leaves
-            preparation: chopped
-            quantity: '0.75'
-        name: Chickpeas
-    -   ingredient:
-        -   measurement: g
-            name: peanuts
-            preparation: with skins
-            quantity: '37.50'
-        -   measurement: tsp
-            name: soy sauce
-            preparation: null
-            quantity: '0.38'
-        -   measurement: tsp
-            name: sugar
-            preparation: null
-            quantity: '0.38'
-        -   measurement: tsp
-            name: salt
-            preparation: null
-            quantity: '0.25'
-        name: Peanuts
-    -   ingredient:
-        -   measurement: tsp
-            name: coriander seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: tsp
-            name: mustard seeds
-            preparation: null
-            quantity: '0.25'
-        -   measurement: leaves
-            name: curry
-            preparation: null
-            quantity: '2.50'
-        -   measurement: tsp
-            name: assafoetida
-            preparation: null
-            quantity: '0.12'
-        -   measurement: tsp
-            name: garam masala
-            preparation: null
-            quantity: '0.12'
-        name: Spices
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: chickpeas
+      note: null
+      preparation: dried
+      quantity: '75.00'
+    - measurement: g
+      name: coconut
+      note: null
+      preparation: grated (fresh if you can)
+      quantity: '15.00'
+    - measurement: tbsp
+      name: lemon juicew
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: null
+      name: chilli
+      note: null
+      preparation: chopped
+      quantity: '0.50'
+    - measurement: tbsp
+      name: coriander leaves
+      note: null
+      preparation: chopped
+      quantity: '1.50'
+    name: Chickpeas
+  - ingredient:
+    - measurement: g
+      name: peanuts
+      note: null
+      preparation: with skins
+      quantity: '75.00'
+    - measurement: tsp
+      name: soy sauce
+      note: null
+      preparation: null
+      quantity: '0.76'
+    - measurement: tsp
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '0.76'
+    - measurement: tsp
+      name: salt
+      note: null
+      preparation: null
+      quantity: '0.50'
+    name: Peanuts
+  - ingredient:
+    - measurement: tsp
+      name: coriander seeds
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: tsp
+      name: mustard seeds
+      note: null
+      preparation: null
+      quantity: '0.50'
+    - measurement: leaves
+      name: curry
+      note: null
+      preparation: null
+      quantity: '5.00'
+    - measurement: tsp
+      name: assafoetida
+      note: null
+      preparation: null
+      quantity: '0.24'
+    - measurement: tsp
+      name: garam masala
+      note: null
+      preparation: null
+      quantity: '0.24'
+    name: Spices
+  serves: 2
 source: Ottolenghi
 tags: []
 title: Chickpeas and peanuts curry

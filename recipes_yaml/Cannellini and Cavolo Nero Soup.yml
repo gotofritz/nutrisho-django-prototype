@@ -1,43 +1,49 @@
 cuisine: .italian
 description: null
 directions:
-    step:
-    - Soak the beans overnight, and cook 30 mins
-    - Sauté garlic and chili, then add the cooked beans
-    - Add the cavolo nero leaves
-    - Slowly add in the stock, cook on low for 45 mins
-    - Toast two slices of bread, rub garlic on them, and place them at the bottom
-        of the bowls
-    - Pour the soup over the bread
+  step:
+  - Soak the beans overnight, and cook 30 mins
+  - Sauté garlic and chili, then add the cooked beans
+  - Add the cavolo nero leaves
+  - Slowly add in the stock, cook on low for 45 mins
+  - Toast two slices of bread, rub garlic on them, and place them at the bottom of
+    the bowls
+  - Pour the soup over the bread
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: cannellini, dried
-            preparation: null
-            quantity: '50.00'
-        -   measurement: null
-            name: cavolo nero
-            preparation: null
-            quantity: '0.25'
-        -   measurement: cloves
-            name: garlic
-            preparation: null
-            quantity: '0.75'
-        -   measurement: null
-            name: chilies, fresh
-            preparation: null
-            quantity: '0.75'
-        -   measurement: L
-            name: stock, veg
-            preparation: null
-            quantity: '0.25'
-        -   measurement: '4'
-            name: slices
-            preparation: bread
-            quantity: null
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: cannellini, dried
+      note: null
+      preparation: null
+      quantity: '200.00'
+    - measurement: null
+      name: cavolo nero
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: cloves
+      name: garlic
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: null
+      name: chilies, fresh
+      note: null
+      preparation: null
+      quantity: '3.00'
+    - measurement: L
+      name: stock, veg
+      note: null
+      preparation: null
+      quantity: '1.00'
+    - measurement: '4'
+      name: slices
+      note: null
+      preparation: bread
+      quantity: null
+    name: null
+  serves: 4
 source: http://www.piciecastagne.it/?p=246
 tags: []
 title: Cannellini and Cavolo Nero Soup

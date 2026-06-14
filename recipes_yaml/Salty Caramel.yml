@@ -1,31 +1,35 @@
 cuisine: .european
 description: null
 directions:
-    step:
-    - Caramelize the sugar in a heavy pan without stirring until dark
-    - Add the butter and salt
-    - Add the cream slowly
+  step:
+  - Caramelize the sugar in a heavy pan without stirring until dark
+  - Add the butter and salt
+  - Add the cream slowly
 ingredients:
-    group:
-    -   ingredient:
-        -   measurement: g
-            name: sugar
-            preparation: null
-            quantity: '25.00'
-        -   measurement: cl
-            name: double cream
-            preparation: null
-            quantity: '2.50'
-        -   measurement: g
-            name: butter
-            preparation: null
-            quantity: '2.50'
-        -   measurement: pinches
-            name: salt
-            preparation: null
-            quantity: '0.50'
-        name: null
-    serves: 1
+  group:
+  - ingredient:
+    - measurement: g
+      name: sugar
+      note: null
+      preparation: null
+      quantity: '100.00'
+    - measurement: cl
+      name: double cream
+      note: null
+      preparation: null
+      quantity: '10.00'
+    - measurement: g
+      name: butter
+      note: null
+      preparation: null
+      quantity: '10.00'
+    - measurement: pinches
+      name: salt
+      note: null
+      preparation: null
+      quantity: '2.00'
+    name: null
+  serves: 4
 source: ''
 tags: []
 title: Salty Caramel
