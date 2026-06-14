@@ -1191,3 +1191,129 @@ def test_group_save_blank_name_rejected_when_concurrent_group_created(auth_clien
     assert "Group name required" in response.content.decode()
     group.refresh_from_db()
     assert group.group_name == "Main"  # not overwritten with blank
+
+
+@pytest.mark.django_db
+def test_ingredient_delete_concurrent_reassign_still_deletes(auth_client, recipe, group, second_group):
+    """Delete must proceed even if IIR was reassigned concurrently before the lock."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    ing = Ingredient.objects.create(ingredient_name="coriander")
+    iir = IngredientInRecipe.objects.create(
+        ingredient=ing, ingredient_group=group, index_in_sequence=0
+    )
+
+    original_sfu = QuerySet.select_for_update
+    reassigned = []
+
+    def reassign_at_iir_lock(qs, *args, **kwargs):
+        if qs.model is IngredientInRecipe and not reassigned:
+            reassigned.append(True)
+            IngredientInRecipe.objects.filter(pk=iir.pk).update(
+                ingredient_group=second_group, index_in_sequence=0
+            )
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", reassign_at_iir_lock):
+        auth_client.post(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/delete/")
+
+    assert not IngredientInRecipe.objects.filter(pk=iir.pk).exists()
+
+
+@pytest.mark.django_db
+def test_ingredient_move_up_concurrent_reassign_moves_in_fresh_group(
+    auth_client, recipe, group, second_group
+):
+    """After concurrent reassign, move-up must operate in the IIR's fresh group."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    ing0 = Ingredient.objects.create(ingredient_name="cumin-0")
+    ing1 = Ingredient.objects.create(ingredient_name="cumin-1")
+    ing2 = Ingredient.objects.create(ingredient_name="cumin-2")
+    IngredientInRecipe.objects.create(
+        ingredient=ing0, ingredient_group=group, index_in_sequence=0
+    )
+    iir_b = IngredientInRecipe.objects.create(
+        ingredient=ing1, ingredient_group=group, index_in_sequence=1
+    )
+    iir_c = IngredientInRecipe.objects.create(
+        ingredient=ing2, ingredient_group=second_group, index_in_sequence=0
+    )
+
+    original_sfu = QuerySet.select_for_update
+    reassigned = []
+
+    def reassign_at_iir_lock(qs, *args, **kwargs):
+        if qs.model is IngredientInRecipe and not reassigned:
+            reassigned.append(True)
+            IngredientInRecipe.objects.filter(pk=iir_b.pk).update(
+                ingredient_group=second_group, index_in_sequence=1
+            )
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", reassign_at_iir_lock):
+        auth_client.post(f"/recipes/{recipe.pk}/ingredients/{iir_b.pk}/move-up/")
+
+    iir_b.refresh_from_db()
+    iir_c.refresh_from_db()
+    # With fix: iir_b moves up within second_group, swapping with iir_c
+    assert iir_b.index_in_sequence == 0
+    assert iir_c.index_in_sequence == 1
+
+
+@pytest.mark.django_db
+def test_ingredient_create_group_deleted_concurrently_returns_error(auth_client, recipe, group):
+    """Create must abort cleanly (404) if group is deleted before the lock is acquired."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+    deleted = []
+
+    def delete_group_at_lock(qs, *args, **kwargs):
+        if qs.model is IngredientGroup and not deleted:
+            deleted.append(True)
+            IngredientGroup.objects.filter(pk=group.pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", delete_group_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/groups/{group.pk}/ingredients/create/",
+            {"ingredient_name": "turmeric", "quantity": "1", "unit": "tsp", "preparation": ""},
+        )
+
+    assert response.status_code == 404
+    assert not IngredientInRecipe.objects.filter(
+        ingredient__ingredient_name="turmeric"
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_group_save_group_deleted_concurrently_does_not_recreate(auth_client, recipe, group):
+    """group_save must abort if group is deleted after get_object_or_404 and before save."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+    deleted = []
+
+    def delete_group_at_recipe_lock(qs, *args, **kwargs):
+        if qs.model is Recipe and not deleted:
+            deleted.append(True)
+            IngredientGroup.objects.filter(pk=group.pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", delete_group_at_recipe_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/groups/{group.pk}/save/",
+            {"group_name": "Updated Name"},
+        )
+
+    assert response.status_code == 404
+    assert not IngredientGroup.objects.filter(pk=group.pk).exists()

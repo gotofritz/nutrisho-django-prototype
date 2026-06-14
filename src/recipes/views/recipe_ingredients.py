@@ -70,11 +70,20 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
 @require_POST
 def recipe_ingredient_delete(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
-    iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
-    remove_and_compact(
-        siblings=IngredientInRecipe.objects.filter(ingredient_group=iir.ingredient_group),
-        instance=iir,
-    )
+    get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
+    with transaction.atomic():
+        fresh = (
+            IngredientInRecipe.objects.select_for_update()
+            .select_related("ingredient_group")
+            .filter(pk=iir_id, ingredient_group__recipe=recipe)
+            .first()
+        )
+        if fresh is None:
+            return HttpResponse("")
+        remove_and_compact(
+            siblings=IngredientInRecipe.objects.filter(ingredient_group=fresh.ingredient_group),
+            instance=fresh,
+        )
     return HttpResponse("")
 
 
@@ -103,16 +112,23 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
     form = IngredientInRecipeForm(data=request.POST)
     if form.is_valid():
         with transaction.atomic():
+            fresh_group = (
+                IngredientGroup.objects.select_for_update()
+                .filter(pk=group_id, recipe=recipe)
+                .first()
+            )
+            if fresh_group is None:
+                return HttpResponse("", status=404)
             name = form.cleaned_data["ingredient_name"].strip()
             ingredient, _ = Ingredient.objects.get_or_create(ingredient_name=name)
             iir = form.save(commit=False)
             iir.ingredient = ingredient
-            iir.ingredient_group = group
+            iir.ingredient_group = fresh_group
             insert_at_index(
-                siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
+                siblings=IngredientInRecipe.objects.filter(ingredient_group=fresh_group),
                 instance=iir,
                 requested_index=request.POST.get("position"),
-                lock_parent=IngredientGroup.objects.filter(pk=group.pk),
+                lock_parent=None,
             )
         return render(
             request,
@@ -135,13 +151,22 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
 @require_POST
 def recipe_ingredient_move_up(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
-    iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
-    group = iir.ingredient_group
-    move_in_sequence(
-        siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
-        instance=iir,
-        direction="up",
-    )
+    get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
+    with transaction.atomic():
+        fresh = (
+            IngredientInRecipe.objects.select_for_update()
+            .select_related("ingredient_group")
+            .filter(pk=iir_id, ingredient_group__recipe=recipe)
+            .first()
+        )
+        if fresh is None:
+            return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
+        group = fresh.ingredient_group
+        move_in_sequence(
+            siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
+            instance=fresh,
+            direction="up",
+        )
     return render(request, "recipes/partials/_iir_list.html", {"recipe": recipe, "group": group})
 
 
@@ -150,13 +175,22 @@ def recipe_ingredient_move_down(
     request: AuthedRequest, recipe_id: int, iir_id: int
 ) -> HttpResponse:
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
-    iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
-    group = iir.ingredient_group
-    move_in_sequence(
-        siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
-        instance=iir,
-        direction="down",
-    )
+    get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
+    with transaction.atomic():
+        fresh = (
+            IngredientInRecipe.objects.select_for_update()
+            .select_related("ingredient_group")
+            .filter(pk=iir_id, ingredient_group__recipe=recipe)
+            .first()
+        )
+        if fresh is None:
+            return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
+        group = fresh.ingredient_group
+        move_in_sequence(
+            siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
+            instance=fresh,
+            direction="down",
+        )
     return render(request, "recipes/partials/_iir_list.html", {"recipe": recipe, "group": group})
 
 
@@ -189,6 +223,13 @@ def recipe_group_save(request: AuthedRequest, recipe_id: int, group_id: int) -> 
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     with transaction.atomic():
         list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
+        group = (
+            IngredientGroup.objects.select_for_update()
+            .filter(pk=group_id, recipe=recipe)
+            .first()
+        )
+        if group is None:
+            return HttpResponse("", status=404)
         group_count = IngredientGroup.objects.filter(recipe=recipe).count()
         form = IngredientGroupForm(data=request.POST, instance=group, group_count=group_count)
         if form.is_valid():
