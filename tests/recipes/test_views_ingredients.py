@@ -1095,3 +1095,36 @@ def test_reassign_new_group_blank_name_race_rejected(auth_client, recipe, group)
 
     # Blank group must not be created; stale pre-lock count must not have allowed it
     assert IngredientGroup.objects.filter(recipe=recipe, group_name="").count() == 0
+
+
+@pytest.mark.django_db
+def test_reassign_existing_target_deleted_before_transaction_returns_422(auth_client, recipe, group):
+    """Target group deleted concurrently must be caught inside the transaction via re-fetch."""
+    from unittest.mock import patch
+
+    from django.db.models.query import QuerySet
+
+    target = IngredientGroup.objects.create(recipe=recipe, group_name="Target", index_in_sequence=1)
+    ing = Ingredient.objects.create(ingredient_name="salt")
+    iir = IngredientInRecipe.objects.create(
+        ingredient=ing, ingredient_group=group, index_in_sequence=0
+    )
+
+    original_sfu = QuerySet.select_for_update
+
+    def delete_target_at_recipe_lock(qs, *args, **kwargs):
+        # Simulate concurrent deletion of target group when Recipe lock is acquired
+        if qs.model is Recipe:
+            IngredientGroup.objects.filter(pk=target.pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", delete_target_at_recipe_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/ingredients/reassign/",
+            {"ingredient_ids": [iir.pk], "target_group": str(target.pk)},
+        )
+
+    assert response.status_code == 422
+    # Ingredient must not have moved
+    iir.refresh_from_db()
+    assert iir.ingredient_group_id == group.pk

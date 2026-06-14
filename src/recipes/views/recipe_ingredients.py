@@ -350,6 +350,21 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
             target_group.recipe = recipe
             target_group.index_in_sequence = (last + 1) if last is not None else 0
             target_group.save()
+        else:
+            # Lock recipe and re-fetch target group so concurrent deletes/reorders are visible.
+            list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
+            target_group = (
+                IngredientGroup.objects.select_for_update()
+                .filter(id=group_pk, recipe=recipe)
+                .first()
+            )
+            if target_group is None:
+                return render(
+                    request,
+                    "recipes/partials/_groups_list.html",
+                    {"recipe": recipe, "error": "Invalid group."},
+                    status=422,
+                )
 
         affected_old_group_ids = {
             iir.ingredient_group_id for iir in iirs if iir.ingredient_group_id != target_group.id
