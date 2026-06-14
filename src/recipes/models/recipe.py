@@ -62,7 +62,7 @@ class Recipe(models.Model):
         super().save(*args, **kwargs)
 
     def natural_key(self) -> tuple[str, str]:
-        return (str(self.owner.username), str(self.recipe_name))
+        return (str(self.owner.username), str(self.recipe_name))  # type: ignore[union-attr]
 
     natural_key.dependencies = ["auth.user"]  # type: ignore[attr-defined]
 
