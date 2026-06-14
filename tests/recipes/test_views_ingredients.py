@@ -1054,3 +1054,44 @@ def test_group_create_blank_name_rejected_when_race_creates_sibling(auth_client,
 
     # Only the injected competitor should exist; this request must not create a second blank group
     assert IngredientGroup.objects.filter(recipe=recipe).count() == 1
+
+
+@pytest.mark.django_db
+def test_reassign_new_group_blank_name_race_rejected(auth_client, recipe, group):
+    """Stale pre-lock count=0 would allow blank name; re-read count under lock=1 must reject it."""
+    from unittest.mock import patch
+
+    from django.db.models.query import QuerySet
+
+    ing = Ingredient.objects.create(ingredient_name="pepper")
+    iir = IngredientInRecipe.objects.create(
+        ingredient=ing, ingredient_group=group, index_in_sequence=0
+    )
+
+    locked = [False]
+    original_sfu = QuerySet.select_for_update
+    original_count = QuerySet.count
+
+    def mock_lock(qs, *args, **kwargs):
+        if qs.model is Recipe:
+            locked[0] = True
+        return original_sfu(qs, *args, **kwargs)
+
+    def mock_count(qs):
+        if qs.model is IngredientGroup and not locked[0]:
+            return 0  # Simulate stale pre-lock read (race: another request saw 0 groups)
+        return original_count(qs)
+
+    with patch.object(QuerySet, "select_for_update", mock_lock):
+        with patch.object(QuerySet, "count", mock_count):
+            auth_client.post(
+                f"/recipes/{recipe.pk}/ingredients/reassign/",
+                {
+                    "ingredient_ids": [iir.pk],
+                    "target_group": "new",
+                    "new_group_name": "",
+                },
+            )
+
+    # Blank group must not be created; stale pre-lock count must not have allowed it
+    assert IngredientGroup.objects.filter(recipe=recipe, group_name="").count() == 0

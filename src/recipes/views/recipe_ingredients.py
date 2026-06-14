@@ -292,21 +292,8 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
         )
 
     target_group_id = request.POST.get("target_group", "")
-    if target_group_id == "new":
-        existing_count = IngredientGroup.objects.filter(recipe=recipe).count()
-        form = IngredientGroupForm(
-            data={"group_name": request.POST.get("new_group_name", "")},
-            group_count=existing_count + 1,
-        )
-        if not form.is_valid():
-            return render(
-                request,
-                "recipes/partials/_groups_list.html",
-                {"recipe": recipe, "error": "Group name is required."},
-                status=422,
-            )
-    else:
-        form = None
+    is_new_group = target_group_id == "new"
+    if not is_new_group:
         try:
             group_pk = int(target_group_id)
         except (ValueError, TypeError):
@@ -335,17 +322,28 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
     if not iirs:
         return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
 
-    if form is None and all(iir.ingredient_group_id == target_group.id for iir in iirs):
+    if not is_new_group and all(iir.ingredient_group_id == target_group.id for iir in iirs):
         # Everything already lives in the target group — moving would only
         # reorder rows to the end, so do nothing.
         return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
 
     with transaction.atomic():
-        if form is not None:
-            # Lock the recipe row before reading Max(index_in_sequence) so
-            # concurrent reassign-to-new-group requests serialize instead of
-            # racing on the unique (recipe, index_in_sequence) group constraint.
+        if is_new_group:
+            # Lock the recipe row before reading count so concurrent blank-group
+            # creates serialize rather than both validating against a stale count.
             list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
+            existing_count = IngredientGroup.objects.filter(recipe=recipe).count()
+            form = IngredientGroupForm(
+                data={"group_name": request.POST.get("new_group_name", "")},
+                group_count=existing_count + 1,
+            )
+            if not form.is_valid():
+                return render(
+                    request,
+                    "recipes/partials/_groups_list.html",
+                    {"recipe": recipe, "error": "Group name is required."},
+                    status=422,
+                )
             agg = IngredientGroup.objects.filter(recipe=recipe).aggregate(Max("index_in_sequence"))
             last = agg["index_in_sequence__max"]
             target_group = form.save(commit=False)

@@ -35,6 +35,7 @@ class RecipeMetadataForm(forms.ModelForm):
                     recipe.cuisine = None
                 recipe.save()
         else:
+            self._pending_cuisine_name = None
             if not name:
                 recipe.cuisine = None
             else:
@@ -44,6 +45,13 @@ class RecipeMetadataForm(forms.ModelForm):
                 else:
                     self._pending_cuisine_name = name
         return recipe
+
+    def resolve_pending_cuisine(self, recipe: Recipe) -> None:
+        """Create pending Cuisine row and set FK. Call before recipe.save() when commit=False."""
+        if getattr(self, "_pending_cuisine_name", None):
+            cuisine, _ = Cuisine.objects.get_or_create(cuisine=self._pending_cuisine_name)
+            recipe.cuisine = cuisine
+            self._pending_cuisine_name = None
 
 
 class RecipeFieldForm(forms.ModelForm):

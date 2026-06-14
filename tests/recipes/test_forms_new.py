@@ -180,3 +180,45 @@ def test_ingredient_form_commit_false_sets_existing_ingredient(user):
     assert form.is_valid()
     iir = form.save(commit=False)
     assert iir.ingredient == ing
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_form_commit_false_new_cuisine_resolved_via_helper(user):
+    """resolve_pending_cuisine() must create Cuisine row and assign FK before save()."""
+    from recipes.models import Cuisine
+
+    recipe = Recipe.objects.create(recipe_name="Test", owner=user)
+    form = RecipeMetadataForm(
+        data={
+            "recipe_name": "Test",
+            "short_description": "",
+            "servings": "",
+            "source_instance": "",
+            "cuisine_name": "brand-new-cuisine",
+        },
+        instance=recipe,
+    )
+    assert form.is_valid()
+    result = form.save(commit=False)
+    assert not Cuisine.objects.filter(cuisine="brand-new-cuisine").exists()
+    form.resolve_pending_cuisine(result)
+    assert result.cuisine is not None
+    assert result.cuisine.cuisine == "brand-new-cuisine"
+    assert Cuisine.objects.filter(cuisine="brand-new-cuisine").exists()
+
+
+@pytest.mark.django_db
+def test_ingredient_form_commit_false_new_ingredient_resolved_via_helper():
+    """resolve_pending_ingredient() must create Ingredient row and assign FK before save()."""
+    from recipes.models import Ingredient
+
+    form = IngredientInRecipeForm(
+        data={"ingredient_name": "brand-new-spice", "quantity": "", "unit": "", "preparation": "", "note": ""}
+    )
+    assert form.is_valid()
+    iir = form.save(commit=False)
+    assert not Ingredient.objects.filter(ingredient_name="brand-new-spice").exists()
+    form.resolve_pending_ingredient(iir)
+    assert iir.ingredient is not None
+    assert iir.ingredient.ingredient_name == "brand-new-spice"
+    assert Ingredient.objects.filter(ingredient_name="brand-new-spice").exists()

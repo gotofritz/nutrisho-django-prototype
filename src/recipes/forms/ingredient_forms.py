@@ -34,12 +34,20 @@ class IngredientInRecipeForm(forms.ModelForm):
             iir.ingredient = ingredient
             iir.save()
         else:
+            self._pending_ingredient_name = None
             existing = Ingredient.objects.filter(ingredient_name=name).first()
             if existing:
                 iir.ingredient = existing
             else:
                 self._pending_ingredient_name = name
         return iir
+
+    def resolve_pending_ingredient(self, iir: IngredientInRecipe) -> None:
+        """Create pending Ingredient row and set FK. Call before iir.save() when commit=False."""
+        if getattr(self, "_pending_ingredient_name", None):
+            ingredient, _ = Ingredient.objects.get_or_create(ingredient_name=self._pending_ingredient_name)
+            iir.ingredient = ingredient
+            self._pending_ingredient_name = None
 
 
 class IngredientGroupForm(forms.ModelForm):
