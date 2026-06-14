@@ -54,9 +54,11 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
     form = IngredientInRecipeForm(data=request.POST, instance=iir)
     if form.is_valid():
         with transaction.atomic():
-            if not IngredientInRecipe.objects.select_for_update().filter(
-                pk=iir.pk, ingredient_group__recipe=recipe
-            ).exists():
+            if (
+                not IngredientInRecipe.objects.select_for_update()
+                .filter(pk=iir.pk, ingredient_group__recipe=recipe)
+                .exists()
+            ):
                 return HttpResponse("", status=404)
             form.save(commit=False)
             form.resolve_pending_ingredient(iir)
@@ -168,9 +170,7 @@ def recipe_ingredient_move_up(request: AuthedRequest, recipe_id: int, iir_id: in
             .first()
         )
         if fresh is None:
-            response = render(
-                request, "recipes/partials/_groups_list.html", {"recipe": recipe}
-            )
+            response = render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
             response["HX-Retarget"] = "#groups-list"
             response["HX-Reswap"] = "innerHTML"
             return response
@@ -181,9 +181,7 @@ def recipe_ingredient_move_up(request: AuthedRequest, recipe_id: int, iir_id: in
             direction="up",
         )
     if group.pk != original_group_id:
-        response = render(
-            request, "recipes/partials/_groups_list.html", {"recipe": recipe}
-        )
+        response = render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
         response["HX-Retarget"] = "#groups-list"
         response["HX-Reswap"] = "innerHTML"
         return response
@@ -205,9 +203,7 @@ def recipe_ingredient_move_down(
             .first()
         )
         if fresh is None:
-            response = render(
-                request, "recipes/partials/_groups_list.html", {"recipe": recipe}
-            )
+            response = render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
             response["HX-Retarget"] = "#groups-list"
             response["HX-Reswap"] = "innerHTML"
             return response
@@ -218,9 +214,7 @@ def recipe_ingredient_move_down(
             direction="down",
         )
     if group.pk != original_group_id:
-        response = render(
-            request, "recipes/partials/_groups_list.html", {"recipe": recipe}
-        )
+        response = render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
         response["HX-Retarget"] = "#groups-list"
         response["HX-Reswap"] = "innerHTML"
         return response
@@ -257,9 +251,7 @@ def recipe_group_save(request: AuthedRequest, recipe_id: int, group_id: int) -> 
     with transaction.atomic():
         list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
         group = (
-            IngredientGroup.objects.select_for_update()
-            .filter(pk=group_id, recipe=recipe)
-            .first()
+            IngredientGroup.objects.select_for_update().filter(pk=group_id, recipe=recipe).first()
         )
         if group is None:
             return HttpResponse("", status=404)
@@ -469,7 +461,9 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
             return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
 
         affected_old_group_ids = {
-            iir.ingredient_group_id for iir in fresh_iirs if iir.ingredient_group_id != target_group.id
+            iir.ingredient_group_id
+            for iir in fresh_iirs
+            if iir.ingredient_group_id != target_group.id
         }
 
         # Existing items in the target group that are NOT being moved

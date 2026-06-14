@@ -133,7 +133,6 @@ def test_insert_at_index_empty_siblings_locks_parent(recipe):
     """insert_at_index must call select_for_update on lock_parent even when siblings is empty."""
     from unittest.mock import patch
 
-
     locked = []
 
     original_sfu = Recipe.objects.none().__class__.select_for_update

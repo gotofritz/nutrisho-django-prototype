@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("recipes", "0009_alter_ingredient_family_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

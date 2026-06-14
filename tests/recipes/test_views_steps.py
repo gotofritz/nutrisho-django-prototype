@@ -155,7 +155,9 @@ def test_step_create_appends_after_existing(auth_client, recipe, two_steps):
 def test_step_create_inserts_at_posted_position(auth_client, recipe, two_steps):
     """Two drafts saved in reverse order keep their on-screen positions."""
     # Drafts were opened at DOM positions 2 and 3; the later one is saved first.
-    auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Fourth", "position": "3"})
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Fourth", "position": "3"}
+    )
     auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Third", "position": "2"})
     third = Step.objects.get(recipe=recipe, step_text="Third")
     fourth = Step.objects.get(recipe=recipe, step_text="Fourth")
@@ -167,7 +169,9 @@ def test_step_create_inserts_at_posted_position(auth_client, recipe, two_steps):
 def test_step_create_position_shifts_existing_rows(auth_client, recipe, two_steps):
     """Inserting before existing rows shifts them up instead of colliding."""
     first, second = two_steps
-    auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Newcomer", "position": "0"})
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Newcomer", "position": "0"}
+    )
     first.refresh_from_db()
     second.refresh_from_db()
     newcomer = Step.objects.get(recipe=recipe, step_text="Newcomer")
@@ -179,7 +183,9 @@ def test_step_create_position_shifts_existing_rows(auth_client, recipe, two_step
 @pytest.mark.django_db
 def test_step_create_position_missing_or_invalid_appends(auth_client, recipe, two_steps):
     auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "NoPos"})
-    auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "BadPos", "position": "x"})
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "BadPos", "position": "x"}
+    )
     assert Step.objects.get(recipe=recipe, step_text="NoPos").index_in_sequence == 2
     assert Step.objects.get(recipe=recipe, step_text="BadPos").index_in_sequence == 3
 
@@ -187,7 +193,9 @@ def test_step_create_position_missing_or_invalid_appends(auth_client, recipe, tw
 @pytest.mark.django_db
 def test_step_create_position_beyond_end_clamps_to_append(auth_client, recipe, two_steps):
     """Position counting unsaved sibling drafts clamps to the next free index."""
-    auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Clamped", "position": "9"})
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Clamped", "position": "9"}
+    )
     assert Step.objects.get(recipe=recipe, step_text="Clamped").index_in_sequence == 2
 
 
@@ -207,7 +215,9 @@ def test_step_create_appends_after_one_based_imported_rows(auth_client, recipe):
     Step.objects.create(recipe=recipe, step_text="Imported 1", index_in_sequence=1)
     Step.objects.create(recipe=recipe, step_text="Imported 2", index_in_sequence=2)
     # Two rows on screen → draft at DOM position 2
-    auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Appended", "position": "2"})
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Appended", "position": "2"}
+    )
     ordered = list(
         Step.objects.filter(recipe=recipe)
         .order_by("index_in_sequence")
@@ -220,7 +230,9 @@ def test_step_create_appends_after_one_based_imported_rows(auth_client, recipe):
 def test_step_create_inserts_first_among_one_based_imported_rows(auth_client, recipe):
     Step.objects.create(recipe=recipe, step_text="Imported 1", index_in_sequence=1)
     Step.objects.create(recipe=recipe, step_text="Imported 2", index_in_sequence=2)
-    auth_client.post(f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Newcomer", "position": "0"})
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/", {"step_text": "Newcomer", "position": "0"}
+    )
     ordered = list(
         Step.objects.filter(recipe=recipe)
         .order_by("index_in_sequence")

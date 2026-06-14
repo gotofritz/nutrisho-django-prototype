@@ -45,7 +45,9 @@ class IngredientInRecipeForm(forms.ModelForm):
     def resolve_pending_ingredient(self, iir: IngredientInRecipe) -> None:
         """Create pending Ingredient row and set FK. Call before iir.save() when commit=False."""
         if getattr(self, "_pending_ingredient_name", None):
-            ingredient, _ = Ingredient.objects.get_or_create(ingredient_name=self._pending_ingredient_name)
+            ingredient, _ = Ingredient.objects.get_or_create(
+                ingredient_name=self._pending_ingredient_name
+            )
             iir.ingredient = ingredient
             self._pending_ingredient_name = None
 

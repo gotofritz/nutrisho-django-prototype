@@ -96,7 +96,13 @@ def test_ingredient_in_recipe_form_commit_false_does_not_create_ingredient(db):
     from recipes.models import Ingredient
 
     form = IngredientInRecipeForm(
-        data={"ingredient_name": "ghost-veggie", "quantity": "", "unit": "", "preparation": "", "note": ""}
+        data={
+            "ingredient_name": "ghost-veggie",
+            "quantity": "",
+            "unit": "",
+            "preparation": "",
+            "note": "",
+        }
     )
     assert form.is_valid()
     form.save(commit=False)
@@ -213,7 +219,13 @@ def test_ingredient_form_commit_false_new_ingredient_resolved_via_helper():
     from recipes.models import Ingredient
 
     form = IngredientInRecipeForm(
-        data={"ingredient_name": "brand-new-spice", "quantity": "", "unit": "", "preparation": "", "note": ""}
+        data={
+            "ingredient_name": "brand-new-spice",
+            "quantity": "",
+            "unit": "",
+            "preparation": "",
+            "note": "",
+        }
     )
     assert form.is_valid()
     iir = form.save(commit=False)

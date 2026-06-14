@@ -48,9 +48,7 @@ def recipe_field_save(request: AuthedRequest, recipe_id: int, field_name: str) -
     if form.is_valid():
         try:
             with transaction.atomic():
-                locked = list(
-                    Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk")
-                )
+                locked = list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
                 if not locked:
                     return HttpResponse("", status=404)
                 form.save(commit=False)

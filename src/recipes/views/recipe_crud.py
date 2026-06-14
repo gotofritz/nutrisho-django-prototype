@@ -264,7 +264,9 @@ def recipe_scale(request: AuthedRequest, recipe_id: int) -> HttpResponse:
         )
         for iir in scaled:
             try:
-                new_quantity = (iir.quantity * multiplier).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)  # type: ignore[operator]
+                new_quantity = (iir.quantity * multiplier).quantize(
+                    Decimal("0.01"), rounding=ROUND_HALF_UP
+                )  # type: ignore[operator]
             except InvalidOperation:
                 return _scale_error(
                     request, recipe, "Multiplier would overflow an ingredient quantity."

@@ -1026,11 +1026,19 @@ def test_ingredient_create_no_orphan_ingredient_on_insert_failure(auth_client, r
 
     from recipes.models import Ingredient
 
-    with patch("recipes.views.recipe_ingredients.insert_at_index", side_effect=IntegrityError("seq")):
+    with patch(
+        "recipes.views.recipe_ingredients.insert_at_index", side_effect=IntegrityError("seq")
+    ):
         with pytest.raises(IntegrityError):
             auth_client.post(
                 f"/recipes/{recipe.pk}/groups/{group.pk}/ingredients/create/",
-                {"ingredient_name": "orphan-veggie", "quantity": "", "unit": "", "preparation": "", "note": ""},
+                {
+                    "ingredient_name": "orphan-veggie",
+                    "quantity": "",
+                    "unit": "",
+                    "preparation": "",
+                    "note": "",
+                },
             )
     assert not Ingredient.objects.filter(ingredient_name="orphan-veggie").exists()
 
@@ -1098,7 +1106,9 @@ def test_reassign_new_group_blank_name_race_rejected(auth_client, recipe, group)
 
 
 @pytest.mark.django_db
-def test_reassign_existing_target_deleted_before_transaction_returns_422(auth_client, recipe, group):
+def test_reassign_existing_target_deleted_before_transaction_returns_422(
+    auth_client, recipe, group
+):
     """Target group deleted concurrently must be caught inside the transaction via re-fetch."""
     from unittest.mock import patch
 
@@ -1131,7 +1141,9 @@ def test_reassign_existing_target_deleted_before_transaction_returns_422(auth_cl
 
 
 @pytest.mark.django_db
-def test_reassign_does_not_overwrite_concurrent_quantity_edit(auth_client, recipe, group, second_group):
+def test_reassign_does_not_overwrite_concurrent_quantity_edit(
+    auth_client, recipe, group, second_group
+):
     """Re-fetch iirs inside transaction; only ingredient_group/index_in_sequence must be written."""
     from decimal import Decimal
     from unittest.mock import patch
@@ -1194,7 +1206,9 @@ def test_group_save_blank_name_rejected_when_concurrent_group_created(auth_clien
 
 
 @pytest.mark.django_db
-def test_ingredient_delete_concurrent_reassign_still_deletes(auth_client, recipe, group, second_group):
+def test_ingredient_delete_concurrent_reassign_still_deletes(
+    auth_client, recipe, group, second_group
+):
     """Delete must proceed even if IIR was reassigned concurrently before the lock."""
     from unittest.mock import patch
 
@@ -1234,9 +1248,7 @@ def test_ingredient_move_up_concurrent_reassign_moves_in_fresh_group(
     ing0 = Ingredient.objects.create(ingredient_name="cumin-0")
     ing1 = Ingredient.objects.create(ingredient_name="cumin-1")
     ing2 = Ingredient.objects.create(ingredient_name="cumin-2")
-    IngredientInRecipe.objects.create(
-        ingredient=ing0, ingredient_group=group, index_in_sequence=0
-    )
+    IngredientInRecipe.objects.create(ingredient=ing0, ingredient_group=group, index_in_sequence=0)
     iir_b = IngredientInRecipe.objects.create(
         ingredient=ing1, ingredient_group=group, index_in_sequence=1
     )
@@ -1288,9 +1300,7 @@ def test_ingredient_create_group_deleted_concurrently_returns_error(auth_client,
         )
 
     assert response.status_code == 404
-    assert not IngredientInRecipe.objects.filter(
-        ingredient__ingredient_name="turmeric"
-    ).exists()
+    assert not IngredientInRecipe.objects.filter(ingredient__ingredient_name="turmeric").exists()
 
 
 @pytest.mark.django_db
@@ -1388,9 +1398,7 @@ def test_ingredient_move_up_group_changed_retargets_groups_list(
     ing0 = Ingredient.objects.create(ingredient_name="retarget-0")
     ing1 = Ingredient.objects.create(ingredient_name="retarget-1")
     ing2 = Ingredient.objects.create(ingredient_name="retarget-2")
-    IngredientInRecipe.objects.create(
-        ingredient=ing0, ingredient_group=group, index_in_sequence=0
-    )
+    IngredientInRecipe.objects.create(ingredient=ing0, ingredient_group=group, index_in_sequence=0)
     iir_b = IngredientInRecipe.objects.create(
         ingredient=ing1, ingredient_group=group, index_in_sequence=1
     )
@@ -1410,9 +1418,7 @@ def test_ingredient_move_up_group_changed_retargets_groups_list(
         return original_sfu(qs, *args, **kwargs)
 
     with patch.object(QuerySet, "select_for_update", reassign_at_lock):
-        response = auth_client.post(
-            f"/recipes/{recipe.pk}/ingredients/{iir_b.pk}/move-up/"
-        )
+        response = auth_client.post(f"/recipes/{recipe.pk}/ingredients/{iir_b.pk}/move-up/")
 
     assert response.get("HX-Retarget") == "#groups-list"
     assert response.get("HX-Reswap") == "innerHTML"
@@ -1437,7 +1443,13 @@ def test_ingredient_save_iir_deleted_concurrently_returns_404(auth_client, recip
     with patch.object(QuerySet, "select_for_update", delete_iir_at_lock):
         response = auth_client.post(
             f"/recipes/{recipe.pk}/ingredients/{iir.pk}/save/",
-            {"ingredient_name": "onion", "quantity": "2", "unit": "kg", "preparation": "", "note": ""},
+            {
+                "ingredient_name": "onion",
+                "quantity": "2",
+                "unit": "kg",
+                "preparation": "",
+                "note": "",
+            },
         )
 
     assert response.status_code == 404
@@ -1495,7 +1507,13 @@ def test_ingredient_save_preserves_concurrent_group_reassign(auth_client, recipe
     with patch.object(QuerySet, "select_for_update", reassign_at_lock):
         response = auth_client.post(
             f"/recipes/{recipe.pk}/ingredients/{iir.pk}/save/",
-            {"ingredient_name": "onion", "quantity": "7", "unit": "kg", "preparation": "", "note": ""},
+            {
+                "ingredient_name": "onion",
+                "quantity": "7",
+                "unit": "kg",
+                "preparation": "",
+                "note": "",
+            },
         )
 
     assert response.status_code == 200
