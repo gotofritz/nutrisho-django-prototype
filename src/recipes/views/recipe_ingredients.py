@@ -366,20 +366,27 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
                     status=422,
                 )
 
-        affected_old_group_ids = {
-            iir.ingredient_group_id for iir in iirs if iir.ingredient_group_id != target_group.id
-        }
         iir_ids = [iir.id for iir in iirs]
-        all_group_ids = affected_old_group_ids | {target_group.id}
 
-        # Lock all sibling rows in every affected group before reading or writing
-        # so concurrent reassign/move requests serialize rather than racing.
+        # Lock ALL IIRs in the recipe before reading or writing so concurrent
+        # reassign/move requests serialize rather than racing on unique constraints.
         list(
-            IngredientInRecipe.objects.filter(ingredient_group_id__in=all_group_ids)
+            IngredientInRecipe.objects.filter(ingredient_group__recipe=recipe)
             .select_for_update()
             .values("pk")
             .order_by("ingredient_group_id", "index_in_sequence")
         )
+
+        # Re-fetch fresh DB values after locking; caller's iirs may be stale.
+        fresh_iirs = list(
+            IngredientInRecipe.objects.filter(id__in=iir_ids)
+            .select_related("ingredient_group")
+            .order_by("ingredient_group__index_in_sequence", "index_in_sequence")
+        )
+
+        affected_old_group_ids = {
+            iir.ingredient_group_id for iir in fresh_iirs if iir.ingredient_group_id != target_group.id
+        }
 
         # Existing items in the target group that are NOT being moved
         existing_target = list(
@@ -392,7 +399,7 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
         # sort key = (group.index_in_sequence, item.index_in_sequence) before this operation.
         target_group_index = target_group.index_in_sequence
         combined: list[tuple[int, int, IngredientInRecipe]] = []
-        for item in iirs:
+        for item in fresh_iirs:
             combined.append((item.ingredient_group.index_in_sequence, item.index_in_sequence, item))
         for item in existing_target:
             combined.append((target_group_index, item.index_in_sequence, item))
@@ -401,11 +408,11 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
 
         # Park ALL items destined for target_group at temp indexes to free their
         # current positions before writing the merged final order.
-        all_target_items = iirs + existing_target
+        all_target_items = fresh_iirs + existing_target
         for i, item in enumerate(all_target_items):
             item.ingredient_group = target_group
             item.index_in_sequence = 10000 + i
-            item.save()
+            item.save(update_fields=["ingredient_group", "index_in_sequence"])
 
         # Compact non-moved items in source groups (target is rewritten fully below)
         for group_id in affected_old_group_ids:
@@ -417,11 +424,11 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
             for i, r in enumerate(remaining):
                 if r.index_in_sequence != i:
                     r.index_in_sequence = i
-                    r.save()
+                    r.save(update_fields=["index_in_sequence"])
 
         # Write final merged order into the target group
         for i, item in enumerate(final_order):
             item.index_in_sequence = i
-            item.save()
+            item.save(update_fields=["ingredient_group", "index_in_sequence"])
 
     return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})

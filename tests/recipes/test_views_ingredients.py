@@ -1128,3 +1128,34 @@ def test_reassign_existing_target_deleted_before_transaction_returns_422(auth_cl
     # Ingredient must not have moved
     iir.refresh_from_db()
     assert iir.ingredient_group_id == group.pk
+
+
+@pytest.mark.django_db
+def test_reassign_does_not_overwrite_concurrent_quantity_edit(auth_client, recipe, group, second_group):
+    """Re-fetch iirs inside transaction; only ingredient_group/index_in_sequence must be written."""
+    from decimal import Decimal
+    from unittest.mock import patch
+
+    from django.db.models.query import QuerySet
+
+    ing = Ingredient.objects.create(ingredient_name="salt")
+    iir = IngredientInRecipe.objects.create(
+        ingredient=ing, ingredient_group=group, index_in_sequence=0, quantity=Decimal("5.00")
+    )
+
+    original_sfu = QuerySet.select_for_update
+
+    def edit_qty_at_iir_lock(qs, *args, **kwargs):
+        if qs.model is IngredientInRecipe:
+            IngredientInRecipe.objects.filter(pk=iir.pk).update(quantity=Decimal("99.00"))
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", edit_qty_at_iir_lock):
+        auth_client.post(
+            f"/recipes/{recipe.pk}/ingredients/reassign/",
+            {"ingredient_ids": [iir.pk], "target_group": str(second_group.pk)},
+        )
+
+    iir.refresh_from_db()
+    assert iir.ingredient_group == second_group
+    assert iir.quantity == Decimal("99.00")  # must not revert to 5.00

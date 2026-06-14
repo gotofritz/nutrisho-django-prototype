@@ -151,3 +151,41 @@ def test_insert_at_index_empty_siblings_locks_parent(recipe):
             lock_parent=Recipe.objects.filter(pk=recipe.pk),
         )
     assert "Recipe" in locked
+
+
+@pytest.mark.django_db
+def test_remove_and_compact_uses_fresh_instance_index(group):
+    """remove_and_compact must re-read instance's index after locking, not trust stale attr."""
+    iir0 = _make_iir(group, 0)
+    iir1 = _make_iir(group, 1)
+    iir2 = _make_iir(group, 2)
+
+    siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
+    # Simulate stale Python object: DB says index=1, Python says index=5
+    iir1.index_in_sequence = 5
+
+    remove_and_compact(siblings=siblings, instance=iir1)
+
+    # iir1 (at DB index=1) was deleted; iir2 must compact from 2 to 1
+    iir0.refresh_from_db()
+    iir2.refresh_from_db()
+    assert iir0.index_in_sequence == 0
+    assert iir2.index_in_sequence == 1
+
+
+@pytest.mark.django_db
+def test_move_in_sequence_uses_fresh_instance_index_for_neighbor(group):
+    """move_in_sequence must re-read instance's index after locking to find correct neighbor."""
+    iir0 = _make_iir(group, 0)
+    iir1 = _make_iir(group, 1)
+
+    siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
+    # Simulate stale Python object: DB says index=1, Python says index=5
+    iir1.index_in_sequence = 5
+
+    move_in_sequence(siblings=siblings, instance=iir1, direction="up")
+
+    iir0.refresh_from_db()
+    iir1.refresh_from_db()
+    assert iir1.index_in_sequence == 0
+    assert iir0.index_in_sequence == 1

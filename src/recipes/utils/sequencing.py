@@ -67,15 +67,14 @@ def insert_at_index(
 @transaction.atomic
 def remove_and_compact(*, siblings: models.QuerySet, instance: Sequenced) -> None:
     """Delete instance and close the index_in_sequence gap it leaves."""
-    deleted_index = instance.index_in_sequence
+    rows = list(siblings.select_for_update().order_by("index_in_sequence"))
+    fresh = next((r for r in rows if r.pk == instance.pk), None)
+    deleted_index = fresh.index_in_sequence if fresh is not None else instance.index_in_sequence
     instance.delete()
-    for row in (
-        siblings.select_for_update()
-        .filter(index_in_sequence__gt=deleted_index)
-        .order_by("index_in_sequence")
-    ):
-        row.index_in_sequence -= 1
-        row.save()
+    for row in rows:
+        if row.index_in_sequence > deleted_index:
+            row.index_in_sequence -= 1
+            row.save()
 
 
 @transaction.atomic
@@ -92,22 +91,18 @@ def move_in_sequence(
     """
     # Lock the full sibling set before reading neighbors so concurrent moves
     # on the same parent serialize rather than racing on the unique constraint.
-    list(siblings.select_for_update().values("pk").order_by("index_in_sequence"))
+    rows = list(siblings.select_for_update().order_by("index_in_sequence"))
+    fresh = next((r for r in rows if r.pk == instance.pk), None)
+    if fresh is None:
+        return
+    current_index = fresh.index_in_sequence
     if direction == "up":
-        neighbor = (
-            siblings.filter(index_in_sequence__lt=instance.index_in_sequence)
-            .order_by("-index_in_sequence")
-            .first()
-        )
+        neighbor = next((r for r in reversed(rows) if r.index_in_sequence < current_index), None)
     else:
-        neighbor = (
-            siblings.filter(index_in_sequence__gt=instance.index_in_sequence)
-            .order_by("index_in_sequence")
-            .first()
-        )
+        neighbor = next((r for r in rows if r.index_in_sequence > current_index), None)
     if neighbor is None:
         return
-    idx_a, idx_b = instance.index_in_sequence, neighbor.index_in_sequence
+    idx_a, idx_b = current_index, neighbor.index_in_sequence
     siblings.filter(pk=instance.pk).update(index_in_sequence=-1)
     siblings.filter(pk=neighbor.pk).update(index_in_sequence=idx_a)
     siblings.filter(pk=instance.pk).update(index_in_sequence=idx_b)
