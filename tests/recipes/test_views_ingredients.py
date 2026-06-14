@@ -1317,3 +1317,60 @@ def test_group_save_group_deleted_concurrently_does_not_recreate(auth_client, re
 
     assert response.status_code == 404
     assert not IngredientGroup.objects.filter(pk=group.pk).exists()
+
+
+@pytest.mark.django_db
+def test_reassign_new_group_deleted_when_all_iirs_gone_concurrently(auth_client, recipe, group):
+    """If all selected IIRs are deleted concurrently, the just-created new group must be rolled back."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    ing = Ingredient.objects.create(ingredient_name="fennel")
+    iir = IngredientInRecipe.objects.create(
+        ingredient=ing, ingredient_group=group, index_in_sequence=0
+    )
+
+    original_sfu = QuerySet.select_for_update
+    deleted = []
+
+    def delete_iir_at_lock(qs, *args, **kwargs):
+        if qs.model is IngredientInRecipe and not deleted:
+            deleted.append(True)
+            IngredientInRecipe.objects.filter(pk=iir.pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", delete_iir_at_lock):
+        auth_client.post(
+            f"/recipes/{recipe.pk}/ingredients/reassign/",
+            {"ingredient_ids": [iir.pk], "target_group": "new", "new_group_name": "Spices"},
+        )
+
+    assert not IngredientGroup.objects.filter(recipe=recipe, group_name="Spices").exists()
+    assert IngredientGroup.objects.filter(recipe=recipe).count() == 1  # only original
+
+
+@pytest.mark.django_db
+def test_group_create_recipe_deleted_concurrently_returns_404(auth_client, recipe, group):
+    """group_create must abort with 404 if recipe is deleted after get_object_or_404."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+    deleted = []
+
+    def delete_recipe_at_lock(qs, *args, **kwargs):
+        if qs.model is Recipe and not deleted:
+            deleted.append(True)
+            Recipe.objects.filter(pk=recipe.pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", delete_recipe_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/groups/create/",
+            {"group_name": "NewGroup"},
+        )
+
+    assert response.status_code == 404
+    assert not IngredientGroup.objects.filter(group_name="NewGroup").exists()

@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET, require_POST
@@ -91,14 +92,18 @@ def recipe_step_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     form = StepForm(data=request.POST)
     if form.is_valid():
-        step = form.save(commit=False)
-        step.recipe = recipe
-        insert_at_index(
-            siblings=Step.objects.filter(recipe=recipe),
-            instance=step,
-            requested_index=request.POST.get("position"),
-            lock_parent=Recipe.objects.filter(pk=recipe.pk),
-        )
+        with transaction.atomic():
+            locked = list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
+            if not locked:
+                return HttpResponse("", status=404)
+            step = form.save(commit=False)
+            step.recipe = recipe
+            insert_at_index(
+                siblings=Step.objects.filter(recipe=recipe),
+                instance=step,
+                requested_index=request.POST.get("position"),
+                lock_parent=None,
+            )
         return render(
             request,
             "recipes/partials/_step_display.html",

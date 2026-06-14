@@ -291,7 +291,9 @@ def recipe_group_add(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 def recipe_group_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     with transaction.atomic():
-        list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
+        locked = list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
+        if not locked:
+            return HttpResponse("", status=404)
         existing_count = IngredientGroup.objects.filter(recipe=recipe).count()
         form = IngredientGroupForm(data=request.POST, group_count=existing_count + 1)
         if form.is_valid():
@@ -426,6 +428,12 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
             .select_related("ingredient_group")
             .order_by("ingredient_group__index_in_sequence", "index_in_sequence")
         )
+
+        if not fresh_iirs:
+            # All selected rows were deleted concurrently; roll back any just-created group.
+            if is_new_group:
+                target_group.delete()
+            return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
 
         affected_old_group_ids = {
             iir.ingredient_group_id for iir in fresh_iirs if iir.ingredient_group_id != target_group.id
