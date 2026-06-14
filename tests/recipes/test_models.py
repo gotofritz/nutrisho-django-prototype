@@ -212,7 +212,7 @@ def test_ingredient_in_recipe_natural_key_is_serializable(user):
 
 def test_char_fields_are_not_nullable():
     """CharFields should use blank-only emptiness, never NULL (single empty state)."""
-    assert Recipe._meta.get_field("short_description").null is False
-    assert IngredientGroup._meta.get_field("group_name").null is False
-    assert IngredientInRecipe._meta.get_field("unit").null is False
-    assert IngredientInRecipe._meta.get_field("preparation").null is False
+    assert Recipe._meta.get_field("short_description").null is False  # type: ignore[attr-defined]
+    assert IngredientGroup._meta.get_field("group_name").null is False  # type: ignore[attr-defined]
+    assert IngredientInRecipe._meta.get_field("unit").null is False  # type: ignore[attr-defined]
+    assert IngredientInRecipe._meta.get_field("preparation").null is False  # type: ignore[attr-defined]
