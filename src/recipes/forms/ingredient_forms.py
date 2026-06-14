@@ -34,7 +34,11 @@ class IngredientInRecipeForm(forms.ModelForm):
             iir.ingredient = ingredient
             iir.save()
         else:
-            self._pending_ingredient_name = name
+            existing = Ingredient.objects.filter(ingredient_name=name).first()
+            if existing:
+                iir.ingredient = existing
+            else:
+                self._pending_ingredient_name = name
         return iir
 
 

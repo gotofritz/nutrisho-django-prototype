@@ -35,7 +35,14 @@ class RecipeMetadataForm(forms.ModelForm):
                     recipe.cuisine = None
                 recipe.save()
         else:
-            self._pending_cuisine_name = name
+            if not name:
+                recipe.cuisine = None
+            else:
+                existing = Cuisine.objects.filter(cuisine=name).first()
+                if existing:
+                    recipe.cuisine = existing
+                else:
+                    self._pending_cuisine_name = name
         return recipe
 
 

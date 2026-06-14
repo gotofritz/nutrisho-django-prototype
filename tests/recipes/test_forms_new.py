@@ -122,3 +122,61 @@ def test_recipe_metadata_form_commit_false_does_not_create_cuisine(user):
     assert form.is_valid()
     form.save(commit=False)
     assert not Cuisine.objects.filter(cuisine="ghost-cuisine").exists()
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_form_commit_false_clears_cuisine_when_blank(user):
+    """save(commit=False) with blank cuisine_name must set recipe.cuisine = None in-memory."""
+    from recipes.models import Cuisine
+
+    cuisine = Cuisine.objects.create(cuisine="Italian")
+    recipe = Recipe.objects.create(recipe_name="Test", owner=user, cuisine=cuisine)
+    form = RecipeMetadataForm(
+        data={
+            "recipe_name": "Test",
+            "short_description": "",
+            "servings": "",
+            "source_instance": "",
+            "cuisine_name": "",
+        },
+        instance=recipe,
+    )
+    assert form.is_valid()
+    result = form.save(commit=False)
+    assert result.cuisine is None
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_form_commit_false_sets_existing_cuisine(user):
+    """save(commit=False) with existing cuisine must set recipe.cuisine in-memory without write."""
+    from recipes.models import Cuisine
+
+    cuisine = Cuisine.objects.create(cuisine="Thai")
+    recipe = Recipe.objects.create(recipe_name="Test", owner=user)
+    form = RecipeMetadataForm(
+        data={
+            "recipe_name": "Test",
+            "short_description": "",
+            "servings": "",
+            "source_instance": "",
+            "cuisine_name": "Thai",
+        },
+        instance=recipe,
+    )
+    assert form.is_valid()
+    result = form.save(commit=False)
+    assert result.cuisine == cuisine
+
+
+@pytest.mark.django_db
+def test_ingredient_form_commit_false_sets_existing_ingredient(user):
+    """save(commit=False) with existing ingredient must set iir.ingredient in-memory."""
+    from recipes.models import Ingredient
+
+    ing = Ingredient.objects.create(ingredient_name="basil")
+    form = IngredientInRecipeForm(
+        data={"ingredient_name": "basil", "quantity": "", "unit": "", "preparation": "", "note": ""}
+    )
+    assert form.is_valid()
+    iir = form.save(commit=False)
+    assert iir.ingredient == ing
