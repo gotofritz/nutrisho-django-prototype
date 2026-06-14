@@ -187,17 +187,19 @@ def recipe_group_edit(request: AuthedRequest, recipe_id: int, group_id: int) -> 
 def recipe_group_save(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
-    group_count = IngredientGroup.objects.filter(recipe=recipe).count()
-    form = IngredientGroupForm(data=request.POST, instance=group, group_count=group_count)
-    if form.is_valid():
-        form.save()
-        group.refresh_from_db()
-        content = render_to_string(
-            "recipes/partials/_group_display.html",
-            {"recipe": recipe, "group": group},
-            request=request,
-        )
-        return HttpResponse(content + _reassign_select_oob(recipe, request))
+    with transaction.atomic():
+        list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
+        group_count = IngredientGroup.objects.filter(recipe=recipe).count()
+        form = IngredientGroupForm(data=request.POST, instance=group, group_count=group_count)
+        if form.is_valid():
+            form.save()
+            group.refresh_from_db()
+            content = render_to_string(
+                "recipes/partials/_group_display.html",
+                {"recipe": recipe, "group": group},
+                request=request,
+            )
+            return HttpResponse(content + _reassign_select_oob(recipe, request))
     return render(
         request,
         "recipes/partials/_group_edit.html",

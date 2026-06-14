@@ -189,3 +189,35 @@ def test_move_in_sequence_uses_fresh_instance_index_for_neighbor(group):
     iir1.refresh_from_db()
     assert iir1.index_in_sequence == 0
     assert iir0.index_in_sequence == 1
+
+
+@pytest.mark.django_db
+def test_remove_and_compact_already_deleted_is_noop(group):
+    """Double-delete: second remove_and_compact must be a no-op, not corrupt indexes.
+
+    After the first concurrent delete compacted [0,1,2,3] to [0,1,2], a second
+    call with the stale iir1 object (fresh=None) must return early. Without the
+    early return it tries to shift iir3 from 2 to 1, hitting the unique constraint
+    because iir2 already occupies index 1.
+    """
+    iir0 = _make_iir(group, 0)
+    iir1 = _make_iir(group, 1)
+    iir2 = _make_iir(group, 2)
+    iir3 = _make_iir(group, 3)
+    siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
+
+    # Simulate first concurrent delete already ran: delete iir1 and compact
+    IngredientInRecipe.objects.filter(pk=iir1.pk).delete()
+    IngredientInRecipe.objects.filter(pk=iir2.pk).update(index_in_sequence=1)
+    IngredientInRecipe.objects.filter(pk=iir3.pk).update(index_in_sequence=2)
+    # iir1 Python object: pk points to deleted row, index_in_sequence=1
+
+    # Second concurrent delete request arrives with stale iir1
+    remove_and_compact(siblings=siblings, instance=iir1)
+
+    iir0.refresh_from_db()
+    iir2.refresh_from_db()
+    iir3.refresh_from_db()
+    assert iir0.index_in_sequence == 0
+    assert iir2.index_in_sequence == 1  # unchanged
+    assert iir3.index_in_sequence == 2  # not incorrectly compacted to 1

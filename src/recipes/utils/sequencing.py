@@ -69,7 +69,9 @@ def remove_and_compact(*, siblings: models.QuerySet, instance: Sequenced) -> Non
     """Delete instance and close the index_in_sequence gap it leaves."""
     rows = list(siblings.select_for_update().order_by("index_in_sequence"))
     fresh = next((r for r in rows if r.pk == instance.pk), None)
-    deleted_index = fresh.index_in_sequence if fresh is not None else instance.index_in_sequence
+    if fresh is None:
+        return
+    deleted_index = fresh.index_in_sequence
     instance.delete()
     for row in rows:
         if row.index_in_sequence > deleted_index:

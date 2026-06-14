@@ -1159,3 +1159,35 @@ def test_reassign_does_not_overwrite_concurrent_quantity_edit(auth_client, recip
     iir.refresh_from_db()
     assert iir.ingredient_group == second_group
     assert iir.quantity == Decimal("99.00")  # must not revert to 5.00
+
+
+@pytest.mark.django_db
+def test_group_save_blank_name_rejected_when_concurrent_group_created(auth_client, recipe, group):
+    """recipe_group_save must check group count under recipe lock.
+
+    Lock Recipe first; inject concurrent group at lock time so count() returns 2;
+    blank name must then be rejected. Without the lock the count runs before
+    injection and returns 1, letting blank name through (the bug).
+    """
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+
+    def inject_at_recipe_lock(qs, *args, **kwargs):
+        if qs.model is Recipe:
+            IngredientGroup.objects.create(
+                recipe=recipe, group_name="Concurrent", index_in_sequence=99
+            )
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", inject_at_recipe_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/groups/{group.pk}/save/",
+            {"group_name": ""},
+        )
+
+    assert "Group name required" in response.content.decode()
+    group.refresh_from_db()
+    assert group.group_name == "Main"  # not overwritten with blank
