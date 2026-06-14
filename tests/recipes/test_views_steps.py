@@ -414,3 +414,31 @@ def test_step_save_step_deleted_concurrently_returns_404(auth_client, recipe, st
 
     assert response.status_code == 404
     assert not Step.objects.filter(pk=step.pk).exists()
+
+
+@pytest.mark.django_db
+def test_step_save_preserves_concurrent_index_change(auth_client, recipe, step):
+    """recipe_step_save must not undo a concurrent reorder by writing stale index_in_sequence."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+    moved = []
+
+    def reorder_at_lock(qs, *args, **kwargs):
+        if qs.model is Step and not moved:
+            moved.append(True)
+            Step.objects.filter(pk=step.pk).update(index_in_sequence=5)
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", reorder_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/steps/{step.pk}/save/",
+            {"step_text": "Updated text"},
+        )
+
+    assert response.status_code == 200
+    step.refresh_from_db()
+    assert step.index_in_sequence == 5  # concurrent reorder preserved
+    assert step.step_text == "Updated text"  # form edit applied

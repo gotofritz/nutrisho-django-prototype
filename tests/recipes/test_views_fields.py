@@ -156,3 +156,34 @@ def test_field_save_recipe_deleted_concurrently_returns_404(auth_client, recipe)
 
     assert response.status_code == 404
     assert not Recipe.objects.filter(pk=recipe.pk).exists()
+
+
+@pytest.mark.django_db
+def test_field_save_preserves_concurrent_other_field_change(auth_client, recipe):
+    """recipe_field_save(servings) must not overwrite a concurrently edited short_description."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    recipe.short_description = "Original"
+    recipe.save(update_fields=["short_description"])
+
+    original_sfu = QuerySet.select_for_update
+    edited = []
+
+    def update_desc_at_lock(qs, *args, **kwargs):
+        if qs.model is Recipe and not edited:
+            edited.append(True)
+            Recipe.objects.filter(pk=recipe.pk).update(short_description="Concurrent edit")
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", update_desc_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/field/servings/save/",
+            {"servings": "8"},
+        )
+
+    assert response.status_code == 200
+    recipe.refresh_from_db()
+    assert recipe.servings == 8
+    assert recipe.short_description == "Concurrent edit"  # not overwritten

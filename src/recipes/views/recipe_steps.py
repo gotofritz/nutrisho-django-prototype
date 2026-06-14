@@ -41,7 +41,8 @@ def recipe_step_save(request: AuthedRequest, recipe_id: int, step_id: int) -> Ht
         with transaction.atomic():
             if not Step.objects.select_for_update().filter(pk=step.pk, recipe=recipe).exists():
                 return HttpResponse("", status=404)
-            form.save()
+            form.save(commit=False)
+            step.save(update_fields=["step_text"])
         step.refresh_from_db()
         return render(
             request,

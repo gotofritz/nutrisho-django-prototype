@@ -53,7 +53,8 @@ def recipe_field_save(request: AuthedRequest, recipe_id: int, field_name: str) -
                 )
                 if not locked:
                     return HttpResponse("", status=404)
-                form.save()
+                form.save(commit=False)
+                recipe.save(update_fields=[field_name])
         except IntegrityError:
             form.add_error(field_name, "You already have a recipe with that name.")
         else:

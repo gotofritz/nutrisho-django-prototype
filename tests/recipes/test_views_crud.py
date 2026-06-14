@@ -319,11 +319,11 @@ def test_recipe_delete_removes_recipe(auth_client, recipe):
 
 
 @pytest.mark.django_db
-def test_recipe_delete_htmx_returns_empty_body(auth_client, recipe):
-    """HTMX delete returns empty 200 so hx-swap removes the row from DOM."""
+def test_recipe_delete_htmx_returns_hx_redirect(auth_client, recipe):
+    """Detail-page HTMX delete returns HX-Redirect so HTMX navigates client-side."""
     response = auth_client.post(f"/recipes/{recipe.pk}/delete/", HTTP_HX_REQUEST="true")
     assert response.status_code == 200
-    assert "HX-Redirect" not in response
+    assert "HX-Redirect" in response
     assert response.content == b""
 
 
@@ -356,39 +356,47 @@ def test_recipe_delete_from_list_with_remaining_returns_empty_body(auth_client, 
 
 
 @pytest.mark.django_db
-def test_recipe_delete_last_from_detail_panel_returns_empty_body(auth_client, recipe):
-    """Detail-page confirm panel delete (no recipe-* target) keeps empty response;
-    its hx-on::after-request handler does the redirect."""
+def test_recipe_delete_last_from_detail_panel_redirects_to_list(auth_client, recipe):
+    """Detail-page delete with no remaining recipes redirects to the list page."""
     response = auth_client.post(f"/recipes/{recipe.pk}/delete/", HTTP_HX_REQUEST="true")
     assert response.status_code == 200
-    assert response.content == b""
+    assert response["HX-Redirect"] == "/recipes/"
     assert "HX-Retarget" not in response
 
 
 @pytest.mark.django_db
-def test_recipe_delete_panel_next_url_points_to_next_recipe(auth_client, user, recipe, db):
-    """Delete panel includes URL of next recipe so JS can redirect after confirm."""
+def test_recipe_delete_hx_redirect_points_to_next_recipe(auth_client, user, recipe, db):
+    """Detail delete POST sets HX-Redirect to the next recipe's URL."""
     other = Recipe.objects.create(recipe_name="Other", owner=user)
-    response = auth_client.get(f"/recipes/{recipe.pk}/delete/panel/", HTTP_HX_REQUEST="true")
-    assert f"/recipes/{other.pk}/" in response.content.decode()
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/delete/",
+        HTTP_HX_REQUEST="true",
+    )
+    assert response["HX-Redirect"] == other.get_absolute_url()
 
 
 @pytest.mark.django_db
-def test_recipe_delete_panel_next_url_falls_back_to_list(auth_client, recipe):
-    """Delete panel next_url is list when no other recipes exist."""
-    response = auth_client.get(f"/recipes/{recipe.pk}/delete/panel/", HTTP_HX_REQUEST="true")
-    assert "/recipes/" in response.content.decode()
+def test_recipe_delete_hx_redirect_falls_back_to_list(auth_client, recipe):
+    """Detail delete POST redirects to /recipes/ when no other recipes exist."""
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/delete/",
+        HTTP_HX_REQUEST="true",
+    )
+    assert response["HX-Redirect"] == "/recipes/"
 
 
 @pytest.mark.django_db
-def test_recipe_delete_panel_prefers_next_over_prev(auth_client, user, db):
-    """next_url prefers higher-id recipe over lower-id."""
+def test_recipe_delete_hx_redirect_prefers_next_over_prev(auth_client, user, db):
+    """HX-Redirect after delete prefers higher-id neighbor over lower-id."""
     owner = user
     Recipe.objects.create(recipe_name="Prev", owner=owner)
     mid = Recipe.objects.create(recipe_name="Mid", owner=owner)
     nxt = Recipe.objects.create(recipe_name="Next", owner=owner)
-    response = auth_client.get(f"/recipes/{mid.pk}/delete/panel/", HTTP_HX_REQUEST="true")
-    assert f"/recipes/{nxt.pk}/" in response.content.decode()
+    response = auth_client.post(
+        f"/recipes/{mid.pk}/delete/",
+        HTTP_HX_REQUEST="true",
+    )
+    assert response["HX-Redirect"] == nxt.get_absolute_url()
 
 
 @pytest.mark.django_db
@@ -539,3 +547,61 @@ def test_metadata_save_recipe_deleted_concurrently_returns_404(auth_client, reci
 
     assert response.status_code == 404
     assert not Recipe.objects.filter(pk=recipe.pk).exists()
+
+
+@pytest.mark.django_db
+def test_metadata_save_preserves_field_not_in_form(auth_client, recipe, source):
+    """recipe_metadata_edit must not overwrite fields outside the form (e.g. source FK)."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    recipe.source = source
+    recipe.save(update_fields=["source"])
+
+    original_sfu = QuerySet.select_for_update
+    edited = []
+
+    def set_yaml_at_lock(qs, *args, **kwargs):
+        if qs.model is Recipe and not edited:
+            edited.append(True)
+            Recipe.objects.filter(pk=recipe.pk).update(yaml_filename="imported.yaml")
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", set_yaml_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/metadata/",
+            {"recipe_name": recipe.recipe_name, "short_description": "Updated", "servings": ""},
+            HTTP_HX_REQUEST="true",
+        )
+
+    assert response.status_code == 200  # HX-Redirect
+    recipe.refresh_from_db()
+    assert recipe.short_description == "Updated"
+    assert recipe.yaml_filename == "imported.yaml"  # not overwritten
+
+
+@pytest.mark.django_db
+def test_recipe_delete_from_detail_returns_hx_redirect(auth_client, recipe):
+    """Detail-page delete must return HX-Redirect so HTMX navigates; no client-side JS needed."""
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/delete/",
+        HTTP_HX_REQUEST="true",
+    )
+    assert response.status_code == 200
+    assert "HX-Redirect" in response
+
+
+@pytest.mark.django_db
+def test_recipe_delete_redirects_to_fresh_next_recipe(auth_client, user, db):
+    """HX-Redirect must reflect the neighbor set at delete time, not at panel-render time."""
+    r1 = Recipe.objects.create(recipe_name="R1", owner=user)
+    r2 = Recipe.objects.create(recipe_name="R2", owner=user)
+    r3 = Recipe.objects.create(recipe_name="R3", owner=user)
+    # Panel was opened while r3 existed, but r3 gets deleted before confirm
+    r3.delete()
+    response = auth_client.post(
+        f"/recipes/{r2.pk}/delete/",
+        HTTP_HX_REQUEST="true",
+    )
+    assert response["HX-Redirect"] == r1.get_absolute_url()

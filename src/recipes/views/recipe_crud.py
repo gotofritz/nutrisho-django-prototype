@@ -60,7 +60,17 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse
                     )
                     if not locked:
                         return HttpResponse("", status=404)
-                    form.save()
+                    form.save(commit=False)
+                    form.resolve_pending_cuisine(recipe)
+                    recipe.save(
+                        update_fields=[
+                            "recipe_name",
+                            "short_description",
+                            "servings",
+                            "source_instance",
+                            "cuisine",
+                        ]
+                    )
             except IntegrityError:
                 form.add_error("recipe_name", "You already have a recipe with that name.")
             else:
@@ -98,7 +108,7 @@ def recipe_delete_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     return render(
         request,
         "recipes/partials/_delete_confirm_panel.html",
-        {"recipe": recipe, "next_url": _next_recipe_url(recipe_id, request.user)},
+        {"recipe": recipe},
     )
 
 
@@ -107,16 +117,19 @@ def recipe_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     recipe.delete()
     if request.htmx:  # type: ignore[attr-defined]  # django-htmx middleware
-        # Row delete on the list page targets #recipe-<id>; when the last
-        # recipe goes, replace the whole list with the empty state instead
-        # of leaving an empty <ul>.
         target = request.htmx.target or ""  # type: ignore[attr-defined]  # django-htmx middleware
-        if target.startswith("recipe-") and not Recipe.objects.filter(owner=request.user).exists():
-            response = render(request, "recipes/partials/_recipe_list_empty.html")
-            response["HX-Retarget"] = "#recipe-list"
-            response["HX-Reswap"] = "outerHTML"
-            return response
-        return HttpResponse("")
+        if target.startswith("recipe-"):
+            # List page: replace row or swap in empty state when last recipe gone.
+            if not Recipe.objects.filter(owner=request.user).exists():
+                response = render(request, "recipes/partials/_recipe_list_empty.html")
+                response["HX-Retarget"] = "#recipe-list"
+                response["HX-Reswap"] = "outerHTML"
+                return response
+            return HttpResponse("")
+        # Detail page: compute redirect after deletion so it reflects current state.
+        response = HttpResponse("")
+        response["HX-Redirect"] = _next_recipe_url(recipe_id, request.user)
+        return response
     return redirect("/recipes/")
 
 
