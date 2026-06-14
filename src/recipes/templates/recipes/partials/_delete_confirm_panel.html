@@ -5,5 +5,5 @@
 >Cancel</button>
 <button
   hx-post="{% url 'recipes:delete' recipe.id %}"
-  hx-on::after-request="if(event.detail.successful) window.location='{{ next_url }}'"
+  hx-on::after-request="if(event.detail.successful && !event.detail.xhr.getResponseHeader('HX-Redirect')) window.location='{{ next_url }}'"
 >Confirm delete</button>

@@ -1374,3 +1374,45 @@ def test_group_create_recipe_deleted_concurrently_returns_404(auth_client, recip
 
     assert response.status_code == 404
     assert not IngredientGroup.objects.filter(group_name="NewGroup").exists()
+
+
+@pytest.mark.django_db
+def test_ingredient_move_up_group_changed_retargets_groups_list(
+    auth_client, recipe, group, second_group
+):
+    """When IIR is reassigned before lock, move must retarget #groups-list to avoid DOM corruption."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    ing0 = Ingredient.objects.create(ingredient_name="retarget-0")
+    ing1 = Ingredient.objects.create(ingredient_name="retarget-1")
+    ing2 = Ingredient.objects.create(ingredient_name="retarget-2")
+    IngredientInRecipe.objects.create(
+        ingredient=ing0, ingredient_group=group, index_in_sequence=0
+    )
+    iir_b = IngredientInRecipe.objects.create(
+        ingredient=ing1, ingredient_group=group, index_in_sequence=1
+    )
+    IngredientInRecipe.objects.create(
+        ingredient=ing2, ingredient_group=second_group, index_in_sequence=0
+    )
+
+    original_sfu = QuerySet.select_for_update
+    reassigned = []
+
+    def reassign_at_lock(qs, *args, **kwargs):
+        if qs.model is IngredientInRecipe and not reassigned:
+            reassigned.append(True)
+            IngredientInRecipe.objects.filter(pk=iir_b.pk).update(
+                ingredient_group=second_group, index_in_sequence=1
+            )
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", reassign_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/ingredients/{iir_b.pk}/move-up/"
+        )
+
+    assert response.get("HX-Retarget") == "#groups-list"
+    assert response.get("HX-Reswap") == "innerHTML"

@@ -151,7 +151,8 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
 @require_POST
 def recipe_ingredient_move_up(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
-    get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
+    iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
+    original_group_id = iir.ingredient_group_id
     with transaction.atomic():
         fresh = (
             IngredientInRecipe.objects.select_for_update()
@@ -160,13 +161,25 @@ def recipe_ingredient_move_up(request: AuthedRequest, recipe_id: int, iir_id: in
             .first()
         )
         if fresh is None:
-            return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
+            response = render(
+                request, "recipes/partials/_groups_list.html", {"recipe": recipe}
+            )
+            response["HX-Retarget"] = "#groups-list"
+            response["HX-Reswap"] = "innerHTML"
+            return response
         group = fresh.ingredient_group
         move_in_sequence(
             siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
             instance=fresh,
             direction="up",
         )
+    if group.pk != original_group_id:
+        response = render(
+            request, "recipes/partials/_groups_list.html", {"recipe": recipe}
+        )
+        response["HX-Retarget"] = "#groups-list"
+        response["HX-Reswap"] = "innerHTML"
+        return response
     return render(request, "recipes/partials/_iir_list.html", {"recipe": recipe, "group": group})
 
 
@@ -175,7 +188,8 @@ def recipe_ingredient_move_down(
     request: AuthedRequest, recipe_id: int, iir_id: int
 ) -> HttpResponse:
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
-    get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
+    iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
+    original_group_id = iir.ingredient_group_id
     with transaction.atomic():
         fresh = (
             IngredientInRecipe.objects.select_for_update()
@@ -184,13 +198,25 @@ def recipe_ingredient_move_down(
             .first()
         )
         if fresh is None:
-            return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
+            response = render(
+                request, "recipes/partials/_groups_list.html", {"recipe": recipe}
+            )
+            response["HX-Retarget"] = "#groups-list"
+            response["HX-Reswap"] = "innerHTML"
+            return response
         group = fresh.ingredient_group
         move_in_sequence(
             siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
             instance=fresh,
             direction="down",
         )
+    if group.pk != original_group_id:
+        response = render(
+            request, "recipes/partials/_groups_list.html", {"recipe": recipe}
+        )
+        response["HX-Retarget"] = "#groups-list"
+        response["HX-Reswap"] = "innerHTML"
+        return response
     return render(request, "recipes/partials/_iir_list.html", {"recipe": recipe, "group": group})
 
 
