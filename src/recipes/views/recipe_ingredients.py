@@ -53,7 +53,12 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     form = IngredientInRecipeForm(data=request.POST, instance=iir)
     if form.is_valid():
-        form.save()
+        with transaction.atomic():
+            if not IngredientInRecipe.objects.select_for_update().filter(
+                pk=iir.pk, ingredient_group__recipe=recipe
+            ).exists():
+                return HttpResponse("", status=404)
+            form.save()
         iir.refresh_from_db()
         return render(
             request,
@@ -488,7 +493,7 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
         all_target_items = fresh_iirs + existing_target
         for i, item in enumerate(all_target_items):
             item.ingredient_group = target_group
-            item.index_in_sequence = 10000 + i
+            item.index_in_sequence = -(i + 1)
             item.save(update_fields=["ingredient_group", "index_in_sequence"])
 
         # Compact non-moved items in source groups (target is rewritten fully below)

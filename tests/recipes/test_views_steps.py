@@ -388,3 +388,29 @@ def test_step_create_recipe_deleted_concurrently_returns_404(auth_client, recipe
 
     assert response.status_code == 404
     assert not Step.objects.filter(step_text="Simmer for 30 minutes").exists()
+
+
+@pytest.mark.django_db
+def test_step_save_step_deleted_concurrently_returns_404(auth_client, recipe, step):
+    """recipe_step_save must return 404 if step is deleted after get_object_or_404."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+    deleted = []
+
+    def delete_step_at_lock(qs, *args, **kwargs):
+        if qs.model is Step and not deleted:
+            deleted.append(True)
+            Step.objects.filter(pk=step.pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", delete_step_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/steps/{step.pk}/save/",
+            {"step_text": "Updated text"},
+        )
+
+    assert response.status_code == 404
+    assert not Step.objects.filter(pk=step.pk).exists()

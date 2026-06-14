@@ -38,7 +38,10 @@ def recipe_step_save(request: AuthedRequest, recipe_id: int, step_id: int) -> Ht
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     form = StepForm(data=request.POST, instance=step)
     if form.is_valid():
-        form.save()
+        with transaction.atomic():
+            if not Step.objects.select_for_update().filter(pk=step.pk, recipe=recipe).exists():
+                return HttpResponse("", status=404)
+            form.save()
         step.refresh_from_db()
         return render(
             request,

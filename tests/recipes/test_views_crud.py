@@ -513,3 +513,29 @@ def test_recipe_new_post_duplicate_name_other_owner_succeeds(db):
     response = c.post("/recipes/new/", {"recipe_name": "Chowder"})
     assert response.status_code == 302
     assert Recipe.objects.filter(recipe_name="Chowder", owner=bob).exists()
+
+
+@pytest.mark.django_db
+def test_metadata_save_recipe_deleted_concurrently_returns_404(auth_client, recipe):
+    """recipe_metadata_edit must return 404 if recipe is deleted after get_object_or_404."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+    deleted = []
+
+    def delete_recipe_at_lock(qs, *args, **kwargs):
+        if qs.model is Recipe and not deleted:
+            deleted.append(True)
+            Recipe.objects.filter(pk=recipe.pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", delete_recipe_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/metadata/",
+            {"recipe_name": "New Name"},
+        )
+
+    assert response.status_code == 404
+    assert not Recipe.objects.filter(pk=recipe.pk).exists()

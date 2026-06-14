@@ -130,3 +130,29 @@ def test_field_save_integrity_error_returns_edit_form_with_error(auth_client, re
     content = response.content.decode()
     assert "<form" in content
     assert "already have" in content
+
+
+@pytest.mark.django_db
+def test_field_save_recipe_deleted_concurrently_returns_404(auth_client, recipe):
+    """recipe_field_save must return 404 if recipe is deleted after get_object_or_404."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+    deleted = []
+
+    def delete_recipe_at_lock(qs, *args, **kwargs):
+        if qs.model is Recipe and not deleted:
+            deleted.append(True)
+            Recipe.objects.filter(pk=recipe.pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", delete_recipe_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/field/short_description/save/",
+            {"short_description": "Updated"},
+        )
+
+    assert response.status_code == 404
+    assert not Recipe.objects.filter(pk=recipe.pk).exists()

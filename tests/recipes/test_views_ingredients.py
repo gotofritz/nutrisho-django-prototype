@@ -1416,3 +1416,56 @@ def test_ingredient_move_up_group_changed_retargets_groups_list(
 
     assert response.get("HX-Retarget") == "#groups-list"
     assert response.get("HX-Reswap") == "innerHTML"
+
+
+@pytest.mark.django_db
+def test_ingredient_save_iir_deleted_concurrently_returns_404(auth_client, recipe, iir):
+    """recipe_ingredient_save must return 404 if IIR is deleted after get_object_or_404."""
+    from unittest.mock import patch
+
+    from django.db.models import QuerySet
+
+    original_sfu = QuerySet.select_for_update
+    deleted = []
+
+    def delete_iir_at_lock(qs, *args, **kwargs):
+        if qs.model is IngredientInRecipe and not deleted:
+            deleted.append(True)
+            IngredientInRecipe.objects.filter(pk=iir.pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    with patch.object(QuerySet, "select_for_update", delete_iir_at_lock):
+        response = auth_client.post(
+            f"/recipes/{recipe.pk}/ingredients/{iir.pk}/save/",
+            {"ingredient_name": "onion", "quantity": "2", "unit": "kg", "preparation": "", "note": ""},
+        )
+
+    assert response.status_code == 404
+    assert not IngredientInRecipe.objects.filter(pk=iir.pk).exists()
+
+
+@pytest.mark.django_db
+def test_reassign_park_indexes_do_not_collide_with_high_indexed_target(auth_client, recipe, group):
+    """Park step must not use 10000+i which can collide with importer-seeded high indexes."""
+    ing_src = Ingredient.objects.create(ingredient_name="park-source")
+    source_iir = IngredientInRecipe.objects.create(
+        ingredient=ing_src, ingredient_group=group, index_in_sequence=0
+    )
+    target_group = IngredientGroup.objects.create(
+        recipe=recipe, group_name="Target", index_in_sequence=1
+    )
+    ing_t0 = Ingredient.objects.create(ingredient_name="park-target-normal")
+    ing_t1 = Ingredient.objects.create(ingredient_name="park-target-high")
+    IngredientInRecipe.objects.create(
+        ingredient=ing_t0, ingredient_group=target_group, index_in_sequence=0
+    )
+    IngredientInRecipe.objects.create(
+        ingredient=ing_t1, ingredient_group=target_group, index_in_sequence=10000
+    )
+
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/ingredients/reassign/",
+        {"ingredient_ids": [source_iir.pk], "target_group": target_group.pk},
+    )
+
+    assert response.status_code == 200

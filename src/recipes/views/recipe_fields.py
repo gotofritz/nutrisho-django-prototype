@@ -1,4 +1,4 @@
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET, require_POST
@@ -47,7 +47,13 @@ def recipe_field_save(request: AuthedRequest, recipe_id: int, field_name: str) -
     form = RecipeFieldForm(field_name, data=request.POST, instance=recipe)
     if form.is_valid():
         try:
-            form.save()
+            with transaction.atomic():
+                locked = list(
+                    Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk")
+                )
+                if not locked:
+                    return HttpResponse("", status=404)
+                form.save()
         except IntegrityError:
             form.add_error(field_name, "You already have a recipe with that name.")
         else:

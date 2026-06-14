@@ -54,7 +54,13 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse
         form = RecipeMetadataForm(data=request.POST, instance=recipe)
         if form.is_valid():
             try:
-                form.save()
+                with transaction.atomic():
+                    locked = list(
+                        Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk")
+                    )
+                    if not locked:
+                        return HttpResponse("", status=404)
+                    form.save()
             except IntegrityError:
                 form.add_error("recipe_name", "You already have a recipe with that name.")
             else:
