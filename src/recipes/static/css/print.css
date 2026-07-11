@@ -1,6 +1,7 @@
 .no-print,
 .btn-add,
 .move-btns,
+input[type=checkbox],
 [data-empty] {
   display: none !important;
 }
