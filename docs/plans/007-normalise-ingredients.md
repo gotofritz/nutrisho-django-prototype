@@ -52,8 +52,13 @@ before the relevant phase.
      `get_or_create`. Aliases are **input-only**: they never become `Ingredient`
      rows and are never referenced by an `IngredientInRecipe`, so storage and
      display always show the canonical British form. Entering `eggplant` stores
-     and shows `aubergine`, with no error. Merge becomes the way aliases are born
-     — merging `eggplant → aubergine` records `eggplant` as an alias.
+     and shows `aubergine`, with no error. Aliases are created three ways, in
+     priority order: **(1) defined explicitly** in the Miller tool (a first-class
+     Alias action — declare `eggplant → aubergine` up front, before it is ever
+     scraped); (2) recorded automatically when a **merge** collapses one
+     ingredient into another; (3) captured when a variant is **resolved manually**
+     during input. Explicit definition is the primary path; the others are
+     conveniences.
 
    This is **not** the old "variant survives as a row" model — there is no
    `canonical` self-FK on `Ingredient`; aliases live in a separate lookup table
@@ -304,12 +309,32 @@ canonical British ingredient at write time; storage and display stay canonical.
   transaction, before deleting the victim.
   - Tests: post-merge alias row exists; `resolve_ingredient("eggplant")` →
     `aubergine`; victim's prior aliases now point at survivor; no orphaned aliases.
-- **8.5** Minimal alias management in the Miller tool: for a single selected
-  canonical ingredient, list / add / remove its aliases (small workspace panel).
-  - Tests: add alias; remove alias; list reflects DB; add of a colliding name
-    rejected (reuses 8.1 validation).
-- **8.6** Docs: update `docs/initial-context.md` (alias-resolution layer + the
-  "resolve on input, store/display canonical" rule) and `README.md`.
+- **8.5** First-class **Alias** action in the Miller tool (4th col-1 button,
+  alongside Edit/Delete/Merge; enabled when exactly 1 canonical is selected).
+  Workspace panel: list the selected ingredient's existing aliases, add new
+  alias name(s), remove aliases. This is the **explicit mapping** path — declare
+  `eggplant → aubergine` directly, before anything is scraped.
+  - Tests: panel lists current aliases; add alias persists and resolves
+    (`resolve_ingredient("eggplant")` → selected canonical); remove deletes the
+    mapping; adding a name that collides (CI) with an existing alias or canonical
+    is rejected (reuses 8.1 validation); guard requires exactly 1 selected.
+- **8.6** Convergence — adding an alias whose name **is already an `Ingredient`**
+  (i.e. the variant exists as its own row, possibly used by recipes) is merge
+  semantics, not a bare insert. Detect this in the Alias action and route through
+  the Phase 6 `merge_ingredients` service (repoint IIR `ingredient`+`substitute`,
+  delete the row, record the alias) so no data is stranded.
+  - Tests: defining `eggplant → aubergine` when an `eggplant` ingredient row
+    exists repoints its recipes to `aubergine`, deletes the row, and leaves the
+    alias; defining an alias for a name with no existing row is a plain insert
+    (no merge).
+- **8.7** Manual-resolution capture (input side): when an importer/input hits a
+  name that resolves to nothing and the owner picks a canonical for it, store the
+  chosen mapping as an alias via the same service. (Lightweight; reuses 8.2/8.5.)
+  - Tests: resolving an unknown variant to a canonical creates the alias; the next
+    input of that variant resolves without prompting.
+- **8.8** Docs: update `docs/initial-context.md` (alias-resolution layer, the
+  "resolve on input, store/display canonical" rule, the three creation paths) and
+  `README.md`.
 
 > Phase 7's case-insensitive uniqueness on `Ingredient.ingredient_name` is a
 > prerequisite — alias collision rules depend on it.
