@@ -1,6 +1,10 @@
 # Plan 007: Normalise Ingredients
 
-## Status: Draft
+## Status: Approved — ready to implement
+
+Finalised 2026-09-13. Phases 1–7 land first; Phase 8 (alias layer) follows in a
+separate PR. The constraints below were re-verified against the codebase at
+`12caf31`.
 
 Tracks [issue #14](https://github.com/gotofritz/nutrisho-django-prototype/issues/14).
 
@@ -33,7 +37,7 @@ updates the columns to reflect the new DB state.
 
 ---
 
-## Decisions (confirmed 2026-06-14)
+## Decisions (confirmed 2026-06-14; #1 revised 2026-06-15, #6 added 2026-09-13)
 
 All resolved to the recommended option (in **bold**). Reopen on the PR to change
 before the relevant phase.
@@ -79,6 +83,13 @@ before the relevant phase.
 5. **Fuzzy search depth.** Recommended: **case-insensitive substring**
    (`icontains`) for v1. SQLite has no trigram extension; true fuzzy ranking is a
    future step.
+
+6. **Rename during merge** *(resolves the former open question)*. **Separate
+   actions** — merge picks a survivor only; renaming it is a distinct Edit
+   action. Folding a rename into the merge chooser would duplicate the
+   case-insensitive uniqueness validation of Phase 4.1 in a second form and widen
+   the merge POST for a case already covered by two clicks (rename, then merge —
+   or merge, then rename). Phase 6 therefore ships no rename field.
 
 ---
 
@@ -187,6 +198,10 @@ isolation, so the HTMX views stay thin. Run `task qa` before the PR; keep covera
     `"N matches / M selected"`; empty selection → empty/placeholder; width class
     (≤62ch); each row links (hx-get) to its preview.
 - **2.2** `preview` view → `_recipe_preview.html` (col 4), new read-only render.
+  The existing `recipes/partials/_recipe_content.html` is **not** reusable here:
+  it pulls in `navbar.html` / `nav_recipe.html` and the add-step / add-group
+  buttons, and its `_field_display.html` includes carry `hx-get` edit triggers.
+  Col 4 is a fresh, inert template rather than a stripped-down include.
   - Tests: shows recipe name, ingredient groups/lines, steps; contains **no**
     nav and **no** edit controls (no `hx-get .../edit/`); 404 for a recipe owned
     by someone else.
@@ -353,5 +368,5 @@ canonical British ingredient at write time; storage and display stay canonical.
 
 ## Open questions
 
-1. Should merge offer a name-rename step (pick survivor *and* rename) in one go,
-   or is rename-then-merge via separate actions enough? Assumed: separate.
+None — all resolved (the merge-rename question became Decision 6). Reopen on the
+PR if a phase turns up something the decisions above do not cover.
