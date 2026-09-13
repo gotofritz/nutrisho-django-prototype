@@ -103,6 +103,20 @@ def test_field_save_post_invalid_returns_form_with_errors(auth_client, recipe):
 
 
 @pytest.mark.django_db
+def test_field_save_blank_servings_returns_form_with_errors(auth_client, recipe):
+    """servings is mandatory: clearing it inline re-renders the edit form, value unchanged."""
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/field/servings/save/",
+        {"servings": ""},
+    )
+    assert response.status_code == 200
+    content = response.content.decode()
+    assert "<form" in content
+    recipe.refresh_from_db()
+    assert recipe.servings == 2
+
+
+@pytest.mark.django_db
 def test_field_save_nonexistent_recipe_returns_404(auth_client, db):
     response = auth_client.post("/recipes/99999/field/recipe_name/save/", {"recipe_name": "x"})
     assert response.status_code == 404

@@ -21,20 +21,8 @@ def recipe(user, db):
 
 
 @pytest.fixture
-def recipe_no_servings(user, db):
-    return Recipe.objects.create(recipe_name="Scale No Servings", owner=user, servings=None)
-
-
-@pytest.fixture
 def group(recipe):
     return IngredientGroup.objects.create(recipe=recipe, group_name="Main", index_in_sequence=0)
-
-
-@pytest.fixture
-def group_no_servings(recipe_no_servings):
-    return IngredientGroup.objects.create(
-        recipe=recipe_no_servings, group_name="Main", index_in_sequence=0
-    )
 
 
 @pytest.fixture
@@ -103,40 +91,6 @@ def test_scale_post_skips_null_quantities(auth_client, recipe, group, iir_null_q
     auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
     iir_null_quantity.refresh_from_db()
     assert iir_null_quantity.quantity is None
-
-
-@pytest.mark.django_db
-def test_scale_post_null_servings_scales_quantities_but_leaves_servings_none(
-    auth_client, recipe_no_servings, group_no_servings
-):
-    ing = Ingredient.objects.create(ingredient_name="garlic-scale")
-    iir = IngredientInRecipe.objects.create(
-        ingredient=ing,
-        ingredient_group=group_no_servings,
-        index_in_sequence=0,
-        quantity=Decimal("3.00"),
-    )
-    auth_client.post(f"/recipes/{recipe_no_servings.pk}/scale/", {"multiplier": "3"})
-    iir.refresh_from_db()
-    recipe_no_servings.refresh_from_db()
-    assert iir.quantity == Decimal("9.00")
-    assert recipe_no_servings.servings is None
-
-
-@pytest.mark.django_db
-def test_scale_post_null_servings_extreme_multiplier_returns_400(
-    auth_client, recipe_no_servings, group_no_servings
-):
-    """Extreme multiplier must return 400, not 500 from InvalidOperation in quantize."""
-    ing = Ingredient.objects.create(ingredient_name="extreme-scale")
-    IngredientInRecipe.objects.create(
-        ingredient=ing,
-        ingredient_group=group_no_servings,
-        index_in_sequence=0,
-        quantity=Decimal("99999.99"),
-    )
-    response = auth_client.post(f"/recipes/{recipe_no_servings.pk}/scale/", {"multiplier": "1E+50"})
-    assert response.status_code == 422
 
 
 @pytest.mark.django_db

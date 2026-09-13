@@ -72,7 +72,7 @@ them as `null` and import coerces `null` back to `""`.
 
 ### Key Models
 
-- `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; `null` when unknown)
+- `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`)
 - `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving)
 - `Step` — ordered recipe steps
 - `Cuisine`, `Source`, `Tag` — lookup/classification models

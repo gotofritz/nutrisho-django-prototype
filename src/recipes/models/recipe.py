@@ -18,7 +18,8 @@ class Recipe(models.Model):
     """
     Recipe model.
 
-    servings is the author's intended serving count (default 1).
+    servings is the author's intended serving count. It is mandatory: every
+    recipe carries one, and the column is NOT NULL with a default of 1.
     Ingredient quantities are stored as-is from the source data and are not
     normalized to per-serving amounts; a data migration is required before
     any per-serving arithmetic is meaningful.
@@ -37,9 +38,7 @@ class Recipe(models.Model):
         blank=True,
     )
     cuisine = models.ForeignKey(Cuisine, on_delete=models.SET_NULL, null=True, blank=True)
-    servings = models.PositiveSmallIntegerField(
-        null=True, blank=True, default=None, validators=[MinValueValidator(1)]
-    )
+    servings = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1)])
     yaml_filename = models.CharField("source YAML filename", max_length=260, blank=True, default="")
     created_date = models.DateTimeField("date created", auto_now_add=True)
     objects = RecipeManager()
@@ -47,8 +46,8 @@ class Recipe(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                condition=models.Q(servings__isnull=True) | models.Q(servings__gte=1),
-                name="recipes_recipe_servings_gte1_or_null",
+                condition=models.Q(servings__gte=1),
+                name="recipes_recipe_servings_gte1",
             ),
             models.UniqueConstraint(
                 fields=["owner", "recipe_name"],
@@ -58,13 +57,15 @@ class Recipe(models.Model):
 
     def save(self, *args, **kwargs):
         if self.yaml_filename:
-            self.yaml_filename = sanitize_stored_filename(str(self.yaml_filename))
+            self.yaml_filename = sanitize_stored_filename(  # ty: ignore[invalid-assignment]
+                str(self.yaml_filename)
+            )
         super().save(*args, **kwargs)
 
     def natural_key(self) -> tuple[str, str]:
-        return (str(self.owner.username), str(self.recipe_name))  # type: ignore[union-attr]
+        return (str(self.owner.username), str(self.recipe_name))  # ty: ignore[unresolved-attribute]
 
-    natural_key.dependencies = ["auth.user"]  # type: ignore[attr-defined]
+    natural_key.dependencies = ["auth.user"]  # ty: ignore[unresolved-attribute]
 
     def get_absolute_url(self):
         return reverse("recipes:recipe", kwargs={"recipe_id": self.id})

@@ -138,9 +138,9 @@ class Command(BaseCommand):
         )
 
     @classmethod
-    def _parse_serves(cls, serves_raw, source_path: Path) -> int | None:
+    def _parse_serves(cls, serves_raw, source_path: Path) -> int:
         if serves_raw is None:
-            return None
+            raise CommandError(f"{source_path}: missing required 'serves' value")
         if isinstance(serves_raw, bool):
             raise CommandError(
                 f"{source_path}: invalid serves value {serves_raw!r} (bool not allowed)"
@@ -182,7 +182,7 @@ class Command(BaseCommand):
                 files_to_load.append(passed_path)
 
         # Phase 1: parse + validate all files before any DB writes
-        payloads: list[tuple[Path, dict, int | None, str, str]] = []
+        payloads: list[tuple[Path, dict, int, str, str]] = []
         seen_names: dict[str, Path] = {}
         seen_filenames: dict[str, Path] = {}  # casefold(yaml_filename) -> source_path
         for source_path in files_to_load:

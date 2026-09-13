@@ -73,7 +73,9 @@ def test_recipe_new_form_cuisine_is_charfield(auth_client):
 
 @pytest.mark.django_db
 def test_recipe_new_post_valid_creates_recipe_and_redirects(auth_client, user):
-    response = auth_client.post("/recipes/new/", {"recipe_name": "Brand New Recipe"})
+    response = auth_client.post(
+        "/recipes/new/", {"recipe_name": "Brand New Recipe", "servings": "4"}
+    )
     assert response.status_code == 302
     assert Recipe.objects.filter(recipe_name="Brand New Recipe").exists()
 
@@ -102,27 +104,55 @@ def test_recipe_new_post_saves_metadata(auth_client, user):
 @pytest.mark.django_db
 def test_recipe_new_post_creates_cuisine_if_new(auth_client, user):
     assert not Cuisine.objects.filter(cuisine="Peruvian").exists()
-    auth_client.post("/recipes/new/", {"recipe_name": "Ceviche", "cuisine_name": "Peruvian"})
+    auth_client.post(
+        "/recipes/new/",
+        {"recipe_name": "Ceviche", "cuisine_name": "Peruvian", "servings": "4"},
+    )
     assert Cuisine.objects.filter(cuisine="Peruvian").exists()
 
 
 @pytest.mark.django_db
 def test_recipe_new_post_reuses_existing_cuisine(auth_client, user, cuisine):
-    auth_client.post("/recipes/new/", {"recipe_name": "Pasta", "cuisine_name": "Italian"})
+    auth_client.post(
+        "/recipes/new/",
+        {"recipe_name": "Pasta", "cuisine_name": "Italian", "servings": "4"},
+    )
     assert Cuisine.objects.filter(cuisine="Italian").count() == 1
 
 
 @pytest.mark.django_db
 def test_recipe_new_post_invalid_returns_200_with_errors(auth_client, user):
-    response = auth_client.post("/recipes/new/", {"recipe_name": ""})
+    response = auth_client.post("/recipes/new/", {"recipe_name": "", "servings": "4"})
     assert response.status_code == 200
     assert "form" in response.context
     assert response.context["form"].errors
 
 
 @pytest.mark.django_db
+def test_recipe_new_post_without_servings_returns_error(auth_client, user):
+    """servings is mandatory: POST /recipes/new/ without it re-renders with a field error."""
+    response = auth_client.post("/recipes/new/", {"recipe_name": "No Serves Recipe"})
+    assert response.status_code == 200
+    assert "servings" in response.context["form"].errors
+    assert not Recipe.objects.filter(recipe_name="No Serves Recipe").exists()
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_post_without_servings_returns_error(auth_client, recipe):
+    """servings is mandatory: clearing it on the metadata form is rejected."""
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/metadata/",
+        {"recipe_name": recipe.recipe_name, "servings": ""},
+    )
+    assert response.status_code == 200
+    assert "servings" in response.context["form"].errors
+
+
+@pytest.mark.django_db
 def test_recipe_new_post_duplicate_name_returns_error(auth_client, recipe):
-    response = auth_client.post("/recipes/new/", {"recipe_name": recipe.recipe_name})
+    response = auth_client.post(
+        "/recipes/new/", {"recipe_name": recipe.recipe_name, "servings": "4"}
+    )
     assert response.status_code == 200
     assert "form" in response.context
 
@@ -135,7 +165,9 @@ def test_recipe_new_post_integrity_error_returns_form_error(auth_client, user):
     from django.db import IntegrityError
 
     with patch("recipes.models.Recipe.save", side_effect=IntegrityError):
-        response = auth_client.post("/recipes/new/", {"recipe_name": "Race Condition Recipe"})
+        response = auth_client.post(
+            "/recipes/new/", {"recipe_name": "Race Condition Recipe", "servings": "4"}
+        )
     assert response.status_code == 200
     assert "form" in response.context
     assert response.context["form"].errors
@@ -151,7 +183,7 @@ def test_recipe_metadata_post_integrity_error_returns_form_error(auth_client, re
     with patch("recipes.views.recipe_crud.RecipeMetadataForm.save", side_effect=IntegrityError):
         response = auth_client.post(
             f"/recipes/{recipe.pk}/metadata/",
-            {"recipe_name": recipe.recipe_name},
+            {"recipe_name": recipe.recipe_name, "servings": "4"},
         )
     assert response.status_code == 200
     assert "form" in response.context
@@ -163,7 +195,7 @@ def test_recipe_new_htmx_post_valid_returns_hx_redirect(auth_client, user):
     """Boosted form submit must get HX-Redirect, not a plain 302."""
     response = auth_client.post(
         "/recipes/new/",
-        {"recipe_name": "HTMX New Recipe"},
+        {"recipe_name": "HTMX New Recipe", "servings": "4"},
         HTTP_HX_REQUEST="true",
     )
     assert response.status_code == 200
@@ -191,7 +223,12 @@ def test_recipe_metadata_get_has_form(auth_client, recipe):
 def test_recipe_metadata_post_saves_and_redirects(auth_client, recipe):
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/",
-        {"recipe_name": recipe.recipe_name, "cuisine_name": "French", "source_instance": "p.10"},
+        {
+            "recipe_name": recipe.recipe_name,
+            "cuisine_name": "French",
+            "source_instance": "p.10",
+            "servings": "4",
+        },
     )
     assert response.status_code == 302
     recipe.refresh_from_db()
@@ -201,7 +238,9 @@ def test_recipe_metadata_post_saves_and_redirects(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_metadata_post_invalid_returns_form(auth_client, recipe):
-    response = auth_client.post(f"/recipes/{recipe.pk}/metadata/", {"recipe_name": ""})
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/metadata/", {"recipe_name": "", "servings": "4"}
+    )
     assert response.status_code == 200
     assert response.context["form"].errors
 
@@ -223,7 +262,7 @@ def test_recipe_metadata_htmx_get_returns_partial(auth_client, recipe):
 def test_recipe_metadata_htmx_post_valid_returns_hx_redirect(auth_client, recipe):
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/",
-        {"recipe_name": recipe.recipe_name, "cuisine_name": "Spanish"},
+        {"recipe_name": recipe.recipe_name, "cuisine_name": "Spanish", "servings": "4"},
         HTTP_HX_REQUEST="true",
     )
     assert response.status_code == 200
@@ -234,7 +273,7 @@ def test_recipe_metadata_htmx_post_valid_returns_hx_redirect(auth_client, recipe
 def test_recipe_metadata_htmx_post_invalid_returns_partial(auth_client, recipe):
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/",
-        {"recipe_name": ""},
+        {"recipe_name": "", "servings": "4"},
         HTTP_HX_REQUEST="true",
     )
     assert response.status_code == 200
@@ -259,7 +298,7 @@ def test_recipe_metadata_boosted_get_returns_full_page(auth_client, recipe):
 def test_recipe_metadata_boosted_post_invalid_returns_full_page(auth_client, recipe):
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/",
-        {"recipe_name": ""},
+        {"recipe_name": "", "servings": "4"},
         HTTP_HX_REQUEST="true",
         HTTP_HX_BOOSTED="true",
     )
@@ -453,7 +492,10 @@ def test_recipe_new_integrity_error_does_not_leave_orphan_cuisine(auth_client, u
 
     assert not Cuisine.objects.filter(cuisine="Orphan Cuisine").exists()
     with patch("recipes.models.Recipe.save", side_effect=IntegrityError):
-        auth_client.post("/recipes/new/", {"recipe_name": "Race", "cuisine_name": "Orphan Cuisine"})
+        auth_client.post(
+            "/recipes/new/",
+            {"recipe_name": "Race", "cuisine_name": "Orphan Cuisine", "servings": "4"},
+        )
     assert not Cuisine.objects.filter(cuisine="Orphan Cuisine").exists()
 
 
@@ -468,7 +510,11 @@ def test_recipe_metadata_integrity_error_does_not_leave_orphan_cuisine(auth_clie
     with patch("recipes.models.Recipe.save", side_effect=IntegrityError):
         auth_client.post(
             f"/recipes/{recipe.pk}/metadata/",
-            {"recipe_name": recipe.recipe_name, "cuisine_name": "Orphan Cuisine 2"},
+            {
+                "recipe_name": recipe.recipe_name,
+                "cuisine_name": "Orphan Cuisine 2",
+                "servings": "4",
+            },
         )
     assert not Cuisine.objects.filter(cuisine="Orphan Cuisine 2").exists()
 
@@ -518,7 +564,7 @@ def test_recipe_new_post_duplicate_name_other_owner_succeeds(db):
 
     c = Client()
     c.force_login(bob)
-    response = c.post("/recipes/new/", {"recipe_name": "Chowder"})
+    response = c.post("/recipes/new/", {"recipe_name": "Chowder", "servings": "4"})
     assert response.status_code == 302
     assert Recipe.objects.filter(recipe_name="Chowder", owner=bob).exists()
 
@@ -542,7 +588,7 @@ def test_metadata_save_recipe_deleted_concurrently_returns_404(auth_client, reci
     with patch.object(QuerySet, "select_for_update", delete_recipe_at_lock):
         response = auth_client.post(
             f"/recipes/{recipe.pk}/metadata/",
-            {"recipe_name": "New Name"},
+            {"recipe_name": "New Name", "servings": "4"},
         )
 
     assert response.status_code == 404
@@ -571,7 +617,7 @@ def test_metadata_save_preserves_field_not_in_form(auth_client, recipe, source):
     with patch.object(QuerySet, "select_for_update", set_yaml_at_lock):
         response = auth_client.post(
             f"/recipes/{recipe.pk}/metadata/",
-            {"recipe_name": recipe.recipe_name, "short_description": "Updated", "servings": ""},
+            {"recipe_name": recipe.recipe_name, "short_description": "Updated", "servings": "2"},
             HTTP_HX_REQUEST="true",
         )
 
