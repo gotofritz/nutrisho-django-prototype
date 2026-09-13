@@ -229,7 +229,7 @@ def recipe_scale(request: AuthedRequest, recipe_id: int) -> HttpResponse:
         multiplier = Decimal(request.POST.get("multiplier", ""))
         if multiplier <= 0:
             raise ValueError
-    except (InvalidOperation, ValueError):
+    except InvalidOperation, ValueError:
         recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
         return _scale_error(request, recipe, "Enter a positive number.")
 

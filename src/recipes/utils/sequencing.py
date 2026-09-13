@@ -47,7 +47,7 @@ def insert_at_index(
     rows = list(siblings.select_for_update().order_by("index_in_sequence"))
     try:
         position = int(requested_index)  # type: ignore[arg-type]  # ValueError/TypeError handled
-    except (TypeError, ValueError):
+    except TypeError, ValueError:
         position = len(rows)
     position = max(0, min(position, len(rows)))
     if position == len(rows):

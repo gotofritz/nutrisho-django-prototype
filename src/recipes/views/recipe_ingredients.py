@@ -353,7 +353,7 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
 
     try:
         ingredient_ids = [int(i) for i in raw_ids]
-    except (ValueError, TypeError):
+    except ValueError, TypeError:
         return render(
             request,
             "recipes/partials/_groups_list.html",
@@ -366,7 +366,7 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
     if not is_new_group:
         try:
             group_pk = int(target_group_id)
-        except (ValueError, TypeError):
+        except ValueError, TypeError:
             return render(
                 request,
                 "recipes/partials/_groups_list.html",
