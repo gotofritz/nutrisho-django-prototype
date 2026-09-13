@@ -33,10 +33,10 @@ updates the columns to reflect the new DB state.
 
 ---
 
-## Decisions required (confirm before Phase 1)
+## Decisions (confirmed 2026-06-14)
 
-These shape the build. Recommended option in **bold**; raise an objection on the
-issue/PR to redirect before implementation starts.
+All resolved to the recommended option (in **bold**). Reopen on the PR to change
+before the relevant phase.
 
 1. **Schema for plurals / alt-spellings / alt-names.**
    - **(A) Recommended — merge-based, no alias table.** Treat variants as
@@ -279,7 +279,5 @@ isolation, so the HTMX views stay thin. Run `task qa` before the PR; keep covera
 
 ## Open questions
 
-1. Confirm Decision 1 (merge-based vs alias FK) before Phase 7.
-2. Col 3 union vs intersection (Decision 4) — union assumed.
-3. Should merge offer a name-rename step (pick survivor *and* rename) in one go,
+1. Should merge offer a name-rename step (pick survivor *and* rename) in one go,
    or is rename-then-merge via separate actions enough? Assumed: separate.
