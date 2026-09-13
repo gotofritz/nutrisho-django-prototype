@@ -26,7 +26,7 @@ def recipe_new(request: AuthedRequest) -> HttpResponse:
                     "recipes/recipe_new.html",
                     {"form": form, "all_cuisines": _cuisine_names()},
                 )
-            if request.htmx:  # type: ignore[attr-defined]  # django-htmx middleware
+            if request.htmx:
                 response = HttpResponse()
                 response["HX-Redirect"] = recipe.get_absolute_url()
                 return response
@@ -43,7 +43,7 @@ def recipe_new(request: AuthedRequest) -> HttpResponse:
 
 def _is_panel_request(request: AuthedRequest) -> bool:
     """True for HTMX panel swaps; boosted navigation wants the full page."""
-    return bool(request.htmx) and not request.htmx.boosted  # type: ignore[attr-defined]  # django-htmx middleware
+    return bool(request.htmx) and not request.htmx.boosted
 
 
 @vary_on_headers("HX-Request", "HX-Boosted")
@@ -74,7 +74,7 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse
             except IntegrityError:
                 form.add_error("recipe_name", "You already have a recipe with that name.")
             else:
-                if request.htmx:  # type: ignore[attr-defined]  # django-htmx middleware
+                if request.htmx:
                     response = HttpResponse()
                     response["HX-Redirect"] = recipe.get_absolute_url()
                     return response
@@ -116,8 +116,8 @@ def recipe_delete_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 def recipe_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     recipe.delete()
-    if request.htmx:  # type: ignore[attr-defined]  # django-htmx middleware
-        target = request.htmx.target or ""  # type: ignore[attr-defined]  # django-htmx middleware
+    if request.htmx:
+        target = request.htmx.target or ""
         if target.startswith("recipe-"):
             # List page: replace row or swap in empty state when last recipe gone.
             if not Recipe.objects.filter(owner=request.user).exists():
@@ -195,7 +195,7 @@ def recipe_duplicate(request: AuthedRequest, recipe_id: int) -> HttpResponse:
                 )
         for tag in original.tag.all():
             tag.recipe.add(new)
-    if request.htmx:  # type: ignore[attr-defined]  # django-htmx middleware
+    if request.htmx:
         response = HttpResponse()
         response["HX-Redirect"] = new.get_absolute_url()
         return response
@@ -274,7 +274,7 @@ def recipe_scale(request: AuthedRequest, recipe_id: int) -> HttpResponse:
         recipe.servings = new_serves
         recipe.save(update_fields=["servings"])
 
-    if request.htmx:  # type: ignore[attr-defined]  # django-htmx middleware
+    if request.htmx:
         response = HttpResponse()
         response["HX-Redirect"] = recipe.get_absolute_url()
         return response

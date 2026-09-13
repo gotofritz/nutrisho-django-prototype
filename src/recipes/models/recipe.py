@@ -57,13 +57,15 @@ class Recipe(models.Model):
 
     def save(self, *args, **kwargs):
         if self.yaml_filename:
-            self.yaml_filename = sanitize_stored_filename(str(self.yaml_filename))
+            self.yaml_filename = sanitize_stored_filename(  # ty: ignore[invalid-assignment]
+                str(self.yaml_filename)
+            )
         super().save(*args, **kwargs)
 
     def natural_key(self) -> tuple[str, str]:
-        return (str(self.owner.username), str(self.recipe_name))  # type: ignore[union-attr]
+        return (str(self.owner.username), str(self.recipe_name))  # ty: ignore[unresolved-attribute]
 
-    natural_key.dependencies = ["auth.user"]  # type: ignore[attr-defined]
+    natural_key.dependencies = ["auth.user"]  # ty: ignore[unresolved-attribute]
 
     def get_absolute_url(self):
         return reverse("recipes:recipe", kwargs={"recipe_id": self.id})

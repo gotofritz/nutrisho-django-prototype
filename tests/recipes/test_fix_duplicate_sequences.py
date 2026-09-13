@@ -52,7 +52,7 @@ def _mock_iir(group_id, iir_id, index):
 
 def _group_cmd():
     cmd = Command()
-    cmd.stdout = StringIO()
+    cmd.stdout = StringIO()  # ty: ignore[invalid-assignment]
     return cmd
 
 

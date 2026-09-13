@@ -506,7 +506,7 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
 
         # Write final merged order into the target group
         for i, item in enumerate(final_order):
-            item.index_in_sequence = i
+            item.index_in_sequence = i  # ty: ignore[invalid-assignment]
             item.save(update_fields=["ingredient_group", "index_in_sequence"])
 
     return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})

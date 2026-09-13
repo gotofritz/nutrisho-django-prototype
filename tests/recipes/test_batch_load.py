@@ -263,7 +263,7 @@ def test_shared_tag_not_removed_from_first_recipe(gotofritz, tmp_path):
     call_command("batch_load_yaml_recipes", str(tmp_path / "b.yml"), user="gotofritz")
 
     tag = Tag.objects.get(tag="vegetarian")
-    tagged_names = set(tag.recipe.values_list("recipe_name", flat=True))  # ty: ignore[unresolved-attribute]
+    tagged_names = set(tag.recipe.values_list("recipe_name", flat=True))
     assert "Recipe A" in tagged_names
     assert "Recipe B" in tagged_names
 
@@ -708,7 +708,7 @@ def test_single_tag_scalar_creates_one_tag(gotofritz, tmp_path):
     p = write_yaml(tmp_path, data, "scalar_tag.yml")
     call_command("batch_load_yaml_recipes", str(p), user="gotofritz")
     recipe = Recipe.objects.get(recipe_name="Scalar Tag Recipe")
-    tags = list(recipe.tag.all())  # ty: ignore[unresolved-attribute]
+    tags = list(recipe.tag.all())
     assert len(tags) == 1
     assert tags[0].tag == "vegetarian"
 

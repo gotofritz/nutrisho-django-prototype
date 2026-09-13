@@ -46,7 +46,7 @@ def insert_at_index(
         list(lock_parent.select_for_update().values("pk"))
     rows = list(siblings.select_for_update().order_by("index_in_sequence"))
     try:
-        position = int(requested_index)  # type: ignore[arg-type]  # ValueError/TypeError handled
+        position = int(requested_index)  # ty: ignore[invalid-argument-type]  # ValueError/TypeError handled
     except TypeError, ValueError:
         position = len(rows)
     position = max(0, min(position, len(rows)))

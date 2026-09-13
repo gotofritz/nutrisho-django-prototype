@@ -68,7 +68,7 @@ def recipe_to_dict(recipe: Recipe) -> dict:
     return {
         "title": recipe.recipe_name,
         "description": recipe.short_description or None,
-        "cuisine": recipe.cuisine.cuisine if recipe.cuisine else None,  # ty: ignore[possibly-missing-attribute]
+        "cuisine": recipe.cuisine.cuisine if recipe.cuisine else None,  # ty: ignore[unresolved-attribute]
         "source": recipe.source_instance or "",
         "tags": tags,
         "directions": {"step": steps},
@@ -166,7 +166,7 @@ class Command(BaseCommand):
         to_write: list[tuple[Recipe, Path]] = []
         skipped = 0
         for recipe in qs:
-            stored = str(recipe.yaml_filename)  # ty: ignore[unresolved-attribute]
+            stored = str(recipe.yaml_filename)
             pk_fallback = f"recipe-{recipe.pk}"
             filename = (
                 sanitize_stored_filename(stored, fallback=pk_fallback)
@@ -235,8 +235,8 @@ class Command(BaseCommand):
             # Backfill stable filename for rows that never had one; future exports
             # (including --missing-only) always match on the stored value, not the
             # current recipe_name, so renames don't cause stale duplicate files.
-            if not recipe.yaml_filename:  # ty: ignore[unresolved-attribute]
-                recipe.yaml_filename = out_path.name  # ty: ignore[unresolved-attribute]
+            if not recipe.yaml_filename:
+                recipe.yaml_filename = out_path.name  # ty: ignore[invalid-assignment]
                 recipe.save(update_fields=["yaml_filename"])
             exported += 1
 

@@ -562,7 +562,7 @@ def test_tags_exported_in_sorted_order(user, tmp_path):
 
     for t in ["zucchini", "appetizer", "mediterranean"]:
         tag, _ = Tag.objects.get_or_create(tag=t)
-        tag.recipe.add(recipe)  # ty: ignore[unresolved-attribute]
+        tag.recipe.add(recipe)
 
     call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
@@ -874,7 +874,7 @@ def test_export_refuses_step_with_duration(user, tmp_path):
     from django.core.management.base import CommandError
 
     recipe = build_recipe(user, name="Timed Recipe")
-    step = recipe.step.first()  # ty: ignore[unresolved-attribute]
+    step = recipe.step.first()
     step.duration = timedelta(minutes=15)
     step.save(update_fields=["duration"])
 
@@ -888,7 +888,7 @@ def test_export_refuses_step_with_extra_info(user, tmp_path):
     from django.core.management.base import CommandError
 
     recipe = build_recipe(user, name="Annotated Recipe")
-    step = recipe.step.first()  # ty: ignore[unresolved-attribute]
+    step = recipe.step.first()
     step.extra_info = "Use a wooden spoon"
     step.save(update_fields=["extra_info"])
 
@@ -903,7 +903,7 @@ def test_export_refuses_iir_with_substitute(user, tmp_path):
 
     recipe = build_recipe(user, name="Substitute Recipe")
     sub, _ = Ingredient.objects.get_or_create(ingredient_name="sea salt")
-    iir = recipe.ingredients_group.first().ingredient.first()  # ty: ignore[unresolved-attribute]
+    iir = recipe.ingredients_group.first().ingredient.first()
     iir.substitute = sub
     iir.save(update_fields=["substitute"])
 
@@ -915,7 +915,7 @@ def test_export_refuses_iir_with_substitute(user, tmp_path):
 def test_force_flag_allows_lossy_export(user, tmp_path, capsys):
     """--force exports lossy recipes after writing a stderr warning listing dropped fields."""
     recipe = build_recipe(user, name="Forced Recipe")
-    step = recipe.step.first()  # ty: ignore[unresolved-attribute]
+    step = recipe.step.first()
     step.extra_info = "ignore me"
     step.save(update_fields=["extra_info"])
 
@@ -933,7 +933,7 @@ def test_force_flag_allows_lossy_export(user, tmp_path, capsys):
 def test_iir_note_exported_in_yaml(user, tmp_path):
     """IngredientInRecipe.note is written to YAML and no longer lossy."""
     recipe = build_recipe(user, name="Noted Recipe")
-    iir = recipe.ingredients_group.first().ingredient.first()  # ty: ignore[unresolved-attribute]
+    iir = recipe.ingredients_group.first().ingredient.first()
     iir.note = "fresh ground"
     iir.save(update_fields=["note"])
 
@@ -1022,7 +1022,7 @@ def test_every_persisted_field_is_categorized():
         # would silently miss.
         field_names = {
             f.name
-            for f in model_cls._meta.get_fields()  # ty: ignore[possibly-missing-attribute]
+            for f in model_cls._meta.get_fields()  # ty: ignore[unresolved-attribute]
             if getattr(f, "concrete", False)
         }
         ignored = _IGNORED_FIELDS[model_name]

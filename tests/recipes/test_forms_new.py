@@ -241,7 +241,7 @@ def test_recipe_metadata_form_commit_false_new_cuisine_resolved_via_helper(user)
     assert not Cuisine.objects.filter(cuisine="brand-new-cuisine").exists()
     form.resolve_pending_cuisine(result)
     assert result.cuisine is not None
-    assert result.cuisine.cuisine == "brand-new-cuisine"  # type: ignore[union-attr]
+    assert result.cuisine.cuisine == "brand-new-cuisine"  # ty: ignore[unresolved-attribute]
     assert Cuisine.objects.filter(cuisine="brand-new-cuisine").exists()
 
 
@@ -264,5 +264,5 @@ def test_ingredient_form_commit_false_new_ingredient_resolved_via_helper():
     assert not Ingredient.objects.filter(ingredient_name="brand-new-spice").exists()
     form.resolve_pending_ingredient(iir)
     assert iir.ingredient is not None
-    assert iir.ingredient.ingredient_name == "brand-new-spice"  # type: ignore[union-attr]
+    assert iir.ingredient.ingredient_name == "brand-new-spice"  # ty: ignore[unresolved-attribute]
     assert Ingredient.objects.filter(ingredient_name="brand-new-spice").exists()

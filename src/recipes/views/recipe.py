@@ -37,11 +37,7 @@ def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
         id=recipe_id,
         owner=request.user,
     )
-    template = (
-        "recipes/partials/_recipe_content.html"
-        if request.htmx  # type: ignore[attr-defined]  # django-htmx middleware
-        else "recipes/recipe.html"
-    )
+    template = "recipes/partials/_recipe_content.html" if request.htmx else "recipes/recipe.html"
     return render(
         request,
         template,
