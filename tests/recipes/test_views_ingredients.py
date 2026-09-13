@@ -1520,3 +1520,89 @@ def test_ingredient_save_preserves_concurrent_group_reassign(auth_client, recipe
     iir.refresh_from_db()
     assert iir.ingredient_group_id == group2.pk  # concurrent reassign preserved
     assert iir.quantity == Decimal("7")  # form edit applied
+
+
+def _add_group(recipe, name, index):
+    return IngredientGroup.objects.create(recipe=recipe, group_name=name, index_in_sequence=index)
+
+
+def _add_iir(group, name, index=0):
+    ingredient, _ = Ingredient.objects.get_or_create(ingredient_name=name)
+    return IngredientInRecipe.objects.create(
+        ingredient=ingredient, ingredient_group=group, index_in_sequence=index
+    )
+
+
+@pytest.mark.django_db
+def test_deleting_the_last_ingredient_removes_the_now_empty_group(auth_client, recipe, group):
+    second = _add_group(recipe, "Sauce", 1)
+    doomed = _add_iir(second, "cream")
+    _add_iir(group, "onion")
+    auth_client.post(f"/recipes/{recipe.pk}/ingredients/{doomed.pk}/delete/")
+    assert not IngredientGroup.objects.filter(pk=second.pk).exists()
+    assert IngredientGroup.objects.filter(pk=group.pk).exists()
+
+
+@pytest.mark.django_db
+def test_emptying_a_recipes_only_group_keeps_it(auth_client, recipe, group):
+    """The + Add ingredient button lives inside a group block, so the last group stays."""
+    only = _add_iir(group, "onion")
+    auth_client.post(f"/recipes/{recipe.pk}/ingredients/{only.pk}/delete/")
+    assert IngredientGroup.objects.filter(pk=group.pk).exists()
+
+
+@pytest.mark.django_db
+def test_deleting_one_of_several_ingredients_keeps_the_group(auth_client, recipe, group):
+    _add_iir(group, "onion", 0)
+    doomed = _add_iir(group, "carrot", 1)
+    auth_client.post(f"/recipes/{recipe.pk}/ingredients/{doomed.pk}/delete/")
+    assert IngredientGroup.objects.filter(pk=group.pk).exists()
+
+
+@pytest.mark.django_db
+def test_pruned_group_is_removed_from_the_page(auth_client, recipe, group):
+    second = _add_group(recipe, "Sauce", 1)
+    doomed = _add_iir(second, "cream")
+    _add_iir(group, "onion")
+    html = auth_client.post(
+        f"/recipes/{recipe.pk}/ingredients/{doomed.pk}/delete/"
+    ).content.decode()
+    assert f'id="group-block-{second.pk}"' in html
+    assert 'hx-swap-oob="delete"' in html
+
+
+@pytest.mark.django_db
+def test_pruning_a_group_compacts_the_remaining_group_indexes(auth_client, recipe, group):
+    second = _add_group(recipe, "Sauce", 1)
+    third = _add_group(recipe, "Topping", 2)
+    doomed = _add_iir(second, "cream")
+    _add_iir(group, "onion")
+    _add_iir(third, "cheese")
+    auth_client.post(f"/recipes/{recipe.pk}/ingredients/{doomed.pk}/delete/")
+    third.refresh_from_db()
+    assert third.index_in_sequence == 1
+
+
+@pytest.mark.django_db
+def test_pruning_a_group_refreshes_the_reassign_select(auth_client, recipe, group):
+    second = _add_group(recipe, "Sauce", 1)
+    doomed = _add_iir(second, "cream")
+    _add_iir(group, "onion")
+    html = auth_client.post(
+        f"/recipes/{recipe.pk}/ingredients/{doomed.pk}/delete/"
+    ).content.decode()
+    assert 'id="reassign-target"' in html
+    assert f'<option value="{second.pk}"' not in html
+
+
+@pytest.mark.django_db
+def test_reassigning_every_ingredient_out_of_a_group_removes_it(auth_client, recipe, group):
+    second = _add_group(recipe, "Sauce", 1)
+    moved = _add_iir(second, "cream")
+    _add_iir(group, "onion")
+    auth_client.post(
+        f"/recipes/{recipe.pk}/ingredients/reassign/",
+        {"ingredient_ids": [moved.pk], "target_group": group.pk},
+    )
+    assert not IngredientGroup.objects.filter(pk=second.pk).exists()
+    assert IngredientInRecipe.objects.filter(pk=moved.pk).exists()

@@ -1,0 +1,9 @@
+{% comment %}
+The workspace replaces column 2, so its checkboxes leave the DOM. These hidden
+inputs keep the selection available to Cancel and to the action POSTs.
+{% endcomment %}
+<div id="workspace-selection" class="workspace-selection" hidden>
+  {% for ingredient_id in selected_ids %}
+  <input type="hidden" class="workspace-pick" name="ingredient_ids" value="{{ ingredient_id }}">
+  {% endfor %}
+</div>

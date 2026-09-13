@@ -29,6 +29,24 @@ def recipe_ingredient_display(request: AuthedRequest, recipe_id: int, iir_id: in
     )
 
 
+def _prune_empty_group(recipe: Recipe, group: IngredientGroup) -> bool:
+    """Drop `group` if nothing is left in it; return whether it went.
+
+    A recipe's last group always survives, empty or not: the "+ Add ingredient"
+    button lives inside a group block, so a recipe with no groups can only be
+    refilled by adding a group first.
+
+    Call inside the caller's transaction — it reads the group's row count and
+    then deletes, and remove_and_compact closes the index gap it leaves.
+    """
+    if IngredientInRecipe.objects.filter(ingredient_group=group).exists():
+        return False
+    if IngredientGroup.objects.filter(recipe=recipe).count() < 2:
+        return False
+    remove_and_compact(siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group)
+    return True
+
+
 def _all_ingredient_names() -> list[str]:
     return list(
         Ingredient.objects.values_list("ingredient_name", flat=True).order_by("ingredient_name")
@@ -89,11 +107,21 @@ def recipe_ingredient_delete(request: AuthedRequest, recipe_id: int, iir_id: int
         )
         if fresh is None:
             return HttpResponse("")
+        group = fresh.ingredient_group
+        group_pk = group.pk  # deleting the row clears pk on the instance
         remove_and_compact(
-            siblings=IngredientInRecipe.objects.filter(ingredient_group=fresh.ingredient_group),
+            siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
             instance=fresh,
         )
-    return HttpResponse("")
+        pruned = _prune_empty_group(recipe, group)
+    if not pruned:
+        return HttpResponse("")
+    # The row swap alone would leave an empty group block on the page, and the
+    # reassign <select> would still offer the group that just went.
+    return HttpResponse(
+        f'<div id="group-block-{group_pk}" hx-swap-oob="delete"></div>'
+        + _reassign_select_oob(recipe, request)
+    )
 
 
 @require_POST
@@ -493,12 +521,18 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
             item.save(update_fields=["ingredient_group", "index_in_sequence"])
 
         # Compact non-moved items in source groups (target is rewritten fully below)
+        emptied: list[IngredientGroup] = []
         for group_id in affected_old_group_ids:
             remaining = list(
                 IngredientInRecipe.objects.filter(ingredient_group_id=group_id).order_by(
                     "index_in_sequence"
                 )
             )
+            if not remaining:
+                source = IngredientGroup.objects.filter(pk=group_id).first()
+                if source is not None:
+                    emptied.append(source)
+                continue
             for i, r in enumerate(remaining):
                 if r.index_in_sequence != i:
                     r.index_in_sequence = i
@@ -508,5 +542,9 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
         for i, item in enumerate(final_order):
             item.index_in_sequence = i  # ty: ignore[invalid-assignment]
             item.save(update_fields=["ingredient_group", "index_in_sequence"])
+
+        # Moving every row out leaves the source group behind with nothing in it.
+        for source in emptied:
+            _prune_empty_group(recipe, source)
 
     return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})

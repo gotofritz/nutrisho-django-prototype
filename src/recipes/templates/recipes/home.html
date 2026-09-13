@@ -6,6 +6,7 @@
 <div class="home-header">
   <h1>Recipes</h1>
   <a href="{% url 'recipes:new' %}" class="btn-new-recipe">New Recipe</a>
+  <a href="{% url 'recipes:ingredient_manage' %}" class="btn-manage-ingredients">Manage ingredients</a>
 </div>
 {% if latest_recipe_list %}
 <ul id="recipe-list">

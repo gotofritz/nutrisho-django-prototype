@@ -1,4 +1,15 @@
 from .home import home
+from .ingredient_admin import (
+    ingredient_manage,
+    ingredient_manage_cancel,
+    ingredient_manage_delete,
+    ingredient_manage_edit,
+    ingredient_manage_merge,
+    ingredient_manage_preview,
+    ingredient_manage_recipes,
+    ingredient_manage_save,
+    ingredient_manage_search,
+)
 from .recipe import recipe
 from .recipe_crud import (
     recipe_delete,
@@ -42,6 +53,15 @@ from .recipe_steps import (
 
 __all__ = [
     "home",
+    "ingredient_manage",
+    "ingredient_manage_cancel",
+    "ingredient_manage_delete",
+    "ingredient_manage_edit",
+    "ingredient_manage_merge",
+    "ingredient_manage_preview",
+    "ingredient_manage_recipes",
+    "ingredient_manage_save",
+    "ingredient_manage_search",
     "recipe",
     "recipe_delete",
     "recipe_delete_panel",
