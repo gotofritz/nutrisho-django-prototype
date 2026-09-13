@@ -41,6 +41,38 @@ def test_recipe_field_form_valid_save(user):
 
 
 @pytest.mark.django_db
+def test_recipe_field_form_servings_required(user):
+    """servings is mandatory: the single-field edit form rejects a blank value."""
+    recipe = Recipe.objects.create(recipe_name="Test", owner=user, servings=4)
+    form = RecipeFieldForm("servings", data={"servings": ""}, instance=recipe)
+    assert not form.is_valid()
+    assert "servings" in form.errors
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_form_servings_required(user):
+    """servings is mandatory: the metadata form rejects a blank value."""
+    form = RecipeMetadataForm(
+        data={
+            "recipe_name": "No Serves",
+            "short_description": "",
+            "servings": "",
+            "source_instance": "",
+            "cuisine_name": "",
+        }
+    )
+    assert not form.is_valid()
+    assert "servings" in form.errors
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_form_servings_initial_is_one(user):
+    """An unbound metadata form pre-fills servings with the model default."""
+    form = RecipeMetadataForm()
+    assert form.fields["servings"].initial == 1
+
+
+@pytest.mark.django_db
 def test_recipe_field_form_all_editable_fields_accepted(user):
     for field in EDITABLE_RECIPE_FIELDS:
         recipe = Recipe.objects.create(recipe_name=f"Recipe-{field}", owner=user)
@@ -119,7 +151,7 @@ def test_recipe_metadata_form_commit_false_does_not_create_cuisine(user):
         data={
             "recipe_name": "Test",
             "short_description": "",
-            "servings": "",
+            "servings": "4",
             "source_instance": "",
             "cuisine_name": "ghost-cuisine",
         },
@@ -141,7 +173,7 @@ def test_recipe_metadata_form_commit_false_clears_cuisine_when_blank(user):
         data={
             "recipe_name": "Test",
             "short_description": "",
-            "servings": "",
+            "servings": "4",
             "source_instance": "",
             "cuisine_name": "",
         },
@@ -163,7 +195,7 @@ def test_recipe_metadata_form_commit_false_sets_existing_cuisine(user):
         data={
             "recipe_name": "Test",
             "short_description": "",
-            "servings": "",
+            "servings": "4",
             "source_instance": "",
             "cuisine_name": "Thai",
         },
@@ -198,7 +230,7 @@ def test_recipe_metadata_form_commit_false_new_cuisine_resolved_via_helper(user)
         data={
             "recipe_name": "Test",
             "short_description": "",
-            "servings": "",
+            "servings": "4",
             "source_instance": "",
             "cuisine_name": "brand-new-cuisine",
         },

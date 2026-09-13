@@ -7,6 +7,7 @@ import pytest
 import yaml
 from django.contrib.auth.models import User as DjangoUser
 from django.core.management import call_command
+from django.core.management.base import CommandError
 
 from recipes.management.commands.batch_load_yaml_recipes import _normalize_quantity
 from recipes.models import Recipe
@@ -14,7 +15,7 @@ from recipes.models import Recipe
 
 def make_yaml(
     title: str = "Test Soup",
-    serves: int | None = None,
+    serves: int | None = 4,
     description: str = "A soup",
     directions: list[str] | None = None,
     groups: list | None = None,
@@ -114,12 +115,23 @@ def test_serves_1_sets_servings_1(gotofritz, tmp_path):
 
 
 @pytest.mark.django_db
-def test_missing_serves_defaults_to_none(gotofritz, tmp_path):
-    """YAML missing serves key → Recipe.servings is None (unknown, not assumed 1)."""
+def test_missing_serves_raises_command_error(gotofritz, tmp_path):
+    """YAML missing serves key → CommandError; servings is mandatory, never guessed."""
     write_yaml(tmp_path, make_yaml(title="Soup C", serves=None), "soup_c.yml")
-    call_command("batch_load_yaml_recipes", str(tmp_path), user="gotofritz")
-    recipe = Recipe.objects.get(recipe_name="Soup C")
-    assert recipe.servings is None
+    with pytest.raises(CommandError, match="serves"):
+        call_command("batch_load_yaml_recipes", str(tmp_path), user="gotofritz")
+    assert not Recipe.objects.filter(recipe_name="Soup C").exists()
+
+
+@pytest.mark.django_db
+def test_null_serves_raises_command_error(gotofritz, tmp_path):
+    """YAML with an explicit `serves:` but no value → CommandError, not a NULL row."""
+    data = make_yaml(title="Soup D")
+    data["ingredients"]["serves"] = None
+    write_yaml(tmp_path, data, "soup_d.yml")
+    with pytest.raises(CommandError, match="serves"):
+        call_command("batch_load_yaml_recipes", str(tmp_path), user="gotofritz")
+    assert not Recipe.objects.filter(recipe_name="Soup D").exists()
 
 
 @pytest.mark.django_db
@@ -646,6 +658,7 @@ def test_quantity_write_path_receives_decimal_not_float(gotofritz, tmp_path):
         "  step:\n"
         "    - Stir\n"
         "ingredients:\n"
+        "  serves: 4\n"
         "  group:\n"
         "    - name: null\n"
         "      ingredient:\n"

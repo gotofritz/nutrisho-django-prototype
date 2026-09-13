@@ -63,9 +63,7 @@ def recipe_to_dict(recipe: Recipe) -> dict:
 
     tags = sorted(t.tag for t in recipe.tag.all())  # ty: ignore[unresolved-attribute]
 
-    ingredients: dict = {"group": groups}
-    if recipe.servings is not None:
-        ingredients["serves"] = recipe.servings
+    ingredients: dict = {"group": groups, "serves": recipe.servings}
 
     return {
         "title": recipe.recipe_name,

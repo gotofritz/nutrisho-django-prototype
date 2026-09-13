@@ -26,7 +26,7 @@
     </nav>
     <div id="scale-panel"></div>
     <div id="delete-panel"></div>
-    <h3 class="serves">Serves {% include "./_field_display.html" with field_name="servings" value=recipe.servings|default:"" %}</h3>
+    <h3 class="serves">Serves {% include "./_field_display.html" with field_name="servings" value=recipe.servings %}</h3>
     <div class="recipe-ingredients">
       <div id="groups-list">
         {% include "./_groups_list.html" %}

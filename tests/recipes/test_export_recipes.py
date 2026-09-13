@@ -524,24 +524,24 @@ def test_export_encodes_unicode_correctly(user, tmp_path):
 
 
 @pytest.mark.django_db
-def test_null_servings_omitted_from_export_yaml(user, tmp_path):
-    """Recipe with servings=None exports without a 'serves' key (not 'serves: null')."""
-    build_recipe(user, name="Unknown Serves Dish", servings=None)
+def test_serves_always_present_in_export_yaml(user, tmp_path):
+    """servings is mandatory, so every exported recipe carries a 'serves' key."""
+    build_recipe(user, name="Single Serving Dish", servings=1)
     call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
-    out_file = tmp_path / "Unknown Serves Dish.yml"
+    out_file = tmp_path / "Single Serving Dish.yml"
     assert out_file.exists()
     with out_file.open() as f:
         data = yaml.safe_load(f)
-    assert "serves" not in data["ingredients"]
+    assert data["ingredients"]["serves"] == 1
 
 
 @pytest.mark.django_db
-def test_round_trip_null_servings_stays_null(user, tmp_path):
-    """Export then re-import preserves servings=None; does not corrupt to 1."""
+def test_round_trip_minimum_servings_preserved(user, tmp_path):
+    """Export then re-import preserves servings=1 rather than dropping the key."""
     from django.contrib.auth.models import User as DjangoUser
 
-    recipe = build_recipe(user, name="Null Serves Round Trip", servings=None)
+    recipe = build_recipe(user, name="Min Serves Round Trip", servings=1)
     original_id = recipe.pk
 
     call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
@@ -550,8 +550,8 @@ def test_round_trip_null_servings_stays_null(user, tmp_path):
     DjangoUser.objects.get_or_create(username="gotofritz", defaults={"password": "x"})
     call_command("batch_load_yaml_recipes", str(tmp_path), user="gotofritz")
 
-    reimported = Recipe.objects.get(recipe_name="Null Serves Round Trip")
-    assert reimported.servings is None
+    reimported = Recipe.objects.get(recipe_name="Min Serves Round Trip")
+    assert reimported.servings == 1
 
 
 @pytest.mark.django_db

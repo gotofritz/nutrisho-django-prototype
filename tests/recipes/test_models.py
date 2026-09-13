@@ -1,5 +1,6 @@
 """Tests for recipes models."""
 
+import django.db
 import pytest
 
 from recipes.models import (
@@ -22,11 +23,17 @@ def test_recipe_creation(user):
 
 
 @pytest.mark.django_db
-def test_recipe_servings_can_be_null(user):
-    """servings=None is valid for legacy rows where count is unknown."""
-    r = Recipe.objects.create(recipe_name="Unknown Serves", owner=user, servings=None)
-    r.refresh_from_db()
-    assert r.servings is None
+def test_recipe_servings_cannot_be_null(user):
+    """servings is mandatory: NULL is rejected at the database level."""
+    with pytest.raises(django.db.IntegrityError):
+        Recipe.objects.create(recipe_name="Unknown Serves", owner=user, servings=None)
+
+
+@pytest.mark.django_db
+def test_recipe_servings_zero_rejected(user):
+    """The check constraint keeps servings >= 1."""
+    with pytest.raises(django.db.IntegrityError):
+        Recipe.objects.create(recipe_name="Zero Serves", owner=user, servings=0)
 
 
 @pytest.mark.django_db
@@ -116,9 +123,9 @@ def test_ingredient_in_recipe_natural_key(user):
 
 @pytest.mark.django_db
 def test_recipe_servings_default(user):
-    """New Recipe has servings=None by default (unknown serving count)."""
+    """New Recipe has servings=1 by default; the column is never NULL."""
     recipe = Recipe.objects.create(recipe_name="Default Servings Recipe", owner=user)
-    assert recipe.servings is None
+    assert recipe.servings == 1
 
 
 @pytest.mark.django_db

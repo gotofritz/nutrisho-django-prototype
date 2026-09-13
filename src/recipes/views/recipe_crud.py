@@ -238,23 +238,16 @@ def recipe_scale(request: AuthedRequest, recipe_id: int) -> HttpResponse:
             Recipe.objects.select_for_update(), id=recipe_id, owner=request.user
         )
 
-        if recipe.servings is not None:
-            old_serves = Decimal(recipe.servings)
-            try:
-                new_serves = max(
-                    1,
-                    int((old_serves * multiplier).quantize(Decimal("1"), rounding=ROUND_HALF_UP)),
-                )
-            except InvalidOperation:
-                return _scale_error(
-                    request, recipe, "Result would exceed the maximum serving count."
-                )
-            if new_serves > _MAX_SERVINGS:
-                return _scale_error(
-                    request, recipe, "Result would exceed the maximum serving count."
-                )
-        else:
-            new_serves = None
+        old_serves = Decimal(recipe.servings)
+        try:
+            new_serves = max(
+                1,
+                int((old_serves * multiplier).quantize(Decimal("1"), rounding=ROUND_HALF_UP)),
+            )
+        except InvalidOperation:
+            return _scale_error(request, recipe, "Result would exceed the maximum serving count.")
+        if new_serves > _MAX_SERVINGS:
+            return _scale_error(request, recipe, "Result would exceed the maximum serving count.")
 
         # Validate every scaled quantity before writing anything
         scaled = list(
@@ -278,9 +271,8 @@ def recipe_scale(request: AuthedRequest, recipe_id: int) -> HttpResponse:
             iir.quantity = new_quantity
 
         IngredientInRecipe.objects.bulk_update(scaled, ["quantity"])
-        if new_serves is not None:
-            recipe.servings = new_serves
-            recipe.save(update_fields=["servings"])
+        recipe.servings = new_serves
+        recipe.save(update_fields=["servings"])
 
     if request.htmx:  # type: ignore[attr-defined]  # django-htmx middleware
         response = HttpResponse()

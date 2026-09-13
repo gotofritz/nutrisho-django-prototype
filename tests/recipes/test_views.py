@@ -74,8 +74,8 @@ def test_recipe_nav_wraps_at_boundaries(auth_client, two_recipes):
 
 @pytest.mark.django_db
 def test_serves_field_always_editable(auth_client, user):
-    """Detail page always shows Serves inline-edit widget, even when null."""
-    r = Recipe.objects.create(recipe_name="Mystery Soup", owner=user, servings=None)
+    """Detail page always shows the Serves inline-edit widget."""
+    r = Recipe.objects.create(recipe_name="Mystery Soup", owner=user)
     response = auth_client.get(f"/recipes/{r.pk}/")
     assert response.status_code == 200
     content = response.content.decode()
