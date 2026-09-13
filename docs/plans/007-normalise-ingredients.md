@@ -38,20 +38,26 @@ updates the columns to reflect the new DB state.
 All resolved to the recommended option (in **bold**). Reopen on the PR to change
 before the relevant phase.
 
-1. **Schema for plurals / alt-spellings / alt-names.**
-   - **(A) Recommended — merge-based, no alias table.** Treat variants as
-     duplicates to be merged away. Stick to British spelling as the canonical
-     form (per the issue: *"I am ok if we decide to only stick to British"*).
-     Lock it in with a **case-insensitive uniqueness** constraint
-     (Phase 7) so `Onion`/`onion` can't both exist going forward. Minimal schema
-     churn; the Miller tool *is* the normalisation mechanism.
-   - (B) Alternative — alias FK. Add `Ingredient.canonical = FK('self', null=True,
-     related_name='aliases')`; variants point at a canonical row and survive.
-     Richer, but adds query/UX surface (every recipe/search must decide whether
-     to resolve to canonical). Defer unless we explicitly want to keep variants.
+1. **Schema for plurals / alt-spellings / alt-names** *(revised 2026-06-15)*.
+   Two stages:
+   - **Start — merge-based, no alias table.** Treat variants as duplicates to be
+     merged away. British spelling is canonical (per the issue: *"I am ok if we
+     decide to only stick to British"*). Lock it in with a **case-insensitive
+     uniqueness** constraint (Phase 7). The Miller tool *is* the normalisation
+     mechanism. Phases 1–7 deliver this.
+   - **Later — alias-resolution layer (Phase 8).** Recipes are scraped from many
+     sources, so input must tolerate variants. An **`IngredientAlias`** table maps
+     `alias_name → canonical Ingredient`. On *input* (importer, recipe-page add,
+     admin create) a name is resolved through aliases to its canonical row before
+     `get_or_create`. Aliases are **input-only**: they never become `Ingredient`
+     rows and are never referenced by an `IngredientInRecipe`, so storage and
+     display always show the canonical British form. Entering `eggplant` stores
+     and shows `aubergine`, with no error. Merge becomes the way aliases are born
+     — merging `eggplant → aubergine` records `eggplant` as an alias.
 
-   The plan below assumes **(A)**. The Miller UI (search/edit/delete/merge) is
-   identical either way; only Phase 7 changes if (B) is chosen.
+   This is **not** the old "variant survives as a row" model — there is no
+   `canonical` self-FK on `Ingredient`; aliases live in a separate lookup table
+   and resolve at write time only. The Miller UI (Phases 1–6) is unaffected.
 
 2. **Access control.** Recommended: **login-only** (`htmx_login_required`, as the
    rest of the app), single-user prototype. Staff/superuser-gating is noted as a
@@ -267,11 +273,54 @@ isolation, so the HTMX views stay thin. Run `task qa` before the PR; keep covera
   in the same PR (`docs/archive/YYYY-MM-DD-HHMM-<shortsha>-007-normalise-ingredients.md`).
 - **7.5** `task qa` green; coverage ≥ 95%.
 
+### Phase 8 — Alias-resolution layer (later; input → canonical British)
+
+Ships after Phases 1–7 are merged. Lets scraped/typed variants resolve to the
+canonical British ingredient at write time; storage and display stay canonical.
+
+- **8.1** `IngredientAlias` model: `alias_name` (case-insensitive unique),
+  `canonical = FK(Ingredient, on_delete=CASCADE, related_name="aliases")`. Migration.
+  - Tests: create alias; duplicate `alias_name` (CI) rejected; an `alias_name`
+    that collides (CI) with an existing `Ingredient.ingredient_name` rejected at
+    validation (can't be both an alias and a canonical name); deleting the
+    canonical cascades its aliases.
+- **8.2** `resolve_ingredient(name) -> Ingredient` service, precedence:
+  (1) CI alias hit → its canonical; (2) CI `Ingredient` hit → that row;
+  (3) otherwise create a new canonical. Never raises on unknown input.
+  - Tests: known alias → canonical (`eggplant` → `aubergine`); CI match to
+    existing canonical; brand-new name creates canonical; returned/stored name is
+    the canonical British form.
+- **8.3** Route all *input* paths through `resolve_ingredient`, replacing raw
+  `Ingredient.objects.get_or_create(ingredient_name=...)`:
+  - `batch_load_yaml_recipes` importer
+  - `IngredientInRecipeForm.save` / `resolve_pending_ingredient` (recipe-page add/edit)
+  - ingredient-admin create/edit (Phase 4)
+  - Tests: importing a recipe naming `eggplant` yields an IIR pointing at
+    `aubergine`; recipe-page add of `eggplant` shows `aubergine`; no duplicate
+    `Ingredient` row created; no error surfaced.
+- **8.4** Merge (Phase 6) records aliases: merging victim → survivor creates
+  `IngredientAlias(alias_name=victim.ingredient_name, canonical=survivor)` and
+  **repoints the victim's existing aliases** to the survivor, inside the same
+  transaction, before deleting the victim.
+  - Tests: post-merge alias row exists; `resolve_ingredient("eggplant")` →
+    `aubergine`; victim's prior aliases now point at survivor; no orphaned aliases.
+- **8.5** Minimal alias management in the Miller tool: for a single selected
+  canonical ingredient, list / add / remove its aliases (small workspace panel).
+  - Tests: add alias; remove alias; list reflects DB; add of a colliding name
+    rejected (reuses 8.1 validation).
+- **8.6** Docs: update `docs/initial-context.md` (alias-resolution layer + the
+  "resolve on input, store/display canonical" rule) and `README.md`.
+
+> Phase 7's case-insensitive uniqueness on `Ingredient.ingredient_name` is a
+> prerequisite — alias collision rules depend on it.
+
 ---
 
 ## Out of scope (note for reviewers)
 
-- Alias/canonical schema — only if Decision 1 flips to (B).
+- Alias resolution ships in Phase 8 (later), not in the Phases 1–7 PR. A
+  `canonical` self-FK on `Ingredient` is explicitly **not** used — aliases live in
+  a separate `IngredientAlias` lookup table.
 - True fuzzy ranking (trigram) — `icontains` only for now.
 - De-duplicating IIR rows after a merge (6.3).
 - Staff/superuser gating (login-only for the prototype).
