@@ -4,6 +4,15 @@ from recipes.views._auth import htmx_login_required
 
 from .views import (
     home,
+    ingredient_manage,
+    ingredient_manage_cancel,
+    ingredient_manage_delete,
+    ingredient_manage_edit,
+    ingredient_manage_merge,
+    ingredient_manage_preview,
+    ingredient_manage_recipes,
+    ingredient_manage_save,
+    ingredient_manage_search,
     recipe,
     recipe_delete,
     recipe_delete_panel,
@@ -52,6 +61,41 @@ app_name = "recipes"
 urlpatterns = [
     path("", _lr(home), name="home"),
     path("new/", _lr(recipe_new), name="new"),
+    # Shared-ingredient clean-up tool (Miller columns). The `manage/` prefix keeps
+    # these clear of the per-recipe `<recipe_id>/ingredients/...` inline-edit routes.
+    path("ingredients/manage/", _lr(ingredient_manage), name="ingredient_manage"),
+    path(
+        "ingredients/manage/search/",
+        _lr(ingredient_manage_search),
+        name="ingredient_manage_search",
+    ),
+    path(
+        "ingredients/manage/recipes/",
+        _lr(ingredient_manage_recipes),
+        name="ingredient_manage_recipes",
+    ),
+    path(
+        "ingredients/manage/preview/<int:recipe_id>/",
+        _lr(ingredient_manage_preview),
+        name="ingredient_manage_preview",
+    ),
+    path(
+        "ingredients/manage/cancel/",
+        _lr(ingredient_manage_cancel),
+        name="ingredient_manage_cancel",
+    ),
+    path("ingredients/manage/edit/", _lr(ingredient_manage_edit), name="ingredient_manage_edit"),
+    path(
+        "ingredients/manage/delete/",
+        _lr(ingredient_manage_delete),
+        name="ingredient_manage_delete",
+    ),
+    path("ingredients/manage/merge/", _lr(ingredient_manage_merge), name="ingredient_manage_merge"),
+    path(
+        "ingredients/manage/<int:ingredient_id>/save/",
+        _lr(ingredient_manage_save),
+        name="ingredient_manage_save",
+    ),
     path("<int:recipe_id>/", _lr(recipe), name="recipe"),
     path("<int:recipe_id>/delete/", _lr(recipe_delete), name="delete"),
     path("<int:recipe_id>/delete/panel/", _lr(recipe_delete_panel), name="delete_panel"),

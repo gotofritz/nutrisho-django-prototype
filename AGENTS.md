@@ -94,6 +94,25 @@ If an open PR exists that covers the same area, commit directly to its branch in
 
 ## Python
 
+### Interpreter — 3.14 only
+
+Pinned to 3.14 (`pyproject.toml` `requires-python = ">=3.14,<3.15"`, `uv.lock`
+`requires-python = "==3.14.*"`, ruff `target-version = "py314"`). CI installs 3.14
+(`.github/workflows/ci.yml`).
+
+Never invoke a bare `python`/`python3` — system interpreter may be older (3.11) and
+will fail on 3.14 syntax. Always `uv run <cmd>` or `.venv/bin/python`.
+
+**PEP 758 is in use.** Unparenthesized multi-exception handlers are valid 3.14:
+
+```python
+except ValueError, TypeError:   # correct — do not "fix" this
+```
+
+`ruff format` strips the redundant parens, so this is the canonical form in this repo.
+`SyntaxError: multiple exception types must be parenthesized` means the wrong
+interpreter was used, not broken code. Do not add parens back.
+
 ### Tooling
 
 - `uv`

@@ -28,6 +28,7 @@ Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuis
 src/
   nutrisho/      # Django project (settings, urls, wsgi)
   recipes/       # Main app: models, views, templates, management commands
+    services/      # Pure query/mutation functions, no HTTP (ingredient_admin.py)
     templatetags/  # Custom template filters (recipe_filters.py)
 docs/
   initial-context.md   # this file
@@ -53,6 +54,90 @@ HTMX swaps partials in place (`hx-swap="outerHTML"`). The `+ Add` buttons (`hx-p
 
 Ingredient name edit uses an HTML5 `<datalist>` for autosuggest (all existing ingredient names). On save, `ingredient_name` is resolved via get-or-create so renaming creates a new `Ingredient` rather than mutating a shared one.
 
+### Ingredient Clean-up Tool (`recipes/services/`, `recipes/views/ingredient_admin.py`)
+
+A self-contained subsystem under `/recipes/ingredients/manage/`, separate from both
+the per-recipe inline editor and Django admin. `Ingredient` rows are shared by every
+recipe, so this is where duplicates and spelling variants get edited, deleted or
+merged. Login-only, like the rest of the app; the `manage/` URL prefix keeps it clear
+of the per-recipe `<recipe_id>/ingredients/...` routes.
+
+The UI is four Miller columns — actions, ingredients, matching recipes, recipe
+preview. Clicking an action collapses columns 2-4 into a full-width workspace panel
+and turns the clicked button into Cancel. Column 4 is a fresh inert template, not a
+trimmed `partials/_recipe_content.html`: that one pulls in the navbars and its field
+includes carry `hx-get` edit triggers.
+
+Column 4 follows column 3 rather than holding state of its own: every response
+that rebuilds the matches rebuilds the preview with it. Exactly one match previews
+itself — there is nothing else to pick — and any other count clears the pane, so a
+preview can never outlive the matches it came from.
+
+**Services layer.** `recipes/services/ingredient_admin.py` holds pure query and
+mutation functions with no HTTP concerns, so the HTMX views stay thin and the
+behaviour is testable without a client. Views own request parsing, guards and
+partial selection; services own the ORM.
+
+**Selection lives in the request.** Checkboxes post `ingredient_ids`; every
+re-rendered partial echoes them back. There is no client-side store: a change or a
+search refreshes its own column and swaps the other affected fragments out of
+band, so header counts, the tri-state select-all box and the enabled/disabled
+state of Edit/Delete/Merge are all server-rendered. The column-2 header carries
+the subsystem's only JavaScript, four lines of it, because `indeterminate` is a
+DOM property with no HTML attribute and the dashed state cannot be rendered any
+other way. The handler binds to the header wrapper rather than the checkbox:
+htmx fires `htmx:load` on the root of swapped content and events bubble up, so a
+listener on the nested input never sees it. The workspace carries the selection as
+hidden inputs, since it replaces the column holding the checkboxes. `hx-include`
+must name the inputs themselves (`.ingredient-pick:checked`, `.workspace-pick`) —
+pointing it at a container element sends nothing.
+
+**Repointing rule (important).** `IngredientInRecipe.ingredient` *and* `.substitute`
+are both `on_delete=PROTECT`. No ingredient can be deleted while either FK
+references it, so `delete_ingredients` and `merge_ingredients` repoint **both** onto
+the replacement or survivor inside one transaction before deleting. Repointing an FK
+leaves `index_in_sequence` alone, so recipe ordering is unaffected and
+`utils/sequencing.py` is not involved. A delete with no usable replacement answers
+422 and writes nothing rather than letting PROTECT surface as a 500. A recipe that
+already held the survivor and a victim keeps both rows; de-duplicating a group is
+out of scope.
+
+**Orphans.** `search_ingredients(query, unused_only=True)` lists ingredients no
+`IngredientInRecipe` references as either ingredient or substitute — the rows that
+can be deleted outright, since neither FK PROTECTs them. Nothing prunes them
+automatically: renames (`get_or_create` keeps the old row), last-use deletions and
+imports all leave orphans, and deciding they are junk is the owner's call.
+
+**Saving an edit.** The Edit workspace holds one panel per selected ingredient,
+each posting itself. Saving the only panel closes the workspace (via `HX-Retarget`
+onto `#columns`, since the form targets itself) — re-rendering a lone panel looks
+like nothing happened. Saving one of several marks it and leaves the rest open,
+because closing would discard whatever is typed in them; the panels carry the
+selection so the view can tell the two cases apart.
+
+**Owner scoping.** Recipes are owner-scoped and column 3 stays that way, but
+ingredients are global: the delete confirmation counts affected recipes across all
+owners, since a delete reaches recipes the current user cannot see.
+
+**Canonical names.** British spelling wins, enforced by
+`UniqueConstraint(Lower("ingredient_name"), name="ingredient_name_ci_unique")`
+(migration 0013) and mirrored in `IngredientForm`, which points a clashing rename at
+the merge action. Databases predating the constraint are cleaned up with the
+`find_ingredient_duplicates` command, which lists case-only clashes; merge them
+before migrating.
+
+Resolving variants that differ by more than case (`eggplant` → `aubergine`) on
+*input* is future work: an `IngredientAlias` lookup table resolving at write time,
+so storage and display stay canonical. See `docs/plans/008-ingredient-aliases.md`.
+
+Deleting the last `IngredientInRecipe` in a group, or moving every row out of it
+via reassign, deletes the now-empty `IngredientGroup` too (`_prune_empty_group`),
+compacting the remaining group indexes. A recipe's **last** group is always kept,
+empty or not: the "+ Add ingredient" button is rendered inside a group block, so a
+recipe with zero groups could only be refilled by adding a group first. The delete
+response carries an `hx-swap-oob="delete"` for the vanished block plus a refreshed
+reassign `<select>`, since the row swap alone would leave both stale.
+
 ### Sequencing (`recipes/utils/sequencing.py`)
 
 All `index_in_sequence` mutations go through shared, transactional helpers:
@@ -73,7 +158,7 @@ them as `null` and import coerces `null` back to `""`.
 ### Key Models
 
 - `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`)
-- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving)
+- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient` rows are global (not owner-scoped) and `ingredient_name` is unique case-insensitively; `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
 - `Step` — ordered recipe steps
 - `Cuisine`, `Source`, `Tag` — lookup/classification models
 
@@ -97,6 +182,7 @@ Django ORM → `export_recipes_to_yaml` management command → YAML files
 
 - `src/nutrisho/` — project config only, no business logic
 - `src/recipes/` — all domain logic
+- `src/recipes/services/` — pure query/mutation functions; no HTTP, no templates
 - Management commands in `src/recipes/management/`
 
 ## Dev Workflow

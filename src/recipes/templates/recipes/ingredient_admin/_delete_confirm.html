@@ -1,0 +1,30 @@
+<div id="columns" class="columns workspace min-w-0 grow h-full min-h-0 overflow-y-auto overflow-x-hidden break-words">
+  {% include "./_workspace_selection.html" %}
+  <form
+    hx-post="{% url 'recipes:ingredient_manage_delete' %}"
+    hx-target="#columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only"
+  >
+    {% csrf_token %}
+    <p class="delete-summary">
+      Delete {{ victim_count }} ingredient{{ victim_count|pluralize }}:
+      {% for victim in victims %}<span class="delete-victim">{{ victim.ingredient_name }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}
+    </p>
+    {% if affected_count %}
+    <p class="delete-warning">
+      Referenced by {{ affected_count }} recipe{{ affected_count|pluralize }}, as an ingredient or
+      a substitute. Every reference moves to the replacement below.
+    </p>
+    <label for="replacement">Replace with</label>
+    <select name="replacement_id" id="replacement">
+      <option value="">&mdash; pick a replacement &mdash;</option>
+      {% for candidate in replacements %}
+      <option value="{{ candidate.pk }}">{{ candidate.ingredient_name }}</option>
+      {% endfor %}
+    </select>
+    {% endif %}
+    {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+    <button type="submit" class="panel-delete rounded border border-gray-400 px-3 py-1">Confirm delete</button>
+  </form>
+</div>

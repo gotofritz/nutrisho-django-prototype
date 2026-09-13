@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.functions import Lower
 
 
 class Ingredient(models.Model):
@@ -42,3 +43,14 @@ class Ingredient(models.Model):
 
     def natural_key(self):
         return self.ingredient_name
+
+    class Meta:
+        constraints = [
+            # British spelling is canonical, so Onion and onion are the same
+            # ingredient. Clear existing clashes with the find_ingredient_duplicates
+            # command and the clean-up tool before applying this.
+            models.UniqueConstraint(
+                Lower("ingredient_name"),
+                name="ingredient_name_ci_unique",
+            )
+        ]

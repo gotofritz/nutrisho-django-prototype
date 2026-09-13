@@ -1,0 +1,38 @@
+<div
+  id="ingredient-count"
+  class="column-header sticky top-0 mb-2 flex items-center justify-between gap-2 border-b border-gray-200 bg-white pb-1"
+  {% if oob %}hx-swap-oob="true"{% endif %}
+>
+  <p class="column-count text-sm font-semibold text-gray-600">
+    {{ found_count }} found / {{ selected_count }} selected
+  </p>
+  <label class="select-all shrink-0" title="Select all / none">
+    <input
+      type="checkbox"
+      id="select-all"
+      {% if all_selected %}checked{% endif %}
+      data-indeterminate="{{ some_selected|yesno:"true,false" }}"
+      hx-get="{% url 'recipes:ingredient_manage_search' %}"
+      hx-vals='{"toggle_all": "1"}'
+      hx-target="#col-ingredients"
+      hx-swap="outerHTML"
+      hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only"
+    >
+  </label>
+  {% comment %}
+  indeterminate is a DOM property with no HTML attribute, so the dashed state
+  cannot be rendered server-side. The handler sits on this wrapper, not on the
+  input: htmx fires htmx:load on the root of swapped content and events bubble
+  up, so a listener on the nested input would never see it.
+  {% endcomment %}
+  <script>
+    (function (root) {
+      function paint() {
+        var box = root.querySelector('#select-all');
+        if (box) box.indeterminate = box.dataset.indeterminate === 'true';
+      }
+      root.addEventListener('htmx:load', paint);
+      paint();
+    })(document.currentScript.parentElement);
+  </script>
+</div>

@@ -1,0 +1,41 @@
+{% extends "../base.html" %}
+
+{% block page_title %}Manage ingredients{% endblock %}
+
+{% block content %}
+<div class="ingredient-manager flex h-screen items-stretch gap-4 p-4">
+  <div id="col-actions" class="col-actions flex shrink-0 flex-col gap-2">
+    <a href="{% url 'recipes:home' %}" class="back-link">&larr; back</a>
+    <input
+      type="search"
+      name="q"
+      id="ingredient-search"
+      class="rounded border border-gray-400 px-2 py-1"
+      placeholder="search&hellip;"
+      value="{{ query }}"
+      hx-get="{% url 'recipes:ingredient_manage_search' %}"
+      hx-trigger="input changed delay:250ms, search"
+      hx-target="#col-ingredients"
+      hx-swap="outerHTML"
+      hx-include=".ingredient-pick:checked, #unused-only"
+    >
+    <label class="unused-toggle">
+      <input
+        type="checkbox"
+        id="unused-only"
+        name="unused"
+        value="1"
+        {% if unused_only %}checked{% endif %}
+        hx-get="{% url 'recipes:ingredient_manage_search' %}"
+        hx-trigger="change"
+        hx-target="#col-ingredients"
+        hx-swap="outerHTML"
+        hx-include=".ingredient-pick:checked, #ingredient-search"
+      >
+      Unused only
+    </label>
+    {% include "./_action_buttons.html" %}
+  </div>
+  {% include "./_columns.html" %}
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+<form
+  id="ingredient-panel-{{ ingredient.pk }}"
+  class="ingredient-panel"
+  hx-post="{% url 'recipes:ingredient_manage_save' ingredient.pk %}"
+  hx-target="this"
+  hx-swap="outerHTML"
+  hx-include=".workspace-pick, #ingredient-search, #unused-only"
+>
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="panel-save rounded border border-gray-400 px-3 py-1">Save</button>
+  {% if saved %}<span class="panel-saved text-sm text-gray-600">Saved</span>{% endif %}
+</form>

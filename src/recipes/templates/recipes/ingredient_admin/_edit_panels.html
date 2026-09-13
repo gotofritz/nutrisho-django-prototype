@@ -1,0 +1,6 @@
+<div id="columns" class="columns workspace min-w-0 grow h-full min-h-0 overflow-y-auto overflow-x-hidden break-words">
+  {% include "./_workspace_selection.html" %}
+  {% for panel in panels %}
+  {% include "./_ingredient_panel.html" with ingredient=panel.ingredient form=panel.form %}
+  {% endfor %}
+</div>

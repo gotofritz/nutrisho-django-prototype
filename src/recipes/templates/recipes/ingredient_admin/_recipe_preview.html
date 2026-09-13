@@ -1,0 +1,38 @@
+{% load recipe_filters %}
+<div
+  id="col-preview"
+  class="col-preview grow basis-[30ch] min-w-0 h-full min-h-0 overflow-y-auto overflow-x-hidden break-words rounded border border-gray-300 p-2"
+  {% if oob %}hx-swap-oob="true"{% endif %}
+>
+  {% if recipe %}
+  {% comment %}
+  The preview is inert by design, so editing happens on the recipe page itself.
+  A new tab, so the clean-up selection behind it survives; hx-boost on <body>
+  would otherwise swap that page in place of opening the tab.
+  {% endcomment %}
+  <a
+    class="preview-open underline decoration-dotted"
+    href="{{ recipe.get_absolute_url }}"
+    target="_blank"
+    rel="noopener"
+    hx-boost="false"
+  >Open to edit &nearr;</a>
+  <h2 class="preview-title">{{ recipe.recipe_name }}</h2>
+  <p class="preview-serves">Serves {{ recipe.servings }}</p>
+  {% for group in recipe.ingredients_group.all %}
+  <div class="preview-group">
+    {% if group.group_name %}<h3 class="preview-group-name">{{ group.group_name }}</h3>{% endif %}
+    <ul class="preview-ingredients">
+      {% for iir in group.ingredient.all %}
+      <li class="preview-ingredient">{{ iir.quantity|format_quantity }} {{ iir.unit }} {{ iir.ingredient.ingredient_name }}{% if iir.preparation %}, {{ iir.preparation }}{% endif %}{% if iir.note %} ({{ iir.note }}){% endif %}{% if iir.substitute %} &mdash; or {{ iir.substitute.ingredient_name }}{% endif %}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+  <ol class="preview-steps">
+    {% for step in recipe.step.all %}
+    <li class="preview-step">{{ step.step_text|safe_step_html }}</li>
+    {% endfor %}
+  </ol>
+  {% endif %}
+</div>

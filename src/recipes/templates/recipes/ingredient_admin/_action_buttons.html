@@ -1,0 +1,79 @@
+{% comment %}
+Column 1 actions. Rendered out of band by every response that changes the
+selection, so `disabled` state is server-rendered and the clicked action turns
+into Cancel without any client-side bookkeeping.
+{% endcomment %}
+<div
+  id="action-buttons"
+  class="action-buttons contents"
+  {% if oob %}hx-swap-oob="true"{% endif %}
+>
+  {% if active_action == "edit" %}
+  <button
+    type="button"
+    id="action-edit"
+    class="action-cancel rounded border border-gray-400 px-3 py-1"
+    hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
+    hx-target="#columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only"
+  >Done</button>
+  {% else %}
+  <button
+    type="button"
+    id="action-edit"
+    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
+    hx-get="{% url 'recipes:ingredient_manage_edit' %}"
+    hx-target="#columns"
+    hx-swap="outerHTML"
+    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only"
+    {% if selected_count < 1 %}disabled{% endif %}
+  >Edit</button>
+  {% endif %}
+
+  {% if active_action == "delete" %}
+  <button
+    type="button"
+    id="action-delete"
+    class="action-cancel rounded border border-gray-400 px-3 py-1"
+    hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
+    hx-target="#columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only"
+  >Cancel</button>
+  {% else %}
+  <button
+    type="button"
+    id="action-delete"
+    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
+    hx-get="{% url 'recipes:ingredient_manage_delete' %}"
+    hx-target="#columns"
+    hx-swap="outerHTML"
+    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only"
+    {% if selected_count < 1 %}disabled{% endif %}
+  >Delete</button>
+  {% endif %}
+
+  {% if active_action == "merge" %}
+  <button
+    type="button"
+    id="action-merge"
+    class="action-cancel rounded border border-gray-400 px-3 py-1"
+    hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
+    hx-target="#columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only"
+  >Cancel</button>
+  {% else %}
+  <button
+    type="button"
+    id="action-merge"
+    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
+    hx-get="{% url 'recipes:ingredient_manage_merge' %}"
+    hx-target="#columns"
+    hx-swap="outerHTML"
+    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only"
+    {% if selected_count < 2 %}disabled{% endif %}
+  >Merge</button>
+  {% endif %}
+</div>

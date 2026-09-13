@@ -1,5 +1,7 @@
 """Tests for HTMX integration (Plan 002)."""
 
+import re
+
 import pytest
 from django.test import Client
 
@@ -123,3 +125,19 @@ def test_base_template_has_csrf_header_for_htmx(auth_client):
     content = response.content.decode()
     assert "hx-headers=" in content
     assert "X-CSRFToken" in content
+
+
+@pytest.mark.django_db
+def test_base_template_htmx_script_exists_in_static_files(auth_client):
+    """The htmx bundle base.html asks for must actually ship with django-htmx.
+
+    django-htmx serves versioned filenames (htmx-2.min.js, htmx-4.min.js); a
+    plain htmx.min.js 404s silently and every hx-* attribute in the app becomes
+    inert, with nothing failing loudly.
+    """
+    from django.contrib.staticfiles import finders
+
+    html = auth_client.get("/recipes/").content.decode()
+    match = re.search(r'src="/static/(django_htmx/[^"]+\.js)"', html)
+    assert match is not None, "base.html no longer loads an htmx bundle"
+    assert finders.find(match.group(1)) is not None, f"{match.group(1)} is not on the static path"

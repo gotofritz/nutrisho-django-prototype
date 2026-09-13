@@ -223,3 +223,18 @@ def test_char_fields_are_not_nullable():
     assert IngredientGroup._meta.get_field("group_name").null is False  # ty: ignore[unresolved-attribute]
     assert IngredientInRecipe._meta.get_field("unit").null is False  # ty: ignore[unresolved-attribute]
     assert IngredientInRecipe._meta.get_field("preparation").null is False  # ty: ignore[unresolved-attribute]
+
+
+@pytest.mark.django_db
+def test_ingredient_name_is_unique_case_insensitively():
+    """British spelling is canonical, so Onion and onion are one ingredient."""
+    Ingredient.objects.create(ingredient_name="Onion")
+    with pytest.raises(django.db.IntegrityError):
+        Ingredient.objects.create(ingredient_name="onion")
+
+
+@pytest.mark.django_db
+def test_ingredient_names_differing_by_more_than_case_coexist():
+    Ingredient.objects.create(ingredient_name="onion")
+    Ingredient.objects.create(ingredient_name="onions")
+    assert Ingredient.objects.count() == 2

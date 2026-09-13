@@ -1,0 +1,32 @@
+<div
+  id="col-ingredients"
+  class="col-ingredients basis-[38ch] min-w-0 max-w-[38ch] h-full min-h-0 overflow-y-auto overflow-x-hidden break-words rounded border border-gray-300 p-2"
+  hx-get="{% url 'recipes:ingredient_manage_recipes' %}"
+  {% comment %}
+  Only row ticks, not every change inside the column: the header's select-all box
+  is in here too, and its own request would race this one — both swap overlapping
+  fragments, and whichever lands second finds its out-of-band targets gone.
+  {% endcomment %}
+  hx-trigger="change[target.classList.contains('ingredient-pick')]"
+  hx-target="#col-recipes"
+  hx-swap="outerHTML"
+  hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only"
+>
+  {% include "./_ingredient_count.html" %}
+  <ul class="ingredient-rows">
+    {% for ingredient in ingredients %}
+    <li class="ingredient-row">
+      <label>
+        <input
+          type="checkbox"
+          class="ingredient-pick"
+          name="ingredient_ids"
+          value="{{ ingredient.pk }}"
+          {% if ingredient.pk in selected_ids %}checked{% endif %}
+        >
+        <span class="ingredient-name">{{ ingredient.ingredient_name }}</span>
+      </label>
+    </li>
+    {% endfor %}
+  </ul>
+</div>

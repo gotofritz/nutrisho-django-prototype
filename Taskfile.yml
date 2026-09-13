@@ -12,6 +12,9 @@ tasks:
       - echo "Virtual environment tasks use {{.VENV}}/python. For interactive shell, run 'source .venv/bin/activate' manually."
 
   run:
+    desc: "Run the dev server (builds CSS first; use css-watch alongside it while editing templates)"
+    deps:
+      - css
     env:
       DJANGO_SETTINGS_MODULE: nutrisho.settings.dev
     cmd: "{{.VENV}}/python manage.py runserver"

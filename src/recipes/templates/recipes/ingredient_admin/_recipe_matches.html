@@ -1,0 +1,19 @@
+<div
+  id="col-recipes"
+  class="col-recipes basis-[62ch] min-w-0 max-w-[62ch] h-full min-h-0 overflow-y-auto overflow-x-hidden break-words rounded border border-gray-300 p-2"
+  {% if oob %}hx-swap-oob="true"{% endif %}
+>
+  <p class="column-count sticky top-0 border-b border-gray-200 bg-white pb-1 mb-2 text-sm font-semibold text-gray-600">{{ match_count }} matches / {{ selected_count }} selected</p>
+  <ul class="recipe-rows">
+    {% for recipe in recipes %}
+    <li class="recipe-row">
+      <a
+        class="recipe-match cursor-pointer underline decoration-dotted"
+        hx-get="{% url 'recipes:ingredient_manage_preview' recipe.pk %}"
+        hx-target="#col-preview"
+        hx-swap="outerHTML"
+      >{{ recipe.recipe_name }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
