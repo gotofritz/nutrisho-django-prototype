@@ -20,17 +20,27 @@ from recipes.services.ingredient_admin import (
     IngredientInUseError,
     delete_ingredients,
     merge_ingredients,
+    merge_plural_ingredients,
     recipes_for_ingredients,
     recipes_referencing_ingredients,
     search_ingredients,
     selected_ingredients,
+    suggest_singular,
 )
 from recipes.views._types import AuthedRequest
 
 _T = "recipes/ingredient_admin/"
 
-# Selected-ingredient count each action needs before it makes sense.
-_MINIMUM_SELECTED = {"edit": 1, "delete": 1, "merge": 2}
+# Selected-ingredient count each action needs before it makes sense, as
+# (minimum, maximum); a maximum of None means "no upper bound". Merging a plural
+# is capped at 2 because with two plural rows picked there is no way to tell
+# which spelling should become the survivor's plural.
+_SELECTION_BOUNDS: dict[str, tuple[int, int | None]] = {
+    "edit": (1, None),
+    "delete": (1, None),
+    "merge": (2, None),
+    "merge_plural": (2, 2),
+}
 
 
 def _payload(request: AuthedRequest) -> QueryDict:
@@ -198,19 +208,25 @@ def _actions_oob(request: AuthedRequest, *, selected_ids: list[int], action: str
 
 
 def _guard(*, action: str, selected_ids: list[int]) -> HttpResponse | None:
-    """422 when too few ingredients are selected for `action`, else None.
+    """422 when the selection is the wrong size for `action`, else None.
 
-    The buttons render `disabled` for the same thresholds, so this only fires on
-    a hand-rolled or racing request — but the endpoints must not depend on the
+    The buttons render `disabled` for the same bounds, so this only fires on a
+    hand-rolled or racing request — but the endpoints must not depend on the
     markup to stay honest.
     """
-    minimum = _MINIMUM_SELECTED[action]
-    if len(selected_ids) >= minimum:
+    minimum, maximum = _SELECTION_BOUNDS[action]
+    count = len(selected_ids)
+    if count >= minimum and (maximum is None or count <= maximum):
         return None
+    exact = maximum == minimum
     return HttpResponse(
         render_to_string(
             _T + "_guard_message.html",
-            {"minimum": minimum, "noun": "ingredient" if minimum == 1 else "ingredients"},
+            {
+                "minimum": minimum,
+                "exact": exact,
+                "noun": "ingredient" if minimum == 1 else "ingredients",
+            },
         ),
         status=422,
     )
@@ -464,5 +480,59 @@ def ingredient_manage_merge(request: AuthedRequest) -> HttpResponse:
         "_merge_chooser.html",
         _merge_context(selected_ids=selected_ids),
         action="merge",
+        selected_ids=selected_ids,
+    )
+
+
+def _merge_plural_context(*, selected_ids: list[int]) -> dict[str, object]:
+    """Context for the plural chooser: the pair, and which half looks singular.
+
+    The guess runs the rule both ways — whichever name pluralises into the other
+    is the singular. When neither does (a pair the owner picked by hand, or one
+    the rule spells differently) the first is offered, which is the shorter name
+    in the usual `apple`/`apples` shape because column 2 sorts alphabetically.
+    """
+    candidates = list(selected_ingredients(selected_ids))
+    return {"candidates": candidates, "suggested_id": suggest_singular(candidates)}
+
+
+@require_http_methods(["GET", "POST"])
+def ingredient_manage_merge_plural(request: AuthedRequest) -> HttpResponse:
+    """GET asks which of the two is the singular; POST folds the plural into it.
+
+    The plural-aware Merge: the row that goes is not merely deleted, its spelling
+    is written onto the survivor's `plural_name`, so the name disappearing from
+    column 2 is the one the recipe page renders above a quantity of 1. A plain
+    Merge drops it and leaves the rule guessing.
+    """
+    payload = _payload(request)
+    selected_ids = _selected_ids(payload)
+    blocked = _guard(action="merge_plural", selected_ids=selected_ids)
+    if blocked is not None:
+        return blocked
+    if request.method == "POST":
+        singular_id = _optional_id(payload.get("singular_id"))
+        if singular_id is None or singular_id not in selected_ids:
+            return HttpResponse(
+                _fragment(
+                    request,
+                    "_merge_plural_chooser.html",
+                    _merge_plural_context(selected_ids=selected_ids)
+                    | {
+                        "selected_ids": selected_ids,
+                        "error": "Pick which one is the singular.",
+                    },
+                ),
+                status=422,
+            )
+        plural_id = next(pk for pk in selected_ids if pk != singular_id)
+        merge_plural_ingredients(singular_id=singular_id, plural_id=plural_id)
+        # The singular is all that is left of the pair, so it stays ticked.
+        return _columns_response(request, **_filters(payload), selected_ids=[singular_id])
+    return _workspace_response(
+        request,
+        "_merge_plural_chooser.html",
+        _merge_plural_context(selected_ids=selected_ids),
+        action="merge_plural",
         selected_ids=selected_ids,
     )

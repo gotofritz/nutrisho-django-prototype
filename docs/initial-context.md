@@ -134,7 +134,20 @@ row spelling out its `plural`, `search_ingredients(plurals_only=True)` narrows
 column 2 to those pairs (composing with the query and the unused filter), and
 `find_ingredient_duplicates` reports both classes. Back-filling is a merge in
 the tool, never a data migration: picking which row survives is the owner's
-call. **Alias** — variants differing by more than case (`eggplant` →
+call.
+
+**Merge plural** is the fourth column-1 action and the one that fixes such a
+pair. `merge_plural_ingredients` repoints recipes exactly as `merge_ingredients`
+does, then writes the deleted row's name **verbatim** onto the survivor's
+`plural_name` — the point of the action, since a plain merge drops the spelling
+and leaves the rule to guess (`chili`/`chilis` would come back as `chilies`).
+Verbatim even when the rule agrees, so the plural column visibly shows where the
+merged name went; any prior override is overwritten, the merge being the later
+and more deliberate statement. `suggest_singular` preselects whichever half
+pluralises into the other, falling back to the first. Capped at **exactly two**
+selected: with two plural rows there is no way to tell which spelling wins.
+`_SELECTION_BOUNDS` carries each action's `(minimum, maximum)`; every other
+action is still minimum-only. **Alias** — variants differing by more than case (`eggplant` →
 `aubergine`) — is future work resolving on *input*: an `IngredientAlias` lookup
 table applied at write time, so storage and display stay canonical. See
 `docs/plans/008-ingredient-aliases.md`.

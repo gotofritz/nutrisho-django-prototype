@@ -76,4 +76,30 @@ into Cancel without any client-side bookkeeping.
     {% if selected_count < 2 %}disabled{% endif %}
   >Merge</button>
   {% endif %}
+
+  {% if active_action == "merge_plural" %}
+  <button
+    type="button"
+    id="action-merge-plural"
+    class="action-cancel rounded border border-gray-400 px-3 py-1"
+    hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
+    hx-target="#columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only"
+  >Cancel</button>
+  {% else %}
+  {% comment %}
+  Exactly two: the plural spelling of a pair is unambiguous, three rows are not.
+  {% endcomment %}
+  <button
+    type="button"
+    id="action-merge-plural"
+    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
+    hx-get="{% url 'recipes:ingredient_manage_merge_plural' %}"
+    hx-target="#columns"
+    hx-swap="outerHTML"
+    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only"
+    {% if selected_count != 2 %}disabled{% endif %}
+  >Merge plural</button>
+  {% endif %}
 </div>

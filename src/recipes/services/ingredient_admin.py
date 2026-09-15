@@ -4,7 +4,7 @@ Pure ORM helpers with no HTTP concerns, so the HTMX views in
 `recipes/views/ingredient_admin.py` stay thin.
 """
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from typing import cast
 
 from django.contrib.auth.models import AbstractBaseUser
@@ -167,6 +167,60 @@ def merge_ingredients(*, survivor_id: int, victim_ids: Iterable[int]) -> int:
     if not Ingredient.objects.filter(pk=survivor_id).exists():
         raise ObjectDoesNotExist(f"No Ingredient with id {survivor_id}")
     return delete_ingredients(ingredient_ids=victim_ids, replacement_id=survivor_id)
+
+
+def suggest_singular(candidates: Sequence[Ingredient]) -> int | None:
+    """Which of `candidates` looks like the singular, by primary key.
+
+    Runs the rule both ways: whichever name pluralises into another one in the
+    list is the singular. Falls back to the first candidate when nothing
+    matches — a pair the owner put together by hand, or one whose plural is
+    spelt differently from the rule (`chili`/`chilis`) — which is the shorter
+    name in the usual shape, since the caller lists them alphabetically. `None`
+    only for an empty list.
+    """
+    if not candidates:
+        return None
+    names = {cast(str, c.ingredient_name).lower() for c in candidates}
+    for candidate in candidates:
+        plural = candidate.plural.lower()
+        if plural != cast(str, candidate.ingredient_name).lower() and plural in names:
+            return candidate.pk
+    return candidates[0].pk
+
+
+@transaction.atomic
+def merge_plural_ingredients(*, singular_id: int, plural_id: int) -> None:
+    """Fold a plural row into its singular, keeping the plural as a display form.
+
+    The plural-aware counterpart to `merge_ingredients`: recipes move across the
+    same way (both `ingredient` and `substitute`), and the plural row goes — but
+    its spelling is kept, written verbatim onto `singular.plural_name`, so the
+    name you merged away is what the recipe page renders at a quantity other
+    than 1. That is the difference from a plain merge, which drops the spelling
+    and leaves the rule to guess: `chili`/`chilis` would come back as `chilies`.
+
+    Verbatim even when the rule would have produced the same string, so the
+    plural column always shows where the merged name went rather than sitting
+    empty. Any existing override is overwritten: merging is a deliberate
+    statement about the plural, made later than whatever was there before.
+
+    Raises `ObjectDoesNotExist` if either row is missing, and `ValueError` if
+    they are the same row — a row cannot be its own plural. Nothing is written
+    in either case.
+    """
+    singular = Ingredient.objects.filter(pk=singular_id).first()
+    if singular is None:
+        raise ObjectDoesNotExist(f"No Ingredient with id {singular_id}")
+    plural = Ingredient.objects.filter(pk=plural_id).first()
+    if plural is None:
+        raise ObjectDoesNotExist(f"No Ingredient with id {plural_id}")
+    if singular.pk == plural.pk:
+        raise ValueError("An ingredient cannot be its own plural.")
+    plural_spelling = cast(str, plural.ingredient_name)
+    delete_ingredients(ingredient_ids=[plural.pk], replacement_id=singular.pk)
+    singular.plural_name = plural_spelling
+    singular.save(update_fields=["plural_name"])
 
 
 def find_ingredient_duplicates() -> list[list[Ingredient]]:

@@ -9,6 +9,7 @@ from .views import (
     ingredient_manage_delete,
     ingredient_manage_edit,
     ingredient_manage_merge,
+    ingredient_manage_merge_plural,
     ingredient_manage_preview,
     ingredient_manage_recipes,
     ingredient_manage_save,
@@ -91,6 +92,11 @@ urlpatterns = [
         name="ingredient_manage_delete",
     ),
     path("ingredients/manage/merge/", _lr(ingredient_manage_merge), name="ingredient_manage_merge"),
+    path(
+        "ingredients/manage/merge-plural/",
+        _lr(ingredient_manage_merge_plural),
+        name="ingredient_manage_merge_plural",
+    ),
     path(
         "ingredients/manage/<int:ingredient_id>/save/",
         _lr(ingredient_manage_save),

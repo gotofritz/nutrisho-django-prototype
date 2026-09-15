@@ -1228,3 +1228,127 @@ def test_saving_a_plural_override_changes_what_the_recipe_page_shows(
     )
     html = auth_client.get(recipe.get_absolute_url()).content.decode()
     assert '<span class="ingredient-name">avocados</span>' in html
+
+
+MERGE_PLURAL_URL = "/recipes/ingredients/manage/merge-plural/"
+
+
+@pytest.mark.django_db
+def test_merge_plural_requires_login(client, user):
+    response = client.get(MERGE_PLURAL_URL)
+    assert response.status_code == 302
+    assert "/accounts/login/" in response["Location"]
+
+
+@pytest.mark.django_db
+def test_manager_offers_a_merge_plural_button_disabled_until_two_are_picked(auth_client):
+    html = auth_client.get(MANAGE_URL).content.decode()
+    assert has_bare_attr(tag(html, "action-merge-plural"), "disabled")
+
+
+@pytest.mark.django_db
+def test_merge_plural_button_enables_at_exactly_two(auth_client, make_ingredient):
+    apple = make_ingredient("apple")
+    apples = make_ingredient("apples")
+    html = auth_client.get(RECIPES_URL, {"ingredient_ids": [apple.pk, apples.pk]}).content.decode()
+    assert not has_bare_attr(tag(html, "action-merge-plural"), "disabled")
+
+
+@pytest.mark.django_db
+def test_merge_plural_button_disabled_again_at_three(auth_client, make_ingredient):
+    ids = [make_ingredient(name).pk for name in ("apple", "apples", "pear")]
+    html = auth_client.get(RECIPES_URL, {"ingredient_ids": ids}).content.decode()
+    assert has_bare_attr(tag(html, "action-merge-plural"), "disabled")
+
+
+@pytest.mark.django_db
+def test_merge_plural_panel_preselects_the_singular_from_the_rule(auth_client, make_ingredient):
+    """`apple` pluralises to `apples`, so `apple` is the one to keep."""
+    apple = make_ingredient("apple")
+    apples = make_ingredient("apples")
+    html = squash(
+        auth_client.get(
+            MERGE_PLURAL_URL, {"ingredient_ids": [apples.pk, apple.pk]}
+        ).content.decode()
+    )
+    assert f'name="singular_id" value="{apple.pk}" checked' in html
+    assert f'name="singular_id" value="{apples.pk}" >' in html.replace(" checked", " ")
+
+
+@pytest.mark.django_db
+def test_merge_plural_guards_against_a_lone_selection(auth_client, make_ingredient):
+    apple = make_ingredient("apple")
+    response = auth_client.get(MERGE_PLURAL_URL, {"ingredient_ids": [apple.pk]})
+    assert response.status_code == 422
+    assert "exactly 2" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_merge_plural_guards_against_three(auth_client, make_ingredient):
+    ids = [make_ingredient(name).pk for name in ("apple", "apples", "pear")]
+    response = auth_client.get(MERGE_PLURAL_URL, {"ingredient_ids": ids})
+    assert response.status_code == 422
+
+
+@pytest.mark.django_db
+def test_merge_plural_post_merges_and_records_the_plural(auth_client, make_ingredient):
+    apple = make_ingredient("apple")
+    apples = make_ingredient("apples")
+    response = auth_client.post(
+        MERGE_PLURAL_URL,
+        {"ingredient_ids": [apple.pk, apples.pk], "singular_id": apple.pk},
+    )
+    assert response.status_code == 200
+    apple.refresh_from_db()
+    assert apple.plural_name == "apples"
+    assert not Ingredient.objects.filter(pk=apples.pk).exists()
+
+
+@pytest.mark.django_db
+def test_merge_plural_post_leaves_the_survivor_selected(auth_client, make_ingredient):
+    apple = make_ingredient("apple")
+    apples = make_ingredient("apples")
+    html = auth_client.post(
+        MERGE_PLURAL_URL,
+        {"ingredient_ids": [apple.pk, apples.pk], "singular_id": apple.pk},
+    ).content.decode()
+    assert "1 found / 1 selected" in html
+
+
+@pytest.mark.django_db
+def test_merge_plural_post_rejects_a_singular_outside_the_selection(auth_client, make_ingredient):
+    apple = make_ingredient("apple")
+    apples = make_ingredient("apples")
+    pear = make_ingredient("pear")
+    response = auth_client.post(
+        MERGE_PLURAL_URL,
+        {"ingredient_ids": [apple.pk, apples.pk], "singular_id": pear.pk},
+    )
+    assert response.status_code == 422
+    assert Ingredient.objects.filter(pk=apples.pk).exists()
+
+
+@pytest.mark.django_db
+def test_merge_plural_post_rejects_a_missing_choice(auth_client, make_ingredient):
+    apple = make_ingredient("apple")
+    apples = make_ingredient("apples")
+    response = auth_client.post(MERGE_PLURAL_URL, {"ingredient_ids": [apple.pk, apples.pk]})
+    assert response.status_code == 422
+    assert Ingredient.objects.filter(pk=apples.pk).exists()
+
+
+@pytest.mark.django_db
+def test_merge_plural_then_the_recipe_page_shows_the_merged_spelling(
+    auth_client, user, make_ingredient, make_recipe, add_ingredient
+):
+    """End to end: the spelling you merged away is what the page renders."""
+    chili = make_ingredient("chili")
+    chilis = make_ingredient("chilis")
+    recipe = make_recipe(owner=user, name="Chilli con carne")
+    add_ingredient(recipe=recipe, ingredient=chilis, quantity=Decimal("3"))
+    auth_client.post(
+        MERGE_PLURAL_URL,
+        {"ingredient_ids": [chili.pk, chilis.pk], "singular_id": chili.pk},
+    )
+    html = auth_client.get(recipe.get_absolute_url()).content.decode()
+    assert '<span class="ingredient-name">chilis</span>' in html
