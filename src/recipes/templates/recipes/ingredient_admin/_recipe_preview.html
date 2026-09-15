@@ -31,7 +31,7 @@
   {% endfor %}
   <ol class="preview-steps">
     {% for step in recipe.step.all %}
-    <li class="preview-step">{{ step.step_text|safe_step_html }}</li>
+    <li class="preview-step">{% if step.step_title %}<span class="step-title">{{ step.step_title }}</span>: {% endif %}{{ step.step_text|safe_step_html }}</li>
     {% endfor %}
   </ol>
   {% endif %}

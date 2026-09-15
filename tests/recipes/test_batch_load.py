@@ -17,7 +17,7 @@ def make_yaml(
     title: str = "Test Soup",
     serves: int | None = 4,
     description: str = "A soup",
-    directions: list[str] | None = None,
+    directions: list[str | dict] | None = None,
     groups: list | None = None,
 ) -> dict:
     """Build a minimal YAML dict matching the schema."""
@@ -774,3 +774,68 @@ def test_import_filename_collision_check_is_owner_scoped(gotofritz, tmp_path):
     # Should succeed — different owner, same effective filename
     call_command("batch_load_yaml_recipes", str(p), user="gotofritz")
     assert Recipe.objects.filter(recipe_name="Bob Soup", owner=gotofritz).exists()
+
+
+# --- Step titles (plan 010) ---------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_step_mapping_sets_title_and_text(gotofritz, tmp_path):
+    from recipes.models import Step
+
+    data = make_yaml(
+        title="Titled Recipe",
+        directions=[{"title": "RAGÚ", "text": "Brown the beef"}, "Serve"],
+    )
+    p = write_yaml(tmp_path, data, "titled.yml")
+    call_command("batch_load_yaml_recipes", str(p), user="gotofritz")
+
+    steps = list(
+        Step.objects.filter(recipe__recipe_name="Titled Recipe").order_by("index_in_sequence")
+    )
+    assert [(s.step_title, s.step_text) for s in steps] == [
+        ("RAGÚ", "Brown the beef"),
+        ("", "Serve"),
+    ]
+
+
+@pytest.mark.django_db
+def test_step_mapping_without_a_title_stores_empty_string(gotofritz, tmp_path):
+    from recipes.models import Step
+
+    data = make_yaml(title="Null Title", directions=[{"title": None, "text": "Brown the beef"}])
+    p = write_yaml(tmp_path, data, "null_title.yml")
+    call_command("batch_load_yaml_recipes", str(p), user="gotofritz")
+
+    step = Step.objects.get(recipe__recipe_name="Null Title")
+    assert step.step_title == ""
+    assert step.step_text == "Brown the beef"
+
+
+@pytest.mark.django_db
+def test_step_title_is_cleaned_like_every_other_text(gotofritz, tmp_path):
+    from recipes.models import Step
+
+    data = make_yaml(title="Messy Title", directions=[{"title": " RAGÚ\n ", "text": "Brown it"}])
+    p = write_yaml(tmp_path, data, "messy_title.yml")
+    call_command("batch_load_yaml_recipes", str(p), user="gotofritz")
+
+    assert Step.objects.get(recipe__recipe_name="Messy Title").step_title == "RAGÚ"
+
+
+@pytest.mark.django_db
+def test_step_mapping_missing_text_raises(gotofritz, tmp_path):
+    data = make_yaml(title="No Text", directions=[{"title": "RAGÚ"}])
+    p = write_yaml(tmp_path, data, "no_text.yml")
+    with pytest.raises(CommandError, match="missing required 'text'"):
+        call_command("batch_load_yaml_recipes", str(p), user="gotofritz")
+    assert not Recipe.objects.filter(recipe_name="No Text").exists()
+
+
+@pytest.mark.django_db
+def test_step_title_over_the_field_limit_raises(gotofritz, tmp_path):
+    data = make_yaml(title="Long Title", directions=[{"title": "A" * 129, "text": "Brown it"}])
+    p = write_yaml(tmp_path, data, "long_title.yml")
+    with pytest.raises(CommandError, match="exceeds"):
+        call_command("batch_load_yaml_recipes", str(p), user="gotofritz")
+    assert not Recipe.objects.filter(recipe_name="Long Title").exists()

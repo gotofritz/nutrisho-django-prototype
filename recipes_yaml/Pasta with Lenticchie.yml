@@ -5,12 +5,16 @@ directions:
   - Sautè the onions, celery and carrots in olive oil
   - Add the lentils, stock, tomatoes. Stir and close the pressure cooker
   - Cook 15 - 20 mins, depending on the lentils, from when it begins to steam.
-  - 'SOUP: to make a soup, uncover the pressure cooker and add pastina and chilies
-    in the same pot, and extra water if needed.'
-  - 'DRY: while the lentils cook, cook the pasta separately.'
-  - 'DRY: in another pot, sautè some garlic and chili in plenty of olive oil'
-  - 'DRY: remove the garlic (as desired) from the oil, drain the lentils and mix them
-    with the pasta in the olive oil'
+  - text: to make a soup, uncover the pressure cooker and add pastina and chilies
+      in the same pot, and extra water if needed.
+    title: Soup
+  - text: while the lentils cook, cook the pasta separately.
+    title: Dry
+  - text: in another pot, sautè some garlic and chili in plenty of olive oil
+    title: Dry
+  - text: remove the garlic (as desired) from the oil, drain the lentils and mix them
+      with the pasta in the olive oil
+    title: Dry
 ingredients:
   group:
   - ingredient:

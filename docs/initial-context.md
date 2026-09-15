@@ -30,7 +30,8 @@ src/
   recipes/       # Main app: models, views, templates, management commands
     services/      # Pure query/mutation functions, no HTTP (ingredient_admin.py)
     templatetags/  # Custom template filters (recipe_filters.py)
-    utils/         # Framework-free helpers (filename.py, sequencing.py, pluralise.py)
+    utils/         # Framework-free helpers (filename.py, sequencing.py, pluralise.py,
+                   #   step_title.py)
 docs/
   initial-context.md   # this file
   plans/               # active work plans
@@ -164,6 +165,35 @@ recipe with zero groups could only be refilled by adding a group first. The dele
 response carries an `hx-swap-oob="delete"` for the vanished block plus a refreshed
 reassign `<select>`, since the row swap alone would leave both stale.
 
+### Step Titles (`Step.step_title`, `recipes/utils/step_title.py`)
+
+Scraped recipes bury the heading of a step in the step itself — `<u>RAGÚ</u>:
+Sauté the beef`, or `FOR THE STOCK: soak the kombu`. That heading is structure,
+so it lives in its own optional field and the templates render it underlined
+with a colon after it — the shape the scraped text wrote by hand — while the
+colon itself stays outside `.step-title`, being punctuation rather than heading.
+A step without a title renders exactly as it did before. Titles carry **no markup**: the `<u>` was
+a wrapper around the heading, never part of it, so `_step_display.html` escapes
+the title outright while `step_text` still goes through `safe_step_html`.
+
+`recipes/utils/step_title.py` holds the recognition rule as a pure function,
+free of Django imports. It is deliberately narrow — an inline-tag wrapper
+(`<u>`, `<b>`, `<i>`, `<s>`) or an entirely upper-case run, closed by a colon,
+followed by whitespace and something left over — so `Add salt: to taste` stays
+whole. `sentence_case_heading` sits next to it and un-shouts a heading that is entirely
+upper case (`FOR THE STOCK` → `For the stock`), leaving anything cased by hand
+alone; proper nouns are lost with the shouting, since nothing in the text says
+which words they were. Nothing calls either at import time: splitting and
+un-shouting are a one-off backfill (`scripts/backfill_step_titles.py`), because
+deciding that a colon introduces a heading is a judgement about legacy data, not
+an import rule.
+
+In YAML a step is **either** a bare string (untitled — the shape every file used
+before) **or** a `{title, text}` mapping. Export emits the mapping only when a
+title is set, so untitled recipes round-trip byte-identically; the importer
+normalises both shapes in `_normalize_steps` before the write phase, so a
+mapping missing `text` fails validation rather than mid-transaction.
+
 ### Sequencing (`recipes/utils/sequencing.py`)
 
 All `index_in_sequence` mutations go through shared, transactional helpers:
@@ -212,7 +242,7 @@ because `recipe_scale` *persists* scaled quantities, so doubling a recipe writes
 
 - `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`)
 - `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient` rows are global (not owner-scoped) and `ingredient_name` is unique case-insensitively; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
-- `Step` — ordered recipe steps
+- `Step` — ordered recipe steps; `step_title` is an optional heading, stored as `""` when absent and rendered underlined in front of the step text, followed by a colon
 - `Cuisine`, `Source`, `Tag` — lookup/classification models
 
 ### Data Flow

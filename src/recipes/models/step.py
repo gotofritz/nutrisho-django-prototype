@@ -7,6 +7,12 @@ from .recipe import Recipe
 
 class Step(models.Model):
     id = models.AutoField(primary_key=True)
+    step_title = models.CharField(
+        "An optional heading for a step",
+        max_length=128,
+        blank=True,
+        default="",
+    )
     step_text = models.CharField(
         "The description of a step",
         max_length=512,

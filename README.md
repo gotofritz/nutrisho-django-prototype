@@ -46,6 +46,13 @@ Use `--missing-only` to skip recipes that already have a file on disk, or `--id 
 
 Inline editing is available on every recipe detail page. Click any field, step, ingredient, or group header to edit it in place. Changes save immediately without a page reload.
 
+A step can carry a **title** — the heading some recipes put in front of the
+instruction, like `RAGÚ` or `FOR THE STOCK`. It is optional: leave it empty and
+the step reads exactly as before. Recipes imported with the heading buried in
+the text (`<u>RAGÚ</u>: Sauté the beef`) were split out in one pass, so the
+heading is now its own field, no longer shouted, and exports carry it
+separately.
+
 You can also:
 - Add and delete steps
 - Add ingredients to any group

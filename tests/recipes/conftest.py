@@ -51,10 +51,11 @@ def add_ingredient(db):
 
 @pytest.fixture
 def add_step(db):
-    def _add(*, recipe, text: str) -> Step:
+    def _add(*, recipe, text: str, title: str = "") -> Step:
         return Step.objects.create(
             recipe=recipe,
             step_text=text,
+            step_title=title,
             index_in_sequence=Step.objects.filter(recipe=recipe).count(),
         )
 

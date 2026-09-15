@@ -2,14 +2,17 @@ cuisine: .spain.classic
 description: Typical moorish combination of ingredients, gluten free cake
 directions:
   step:
-  - 'CAKE: Set oven to 180°, line 23cm spring form tin with greased paper'
+  - text: Set oven to 180°, line 23cm spring form tin with greased paper
+    title: Cake
   - Mix the egg yolks and sugar together until pale, then add almonds and zest
   - Beat egg whites with sugar until stiff and carefully fold into (2)
   - Pour into baking tin and bake in middle shelf 35 - 45 mins
-  - 'SYRUP: place juices and cinnamon stick in a saucepan with the sugar, bring to
-    a boil and simmer until thickened a bit'
+  - text: place juices and cinnamon stick in a saucepan with the sugar, bring to a
+      boil and simmer until thickened a bit
+    title: Syrup
   - Allow to cool and put in fridge
-  - 'CAKE: cool the cake completely, then remove from tin'
+  - text: cool the cake completely, then remove from tin
+    title: Cake
   - Make six small holes in the cake. Pour the syrup over the cake, spreading all
     over, and also so that it falls in the holes
 ingredients:

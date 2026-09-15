@@ -3,7 +3,8 @@ description: null
 directions:
   step:
   - Sauté onion in olive oil on medium heat until soft, about 5m
-  - 'IF MAKING OWN SPICE MIX: dry roast spice ingredients 4-5m then grind'
+  - text: dry roast spice ingredients 4-5m then grind
+    title: If making own spice mix
   - Raise heat, add cinnamon and cardamom to onion for a few seconds
   - Add chicken and potatoes until browned, about 5m
   - Blend tomatoes, garlic, water in a food processor
