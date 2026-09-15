@@ -8,7 +8,7 @@
   >
     <span class="ingredient-quantity">{{ iir.quantity|format_quantity }}</span>
     <span class="ingredient-unit">{{ iir.unit|default:"" }}</span>
-    <span class="ingredient-name">{{ iir.ingredient.ingredient_name }}</span>{% if iir.ingredient.ingredient_name and iir.preparation %},{% endif %}
+    <span class="ingredient-name">{{ iir|display_ingredient_name }}</span>{% if iir.ingredient.ingredient_name and iir.preparation %},{% endif %}
     <span class="ingredient-preparation">{{ iir.preparation|default:"" }}</span>
     {% if iir.note %}<span class="ingredient-note">({{ iir.note }})</span>{% endif %}
   </div>

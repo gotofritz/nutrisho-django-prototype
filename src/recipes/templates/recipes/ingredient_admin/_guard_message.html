@@ -1,3 +1,7 @@
 <div id="columns" class="columns workspace min-w-0 grow h-full min-h-0 overflow-y-auto overflow-x-hidden break-words">
+  {% if exact %}
+  <p class="form-error">Select exactly {{ minimum }} {{ noun }} first.</p>
+  {% else %}
   <p class="form-error">Select at least {{ minimum }} {{ noun }} first.</p>
+  {% endif %}
 </div>

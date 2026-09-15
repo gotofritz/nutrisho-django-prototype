@@ -6,6 +6,8 @@ Selection lives in the request (`ingredient_ids`) and is echoed back into every
 re-rendered partial, so there is no client-side store.
 """
 
+from typing import TypedDict
+
 from django.contrib.auth.models import AbstractBaseUser
 from django.http import HttpResponse, QueryDict
 from django.shortcuts import get_object_or_404, render
@@ -18,17 +20,27 @@ from recipes.services.ingredient_admin import (
     IngredientInUseError,
     delete_ingredients,
     merge_ingredients,
+    merge_plural_ingredients,
     recipes_for_ingredients,
     recipes_referencing_ingredients,
     search_ingredients,
     selected_ingredients,
+    suggest_singular,
 )
 from recipes.views._types import AuthedRequest
 
 _T = "recipes/ingredient_admin/"
 
-# Selected-ingredient count each action needs before it makes sense.
-_MINIMUM_SELECTED = {"edit": 1, "delete": 1, "merge": 2}
+# Selected-ingredient count each action needs before it makes sense, as
+# (minimum, maximum); a maximum of None means "no upper bound". Merging a plural
+# is capped at 2 because with two plural rows picked there is no way to tell
+# which spelling should become the survivor's plural.
+_SELECTION_BOUNDS: dict[str, tuple[int, int | None]] = {
+    "edit": (1, None),
+    "delete": (1, None),
+    "merge": (2, None),
+    "merge_plural": (2, 2),
+}
 
 
 def _payload(request: AuthedRequest) -> QueryDict:
@@ -47,12 +59,29 @@ def _selected_ids(data: QueryDict) -> list[int]:
     return ids
 
 
-def _filters(data: QueryDict) -> tuple[str, bool]:
-    """The column-2 filters carried by this request: search text and unused-only."""
-    return data.get("q", ""), bool(data.get("unused"))
+class _Filters(TypedDict):
+    """The column-2 filters, as every context helper takes them."""
+
+    query: str
+    unused_only: bool
+    plurals_only: bool
 
 
-def _selection(data: QueryDict, *, query: str, unused_only: bool) -> list[int]:
+def _filters(data: QueryDict) -> _Filters:
+    """The column-2 filters carried by this request.
+
+    A mapping rather than a tuple, so the set of filters can grow without every
+    call site having to unpack one more positional value: each of them just
+    forwards it as `**filters`.
+    """
+    return {
+        "query": data.get("q", ""),
+        "unused_only": bool(data.get("unused")),
+        "plurals_only": bool(data.get("plurals")),
+    }
+
+
+def _selection(data: QueryDict, *, query: str, unused_only: bool, plurals_only: bool) -> list[int]:
     """The ids this request selects.
 
     `toggle_all` is the header checkbox: it clears the selection when every listed
@@ -65,7 +94,10 @@ def _selection(data: QueryDict, *, query: str, unused_only: bool) -> list[int]:
     if not data.get("toggle_all"):
         return selected_ids
     listed_ids = [
-        ingredient.pk for ingredient in search_ingredients(query, unused_only=unused_only)
+        ingredient.pk
+        for ingredient in search_ingredients(
+            query, unused_only=unused_only, plurals_only=plurals_only
+        )
     ]
     if listed_ids and set(listed_ids).issubset(selected_ids):
         return []
@@ -80,18 +112,23 @@ def _optional_id(raw: str | None) -> int | None:
         return None
 
 
-def _list_context(*, query: str, unused_only: bool, selected_ids: list[int]) -> dict[str, object]:
+def _list_context(
+    *, query: str, unused_only: bool, plurals_only: bool, selected_ids: list[int]
+) -> dict[str, object]:
     """Context for column 2: the filtered ingredient list plus header counts.
 
     The header checkbox is tri-state, and only listed rows decide which state:
     ticked when they are all selected, dashed when some are, clear otherwise.
     """
-    ingredients = list(search_ingredients(query, unused_only=unused_only))
+    ingredients = list(
+        search_ingredients(query, unused_only=unused_only, plurals_only=plurals_only)
+    )
     listed_selected = {i.pk for i in ingredients} & set(selected_ids)
     all_selected = bool(ingredients) and len(listed_selected) == len(ingredients)
     return {
         "query": query,
         "unused_only": unused_only,
+        "plurals_only": plurals_only,
         "ingredients": ingredients,
         "found_count": len(ingredients),
         "selected_ids": selected_ids,
@@ -118,11 +155,19 @@ def _matches_context(*, selected_ids: list[int], owner: AbstractBaseUser) -> dic
 
 
 def _columns_context(
-    *, owner: AbstractBaseUser, query: str, unused_only: bool, selected_ids: list[int]
+    *,
+    owner: AbstractBaseUser,
+    query: str,
+    unused_only: bool,
+    plurals_only: bool,
+    selected_ids: list[int],
 ) -> dict[str, object]:
     """Context for columns 2-4; column 4 stays empty until a recipe is picked."""
     return _list_context(
-        query=query, unused_only=unused_only, selected_ids=selected_ids
+        query=query,
+        unused_only=unused_only,
+        plurals_only=plurals_only,
+        selected_ids=selected_ids,
     ) | _matches_context(selected_ids=selected_ids, owner=owner)
 
 
@@ -163,26 +208,37 @@ def _actions_oob(request: AuthedRequest, *, selected_ids: list[int], action: str
 
 
 def _guard(*, action: str, selected_ids: list[int]) -> HttpResponse | None:
-    """422 when too few ingredients are selected for `action`, else None.
+    """422 when the selection is the wrong size for `action`, else None.
 
-    The buttons render `disabled` for the same thresholds, so this only fires on
-    a hand-rolled or racing request — but the endpoints must not depend on the
+    The buttons render `disabled` for the same bounds, so this only fires on a
+    hand-rolled or racing request — but the endpoints must not depend on the
     markup to stay honest.
     """
-    minimum = _MINIMUM_SELECTED[action]
-    if len(selected_ids) >= minimum:
+    minimum, maximum = _SELECTION_BOUNDS[action]
+    count = len(selected_ids)
+    if count >= minimum and (maximum is None or count <= maximum):
         return None
+    exact = maximum == minimum
     return HttpResponse(
         render_to_string(
             _T + "_guard_message.html",
-            {"minimum": minimum, "noun": "ingredient" if minimum == 1 else "ingredients"},
+            {
+                "minimum": minimum,
+                "exact": exact,
+                "noun": "ingredient" if minimum == 1 else "ingredients",
+            },
         ),
         status=422,
     )
 
 
 def _columns_response(
-    request: AuthedRequest, *, query: str, unused_only: bool, selected_ids: list[int]
+    request: AuthedRequest,
+    *,
+    query: str,
+    unused_only: bool,
+    plurals_only: bool,
+    selected_ids: list[int],
 ) -> HttpResponse:
     """Restore columns 2-4 and reset the column-1 buttons."""
     return HttpResponse(
@@ -193,6 +249,7 @@ def _columns_response(
                 owner=request.user,
                 query=query,
                 unused_only=unused_only,
+                plurals_only=plurals_only,
                 selected_ids=selected_ids,
             ),
         )
@@ -222,14 +279,12 @@ def _workspace_response(
 @require_GET
 def ingredient_manage(request: AuthedRequest) -> HttpResponse:
     """Full-page four-column shell."""
-    query, unused_only = _filters(request.GET)
     return render(
         request,
         _T + "manager.html",
         _columns_context(
             owner=request.user,
-            query=query,
-            unused_only=unused_only,
+            **_filters(request.GET),
             selected_ids=_selected_ids(request.GET),
         ),
     )
@@ -244,14 +299,14 @@ def ingredient_manage_search(request: AuthedRequest) -> HttpResponse:
     all arrives here too, for the same reason: it changes the selection, so the
     same three fragments have to come back.
     """
-    query, unused_only = _filters(request.GET)
-    selected_ids = _selection(request.GET, query=query, unused_only=unused_only)
+    filters = _filters(request.GET)
+    selected_ids = _selection(request.GET, **filters)
     matches = _matches_context(selected_ids=selected_ids, owner=request.user)
     return HttpResponse(
         _fragment(
             request,
             "_ingredient_list.html",
-            _list_context(query=query, unused_only=unused_only, selected_ids=selected_ids),
+            _list_context(**filters, selected_ids=selected_ids),
         )
         + _fragment(request, "_recipe_matches.html", matches, oob=True)
         + _fragment(request, "_recipe_preview.html", matches, oob=True)
@@ -266,7 +321,7 @@ def ingredient_manage_recipes(request: AuthedRequest) -> HttpResponse:
     Triggered by ticking a checkbox, so it also refreshes column 2's header
     counts, the preview and the action buttons out of band.
     """
-    query, unused_only = _filters(request.GET)
+    filters = _filters(request.GET)
     selected_ids = _selected_ids(request.GET)
     matches = _matches_context(selected_ids=selected_ids, owner=request.user)
     return HttpResponse(
@@ -275,7 +330,7 @@ def ingredient_manage_recipes(request: AuthedRequest) -> HttpResponse:
         + _fragment(
             request,
             "_ingredient_count.html",
-            _list_context(query=query, unused_only=unused_only, selected_ids=selected_ids),
+            _list_context(**filters, selected_ids=selected_ids),
             oob=True,
         )
         + _actions_oob(request, selected_ids=selected_ids, action=None)
@@ -297,11 +352,9 @@ def ingredient_manage_preview(request: AuthedRequest, recipe_id: int) -> HttpRes
 @require_GET
 def ingredient_manage_cancel(request: AuthedRequest) -> HttpResponse:
     """Restore columns 2-4 after an action panel is dismissed."""
-    query, unused_only = _filters(request.GET)
     return _columns_response(
         request,
-        query=query,
-        unused_only=unused_only,
+        **_filters(request.GET),
         selected_ids=_selected_ids(request.GET),
     )
 
@@ -345,10 +398,7 @@ def ingredient_manage_save(request: AuthedRequest, ingredient_id: int) -> HttpRe
             _T + "_ingredient_panel.html",
             {"ingredient": ingredient, "form": form, "saved": True},
         )
-    query, unused_only = _filters(request.POST)
-    response = _columns_response(
-        request, query=query, unused_only=unused_only, selected_ids=selected_ids
-    )
+    response = _columns_response(request, **_filters(request.POST), selected_ids=selected_ids)
     # The form targets itself; the whole workspace has to go instead.
     response["HX-Retarget"] = "#columns"
     response["HX-Reswap"] = "outerHTML"
@@ -384,8 +434,7 @@ def ingredient_manage_delete(request: AuthedRequest) -> HttpResponse:
                 status=422,
             )
         # The selection is gone with the rows, so the columns come back empty-handed.
-        query, unused_only = _filters(payload)
-        return _columns_response(request, query=query, unused_only=unused_only, selected_ids=[])
+        return _columns_response(request, **_filters(payload), selected_ids=[])
     return _workspace_response(
         request,
         "_delete_confirm.html",
@@ -425,14 +474,65 @@ def ingredient_manage_merge(request: AuthedRequest) -> HttpResponse:
         get_object_or_404(Ingredient, pk=survivor_id)
         merge_ingredients(survivor_id=survivor_id, victim_ids=selected_ids)
         # The survivor is all that is left of the selection, so it stays ticked.
-        query, unused_only = _filters(payload)
-        return _columns_response(
-            request, query=query, unused_only=unused_only, selected_ids=[survivor_id]
-        )
+        return _columns_response(request, **_filters(payload), selected_ids=[survivor_id])
     return _workspace_response(
         request,
         "_merge_chooser.html",
         _merge_context(selected_ids=selected_ids),
         action="merge",
+        selected_ids=selected_ids,
+    )
+
+
+def _merge_plural_context(*, selected_ids: list[int]) -> dict[str, object]:
+    """Context for the plural chooser: the pair, and which half looks singular.
+
+    The guess runs the rule both ways — whichever name pluralises into the other
+    is the singular. When neither does (a pair the owner picked by hand, or one
+    the rule spells differently) the first is offered, which is the shorter name
+    in the usual `apple`/`apples` shape because column 2 sorts alphabetically.
+    """
+    candidates = list(selected_ingredients(selected_ids))
+    return {"candidates": candidates, "suggested_id": suggest_singular(candidates)}
+
+
+@require_http_methods(["GET", "POST"])
+def ingredient_manage_merge_plural(request: AuthedRequest) -> HttpResponse:
+    """GET asks which of the two is the singular; POST folds the plural into it.
+
+    The plural-aware Merge: the row that goes is not merely deleted, its spelling
+    is written onto the survivor's `plural_name`, so the name disappearing from
+    column 2 is the one the recipe page renders above a quantity of 1. A plain
+    Merge drops it and leaves the rule guessing.
+    """
+    payload = _payload(request)
+    selected_ids = _selected_ids(payload)
+    blocked = _guard(action="merge_plural", selected_ids=selected_ids)
+    if blocked is not None:
+        return blocked
+    if request.method == "POST":
+        singular_id = _optional_id(payload.get("singular_id"))
+        if singular_id is None or singular_id not in selected_ids:
+            return HttpResponse(
+                _fragment(
+                    request,
+                    "_merge_plural_chooser.html",
+                    _merge_plural_context(selected_ids=selected_ids)
+                    | {
+                        "selected_ids": selected_ids,
+                        "error": "Pick which one is the singular.",
+                    },
+                ),
+                status=422,
+            )
+        plural_id = next(pk for pk in selected_ids if pk != singular_id)
+        merge_plural_ingredients(singular_id=singular_id, plural_id=plural_id)
+        # The singular is all that is left of the pair, so it stays ticked.
+        return _columns_response(request, **_filters(payload), selected_ids=[singular_id])
+    return _workspace_response(
+        request,
+        "_merge_plural_chooser.html",
+        _merge_plural_context(selected_ids=selected_ids),
+        action="merge_plural",
         selected_ids=selected_ids,
     )

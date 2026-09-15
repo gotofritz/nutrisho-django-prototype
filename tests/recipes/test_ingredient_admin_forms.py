@@ -94,3 +94,28 @@ def test_rejected_rename_does_not_write(make_ingredient):
     make_ingredient("aubergine")
     IngredientForm(data={"ingredient_name": "aubergine"}, instance=onion).is_valid()
     assert Ingredient.objects.get(pk=onion.pk).ingredient_name == "onion"
+
+
+@pytest.mark.django_db
+def test_form_saves_a_plural_name_override(make_ingredient):
+    """The rule cannot know `avocados`, so the Edit panel has to be able to say so."""
+    avocado = make_ingredient("avocado")
+    form = IngredientForm(
+        data={"ingredient_name": "avocado", "plural_name": "avocados"}, instance=avocado
+    )
+    assert form.is_valid(), form.errors
+    saved = form.save()
+    saved.refresh_from_db()
+    assert saved.plural_name == "avocados"
+    assert saved.plural == "avocados"
+
+
+@pytest.mark.django_db
+def test_blank_plural_name_falls_back_to_the_rule(make_ingredient):
+    tomato = make_ingredient("tomato", plural_name="tomatos")
+    form = IngredientForm(data={"ingredient_name": "tomato", "plural_name": ""}, instance=tomato)
+    assert form.is_valid(), form.errors
+    saved = form.save()
+    saved.refresh_from_db()
+    assert saved.plural_name == ""
+    assert saved.plural == "tomatoes"

@@ -8,11 +8,14 @@ from recipes.services.ingredient_admin import (
     IngredientInUseError,
     delete_ingredients,
     find_ingredient_duplicates,
+    find_plural_duplicates,
     merge_ingredients,
+    merge_plural_ingredients,
     recipes_for_ingredients,
     recipes_referencing_ingredients,
     search_ingredients,
     selected_ingredients,
+    suggest_singular,
 )
 
 
@@ -450,3 +453,186 @@ def test_search_ingredients_without_the_flag_still_lists_used_ingredients(
     onion = make_ingredient("onion")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
     assert [i.ingredient_name for i in search_ingredients("")] == ["onion"]
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_pairs_a_singular_with_its_plural_row(make_ingredient):
+    """An `onions` row next to `onion` is bad data — the display adds the s."""
+    onion = make_ingredient("onion")
+    onions = make_ingredient("onions")
+    make_ingredient("carrot")
+    assert find_plural_duplicates() == [[onion, onions]]
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_uses_the_rule_not_a_bare_s(make_ingredient):
+    tomato = make_ingredient("tomato")
+    tomatoes = make_ingredient("tomatoes")
+    make_ingredient("tomatos")
+    assert find_plural_duplicates() == [[tomato, tomatoes]]
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_honours_the_plural_name_override(make_ingredient):
+    avocado = make_ingredient("avocado", plural_name="avocados")
+    avocados = make_ingredient("avocados")
+    assert find_plural_duplicates() == [[avocado, avocados]]
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_matches_case_insensitively(make_ingredient):
+    onion = make_ingredient("onion")
+    onions = make_ingredient("Onions")
+    assert find_plural_duplicates() == [[onion, onions]]
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_ignores_invariant_and_lone_rows(make_ingredient):
+    make_ingredient("onion")
+    make_ingredient("oats")
+    make_ingredient("broccoli", plural_name="broccoli")
+    assert find_plural_duplicates() == []
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_orders_groups_case_insensitively(make_ingredient):
+    tomato = make_ingredient("tomato")
+    tomatoes = make_ingredient("tomatoes")
+    carrot = make_ingredient("carrot")
+    carrots = make_ingredient("carrots")
+    assert find_plural_duplicates() == [[carrot, carrots], [tomato, tomatoes]]
+
+
+@pytest.mark.django_db
+def test_search_ingredients_plurals_only_lists_both_halves_of_each_pair(make_ingredient):
+    make_ingredient("onion")
+    make_ingredient("onions")
+    make_ingredient("carrot")
+    names = [i.ingredient_name for i in search_ingredients("", plurals_only=True)]
+    assert names == ["onion", "onions"]
+
+
+@pytest.mark.django_db
+def test_search_ingredients_plurals_only_composes_with_the_query(make_ingredient):
+    make_ingredient("onion")
+    make_ingredient("onions")
+    make_ingredient("carrot")
+    make_ingredient("carrots")
+    names = [i.ingredient_name for i in search_ingredients("onio", plurals_only=True)]
+    assert names == ["onion", "onions"]
+
+
+@pytest.mark.django_db
+def test_search_ingredients_plurals_only_composes_with_unused_only(
+    make_ingredient, make_recipe, add_ingredient, user
+):
+    onion = make_ingredient("onion")
+    make_ingredient("onions")
+    recipe = make_recipe(owner=user, name="Soup")
+    add_ingredient(recipe=recipe, ingredient=onion)
+    names = [i.ingredient_name for i in search_ingredients("", unused_only=True, plurals_only=True)]
+    assert names == ["onions"]
+
+
+@pytest.mark.django_db
+def test_search_ingredients_plurals_only_defaults_off(make_ingredient):
+    make_ingredient("carrot")
+    assert [i.ingredient_name for i in search_ingredients("")] == ["carrot"]
+
+
+@pytest.mark.django_db
+def test_merge_plural_records_the_deleted_name_as_the_plural(make_ingredient):
+    """The whole point: the spelling you merge away lands in the plural column."""
+    apple = make_ingredient("apple")
+    apples = make_ingredient("apples")
+    merge_plural_ingredients(singular_id=apple.pk, plural_id=apples.pk)
+    apple.refresh_from_db()
+    assert apple.plural_name == "apples"
+    assert not Ingredient.objects.filter(pk=apples.pk).exists()
+
+
+@pytest.mark.django_db
+def test_merge_plural_stores_a_spelling_the_rule_would_not_produce(make_ingredient):
+    """`chili` pluralises to `chilies` by rule; the stored spelling has to win."""
+    chili = make_ingredient("chili")
+    chilis = make_ingredient("chilis")
+    merge_plural_ingredients(singular_id=chili.pk, plural_id=chilis.pk)
+    chili.refresh_from_db()
+    assert chili.plural == "chilis"
+
+
+@pytest.mark.django_db
+def test_merge_plural_carries_recipes_across(make_ingredient, make_recipe, add_ingredient, user):
+    apple = make_ingredient("apple")
+    apples = make_ingredient("apples")
+    recipe = make_recipe(owner=user, name="Crumble")
+    iir = add_ingredient(recipe=recipe, ingredient=apples)
+    merge_plural_ingredients(singular_id=apple.pk, plural_id=apples.pk)
+    iir.refresh_from_db()
+    assert iir.ingredient_id == apple.pk
+
+
+@pytest.mark.django_db
+def test_merge_plural_carries_substitute_references_across(
+    make_ingredient, make_recipe, add_ingredient, user
+):
+    apple = make_ingredient("apple")
+    apples = make_ingredient("apples")
+    pear = make_ingredient("pear")
+    recipe = make_recipe(owner=user, name="Crumble")
+    iir = add_ingredient(recipe=recipe, ingredient=pear, substitute=apples)
+    merge_plural_ingredients(singular_id=apple.pk, plural_id=apples.pk)
+    iir.refresh_from_db()
+    assert iir.substitute_id == apple.pk
+
+
+@pytest.mark.django_db
+def test_merge_plural_overwrites_an_existing_override(make_ingredient):
+    """Merging is an explicit statement about the plural, so it wins."""
+    apple = make_ingredient("apple", plural_name="appels")
+    apples = make_ingredient("apples")
+    merge_plural_ingredients(singular_id=apple.pk, plural_id=apples.pk)
+    apple.refresh_from_db()
+    assert apple.plural_name == "apples"
+
+
+@pytest.mark.django_db
+def test_merge_plural_rejects_an_unknown_singular(make_ingredient):
+    apples = make_ingredient("apples")
+    with pytest.raises(ObjectDoesNotExist):
+        merge_plural_ingredients(singular_id=0, plural_id=apples.pk)
+
+
+@pytest.mark.django_db
+def test_merge_plural_rejects_an_unknown_plural(make_ingredient):
+    apple = make_ingredient("apple")
+    with pytest.raises(ObjectDoesNotExist):
+        merge_plural_ingredients(singular_id=apple.pk, plural_id=0)
+
+
+@pytest.mark.django_db
+def test_merge_plural_rejects_merging_a_row_into_itself(make_ingredient):
+    apple = make_ingredient("apple")
+    with pytest.raises(ValueError):
+        merge_plural_ingredients(singular_id=apple.pk, plural_id=apple.pk)
+    apple.refresh_from_db()
+    assert apple.plural_name == ""
+
+
+@pytest.mark.django_db
+def test_suggest_singular_picks_the_half_that_pluralises_into_the_other(make_ingredient):
+    apple = make_ingredient("apple")
+    apples = make_ingredient("apples")
+    assert suggest_singular([apples, apple]) == apple.pk
+
+
+@pytest.mark.django_db
+def test_suggest_singular_falls_back_to_the_first_when_the_rule_disagrees(make_ingredient):
+    """`chili` pluralises to `chilies`, so neither name derives the other."""
+    chili = make_ingredient("chili")
+    chilis = make_ingredient("chilis")
+    assert suggest_singular([chili, chilis]) == chili.pk
+
+
+def test_suggest_singular_of_nothing_is_none():
+    assert suggest_singular([]) is None

@@ -4,7 +4,8 @@ Pure ORM helpers with no HTTP concerns, so the HTMX views in
 `recipes/views/ingredient_admin.py` stay thin.
 """
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
+from typing import cast
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.core.exceptions import ObjectDoesNotExist
@@ -19,7 +20,9 @@ class IngredientInUseError(Exception):
     """Raised when a delete would strand recipes that still reference an ingredient."""
 
 
-def search_ingredients(query: str, *, unused_only: bool = False) -> QuerySet:
+def search_ingredients(
+    query: str, *, unused_only: bool = False, plurals_only: bool = False
+) -> QuerySet:
     """`Ingredient` rows whose name contains `query`, case-insensitively.
 
     Ordered case-insensitively so spelling variants of one ingredient
@@ -33,10 +36,22 @@ def search_ingredients(query: str, *, unused_only: bool = False) -> QuerySet:
     owner-scoped — ingredients are shared, so another owner's recipe still
     counts as a use. Orphans accumulate from renames (which get_or_create leaves
     behind), from deleting the last row that used one, and from imports.
+
+    `plurals_only` narrows the list to rows that are one half of a
+    singular/plural pair (`onion` alongside `onions`). A plural is a display
+    form, not a second ingredient, so such a pair is bad data: this is how the
+    owner finds them and merges the plural into the singular. Composes with the
+    other two filters.
     """
     matches = Ingredient.objects.all()
     if query:
         matches = matches.filter(ingredient_name__icontains=query)
+    if plurals_only:
+        # The plural of a name is computed in Python (rule plus override), so the
+        # pairs cannot be expressed as a lookup; narrow by their ids instead.
+        matches = matches.filter(
+            pk__in={row.pk for group in find_plural_duplicates() for row in group}
+        )
     if unused_only:
         matches = matches.exclude(
             Q(pk__in=IngredientInRecipe.objects.values("ingredient"))
@@ -154,6 +169,60 @@ def merge_ingredients(*, survivor_id: int, victim_ids: Iterable[int]) -> int:
     return delete_ingredients(ingredient_ids=victim_ids, replacement_id=survivor_id)
 
 
+def suggest_singular(candidates: Sequence[Ingredient]) -> int | None:
+    """Which of `candidates` looks like the singular, by primary key.
+
+    Runs the rule both ways: whichever name pluralises into another one in the
+    list is the singular. Falls back to the first candidate when nothing
+    matches — a pair the owner put together by hand, or one whose plural is
+    spelt differently from the rule (`chili`/`chilis`) — which is the shorter
+    name in the usual shape, since the caller lists them alphabetically. `None`
+    only for an empty list.
+    """
+    if not candidates:
+        return None
+    names = {cast(str, c.ingredient_name).lower() for c in candidates}
+    for candidate in candidates:
+        plural = candidate.plural.lower()
+        if plural != cast(str, candidate.ingredient_name).lower() and plural in names:
+            return candidate.pk
+    return candidates[0].pk
+
+
+@transaction.atomic
+def merge_plural_ingredients(*, singular_id: int, plural_id: int) -> None:
+    """Fold a plural row into its singular, keeping the plural as a display form.
+
+    The plural-aware counterpart to `merge_ingredients`: recipes move across the
+    same way (both `ingredient` and `substitute`), and the plural row goes — but
+    its spelling is kept, written verbatim onto `singular.plural_name`, so the
+    name you merged away is what the recipe page renders at a quantity other
+    than 1. That is the difference from a plain merge, which drops the spelling
+    and leaves the rule to guess: `chili`/`chilis` would come back as `chilies`.
+
+    Verbatim even when the rule would have produced the same string, so the
+    plural column always shows where the merged name went rather than sitting
+    empty. Any existing override is overwritten: merging is a deliberate
+    statement about the plural, made later than whatever was there before.
+
+    Raises `ObjectDoesNotExist` if either row is missing, and `ValueError` if
+    they are the same row — a row cannot be its own plural. Nothing is written
+    in either case.
+    """
+    singular = Ingredient.objects.filter(pk=singular_id).first()
+    if singular is None:
+        raise ObjectDoesNotExist(f"No Ingredient with id {singular_id}")
+    plural = Ingredient.objects.filter(pk=plural_id).first()
+    if plural is None:
+        raise ObjectDoesNotExist(f"No Ingredient with id {plural_id}")
+    if singular.pk == plural.pk:
+        raise ValueError("An ingredient cannot be its own plural.")
+    plural_spelling = cast(str, plural.ingredient_name)
+    delete_ingredients(ingredient_ids=[plural.pk], replacement_id=singular.pk)
+    singular.plural_name = plural_spelling
+    singular.save(update_fields=["plural_name"])
+
+
 def find_ingredient_duplicates() -> list[list[Ingredient]]:
     """Ingredient rows whose names differ only by case, grouped.
 
@@ -173,3 +242,28 @@ def find_ingredient_duplicates() -> list[list[Ingredient]]:
         list(Ingredient.objects.filter(ingredient_name__iexact=name).order_by("ingredient_name"))
         for name in clashing_names
     ]
+
+
+def find_plural_duplicates() -> list[list[Ingredient]]:
+    """Rows paired with the row that spells out their plural, singular first.
+
+    The third variant class (issue #24), alongside case (`Onion`/`onion`) and
+    alias (`eggplant`/`aubergine`). A plural is the display form of one
+    ingredient at a quantity other than 1, so an `onions` row sitting next to
+    `onion` is bad data, not a variant to keep: merge it into the singular and
+    let `display_ingredient_name` add the "s".
+
+    Matching is case-insensitive and goes through `Ingredient.plural`, so both
+    the rule (`tomato` → `tomatoes`) and a `plural_name` override
+    (`avocado` → `avocados`) find their partner. Invariant rows — anything whose
+    plural equals its own name — pair with nothing. Groups are ordered
+    case-insensitively, as column 2 lists them.
+    """
+    rows = list(Ingredient.objects.all())
+    by_name = {row.ingredient_name.lower(): row for row in rows}
+    groups = [
+        [row, by_name[row.plural.lower()]]
+        for row in rows
+        if row.plural.lower() != row.ingredient_name.lower() and row.plural.lower() in by_name
+    ]
+    return sorted(groups, key=lambda group: cast(str, group[0].ingredient_name).lower())

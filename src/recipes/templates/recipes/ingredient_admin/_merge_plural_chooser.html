@@ -1,25 +1,26 @@
 <div id="columns" class="columns workspace min-w-0 grow h-full min-h-0 overflow-y-auto overflow-x-hidden break-words">
   {% include "./_workspace_selection.html" %}
   <form
-    hx-post="{% url 'recipes:ingredient_manage_merge' %}"
+    hx-post="{% url 'recipes:ingredient_manage_merge_plural' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
     hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only"
   >
     {% csrf_token %}
-    <p class="merge-intro">
-      Which name should survive? The others are merged into it and their recipes follow, as
-      ingredients and as substitutes. Renaming the survivor is a separate Edit.
+    <p class="merge-plural-intro">
+      Which one is the singular? It survives, the other one's recipes follow, and
+      the other one's spelling becomes its plural — so nothing is lost and the
+      recipe page keeps writing it above a quantity of 1.
     </p>
-    <ul class="merge-candidates">
+    <ul class="merge-plural-candidates">
       {% for candidate in candidates %}
-      <li class="merge-candidate">
+      <li class="merge-plural-candidate">
         <label>
           <input
             type="radio"
-            name="survivor_id"
+            name="singular_id"
             value="{{ candidate.pk }}"
-            {% if forloop.first %}checked{% endif %}
+            {% if candidate.pk == suggested_id %}checked{% endif %}
           >
           <span class="ingredient-name">{{ candidate.ingredient_name }}</span>
         </label>
@@ -27,6 +28,6 @@
       {% endfor %}
     </ul>
     {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
-    <button type="submit" class="panel-merge rounded border border-gray-400 px-3 py-1">Merge</button>
+    <button type="submit" class="panel-merge-plural rounded border border-gray-400 px-3 py-1">Merge plural</button>
   </form>
 </div>

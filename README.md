@@ -73,15 +73,22 @@ So you can see exactly what a clean-up would touch before committing to it.
 
 Tick one or more ingredients, then:
 
-- **Edit** — rename them, or set their family and dietary constraint. Editing one
-  ingredient, Save closes the panel and returns you to the columns; editing
-  several, each panel saves on its own and the rest stay open, so **Done** is how
-  you leave.
+- **Edit** — rename them, set their family and dietary constraint, or give them a
+  plural. Editing one ingredient, Save closes the panel and returns you to the
+  columns; editing several, each panel saves on its own and the rest stay open,
+  so **Done** is how you leave.
 - **Delete** — remove them. If recipes still use one you have to pick a
   replacement, and every mention moves across, including "or use this instead"
   substitutes.
 - **Merge** — choose the name to keep; the others fold into it and their recipes
   follow. Renaming the survivor afterwards is a separate Edit.
+- **Merge plural** — for exactly two rows that are the same ingredient written
+  singular and plural, `apple` and `apples`. Say which one is the singular (the
+  likely one is already picked) and it survives, the other one's recipes follow,
+  and **the other one's spelling becomes its plural**. Nothing is lost: the name
+  that leaves column 2 is the one the recipe page writes above a quantity of 1.
+  Plain Merge would drop it and leave the plural to be guessed from the name,
+  which is wrong for anything the rule does not cover.
 
 Typing in the search box filters the list; the counts above each column tell you
 how many ingredients matched and how many you have selected.
@@ -95,6 +102,11 @@ all. They pile up on their own: renaming an ingredient on a recipe leaves the ol
 spelling behind, as does removing the last recipe that used one, and imports add
 their own. Tick the filter, select the lot, Delete.
 
+**Plural pairs only** narrows the list to ingredients stored twice, once
+singular and once plural — `onion` alongside `onions`. The plural row is always
+the one to lose: see *Plurals* below. Tick the filter, select a pair, **Merge
+plural**.
+
 British spelling is the canonical one, and ingredient names must now be unique
 ignoring case — `Onion` and `onion` can no longer both exist. If your database
 predates that rule, list the clashes **before** migrating:
@@ -103,7 +115,30 @@ predates that rule, list the clashes **before** migrating:
 python manage.py find_ingredient_duplicates
 ```
 
-Merge whatever it reports with the tool above, then run the migration.
+Merge whatever it reports with the tool above, then run the migration. The same
+command also lists any singular/plural pairs it finds.
+
+---
+
+## Plurals
+
+A plural is not a different ingredient — it is how one ingredient reads at a
+quantity other than 1. Recipes store `onion` once and the page writes **1
+onion** or **2 onions** as the quantity requires. Doubling a recipe therefore
+reads correctly without anything being stored twice.
+
+This only happens when there is no unit: `2 onions`, but `200 g onion`, never
+`200 g onions`. A quantity you have not filled in stays singular.
+
+The plural is worked out from the name — `tomato` → `tomatoes`, `leaf` →
+`leaves`, `chilli` → `chillies`. English being what it is, the rule misses some:
+give the ingredient a **plural** of its own in the Edit panel to fix one
+(`avocado` → `avocados`). Setting the plural to the singular is how you stop a
+word inflecting at all, for a `broccoli` or a `fish`. **Merge plural** fills the
+same field in for you, from the row it merges away.
+
+Nothing about this is stored on the recipe or written to YAML: exports always
+carry the singular.
 
 ---
 
