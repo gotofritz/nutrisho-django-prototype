@@ -1,5 +1,9 @@
+from typing import cast
+
 from django.db import models
 from django.db.models.functions import Lower
+
+from recipes.utils.pluralise import pluralise
 
 
 class Ingredient(models.Model):
@@ -30,6 +34,12 @@ class Ingredient(models.Model):
         ("MSC", "Misc"),
     ]
     ingredient_name = models.CharField(max_length=64, unique=True)
+    plural_name = models.CharField(
+        "plural display form; blank derives it from the rule",
+        max_length=64,
+        blank=True,
+        default="",
+    )
     dietary_constraint = models.CharField(
         "vegetarian etc", choices=CONSTRAINT_CHOICES, blank=True, max_length=32
     )
@@ -40,6 +50,17 @@ class Ingredient(models.Model):
         blank=True,
     )
     objects = models.Manager()
+
+    @property
+    def plural(self) -> str:
+        """Display form at a quantity other than 1: the override, else the rule.
+
+        Presentation only — nothing persists or exports the plural. An override
+        equal to `ingredient_name` is how an invariant noun (`broccoli`, `fish`)
+        opts out of inflection.
+        """
+        # cast: Django's CharField descriptor types as the field, not its value.
+        return cast(str, self.plural_name) or pluralise(cast(str, self.ingredient_name))
 
     def natural_key(self):
         return self.ingredient_name

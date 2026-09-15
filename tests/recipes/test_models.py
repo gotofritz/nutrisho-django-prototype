@@ -238,3 +238,31 @@ def test_ingredient_names_differing_by_more_than_case_coexist():
     Ingredient.objects.create(ingredient_name="onion")
     Ingredient.objects.create(ingredient_name="onions")
     assert Ingredient.objects.count() == 2
+
+
+@pytest.mark.django_db
+def test_ingredient_plural_derives_from_the_rule_when_not_overridden():
+    """Blank plural_name means 'derive from the rule' (plan 009, decision 3)."""
+    assert Ingredient.objects.create(ingredient_name="tomato").plural == "tomatoes"
+    assert Ingredient.objects.create(ingredient_name="onion").plural == "onions"
+
+
+@pytest.mark.django_db
+def test_ingredient_plural_name_override_wins_verbatim():
+    ingredient = Ingredient.objects.create(ingredient_name="avocado", plural_name="avocados")
+    assert ingredient.plural == "avocados"
+
+
+@pytest.mark.django_db
+def test_ingredient_plural_name_equal_to_singular_makes_it_invariant():
+    """Setting the override to the singular is how a mass noun opts out."""
+    ingredient = Ingredient.objects.create(ingredient_name="broccoli", plural_name="broccoli")
+    assert ingredient.plural == "broccoli"
+
+
+@pytest.mark.django_db
+def test_ingredient_plural_name_defaults_to_blank():
+    ingredient = Ingredient.objects.create(ingredient_name="leek")
+    assert ingredient.plural_name == ""
+    assert Ingredient._meta.get_field("plural_name").null is False  # ty: ignore[unresolved-attribute]
+    assert Ingredient._meta.get_field("plural_name").blank is True  # ty: ignore[unresolved-attribute]

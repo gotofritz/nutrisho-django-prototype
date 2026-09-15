@@ -30,6 +30,7 @@ src/
   recipes/       # Main app: models, views, templates, management commands
     services/      # Pure query/mutation functions, no HTTP (ingredient_admin.py)
     templatetags/  # Custom template filters (recipe_filters.py)
+    utils/         # Framework-free helpers (filename.py, sequencing.py, pluralise.py)
 docs/
   initial-context.md   # this file
   plans/               # active work plans
@@ -126,9 +127,21 @@ the merge action. Databases predating the constraint are cleaned up with the
 `find_ingredient_duplicates` command, which lists case-only clashes; merge them
 before migrating.
 
-Resolving variants that differ by more than case (`eggplant` → `aubergine`) on
-*input* is future work: an `IngredientAlias` lookup table resolving at write time,
-so storage and display stay canonical. See `docs/plans/008-ingredient-aliases.md`.
+**Three variant classes.** Case (`Onion`/`onion`) is the constraint above.
+**Plural** (`onion`/`onions`) is the third: since the plural is a display form,
+an `onions` row is bad data, so `find_plural_duplicates` pairs each row with the
+row spelling out its `plural`, `search_ingredients(plurals_only=True)` narrows
+column 2 to those pairs (composing with the query and the unused filter), and
+`find_ingredient_duplicates` reports both classes. Back-filling is a merge in
+the tool, never a data migration: picking which row survives is the owner's
+call. **Alias** — variants differing by more than case (`eggplant` →
+`aubergine`) — is future work resolving on *input*: an `IngredientAlias` lookup
+table applied at write time, so storage and display stay canonical. See
+`docs/plans/008-ingredient-aliases.md`.
+
+**Column-2 filters.** The views carry them as one typed mapping (`_Filters`:
+`query`, `unused_only`, `plurals_only`), forwarded as `**filters` into the
+context helpers, so adding a filter does not widen every call site.
 
 Deleting the last `IngredientInRecipe` in a group, or moving every row out of it
 via reassign, deletes the now-empty `IngredientGroup` too (`_prune_empty_group`),
@@ -154,11 +167,38 @@ them as `null` and import coerces `null` back to `""`.
 
 - `safe_step_html` — sanitizes step text, allowing only `<b>`, `<i>`, `<s>`, `<u>` inline tags; escapes everything else. Applied in `_step_display.html`.
 - `format_quantity` — strips trailing decimal zeros from `DecimalField` values (e.g. `2.50 → 2.5`, `4.00 → 4`). Applied in `_ingredient_display.html`.
+- `display_ingredient_name` — the ingredient's name, pluralised when the quantity
+  calls for it. Takes the whole `IngredientInRecipe`, since the decision needs
+  name, quantity and unit together. Applied in `_ingredient_display.html` and
+  `ingredient_admin/_recipe_preview.html`. See **Pluralisation** below.
+
+### Pluralisation (`recipes/utils/pluralise.py`, `Ingredient.plural`)
+
+A plural is the display form of **one** ingredient at a quantity other than 1,
+never a second row: `1 onion` and `2 onions` are the same `Ingredient`. It is
+therefore presentation, computed on render, and nothing persists or exports it —
+`export_recipes_to_yaml` always writes the canonical singular.
+
+`recipes/utils/pluralise.py` holds the rule as a pure function with no Django
+imports, so it is testable on its own. It inflects the **last word only**
+(`spring onion` → `spring onions`) and leaves names already ending in `-s`
+alone, since food nouns ending in `-s` are nearly always already plural or mass
+(`oats`, `chives`, `asparagus`). `Ingredient.plural` layers the `plural_name`
+override on top: blank derives from the rule, a value wins verbatim, and a value
+equal to the singular makes the noun invariant (`broccoli`, `fish`). The
+override is what covers the irregulars the rule deliberately does not chase, and
+it is editable in the clean-up tool's Edit panel.
+
+Two conditions gate the swap, both in `display_ingredient_name`: the quantity is
+recorded and is not 1, **and** `unit` is empty. The unit check is what keeps mass
+nouns safe — `200 g onion` must never become `200 g onions`. This matters
+because `recipe_scale` *persists* scaled quantities, so doubling a recipe writes
+`quantity=2` and the page would otherwise read "2 onion".
 
 ### Key Models
 
 - `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`)
-- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient` rows are global (not owner-scoped) and `ingredient_name` is unique case-insensitively; `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
+- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient` rows are global (not owner-scoped) and `ingredient_name` is unique case-insensitively; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
 - `Step` — ordered recipe steps
 - `Cuisine`, `Source`, `Tag` — lookup/classification models
 

@@ -24,7 +24,7 @@
     {% if group.group_name %}<h3 class="preview-group-name">{{ group.group_name }}</h3>{% endif %}
     <ul class="preview-ingredients">
       {% for iir in group.ingredient.all %}
-      <li class="preview-ingredient">{{ iir.quantity|format_quantity }} {{ iir.unit }} {{ iir.ingredient.ingredient_name }}{% if iir.preparation %}, {{ iir.preparation }}{% endif %}{% if iir.note %} ({{ iir.note }}){% endif %}{% if iir.substitute %} &mdash; or {{ iir.substitute.ingredient_name }}{% endif %}</li>
+      <li class="preview-ingredient">{{ iir.quantity|format_quantity }} {{ iir.unit }} {{ iir|display_ingredient_name }}{% if iir.preparation %}, {{ iir.preparation }}{% endif %}{% if iir.note %} ({{ iir.note }}){% endif %}{% if iir.substitute %} &mdash; or {{ iir.substitute.ingredient_name }}{% endif %}</li>
       {% endfor %}
     </ul>
   </div>

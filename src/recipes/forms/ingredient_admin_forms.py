@@ -12,11 +12,15 @@ class IngredientForm(forms.ModelForm):
     `Onion`/`onion` are the same ingredient, so a rename onto an existing name
     is a merge, not an edit. Phase 7 adds the matching DB constraint; this keeps
     the form from creating clashes in the meantime.
+
+    `plural_name` is the escape hatch for the pluralisation rule (issue #24):
+    blank derives the plural from the rule, a value overrides it, and a value
+    equal to the singular makes the ingredient invariant.
     """
 
     class Meta:
         model = Ingredient
-        fields = ["ingredient_name", "family", "dietary_constraint"]
+        fields = ["ingredient_name", "plural_name", "family", "dietary_constraint"]
 
     def clean_ingredient_name(self) -> str:
         name = (self.cleaned_data.get("ingredient_name") or "").strip()

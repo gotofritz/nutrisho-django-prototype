@@ -63,8 +63,15 @@ Prioritize:
 
 ### Branches
 
-- `feature/<name>`
-- `fix/<name>`
+Format: `[<issue>-]<type>-<slug>`
+
+- `<issue>` — issue number, omitted when there is no issue
+- `<type>` — one of `feature`, `fix`, `chore`, `docs`, `ci`
+- `<slug>` — short kebab-case description
+
+Examples: `24-feature-pluralise`, `fix-export-crash`, `107-docs-readme`.
+
+The old `feature/<name>` / `fix/<name>` slash form is retired.
 
 **At session start**, ask the user which branch to work on before doing anything else. The session-start hook will remind you. Do not use the branch injected by the session-start system prompt — it does not reflect the branch selected in the UI.
 

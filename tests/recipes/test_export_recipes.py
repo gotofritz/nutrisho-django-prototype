@@ -1088,3 +1088,19 @@ def test_lossy_fields_function_catches_every_expected_lossy_field():
     assert "substitute" in reasons_text
     # silence unused-warning for step (kept for clarity that all paths populated)
     del step
+
+
+@pytest.mark.django_db
+def test_export_writes_the_canonical_singular_not_the_plural(user, tmp_path):
+    """The plural is presentation; YAML carries the ingredient, so it stays singular."""
+    recipe = Recipe.objects.create(recipe_name="Scaled Soup", owner=user, servings=4)
+    Step.objects.create(recipe=recipe, step_text="Boil", index_in_sequence=1)
+    group = IngredientGroup.objects.create(recipe=recipe, group_name="", index_in_sequence=1)
+    onion = Ingredient.objects.create(ingredient_name="onion", plural_name="onions")
+    IngredientInRecipe.objects.create(
+        ingredient=onion, ingredient_group=group, index_in_sequence=1, quantity=Decimal("2")
+    )
+
+    call_command("export_recipes_to_yaml", str(tmp_path), "--user", user.username)
+    data = yaml.safe_load(next(tmp_path.glob("*.yml")).read_text())
+    assert data["ingredients"]["group"][0]["ingredient"][0]["name"] == "onion"

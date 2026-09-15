@@ -5,6 +5,7 @@ Pure ORM helpers with no HTTP concerns, so the HTMX views in
 """
 
 from collections.abc import Iterable
+from typing import cast
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.core.exceptions import ObjectDoesNotExist
@@ -19,7 +20,9 @@ class IngredientInUseError(Exception):
     """Raised when a delete would strand recipes that still reference an ingredient."""
 
 
-def search_ingredients(query: str, *, unused_only: bool = False) -> QuerySet:
+def search_ingredients(
+    query: str, *, unused_only: bool = False, plurals_only: bool = False
+) -> QuerySet:
     """`Ingredient` rows whose name contains `query`, case-insensitively.
 
     Ordered case-insensitively so spelling variants of one ingredient
@@ -33,10 +36,22 @@ def search_ingredients(query: str, *, unused_only: bool = False) -> QuerySet:
     owner-scoped — ingredients are shared, so another owner's recipe still
     counts as a use. Orphans accumulate from renames (which get_or_create leaves
     behind), from deleting the last row that used one, and from imports.
+
+    `plurals_only` narrows the list to rows that are one half of a
+    singular/plural pair (`onion` alongside `onions`). A plural is a display
+    form, not a second ingredient, so such a pair is bad data: this is how the
+    owner finds them and merges the plural into the singular. Composes with the
+    other two filters.
     """
     matches = Ingredient.objects.all()
     if query:
         matches = matches.filter(ingredient_name__icontains=query)
+    if plurals_only:
+        # The plural of a name is computed in Python (rule plus override), so the
+        # pairs cannot be expressed as a lookup; narrow by their ids instead.
+        matches = matches.filter(
+            pk__in={row.pk for group in find_plural_duplicates() for row in group}
+        )
     if unused_only:
         matches = matches.exclude(
             Q(pk__in=IngredientInRecipe.objects.values("ingredient"))
@@ -173,3 +188,28 @@ def find_ingredient_duplicates() -> list[list[Ingredient]]:
         list(Ingredient.objects.filter(ingredient_name__iexact=name).order_by("ingredient_name"))
         for name in clashing_names
     ]
+
+
+def find_plural_duplicates() -> list[list[Ingredient]]:
+    """Rows paired with the row that spells out their plural, singular first.
+
+    The third variant class (issue #24), alongside case (`Onion`/`onion`) and
+    alias (`eggplant`/`aubergine`). A plural is the display form of one
+    ingredient at a quantity other than 1, so an `onions` row sitting next to
+    `onion` is bad data, not a variant to keep: merge it into the singular and
+    let `display_ingredient_name` add the "s".
+
+    Matching is case-insensitive and goes through `Ingredient.plural`, so both
+    the rule (`tomato` → `tomatoes`) and a `plural_name` override
+    (`avocado` → `avocados`) find their partner. Invariant rows — anything whose
+    plural equals its own name — pair with nothing. Groups are ordered
+    case-insensitively, as column 2 lists them.
+    """
+    rows = list(Ingredient.objects.all())
+    by_name = {row.ingredient_name.lower(): row for row in rows}
+    groups = [
+        [row, by_name[row.plural.lower()]]
+        for row in rows
+        if row.plural.lower() != row.ingredient_name.lower() and row.plural.lower() in by_name
+    ]
+    return sorted(groups, key=lambda group: cast(str, group[0].ingredient_name).lower())

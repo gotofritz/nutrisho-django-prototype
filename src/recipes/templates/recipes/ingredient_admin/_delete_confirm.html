@@ -4,7 +4,7 @@
     hx-post="{% url 'recipes:ingredient_manage_delete' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".workspace-pick, #ingredient-search, #unused-only"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only"
   >
     {% csrf_token %}
     <p class="delete-summary">

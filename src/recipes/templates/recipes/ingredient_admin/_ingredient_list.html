@@ -10,7 +10,7 @@
   hx-trigger="change[target.classList.contains('ingredient-pick')]"
   hx-target="#col-recipes"
   hx-swap="outerHTML"
-  hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only"
+  hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only"
 >
   {% include "./_ingredient_count.html" %}
   <ul class="ingredient-rows">

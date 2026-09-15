@@ -73,7 +73,8 @@ So you can see exactly what a clean-up would touch before committing to it.
 
 Tick one or more ingredients, then:
 
-- **Edit** — rename them, or set their family and dietary constraint. Editing one
+- **Edit** — rename them, set their family and dietary constraint, or give them a
+  plural. Editing one
   ingredient, Save closes the panel and returns you to the columns; editing
   several, each panel saves on its own and the rest stay open, so **Done** is how
   you leave.
@@ -95,6 +96,11 @@ all. They pile up on their own: renaming an ingredient on a recipe leaves the ol
 spelling behind, as does removing the last recipe that used one, and imports add
 their own. Tick the filter, select the lot, Delete.
 
+**Plural pairs only** narrows the list to ingredients stored twice, once
+singular and once plural — `onion` alongside `onions`. The plural row is always
+the one to lose: see *Plurals* below. Tick the filter, select a pair, Merge into
+the singular.
+
 British spelling is the canonical one, and ingredient names must now be unique
 ignoring case — `Onion` and `onion` can no longer both exist. If your database
 predates that rule, list the clashes **before** migrating:
@@ -103,7 +109,29 @@ predates that rule, list the clashes **before** migrating:
 python manage.py find_ingredient_duplicates
 ```
 
-Merge whatever it reports with the tool above, then run the migration.
+Merge whatever it reports with the tool above, then run the migration. The same
+command also lists any singular/plural pairs it finds.
+
+---
+
+## Plurals
+
+A plural is not a different ingredient — it is how one ingredient reads at a
+quantity other than 1. Recipes store `onion` once and the page writes **1
+onion** or **2 onions** as the quantity requires. Doubling a recipe therefore
+reads correctly without anything being stored twice.
+
+This only happens when there is no unit: `2 onions`, but `200 g onion`, never
+`200 g onions`. A quantity you have not filled in stays singular.
+
+The plural is worked out from the name — `tomato` → `tomatoes`, `leaf` →
+`leaves`, `chilli` → `chillies`. English being what it is, the rule misses some:
+give the ingredient a **plural** of its own in the Edit panel to fix one
+(`avocado` → `avocados`). Setting the plural to the singular is how you stop a
+word inflecting at all, for a `broccoli` or a `fish`.
+
+Nothing about this is stored on the recipe or written to YAML: exports always
+carry the singular.
 
 ---
 

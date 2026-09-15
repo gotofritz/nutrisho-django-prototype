@@ -17,7 +17,7 @@
       hx-trigger="input changed delay:250ms, search"
       hx-target="#col-ingredients"
       hx-swap="outerHTML"
-      hx-include=".ingredient-pick:checked, #unused-only"
+      hx-include=".ingredient-pick:checked, #unused-only, #plurals-only"
     >
     <label class="unused-toggle">
       <input
@@ -30,9 +30,29 @@
         hx-trigger="change"
         hx-target="#col-ingredients"
         hx-swap="outerHTML"
-        hx-include=".ingredient-pick:checked, #ingredient-search"
+        hx-include=".ingredient-pick:checked, #ingredient-search, #plurals-only"
       >
       Unused only
+    </label>
+    {% comment %}
+    A plural is a display form, not a second ingredient, so a row paired with its
+    own plural is bad data. This narrows the column to those pairs so they can be
+    merged into the singular; the recipe page puts the "s" back.
+    {% endcomment %}
+    <label class="plurals-toggle">
+      <input
+        type="checkbox"
+        id="plurals-only"
+        name="plurals"
+        value="1"
+        {% if plurals_only %}checked{% endif %}
+        hx-get="{% url 'recipes:ingredient_manage_search' %}"
+        hx-trigger="change"
+        hx-target="#col-ingredients"
+        hx-swap="outerHTML"
+        hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only"
+      >
+      Plural pairs only
     </label>
     {% include "./_action_buttons.html" %}
   </div>

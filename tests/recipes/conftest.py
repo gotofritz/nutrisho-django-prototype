@@ -15,8 +15,8 @@ def other_user(db):
 
 @pytest.fixture
 def make_ingredient(db):
-    def _make(name: str) -> Ingredient:
-        return Ingredient.objects.create(ingredient_name=name)
+    def _make(name: str, *, plural_name: str = "") -> Ingredient:
+        return Ingredient.objects.create(ingredient_name=name, plural_name=plural_name)
 
     return _make
 
@@ -33,13 +33,15 @@ def make_recipe(db):
 def add_ingredient(db):
     """Attach an ingredient to a recipe, creating a default group on demand."""
 
-    def _add(*, recipe, ingredient, substitute=None) -> IngredientInRecipe:
+    def _add(*, recipe, ingredient, substitute=None, quantity=None, unit="") -> IngredientInRecipe:
         group, _ = IngredientGroup.objects.get_or_create(
             recipe=recipe, group_name="Main", defaults={"index_in_sequence": 0}
         )
         return IngredientInRecipe.objects.create(
             ingredient=ingredient,
             substitute=substitute,
+            quantity=quantity,
+            unit=unit,
             ingredient_group=group,
             index_in_sequence=IngredientInRecipe.objects.filter(ingredient_group=group).count(),
         )

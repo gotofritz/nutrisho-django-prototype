@@ -1,6 +1,7 @@
 """Tests for the ingredient-admin HTMX views (Plan 007)."""
 
 import re
+from decimal import Decimal
 
 import pytest
 
@@ -514,7 +515,7 @@ def test_save_panel_carries_the_selection_so_it_knows_how_many_are_open(
 ):
     onion = make_ingredient("onion")
     html = auth_client.get(EDIT_URL, {"ingredient_ids": [onion.pk]}).content.decode()
-    assert 'hx-include=".workspace-pick, #ingredient-search, #unused-only"' in html
+    assert 'hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only"' in html
 
 
 @pytest.mark.django_db
@@ -1120,3 +1121,110 @@ def test_the_auto_preview_is_owner_scoped(
     add_ingredient(recipe=make_recipe(owner=other_user, name="Their Soup"), ingredient=onion)
     html = auth_client.get(RECIPES_URL, {"ingredient_ids": [onion.pk]}).content.decode()
     assert "Their Soup" not in html
+
+
+@pytest.mark.django_db
+def test_preview_pluralises_a_countable_ingredient(
+    auth_client, user, make_ingredient, make_recipe, add_ingredient
+):
+    """The preview reads the same as the recipe page it mirrors (plan 009)."""
+    onion = make_ingredient("onion")
+    moussaka = make_recipe(owner=user, name="Moussaka")
+    add_ingredient(recipe=moussaka, ingredient=onion, quantity=Decimal("2"))
+    html = squash(auth_client.get(preview_url(moussaka.pk)).content.decode())
+    assert "2 onions" in html
+
+
+@pytest.mark.django_db
+def test_preview_keeps_the_singular_when_a_unit_is_given(
+    auth_client, user, make_ingredient, make_recipe, add_ingredient
+):
+    onion = make_ingredient("onion")
+    moussaka = make_recipe(owner=user, name="Moussaka")
+    add_ingredient(recipe=moussaka, ingredient=onion, quantity=Decimal("200"), unit="g")
+    html = squash(auth_client.get(preview_url(moussaka.pk)).content.decode())
+    assert "200 g onion" in html
+    assert "onions" not in html
+
+
+@pytest.mark.django_db
+def test_manager_offers_a_plurals_only_toggle(auth_client):
+    html = squash(auth_client.get(MANAGE_URL).content.decode())
+    toggle = tag(html, "plurals-only")
+    assert 'name="plurals"' in toggle
+    assert 'type="checkbox"' in toggle
+    assert 'value="1" checked' not in toggle
+
+
+@pytest.mark.django_db
+def test_search_plurals_only_lists_both_halves_of_each_pair(auth_client, make_ingredient):
+    """Finding `onion` next to `onions` is the first step of merging them away."""
+    make_ingredient("onion")
+    make_ingredient("onions")
+    make_ingredient("carrot")
+    html = auth_client.get(SEARCH_URL, {"plurals": "1"}).content.decode()
+    assert "onion" in html
+    assert "onions" in html
+    assert "carrot" not in html
+    assert "2 found / 0 selected" in html
+
+
+@pytest.mark.django_db
+def test_manager_keeps_the_plurals_toggle_ticked(auth_client):
+    html = squash(auth_client.get(MANAGE_URL, {"plurals": "1"}).content.decode())
+    assert 'value="1" checked' in tag(html, "plurals-only")
+
+
+@pytest.mark.django_db
+def test_cancel_preserves_the_plurals_filter(auth_client, make_ingredient):
+    make_ingredient("onion")
+    make_ingredient("onions")
+    make_ingredient("carrot")
+    html = auth_client.get(CANCEL_URL, {"plurals": "1"}).content.decode()
+    assert "onions" in html
+    assert "carrot" not in html
+
+
+@pytest.mark.django_db
+def test_merge_leaves_the_plurals_filter_applied(auth_client, make_ingredient):
+    """Merging the plural away should leave you looking at the remaining pairs."""
+    onion = make_ingredient("onion")
+    onions = make_ingredient("onions")
+    make_ingredient("tomato")
+    make_ingredient("tomatoes")
+    html = auth_client.post(
+        MERGE_URL,
+        {"ingredient_ids": [onion.pk, onions.pk], "survivor_id": onion.pk, "plurals": "1"},
+    ).content.decode()
+    # 2, not 3: the surviving `onion` has no plural partner left, so it drops
+    # out of the filtered column along with the row it absorbed.
+    assert "2 found / 1 selected" in html
+    assert "tomatoes" in html
+    assert "onions" not in html
+
+
+@pytest.mark.django_db
+def test_ingredient_column_sends_the_plurals_toggle_with_its_refresh(auth_client):
+    column = tag(squash(auth_client.get(SEARCH_URL).content.decode()), "col-ingredients")
+    assert "#plurals-only" in column
+
+
+@pytest.mark.django_db
+def test_edit_panel_offers_the_plural_name_override(auth_client, make_ingredient):
+    avocado = make_ingredient("avocado")
+    html = auth_client.get(EDIT_URL, {"ingredient_ids": [avocado.pk]}).content.decode()
+    assert 'name="plural_name"' in html
+
+
+@pytest.mark.django_db
+def test_saving_a_plural_override_changes_what_the_recipe_page_shows(
+    auth_client, user, make_ingredient, make_recipe, add_ingredient
+):
+    avocado = make_ingredient("avocado")
+    recipe = make_recipe(owner=user, name="Guacamole")
+    add_ingredient(recipe=recipe, ingredient=avocado, quantity=Decimal("3"))
+    auth_client.post(
+        save_url(avocado.pk), {"ingredient_name": "avocado", "plural_name": "avocados"}
+    )
+    html = auth_client.get(recipe.get_absolute_url()).content.decode()
+    assert '<span class="ingredient-name">avocados</span>' in html

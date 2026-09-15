@@ -8,6 +8,7 @@ from recipes.services.ingredient_admin import (
     IngredientInUseError,
     delete_ingredients,
     find_ingredient_duplicates,
+    find_plural_duplicates,
     merge_ingredients,
     recipes_for_ingredients,
     recipes_referencing_ingredients,
@@ -450,3 +451,88 @@ def test_search_ingredients_without_the_flag_still_lists_used_ingredients(
     onion = make_ingredient("onion")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
     assert [i.ingredient_name for i in search_ingredients("")] == ["onion"]
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_pairs_a_singular_with_its_plural_row(make_ingredient):
+    """An `onions` row next to `onion` is bad data — the display adds the s."""
+    onion = make_ingredient("onion")
+    onions = make_ingredient("onions")
+    make_ingredient("carrot")
+    assert find_plural_duplicates() == [[onion, onions]]
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_uses_the_rule_not_a_bare_s(make_ingredient):
+    tomato = make_ingredient("tomato")
+    tomatoes = make_ingredient("tomatoes")
+    make_ingredient("tomatos")
+    assert find_plural_duplicates() == [[tomato, tomatoes]]
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_honours_the_plural_name_override(make_ingredient):
+    avocado = make_ingredient("avocado", plural_name="avocados")
+    avocados = make_ingredient("avocados")
+    assert find_plural_duplicates() == [[avocado, avocados]]
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_matches_case_insensitively(make_ingredient):
+    onion = make_ingredient("onion")
+    onions = make_ingredient("Onions")
+    assert find_plural_duplicates() == [[onion, onions]]
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_ignores_invariant_and_lone_rows(make_ingredient):
+    make_ingredient("onion")
+    make_ingredient("oats")
+    make_ingredient("broccoli", plural_name="broccoli")
+    assert find_plural_duplicates() == []
+
+
+@pytest.mark.django_db
+def test_find_plural_duplicates_orders_groups_case_insensitively(make_ingredient):
+    tomato = make_ingredient("tomato")
+    tomatoes = make_ingredient("tomatoes")
+    carrot = make_ingredient("carrot")
+    carrots = make_ingredient("carrots")
+    assert find_plural_duplicates() == [[carrot, carrots], [tomato, tomatoes]]
+
+
+@pytest.mark.django_db
+def test_search_ingredients_plurals_only_lists_both_halves_of_each_pair(make_ingredient):
+    make_ingredient("onion")
+    make_ingredient("onions")
+    make_ingredient("carrot")
+    names = [i.ingredient_name for i in search_ingredients("", plurals_only=True)]
+    assert names == ["onion", "onions"]
+
+
+@pytest.mark.django_db
+def test_search_ingredients_plurals_only_composes_with_the_query(make_ingredient):
+    make_ingredient("onion")
+    make_ingredient("onions")
+    make_ingredient("carrot")
+    make_ingredient("carrots")
+    names = [i.ingredient_name for i in search_ingredients("onio", plurals_only=True)]
+    assert names == ["onion", "onions"]
+
+
+@pytest.mark.django_db
+def test_search_ingredients_plurals_only_composes_with_unused_only(
+    make_ingredient, make_recipe, add_ingredient, user
+):
+    onion = make_ingredient("onion")
+    make_ingredient("onions")
+    recipe = make_recipe(owner=user, name="Soup")
+    add_ingredient(recipe=recipe, ingredient=onion)
+    names = [i.ingredient_name for i in search_ingredients("", unused_only=True, plurals_only=True)]
+    assert names == ["onions"]
+
+
+@pytest.mark.django_db
+def test_search_ingredients_plurals_only_defaults_off(make_ingredient):
+    make_ingredient("carrot")
+    assert [i.ingredient_name for i in search_ingredients("")] == ["carrot"]
