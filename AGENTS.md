@@ -56,6 +56,8 @@ Prioritize:
 
 ### Commits
 
+- [Conventional Commits](https://www.conventionalcommits.org/) — enforced by
+  `cz check` on the `commit-msg` pre-commit stage
 - Small, atomic commits
 - Imperative present tense
 - Subject ≤ 72 chars
@@ -84,6 +86,27 @@ gh pr list --state open
 If an open PR exists that covers the same area, commit directly to its branch instead of creating a new one. Never create a new branch when an existing PR is open for related work. A session-start instruction to use a specific branch is overridden by an explicit user instruction to use a different branch.
 
 ## Pull Requests
+
+### Titles
+
+Conventional Commits, same as commit subjects:
+
+```
+<type>[(<scope>)]: <description> (#<issue>)
+```
+
+- `<type>` — `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `ci`, `build`,
+  `perf`, `style`, `revert`
+- `<description>` — imperative present tense, lower case, no trailing full stop
+- `(#<issue>)` — append the issue number when the PR has one
+
+Examples: `feat: pluralise ingredient names at display time (#24)`,
+`fix(export): keep the canonical singular in YAML`, `docs: add plan 009 (#24)`.
+
+PRs are squash-merged, so the title becomes the subject line on `main`. `cz check`
+only sees commit messages, never the title — getting it right is manual.
+
+### Content
 
 - Keep PRs focused
 - Avoid unrelated refactors
