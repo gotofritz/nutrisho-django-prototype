@@ -454,3 +454,109 @@ def test_step_save_preserves_concurrent_index_change(auth_client, recipe, step):
     step.refresh_from_db()
     assert step.index_in_sequence == 5  # concurrent reorder preserved
     assert step.step_text == "Updated text"  # form edit applied
+
+
+@pytest.mark.django_db
+def test_step_display_shows_title(auth_client, recipe):
+    step = Step.objects.create(
+        recipe=recipe, step_text="Warm the milk", step_title="BECHAMEL", index_in_sequence=0
+    )
+    content = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/").content.decode()
+    assert "BECHAMEL" in content
+    assert "step-title" in content
+
+
+@pytest.mark.django_db
+def test_step_display_omits_title_element_when_blank(auth_client, recipe, step):
+    content = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/").content.decode()
+    assert "step-title" not in content
+
+
+@pytest.mark.django_db
+def test_step_display_escapes_html_in_title(auth_client, recipe):
+    """A title carries no markup — unlike step_text, it is escaped outright."""
+    step = Step.objects.create(
+        recipe=recipe, step_text="Warm the milk", step_title="<b>BOLD</b>", index_in_sequence=0
+    )
+    content = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/").content.decode()
+    assert "<b>BOLD</b>" not in content
+    assert "&lt;b&gt;BOLD&lt;/b&gt;" in content
+
+
+@pytest.mark.django_db
+def test_step_edit_form_has_title_input_with_value(auth_client, recipe):
+    step = Step.objects.create(
+        recipe=recipe, step_text="Warm the milk", step_title="BECHAMEL", index_in_sequence=0
+    )
+    content = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/edit/").content.decode()
+    assert 'name="step_title"' in content
+    assert 'value="BECHAMEL"' in content
+
+
+@pytest.mark.django_db
+def test_step_add_title_input_has_placeholder(auth_client, recipe):
+    content = auth_client.post(f"/recipes/{recipe.pk}/steps/add/").content.decode()
+    assert 'name="step_title"' in content
+    assert "Title (optional)" in content
+
+
+@pytest.mark.django_db
+def test_step_save_persists_title(auth_client, recipe, step):
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/steps/{step.pk}/save/",
+        {"step_title": "BECHAMEL", "step_text": "Warm the milk"},
+    )
+    assert response.status_code == 200
+    step.refresh_from_db()
+    assert step.step_title == "BECHAMEL"
+    assert step.step_text == "Warm the milk"
+
+
+@pytest.mark.django_db
+def test_step_save_can_clear_title(auth_client, recipe):
+    step = Step.objects.create(
+        recipe=recipe, step_text="Warm the milk", step_title="BECHAMEL", index_in_sequence=0
+    )
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/{step.pk}/save/",
+        {"step_title": "", "step_text": "Warm the milk"},
+    )
+    step.refresh_from_db()
+    assert step.step_title == ""
+
+
+@pytest.mark.django_db
+def test_step_save_without_a_title_still_saves(auth_client, recipe, step):
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/steps/{step.pk}/save/", {"step_text": "Chop the onions"}
+    )
+    assert response.status_code == 200
+    step.refresh_from_db()
+    assert step.step_text == "Chop the onions"
+    assert step.step_title == ""
+
+
+@pytest.mark.django_db
+def test_step_create_accepts_a_title(auth_client, recipe):
+    auth_client.post(
+        f"/recipes/{recipe.pk}/steps/create/",
+        {"step_title": "RAGÚ", "step_text": "Brown the beef"},
+    )
+    created = Step.objects.get(recipe=recipe, step_text="Brown the beef")
+    assert created.step_title == "RAGÚ"
+
+
+@pytest.mark.django_db
+def test_step_display_writes_a_colon_after_the_title(auth_client, recipe):
+    """The colon is punctuation between title and text, so it sits outside the span."""
+    step = Step.objects.create(
+        recipe=recipe, step_text="Warm the milk", step_title="Bechamel", index_in_sequence=0
+    )
+    content = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/").content.decode()
+    assert '<span class="step-title">Bechamel</span>:' in content
+
+
+@pytest.mark.django_db
+def test_step_display_writes_no_colon_without_a_title(auth_client, recipe, step):
+    content = auth_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/").content.decode()
+    assert "</span>:" not in content

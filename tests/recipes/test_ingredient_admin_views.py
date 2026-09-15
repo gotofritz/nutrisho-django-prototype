@@ -262,6 +262,18 @@ def test_preview_shows_name_servings_ingredients_and_steps(
 
 
 @pytest.mark.django_db
+def test_preview_shows_step_titles(
+    auth_client, user, make_ingredient, make_recipe, add_ingredient, add_step
+):
+    onion = make_ingredient("onion")
+    moussaka = make_recipe(owner=user, name="Moussaka")
+    add_ingredient(recipe=moussaka, ingredient=onion)
+    add_step(recipe=moussaka, text="Slice the aubergine", title="BECHAMEL")
+    html = auth_client.get(preview_url(moussaka.pk)).content.decode()
+    assert "BECHAMEL" in html
+
+
+@pytest.mark.django_db
 def test_preview_has_no_navigation_or_edit_controls(
     auth_client, user, make_ingredient, make_recipe, add_ingredient, add_step
 ):

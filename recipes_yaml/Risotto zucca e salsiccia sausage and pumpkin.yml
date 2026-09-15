@@ -2,13 +2,15 @@ cuisine: .italian
 description: null
 directions:
   step:
-  - 'PUMPKIN: Mix marinade in a bowl, toss pumpkin in, arrange on a tray and bake
-    at 200° for 15 mins'
-  - 'STOCK: use a light stock, or make one yourself by simply simmering the stock
-    ingredients for half an hour'
+  - text: Mix marinade in a bowl, toss pumpkin in, arrange on a tray and bake at 200°
+      for 15 mins
+    title: Pumpkin
+  - text: use a light stock, or make one yourself by simply simmering the stock ingredients
+      for half an hour
+    title: Stock
   - Either way keep it in a pot on low fire
-  - 'RISOTTO: Sauté shallots and leeks in olive oil / butter mixture on high heat,
-    3m'
+  - text: Sauté shallots and leeks in olive oil / butter mixture on high heat, 3m
+    title: Risotto
   - Add sausage, broken with a fork; alternatively, pancetta
   - Add rosemary and rice, and keep stirring for about 1m
   - Sweat with white wine until evaporated, about 3m

@@ -6,7 +6,7 @@
       hx-get="{% url 'recipes:step_edit' recipe.id step.id %}"
       hx-target="closest li"
       hx-swap="outerHTML"
-    >{{ step.step_text|safe_step_html }}</span>
+    >{% if step.step_title %}<span class="step-title">{{ step.step_title }}</span>: {% endif %}{{ step.step_text|safe_step_html }}</span>
     <span class="move-btns" onclick="event.stopPropagation()">
       <button
         hx-post="{% url 'recipes:step_move_up' recipe.id step.id %}"

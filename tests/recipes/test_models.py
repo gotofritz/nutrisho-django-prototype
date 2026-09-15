@@ -13,6 +13,7 @@ from recipes.models import (
     Step,
     Tag,
 )
+from recipes.utils.step_title import MAX_TITLE_LENGTH
 
 
 @pytest.mark.django_db
@@ -266,3 +267,29 @@ def test_ingredient_plural_name_defaults_to_blank():
     assert ingredient.plural_name == ""
     assert Ingredient._meta.get_field("plural_name").null is False  # ty: ignore[unresolved-attribute]
     assert Ingredient._meta.get_field("plural_name").blank is True  # ty: ignore[unresolved-attribute]
+
+
+@pytest.mark.django_db
+def test_step_title_defaults_to_empty_string(user):
+    """An untitled step stores "", never NULL — same rule as the other text fields."""
+    recipe = Recipe.objects.create(recipe_name="R", owner=user)
+    step = Step.objects.create(recipe=recipe, step_text="Chop", index_in_sequence=0)
+    step.refresh_from_db()
+    assert step.step_title == ""
+
+
+@pytest.mark.django_db
+def test_step_title_persists(user):
+    recipe = Recipe.objects.create(recipe_name="R", owner=user)
+    step = Step.objects.create(
+        recipe=recipe, step_text="Chop", step_title="RAGÚ", index_in_sequence=0
+    )
+    step.refresh_from_db()
+    assert step.step_title == "RAGÚ"
+
+
+def test_step_title_max_length_matches_the_splitting_rule():
+    """`split_step_title` rejects longer runs as prose; the two must agree."""
+    # _meta is injected by Django's model metaclass; ty cannot see through it.
+    field = Step._meta.get_field("step_title")  # ty: ignore[unresolved-attribute]
+    assert field.max_length == MAX_TITLE_LENGTH == 128

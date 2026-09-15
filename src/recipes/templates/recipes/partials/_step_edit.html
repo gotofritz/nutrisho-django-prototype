@@ -10,6 +10,8 @@
     hx-target="closest li"
   >
     {% csrf_token %}
+    {{ form.step_title }}
+    {{ form.step_title.errors }}
     {{ form.step_text }}
     {{ form.step_text.errors }}
     <button type="submit">Save</button>

@@ -983,7 +983,8 @@ _IGNORED_FIELDS: dict[str, set[str]] = {
         "id",
         "recipe",  # FK, set on insert
         "index_in_sequence",  # set on insert from list order
-        "step_text",  # serialized as directions.step[i]
+        "step_text",  # serialized as directions.step[i] (or its 'text' key)
+        "step_title",  # serialized as directions.step[i]['title'] when set
     },
     "IngredientInRecipe": {
         "id",
@@ -1104,3 +1105,62 @@ def test_export_writes_the_canonical_singular_not_the_plural(user, tmp_path):
     call_command("export_recipes_to_yaml", str(tmp_path), "--user", user.username)
     data = yaml.safe_load(next(tmp_path.glob("*.yml")).read_text())
     assert data["ingredients"]["group"][0]["ingredient"][0]["name"] == "onion"
+
+
+# --- Step titles (plan 010) ---------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_export_writes_an_untitled_step_as_a_plain_string(user, tmp_path):
+    """Untitled steps keep the shape every existing file uses, so nothing churns."""
+    build_recipe(user, name="Plain Dish")
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
+
+    data = yaml.safe_load((tmp_path / "Plain Dish.yml").read_text())
+    assert data["directions"]["step"] == ["Chop everything"]
+
+
+@pytest.mark.django_db
+def test_export_writes_a_titled_step_as_a_mapping(user, tmp_path):
+    recipe = build_recipe(user, name="Titled Dish")
+    step = recipe.step.first()
+    step.step_title = "RAGÚ"
+    step.save(update_fields=["step_title"])
+
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
+
+    data = yaml.safe_load((tmp_path / "Titled Dish.yml").read_text())
+    assert data["directions"]["step"] == [{"title": "RAGÚ", "text": "Chop everything"}]
+
+
+@pytest.mark.django_db
+def test_export_mixes_both_shapes_within_one_recipe(user, tmp_path):
+    recipe = build_recipe(user, name="Mixed Dish")
+    Step.objects.create(
+        recipe=recipe, step_text="Warm the milk", step_title="BECHAMEL", index_in_sequence=2
+    )
+
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
+
+    data = yaml.safe_load((tmp_path / "Mixed Dish.yml").read_text())
+    assert data["directions"]["step"] == [
+        "Chop everything",
+        {"title": "BECHAMEL", "text": "Warm the milk"},
+    ]
+
+
+@pytest.mark.django_db
+def test_round_trip_preserves_step_titles(user, tmp_path):
+    recipe = build_recipe(user, name="Round Trip Titles")
+    step = recipe.step.first()
+    step.step_title = "RAGÚ"
+    step.save(update_fields=["step_title"])
+
+    call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
+    Recipe.objects.filter(pk=recipe.pk).delete()
+    call_command("batch_load_yaml_recipes", str(tmp_path), user="gotofritz")
+
+    reimported = Recipe.objects.get(recipe_name="Round Trip Titles")
+    assert reimported.step.count() == 1
+    assert reimported.step.first().step_title == "RAGÚ"
+    assert reimported.step.first().step_text == "Chop everything"

@@ -2,8 +2,9 @@ cuisine: .asian
 description: Run of the mill Asian style fried rice
 directions:
   step:
-  - 'THE DAY BEFORE: cook the rice as normal, but when still hot spread it on a tray
-    to let it dry'
+  - text: cook the rice as normal, but when still hot spread it on a tray to let it
+      dry
+    title: The day before
   - Put oil in a wok, high temperature
   - 'If using meat: cut into strips, soak in soy sauce 10 mins. Fry on high heat before
     everything else, or in separate pan while you are doing the rice to be faster'

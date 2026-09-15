@@ -2,9 +2,10 @@ cuisine: .japanese
 description: Bento food, eatable cold
 directions:
   step:
-  - 'FRESH SPINACH: wash, drop in boiling water, boil 3 mins, drain, plunge in cold
-    water'
-  - 'FROZEN SPINACH: blach in boiling water and when defrosted plunge in cold water'
+  - text: wash, drop in boiling water, boil 3 mins, drain, plunge in cold water
+    title: Fresh spinach
+  - text: blach in boiling water and when defrosted plunge in cold water
+    title: Frozen spinach
   - Squeeze water out of spinach as hard as you can
   - Sauté onion on high for a couple of minutes, season with salt and pepper
   - Add garlic, after a couple of minutes add spinach. Remove after a couple of minutes

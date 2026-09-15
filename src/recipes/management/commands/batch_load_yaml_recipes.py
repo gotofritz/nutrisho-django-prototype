@@ -19,6 +19,7 @@ from recipes.models.recipe import Recipe
 from recipes.models.step import Step
 from recipes.models.tag import Tag
 from recipes.utils.filename import safe_filename, sanitize_stored_filename
+from recipes.utils.step_title import MAX_TITLE_LENGTH
 
 _UNICODE_FRACTIONS = {
     "½": "1/2",
@@ -87,6 +88,33 @@ class Command(BaseCommand):
         return tmp.strip()
 
     @classmethod
+    def _normalize_steps(cls, recipe_dict: dict, source_path: Path) -> None:
+        """Rewrite `directions.step` in place as a list of `{title, text}` dicts.
+
+        A step is either a bare string (untitled, the shape every file used before
+        plan 010) or a `{title, text}` mapping. Both end up in the same shape here,
+        so the write path has one case to handle.
+        """
+        steps = recipe_dict["directions"]["step"]
+        if not isinstance(steps, list):
+            steps = [steps]
+        normalized: list[dict[str, str]] = []
+        for step_raw in steps:
+            if not isinstance(step_raw, dict):
+                normalized.append({"title": "", "text": cls.clean(step_raw)})
+                continue
+            text = cls.clean(step_raw.get("text"))
+            if not text:
+                raise CommandError(f"{source_path}: step is missing required 'text'")
+            title = cls.clean(step_raw.get("title")) or ""
+            if len(title) > MAX_TITLE_LENGTH:
+                raise CommandError(
+                    f"{source_path}: step title {title!r} exceeds {MAX_TITLE_LENGTH} characters"
+                )
+            normalized.append({"title": title, "text": text})
+        recipe_dict["directions"]["step"] = normalized
+
+    @classmethod
     def _validate_payload(cls, recipe_dict: dict, source_path: Path) -> None:
         """Validate structure and normalize quantity fields in-place to Decimal/None.
 
@@ -95,6 +123,8 @@ class Command(BaseCommand):
         (floats for unquoted numerics) and Django's DecimalField would re-convert
         them through its own context, potentially diverging from the validated value.
         """
+        cls._normalize_steps(recipe_dict, source_path)
+
         groups = recipe_dict["ingredients"].get("group", [])
         if not isinstance(groups, list):
             groups = [groups]
@@ -263,14 +293,13 @@ class Command(BaseCommand):
                     yaml_filename=yaml_filename,
                 )
 
-                steps = recipe_dict["directions"]["step"]
-                if not isinstance(steps, list):
-                    steps = [steps]
-                for i, step_raw in enumerate(steps):
+                # _normalize_steps has already flattened these to {title, text} dicts
+                for i, step_raw in enumerate(recipe_dict["directions"]["step"]):
                     Step.objects.create(
                         recipe=recipe,
                         index_in_sequence=i + 1,
-                        step_text=Command.clean(step_raw),
+                        step_title=step_raw["title"],
+                        step_text=step_raw["text"],
                     )
 
                 if not isinstance(recipe_dict["ingredients"]["group"], list):

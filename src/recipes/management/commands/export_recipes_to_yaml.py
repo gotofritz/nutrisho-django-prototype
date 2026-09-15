@@ -39,7 +39,12 @@ def lossy_fields(recipe: Recipe) -> list[str]:
 
 def recipe_to_dict(recipe: Recipe) -> dict:
     """Serialise a Recipe instance to a dict matching the YAML schema."""
-    steps = [step.step_text for step in recipe.step.all()]  # ty: ignore[unresolved-attribute]
+    # A titled step needs both halves, so it serialises as a mapping; an untitled one
+    # stays the bare string every existing file uses, so exports do not churn them.
+    steps = [
+        {"title": step.step_title, "text": step.step_text} if step.step_title else step.step_text
+        for step in recipe.step.all()  # ty: ignore[unresolved-attribute]
+    ]
 
     groups = []
     for group in recipe.ingredients_group.all():  # ty: ignore[unresolved-attribute]

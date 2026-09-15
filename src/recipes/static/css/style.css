@@ -294,6 +294,10 @@ ol.recipe-steps {
   flex: 1;
 }
 
+.step-title {
+  text-decoration: underline;
+}
+
 .move-btns {
   display: inline-flex;
   gap: 2px;

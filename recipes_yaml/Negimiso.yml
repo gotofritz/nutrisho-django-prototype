@@ -11,11 +11,13 @@ description: This is one of those really useful and versatile sauces or pastes (
 directions:
   step:
   - Sauté spring onion in oil until transliucent, 5m
-  - 'FOR THE STOCK: soak the kombu (and optional shitake) in water overnight, in a
-    sealed container in the fridge'
+  - text: soak the kombu (and optional shitake) in water overnight, in a sealed container
+      in the fridge
+    title: For the stock
   - Put water in a pot and bring to simmer. Drain and use (you can cut up kombu and
     shitake and use them in stews etc)
-  - 'CLASSIC NEGIMISO: combine dashi stock, miso, sugar, mirin in a bowl.'
+  - text: combine dashi stock, miso, sugar, mirin in a bowl.
+    title: Classic negimiso
   - Sautè the spring onions until soft
   - Add the liquid, and cook until thick and glossy. For onigiri you can cook it even
     more until thick and hard

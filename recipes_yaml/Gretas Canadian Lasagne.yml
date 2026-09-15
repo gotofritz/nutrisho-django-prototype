@@ -2,8 +2,9 @@ cuisine: .anglo.us
 description: Lasagne as they make them in NA
 directions:
   step:
-  - '<u>RAGÚ</u>: Sauté the ground beef in olive oil until browned, then put aside.
-    Do the same for the ground pork in the same pot'
+  - text: Sauté the ground beef in olive oil until browned, then put aside. Do the
+      same for the ground pork in the same pot
+    title: Ragú
   - Add butter to the same pot, add the vegetables and after 5 minutes the stock and
     bay leaf. Cook 5 minutes
   - Add the canned tomates, break them up with a fork
@@ -12,7 +13,8 @@ directions:
     with a fork and add the wine and tomato paste. Stir and pour in an oven friendly
     dish
   - Season and carry on in the oven at 140°C, stirring occasionally
-  - '<u>BECHAMEL</u>: Warm the milk with onion and pepper'
+  - text: Warm the milk with onion and pepper
+    title: Bechamel
   - Melt the butter, then add the flour and mix until it's a slurry
   - Sieve the milk into the slurry, season, and reduce until thick
   - Layer bechamel, lasagna, meat, mozzarella, and so on. End with a layer of bechamel,
