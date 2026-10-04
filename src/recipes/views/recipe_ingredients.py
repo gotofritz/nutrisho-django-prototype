@@ -20,6 +20,7 @@ def _reassign_select_oob(recipe: Recipe, request: AuthedRequest) -> str:
 
 @require_GET
 def recipe_ingredient_display(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
+    """Show a ingredient."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     return render(
@@ -55,6 +56,7 @@ def _all_ingredient_names() -> list[str]:
 
 @require_GET
 def recipe_ingredient_edit(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
+    """Show the ingredient edit form."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     form = IngredientInRecipeForm(instance=iir)
@@ -67,6 +69,7 @@ def recipe_ingredient_edit(request: AuthedRequest, recipe_id: int, iir_id: int) 
 
 @require_POST
 def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
+    """Save a ingredient."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     form = IngredientInRecipeForm(data=request.POST, instance=iir)
@@ -96,6 +99,7 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
 
 @require_POST
 def recipe_ingredient_delete(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
+    """Delete a ingredient."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     with transaction.atomic():
@@ -144,6 +148,7 @@ def recipe_ingredient_add(request: AuthedRequest, recipe_id: int, group_id: int)
 
 @require_POST
 def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
+    """Create a ingredient."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     form = IngredientInRecipeForm(data=request.POST)
@@ -187,6 +192,7 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
 
 @require_POST
 def recipe_ingredient_move_up(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
+    """Move a ingredient up."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     original_group_id = iir.ingredient_group_id
@@ -220,6 +226,7 @@ def recipe_ingredient_move_up(request: AuthedRequest, recipe_id: int, iir_id: in
 def recipe_ingredient_move_down(
     request: AuthedRequest, recipe_id: int, iir_id: int
 ) -> HttpResponse:
+    """Move a ingredient down."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     original_group_id = iir.ingredient_group_id
@@ -251,6 +258,7 @@ def recipe_ingredient_move_down(
 
 @require_GET
 def recipe_group_display(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
+    """Show a group."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     return render(
@@ -262,6 +270,7 @@ def recipe_group_display(request: AuthedRequest, recipe_id: int, group_id: int) 
 
 @require_GET
 def recipe_group_edit(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
+    """Show the group edit form."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     form = IngredientGroupForm(instance=group)
@@ -274,6 +283,7 @@ def recipe_group_edit(request: AuthedRequest, recipe_id: int, group_id: int) -> 
 
 @require_POST
 def recipe_group_save(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
+    """Save a group."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     with transaction.atomic():
@@ -303,6 +313,7 @@ def recipe_group_save(request: AuthedRequest, recipe_id: int, group_id: int) -> 
 
 @require_POST
 def recipe_group_delete(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
+    """Delete a group."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     remove_and_compact(siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group)
@@ -311,6 +322,7 @@ def recipe_group_delete(request: AuthedRequest, recipe_id: int, group_id: int) -
 
 @require_POST
 def recipe_group_move_up(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
+    """Move a group up."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     move_in_sequence(
@@ -321,6 +333,7 @@ def recipe_group_move_up(request: AuthedRequest, recipe_id: int, group_id: int) 
 
 @require_POST
 def recipe_group_move_down(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
+    """Move a group down."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     move_in_sequence(
@@ -342,6 +355,7 @@ def recipe_group_add(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 @require_POST
 def recipe_group_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+    """Create a group."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     with transaction.atomic():
         locked = list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
@@ -373,6 +387,7 @@ def recipe_group_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 @require_POST
 def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+    """Move ingredients into another group."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     raw_ids = request.POST.getlist("ingredient_ids")
 
@@ -504,11 +519,13 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
         # Merge moved + existing target by original page order so visual position is preserved:
         # sort key = (group.index_in_sequence, item.index_in_sequence) before this operation.
         target_group_index = target_group.index_in_sequence
-        combined: list[tuple[int, int, IngredientInRecipe]] = []
-        for item in fresh_iirs:
-            combined.append((item.ingredient_group.index_in_sequence, item.index_in_sequence, item))
-        for item in existing_target:
-            combined.append((target_group_index, item.index_in_sequence, item))
+        combined: list[tuple[int, int, IngredientInRecipe]] = [
+            (item.ingredient_group.index_in_sequence, item.index_in_sequence, item)
+            for item in fresh_iirs
+        ]
+        combined.extend(
+            (target_group_index, item.index_in_sequence, item) for item in existing_target
+        )
         combined.sort(key=lambda x: (x[0], x[1]))
         final_order = [x[2] for x in combined]
 

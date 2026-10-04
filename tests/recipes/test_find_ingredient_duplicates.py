@@ -6,6 +6,7 @@ from django.core.management import call_command
 
 @pytest.mark.django_db
 def test_reports_a_clean_database(make_ingredient, capsys):
+    """Reports a clean database."""
     make_ingredient("onion")
     call_command("find_ingredient_duplicates")
     assert "No case-insensitive duplicates found" in capsys.readouterr().out
@@ -13,6 +14,7 @@ def test_reports_a_clean_database(make_ingredient, capsys):
 
 @pytest.mark.django_db
 def test_lists_each_clashing_group(without_ci_name_constraint, make_ingredient, capsys):
+    """Lists each clashing group."""
     onion = make_ingredient("onion")
     capital = make_ingredient("Onion")
     call_command("find_ingredient_duplicates")
@@ -24,6 +26,7 @@ def test_lists_each_clashing_group(without_ci_name_constraint, make_ingredient, 
 
 @pytest.mark.django_db
 def test_counts_multiple_groups(without_ci_name_constraint, make_ingredient, capsys):
+    """Counts multiple groups."""
     for name in ("onion", "Onion", "carrot", "Carrot"):
         make_ingredient(name)
     call_command("find_ingredient_duplicates")
@@ -40,6 +43,7 @@ def _guard():
 
 @pytest.mark.django_db
 def test_migration_guard_passes_on_a_clean_database(make_ingredient):
+    """Migration guard passes on a clean database."""
     from django.apps import apps
 
     make_ingredient("onion")
@@ -69,6 +73,7 @@ def test_migration_guard_names_the_clashes_instead_of_crashing(
 
 @pytest.mark.django_db
 def test_reports_no_plural_pairs_on_a_clean_database(make_ingredient, capsys):
+    """Reports no plural pairs on a clean database."""
     make_ingredient("onion")
     call_command("find_ingredient_duplicates")
     assert "No singular/plural pairs found" in capsys.readouterr().out
@@ -89,6 +94,7 @@ def test_lists_each_singular_plural_pair(make_ingredient, capsys):
 
 @pytest.mark.django_db
 def test_counts_multiple_plural_pairs(make_ingredient, capsys):
+    """Counts multiple plural pairs."""
     for name in ("onion", "onions", "tomato", "tomatoes"):
         make_ingredient(name)
     call_command("find_ingredient_duplicates")
@@ -97,6 +103,7 @@ def test_counts_multiple_plural_pairs(make_ingredient, capsys):
 
 @pytest.mark.django_db
 def test_reports_both_classes_together(without_ci_name_constraint, make_ingredient, capsys):
+    """Reports both classes together."""
     for name in ("carrot", "Carrot", "onion", "onions"):
         make_ingredient(name)
     call_command("find_ingredient_duplicates")

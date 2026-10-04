@@ -18,6 +18,7 @@ from recipes.utils.step_title import MAX_TITLE_LENGTH
 
 @pytest.mark.django_db
 def test_recipe_creation(user):
+    """Recipe creation."""
     recipe = Recipe.objects.create(recipe_name="Test Recipe", owner=user)
     assert recipe.recipe_name == "Test Recipe"
     assert recipe.pk is not None
@@ -25,7 +26,7 @@ def test_recipe_creation(user):
 
 @pytest.mark.django_db
 def test_recipe_servings_cannot_be_null(user):
-    """servings is mandatory: NULL is rejected at the database level."""
+    """Servings is mandatory: NULL is rejected at the database level."""
     with pytest.raises(django.db.IntegrityError):
         Recipe.objects.create(recipe_name="Unknown Serves", owner=user, servings=None)
 
@@ -39,12 +40,14 @@ def test_recipe_servings_zero_rejected(user):
 
 @pytest.mark.django_db
 def test_recipe_natural_key(user):
+    """Recipe natural key."""
     recipe = Recipe.objects.create(recipe_name="Pasta Carbonara", owner=user)
     assert recipe.natural_key() == (user.username, "Pasta Carbonara")
 
 
 @pytest.mark.django_db
 def test_recipe_get_by_natural_key(user):
+    """Recipe get by natural key."""
     Recipe.objects.create(recipe_name="Pasta Carbonara", owner=user)
     fetched = Recipe.objects.get_by_natural_key(user.username, "Pasta Carbonara")
     assert fetched.recipe_name == "Pasta Carbonara"
@@ -66,24 +69,28 @@ def test_recipe_natural_key_two_owners_same_name(user, db):
 
 @pytest.mark.django_db
 def test_recipe_absolute_url(user):
+    """Recipe absolute url."""
     recipe = Recipe.objects.create(recipe_name="Soup", owner=user)
     assert recipe.get_absolute_url() == f"/recipes/{recipe.pk}/"
 
 
 @pytest.mark.django_db
 def test_cuisine_natural_key():
+    """Cuisine natural key."""
     c = Cuisine.objects.create(cuisine="Italian")
     assert c.natural_key() == "Italian"
 
 
 @pytest.mark.django_db
 def test_source_natural_key():
+    """Source natural key."""
     s = Source.objects.create(short_name="Moro", source="ISBN-123")
     assert s.natural_key() == "Moro"
 
 
 @pytest.mark.django_db
 def test_tag_natural_key(user):
+    """Tag natural key."""
     recipe = Recipe.objects.create(recipe_name="Tagged", owner=user)
     t = Tag.objects.create(tag="vegan")
     t.recipe.add(recipe)
@@ -92,12 +99,14 @@ def test_tag_natural_key(user):
 
 @pytest.mark.django_db
 def test_ingredient_natural_key():
+    """Ingredient natural key."""
     ing = Ingredient.objects.create(ingredient_name="salt")
     assert ing.natural_key() == "salt"
 
 
 @pytest.mark.django_db
 def test_ingredient_group_natural_key(user):
+    """Ingredient group natural key."""
     recipe = Recipe.objects.create(recipe_name="R", owner=user)
     g = IngredientGroup.objects.create(recipe=recipe, group_name="Main", index_in_sequence=0)
     assert g.natural_key() == "Main"
@@ -105,6 +114,7 @@ def test_ingredient_group_natural_key(user):
 
 @pytest.mark.django_db
 def test_step_natural_key(user):
+    """Step natural key."""
     recipe = Recipe.objects.create(recipe_name="R", owner=user)
     step = Step.objects.create(recipe=recipe, step_text="Chop", index_in_sequence=0)
     assert step.natural_key() == (0, "Chop")
@@ -112,6 +122,7 @@ def test_step_natural_key(user):
 
 @pytest.mark.django_db
 def test_ingredient_in_recipe_natural_key(user):
+    """Ingredient in recipe natural key."""
     recipe = Recipe.objects.create(recipe_name="R", owner=user)
     group = IngredientGroup.objects.create(recipe=recipe, group_name="G", index_in_sequence=0)
     ing = Ingredient.objects.create(ingredient_name="onion")
@@ -236,6 +247,7 @@ def test_ingredient_name_is_unique_case_insensitively():
 
 @pytest.mark.django_db
 def test_ingredient_names_differing_by_more_than_case_coexist():
+    """Ingredient names differing by more than case coexist."""
     Ingredient.objects.create(ingredient_name="onion")
     Ingredient.objects.create(ingredient_name="onions")
     assert Ingredient.objects.count() == 2
@@ -250,6 +262,7 @@ def test_ingredient_plural_derives_from_the_rule_when_not_overridden():
 
 @pytest.mark.django_db
 def test_ingredient_plural_name_override_wins_verbatim():
+    """Ingredient plural name override wins verbatim."""
     ingredient = Ingredient.objects.create(ingredient_name="avocado", plural_name="avocados")
     assert ingredient.plural == "avocados"
 
@@ -263,6 +276,7 @@ def test_ingredient_plural_name_equal_to_singular_makes_it_invariant():
 
 @pytest.mark.django_db
 def test_ingredient_plural_name_defaults_to_blank():
+    """Ingredient plural name defaults to blank."""
     ingredient = Ingredient.objects.create(ingredient_name="leek")
     assert ingredient.plural_name == ""
     assert Ingredient._meta.get_field("plural_name").null is False  # ty: ignore[unresolved-attribute]
@@ -280,6 +294,7 @@ def test_step_title_defaults_to_empty_string(user):
 
 @pytest.mark.django_db
 def test_step_title_persists(user):
+    """Step title persists."""
     recipe = Recipe.objects.create(recipe_name="R", owner=user)
     step = Step.objects.create(
         recipe=recipe, step_text="Chop", step_title="RAGÚ", index_in_sequence=0
@@ -293,3 +308,29 @@ def test_step_title_max_length_matches_the_splitting_rule():
     # _meta is injected by Django's model metaclass; ty cannot see through it.
     field = Step._meta.get_field("step_title")  # ty: ignore[unresolved-attribute]
     assert field.max_length == MAX_TITLE_LENGTH == 128
+
+
+@pytest.mark.django_db
+def test_model_str_labels(user):
+    """Each model renders a readable label rather than Django's `Model object (1)`."""
+    recipe = Recipe.objects.create(recipe_name="Soup", owner=user)
+    ingredient = Ingredient.objects.create(ingredient_name="leek")
+    named_group = IngredientGroup.objects.create(
+        recipe=recipe, group_name="Base", index_in_sequence=0
+    )
+    unnamed_group = IngredientGroup.objects.create(
+        recipe=recipe, group_name="", index_in_sequence=1
+    )
+    iir = IngredientInRecipe.objects.create(
+        ingredient=ingredient, ingredient_group=named_group, index_in_sequence=0
+    )
+    step = Step.objects.create(recipe=recipe, step_text="Boil", index_in_sequence=2)
+
+    assert str(recipe) == "Soup"
+    assert str(ingredient) == "leek"
+    assert str(named_group) == "Base"
+    assert str(unnamed_group) == "Group 1"
+    assert str(iir) == "leek"
+    assert str(step) == "2. Boil"
+    assert str(Source.objects.create(short_name="Moro", source="book")) == "Moro"
+    assert str(Tag.objects.create(tag="quick")) == "quick"

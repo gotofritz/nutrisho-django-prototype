@@ -51,6 +51,21 @@ class Ingredient(models.Model):
     )
     objects = models.Manager()
 
+    class Meta:
+        constraints = [
+            # British spelling is canonical, so Onion and onion are the same
+            # ingredient. Clear existing clashes with the find_ingredient_duplicates
+            # command and the clean-up tool before applying this.
+            models.UniqueConstraint(
+                Lower("ingredient_name"),
+                name="ingredient_name_ci_unique",
+            )
+        ]
+
+    def __str__(self) -> str:
+        """Return a readable label."""
+        return str(self.ingredient_name)
+
     @property
     def plural(self) -> str:
         """Display form at a quantity other than 1: the override, else the rule.
@@ -63,15 +78,5 @@ class Ingredient(models.Model):
         return cast(str, self.plural_name) or pluralise(cast(str, self.ingredient_name))
 
     def natural_key(self):
+        """Return the natural key used by fixtures."""
         return self.ingredient_name
-
-    class Meta:
-        constraints = [
-            # British spelling is canonical, so Onion and onion are the same
-            # ingredient. Clear existing clashes with the find_ingredient_duplicates
-            # command and the clean-up tool before applying this.
-            models.UniqueConstraint(
-                Lower("ingredient_name"),
-                name="ingredient_name_ci_unique",
-            )
-        ]

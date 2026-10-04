@@ -12,22 +12,26 @@ from recipes.models import IngredientGroup, IngredientInRecipe, Recipe
 
 @pytest.fixture
 def recipe(user, db):
+    """Recipe."""
     return Recipe.objects.create(recipe_name="Dupe Recipe", owner=user)
 
 
 @pytest.fixture
 def group(recipe):
+    """Group."""
     return IngredientGroup.objects.create(recipe=recipe, group_name="G0", index_in_sequence=0)
 
 
 @pytest.mark.django_db
 def test_no_duplicates_reports_clean(recipe, group, capsys):
+    """No duplicates reports clean."""
     call_command("fix_duplicate_sequences")
     assert "No duplicates found" in capsys.readouterr().out
 
 
 @pytest.mark.django_db
 def test_no_duplicates_multiple_groups(recipe, capsys):
+    """No duplicates multiple groups."""
     IngredientGroup.objects.create(recipe=recipe, group_name="G0", index_in_sequence=0)
     IngredientGroup.objects.create(recipe=recipe, group_name="G1", index_in_sequence=1)
     call_command("fix_duplicate_sequences")
@@ -58,7 +62,6 @@ def _group_cmd():
 
 def _patched_groups(recipe_ids, groups_by_recipe):
     """Context manager mocking IngredientGroup.objects for _fix_ingredient_groups."""
-
     vl_mock = MagicMock()
     vl_mock.distinct.return_value = recipe_ids
 
@@ -91,6 +94,7 @@ def _patched_iirs(group_ids, iirs_by_group):
 
 
 def test_fix_groups_reassigns_duplicate_index():
+    """Fix groups reassigns duplicate index."""
     g1 = _mock_group(1, 10, 0)
     g2 = _mock_group(1, 11, 0)  # duplicate
     cmd = _group_cmd()
@@ -105,6 +109,7 @@ def test_fix_groups_reassigns_duplicate_index():
 
 
 def test_fix_groups_dry_run_does_not_save():
+    """Fix groups dry run does not save."""
     g1 = _mock_group(1, 10, 0)
     g2 = _mock_group(1, 11, 0)
     cmd = _group_cmd()
@@ -118,6 +123,7 @@ def test_fix_groups_dry_run_does_not_save():
 
 
 def test_fix_iir_reassigns_duplicate_index():
+    """Fix iir reassigns duplicate index."""
     i1 = _mock_iir(5, 20, 0)
     i2 = _mock_iir(5, 21, 0)  # duplicate
     cmd = _group_cmd()
@@ -132,6 +138,7 @@ def test_fix_iir_reassigns_duplicate_index():
 
 
 def test_fix_iir_dry_run_does_not_save():
+    """Fix iir dry run does not save."""
     i1 = _mock_iir(5, 20, 0)
     i2 = _mock_iir(5, 21, 0)
     cmd = _group_cmd()
@@ -145,6 +152,7 @@ def test_fix_iir_dry_run_does_not_save():
 
 
 def test_fix_three_dupes_reassigns_sequentially():
+    """Fix three dupes reassigns sequentially."""
     i1 = _mock_iir(5, 20, 0)
     i2 = _mock_iir(5, 21, 0)
     i3 = _mock_iir(5, 22, 0)

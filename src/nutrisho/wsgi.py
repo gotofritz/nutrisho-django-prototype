@@ -1,5 +1,4 @@
-"""
-WSGI config for nutrisho project.
+"""WSGI config for nutrisho project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

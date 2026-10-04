@@ -8,8 +8,10 @@ class Cuisine(models.Model):
     )
     objects = models.Manager()
 
-    def natural_key(self):
-        return self.cuisine
-
     def __str__(self) -> str:
+        """Return the cuisine name."""
         return str(self.cuisine)
+
+    def natural_key(self):
+        """Return the natural key used by fixtures."""
+        return self.cuisine

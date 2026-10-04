@@ -10,6 +10,7 @@ from recipes.models import Recipe
 
 @pytest.mark.django_db
 def test_recipe_field_form_recipe_name_max_length(user):
+    """Recipe field form recipe name max length."""
     recipe = Recipe.objects.create(recipe_name="Test", owner=user)
     form = RecipeFieldForm("recipe_name", data={"recipe_name": "x" * 201}, instance=recipe)
     assert not form.is_valid()
@@ -18,6 +19,7 @@ def test_recipe_field_form_recipe_name_max_length(user):
 
 @pytest.mark.django_db
 def test_recipe_field_form_only_contains_requested_field(user):
+    """Recipe field form only contains requested field."""
     recipe = Recipe.objects.create(recipe_name="Test", owner=user)
     form = RecipeFieldForm("recipe_name", data={"recipe_name": "Test"}, instance=recipe)
     assert list(form.fields.keys()) == ["recipe_name"]
@@ -25,6 +27,7 @@ def test_recipe_field_form_only_contains_requested_field(user):
 
 @pytest.mark.django_db
 def test_recipe_field_form_rejects_unknown_field(user):
+    """Recipe field form rejects unknown field."""
     recipe = Recipe.objects.create(recipe_name="Test", owner=user)
     with pytest.raises(ValueError):
         RecipeFieldForm("nonexistent_field", data={}, instance=recipe)
@@ -32,6 +35,7 @@ def test_recipe_field_form_rejects_unknown_field(user):
 
 @pytest.mark.django_db
 def test_recipe_field_form_valid_save(user):
+    """Recipe field form valid save."""
     recipe = Recipe.objects.create(recipe_name="Old Name", owner=user)
     form = RecipeFieldForm("recipe_name", data={"recipe_name": "New Name"}, instance=recipe)
     assert form.is_valid()
@@ -42,7 +46,7 @@ def test_recipe_field_form_valid_save(user):
 
 @pytest.mark.django_db
 def test_recipe_field_form_servings_required(user):
-    """servings is mandatory: the single-field edit form rejects a blank value."""
+    """Servings is mandatory: the single-field edit form rejects a blank value."""
     recipe = Recipe.objects.create(recipe_name="Test", owner=user, servings=4)
     form = RecipeFieldForm("servings", data={"servings": ""}, instance=recipe)
     assert not form.is_valid()
@@ -51,7 +55,7 @@ def test_recipe_field_form_servings_required(user):
 
 @pytest.mark.django_db
 def test_recipe_metadata_form_servings_required(user):
-    """servings is mandatory: the metadata form rejects a blank value."""
+    """Servings is mandatory: the metadata form rejects a blank value."""
     form = RecipeMetadataForm(
         data={
             "recipe_name": "No Serves",
@@ -74,6 +78,7 @@ def test_recipe_metadata_form_servings_initial_is_one(user):
 
 @pytest.mark.django_db
 def test_recipe_field_form_all_editable_fields_accepted(user):
+    """Recipe field form all editable fields accepted."""
     for field in EDITABLE_RECIPE_FIELDS:
         recipe = Recipe.objects.create(recipe_name=f"Recipe-{field}", owner=user)
         form = RecipeFieldForm(field, instance=recipe)
@@ -81,17 +86,20 @@ def test_recipe_field_form_all_editable_fields_accepted(user):
 
 
 def test_step_form_rejects_empty_step_text():
+    """Step form rejects empty step text."""
     form = StepForm(data={"step_text": ""})
     assert not form.is_valid()
     assert "step_text" in form.errors
 
 
 def test_step_form_accepts_valid_step():
+    """Step form accepts valid step."""
     form = StepForm(data={"step_text": "Boil water for 10 minutes"})
     assert form.is_valid()
 
 
 def test_ingredient_form_accepts_valid_decimal_quantity():
+    """Ingredient form accepts valid decimal quantity."""
     form = IngredientInRecipeForm(
         data={
             "ingredient_name": "salt",
@@ -105,6 +113,7 @@ def test_ingredient_form_accepts_valid_decimal_quantity():
 
 
 def test_ingredient_form_rejects_negative_quantity():
+    """Ingredient form rejects negative quantity."""
     form = IngredientInRecipeForm(
         data={"quantity": "-1", "unit": "cups", "preparation": "", "note": ""}
     )
@@ -113,11 +122,13 @@ def test_ingredient_form_rejects_negative_quantity():
 
 
 def test_ingredient_group_form_accepts_blank_group_name():
+    """Ingredient group form accepts blank group name."""
     form = IngredientGroupForm(data={"group_name": ""})
     assert form.is_valid()
 
 
 def test_ingredient_group_form_accepts_named_group():
+    """Ingredient group form accepts named group."""
     form = IngredientGroupForm(data={"group_name": "Sauce"})
     assert form.is_valid()
 

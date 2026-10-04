@@ -9,7 +9,7 @@ import environ
 environ.Env.read_env(Path(__file__).resolve().parent.parent.parent.parent / ".env")
 os.environ.setdefault("SECRET_KEY", "dev-insecure-key-not-for-production")
 
-from nutrisho.settings.base import *  # noqa: F401, F403
+from nutrisho.settings.base import *  # noqa: F403
 
 DEBUG = True
 

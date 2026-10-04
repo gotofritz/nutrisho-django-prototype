@@ -10,6 +10,7 @@ from recipes.models import Recipe
 
 @pytest.fixture
 def auth_client(user):
+    """Auth client."""
     c = Client()
     c.force_login(user)
     return c
@@ -17,6 +18,7 @@ def auth_client(user):
 
 @pytest.fixture
 def recipe(user, db):
+    """Recipe."""
     return Recipe.objects.create(recipe_name="HTMX Test Recipe", owner=user)
 
 

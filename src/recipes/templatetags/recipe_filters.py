@@ -16,7 +16,7 @@ class _StepHtmlSanitizer(HTMLParser):
         super().__init__()
         self._parts: list[str] = []
 
-    def handle_starttag(self, tag: str, attrs: list) -> None:
+    def handle_starttag(self, tag: str, attrs: list) -> None:  # noqa: ARG002 - HTMLParser API
         if tag in _ALLOWED_TAGS:
             self._parts.append(f"<{tag}>")
 

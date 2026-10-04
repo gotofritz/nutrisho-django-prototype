@@ -9,6 +9,7 @@ class Command(BaseCommand):
     help = "Delete one or more recipes by ID"
 
     def add_arguments(self, parser):
+        """Register command-line arguments."""
         parser.add_argument(
             "--id",
             nargs="+",
@@ -19,6 +20,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        """Delete the recipes with the given IDs."""
         ids = options["ids"]
         qs = Recipe.objects.filter(pk__in=ids)
         count = qs.count()

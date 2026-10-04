@@ -161,7 +161,7 @@ def test_failed_import_does_not_corrupt_existing_recipe(gotofritz, tmp_path):
     bad["ingredients"]["group"][0]["ingredient"][0]["quantity"] = "not-a-number"
     write_yaml(tmp_path, bad, "safe.yml")
 
-    with pytest.raises(Exception):
+    with pytest.raises(CommandError):
         call_command("batch_load_yaml_recipes", str(p), user="gotofritz")
 
     # Original must still exist with original pk
@@ -425,12 +425,15 @@ def test_write_phase_is_atomic_across_batch(gotofritz, tmp_path):
         nonlocal call_count
         call_count += 1
         if call_count == 2:
-            raise RuntimeError("Simulated DB error on second recipe")
+            msg = "Simulated DB error on second recipe"
+            raise RuntimeError(msg)
         return original_create(**kwargs)
 
-    with patch.object(Recipe.objects, "create", side_effect=fail_on_second):
-        with pytest.raises(RuntimeError, match="Simulated DB error"):
-            call_command("batch_load_yaml_recipes", str(tmp_path), user="gotofritz")
+    with (
+        patch.object(Recipe.objects, "create", side_effect=fail_on_second),
+        pytest.raises(RuntimeError, match="Simulated DB error"),
+    ):
+        call_command("batch_load_yaml_recipes", str(tmp_path), user="gotofritz")
 
     # Whole batch must be absent — first recipe must not have been committed
     assert Recipe.objects.filter(recipe_name="Batch Alpha").count() == 0
@@ -459,7 +462,7 @@ def test_import_raises_on_yaml_filename_collision_within_batch(gotofritz, tmp_pa
     write_yaml(dir_a, make_yaml(title="Recipe Alpha"), "soup.yml")
     write_yaml(dir_b, make_yaml(title="Recipe Beta"), "SOUP.yml")
 
-    with pytest.raises(CommandError, match="[Ff]ilename"):
+    with pytest.raises(CommandError, match=r"[Ff]ilename"):
         call_command(
             "batch_load_yaml_recipes",
             str(dir_a / "soup.yml"),
@@ -484,7 +487,7 @@ def test_import_raises_on_yaml_filename_collision_with_existing_recipe(gotofritz
 
     call_command("batch_load_yaml_recipes", str(dir_a / "soup.yml"), user="gotofritz")
 
-    with pytest.raises(CommandError, match="[Ff]ilename"):
+    with pytest.raises(CommandError, match=r"[Ff]ilename"):
         call_command("batch_load_yaml_recipes", str(dir_b / "SOUP.yml"), user="gotofritz")
 
 
@@ -500,7 +503,7 @@ def test_import_detects_collision_with_legacy_unsanitized_yaml_filename(gotofrit
     Recipe.objects.filter(pk=recipe.pk).update(yaml_filename="foo!bar.yml")
 
     p = write_yaml(tmp_path, make_yaml(title="New Recipe"), "foobar.yml")
-    with pytest.raises(CommandError, match="[Ff]ilename"):
+    with pytest.raises(CommandError, match=r"[Ff]ilename"):
         call_command("batch_load_yaml_recipes", str(p), user="gotofritz")
 
 
@@ -516,7 +519,7 @@ def test_import_detects_collision_with_blank_yaml_filename_recipe(gotofritz, tmp
 
     # Importing "Soup.yml" → sanitized name "Soup.yml" → collides with effective filename
     p = write_yaml(tmp_path, make_yaml(title="New Soup"), "Soup.yml")
-    with pytest.raises(CommandError, match="[Ff]ilename"):
+    with pytest.raises(CommandError, match=r"[Ff]ilename"):
         call_command("batch_load_yaml_recipes", str(p), user="gotofritz")
 
 
@@ -543,7 +546,7 @@ def test_blank_quantity_is_accepted(gotofritz, tmp_path):
 
 @pytest.mark.django_db
 def test_quantity_too_many_total_digits_rejected(user, tmp_path):
-    """quantity with more than 7 total digits must be rejected in preflight."""
+    """Quantity with more than 7 total digits must be rejected in preflight."""
     from django.core.management.base import CommandError
 
     groups = [
@@ -561,7 +564,7 @@ def test_quantity_too_many_total_digits_rejected(user, tmp_path):
 
 @pytest.mark.django_db
 def test_quantity_too_many_decimal_places_rejected(user, tmp_path):
-    """quantity with more than 2 decimal places must be rejected in preflight."""
+    """Quantity with more than 2 decimal places must be rejected in preflight."""
     from django.core.management.base import CommandError
 
     groups = [
@@ -702,7 +705,7 @@ def test_single_step_scalar_creates_one_step(gotofritz, tmp_path):
 
 @pytest.mark.django_db
 def test_single_tag_scalar_creates_one_tag(gotofritz, tmp_path):
-    """tags as a bare string must create exactly one Tag, not one per character."""
+    """Tags as a bare string must create exactly one Tag, not one per character."""
     data = make_yaml(title="Scalar Tag Recipe")
     data["tags"] = "vegetarian"  # scalar, not list
     p = write_yaml(tmp_path, data, "scalar_tag.yml")
@@ -729,6 +732,7 @@ def test_single_tag_scalar_creates_one_tag(gotofritz, tmp_path):
     ],
 )
 def test_normalize_quantity_unicode_fractions(raw, expected):
+    """Normalize quantity unicode fractions."""
     assert _normalize_quantity(raw) == expected
 
 
@@ -764,7 +768,9 @@ def test_import_unicode_fraction_quantity(gotofritz, tmp_path):
 @pytest.mark.django_db
 def test_import_filename_collision_check_is_owner_scoped(gotofritz, tmp_path):
     """yaml_filename collision check must be scoped to the importing owner.
-    Bob importing soup.yml must not be blocked by Alice's existing soup.yml."""
+
+    Bob importing soup.yml must not be blocked by Alice's existing soup.yml.
+    """
     alice = DjangoUser.objects.create_user(username="alice_fn", password="x")
     alice_recipe = Recipe.objects.create(recipe_name="Alice Soup", owner=alice, yaml_filename="")
     # Plant alice's effective filename so it matches "soup.yml"
@@ -781,6 +787,7 @@ def test_import_filename_collision_check_is_owner_scoped(gotofritz, tmp_path):
 
 @pytest.mark.django_db
 def test_step_mapping_sets_title_and_text(gotofritz, tmp_path):
+    """Step mapping sets title and text."""
     from recipes.models import Step
 
     data = make_yaml(
@@ -801,6 +808,7 @@ def test_step_mapping_sets_title_and_text(gotofritz, tmp_path):
 
 @pytest.mark.django_db
 def test_step_mapping_without_a_title_stores_empty_string(gotofritz, tmp_path):
+    """Step mapping without a title stores empty string."""
     from recipes.models import Step
 
     data = make_yaml(title="Null Title", directions=[{"title": None, "text": "Brown the beef"}])
@@ -814,6 +822,7 @@ def test_step_mapping_without_a_title_stores_empty_string(gotofritz, tmp_path):
 
 @pytest.mark.django_db
 def test_step_title_is_cleaned_like_every_other_text(gotofritz, tmp_path):
+    """Step title is cleaned like every other text."""
     from recipes.models import Step
 
     data = make_yaml(title="Messy Title", directions=[{"title": " RAGÚ\n ", "text": "Brown it"}])
@@ -825,6 +834,7 @@ def test_step_title_is_cleaned_like_every_other_text(gotofritz, tmp_path):
 
 @pytest.mark.django_db
 def test_step_mapping_missing_text_raises(gotofritz, tmp_path):
+    """Step mapping missing text raises."""
     data = make_yaml(title="No Text", directions=[{"title": "RAGÚ"}])
     p = write_yaml(tmp_path, data, "no_text.yml")
     with pytest.raises(CommandError, match="missing required 'text'"):
@@ -834,6 +844,7 @@ def test_step_mapping_missing_text_raises(gotofritz, tmp_path):
 
 @pytest.mark.django_db
 def test_step_title_over_the_field_limit_raises(gotofritz, tmp_path):
+    """Step title over the field limit raises."""
     data = make_yaml(title="Long Title", directions=[{"title": "A" * 129, "text": "Brown it"}])
     p = write_yaml(tmp_path, data, "long_title.yml")
     with pytest.raises(CommandError, match="exceeds"):

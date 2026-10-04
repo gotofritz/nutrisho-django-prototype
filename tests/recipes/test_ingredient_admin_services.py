@@ -21,6 +21,7 @@ from recipes.services.ingredient_admin import (
 
 @pytest.mark.django_db
 def test_search_ingredients_empty_query_returns_all_case_insensitively_sorted(make_ingredient):
+    """Search ingredients empty query returns all case insensitively sorted."""
     make_ingredient("onion")
     make_ingredient("Carrot")
     make_ingredient("aubergine")
@@ -30,6 +31,7 @@ def test_search_ingredients_empty_query_returns_all_case_insensitively_sorted(ma
 
 @pytest.mark.django_db
 def test_search_ingredients_matches_case_insensitive_substring(make_ingredient):
+    """Search ingredients matches case insensitive substring."""
     make_ingredient("onion")
     make_ingredient("spring onions")
     make_ingredient("aubergine")
@@ -55,6 +57,7 @@ def test_search_ingredients_orders_case_variants_adjacently_and_stably(
 
 @pytest.mark.django_db
 def test_search_ingredients_no_match_returns_empty(make_ingredient):
+    """Search ingredients no match returns empty."""
     make_ingredient("onion")
     assert list(search_ingredients("zzz")) == []
 
@@ -63,6 +66,7 @@ def test_search_ingredients_no_match_returns_empty(make_ingredient):
 def test_recipes_for_ingredients_returns_recipes_using_the_ingredient(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Recipes for ingredients returns recipes using the ingredient."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     make_recipe(owner=user, name="Pancakes")
@@ -75,6 +79,7 @@ def test_recipes_for_ingredients_returns_recipes_using_the_ingredient(
 def test_recipes_for_ingredients_unions_across_selected_ingredients(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Recipes for ingredients unions across selected ingredients."""
     onion = make_ingredient("onion")
     aubergine = make_ingredient("aubergine")
     moussaka = make_recipe(owner=user, name="Moussaka")
@@ -89,6 +94,7 @@ def test_recipes_for_ingredients_unions_across_selected_ingredients(
 def test_recipes_for_ingredients_empty_selection_returns_nothing(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Recipes for ingredients empty selection returns nothing."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -99,6 +105,7 @@ def test_recipes_for_ingredients_empty_selection_returns_nothing(
 def test_recipes_for_ingredients_lists_a_recipe_once_per_repeated_use(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Recipes for ingredients lists a recipe once per repeated use."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -111,6 +118,7 @@ def test_recipes_for_ingredients_lists_a_recipe_once_per_repeated_use(
 def test_recipes_for_ingredients_is_owner_scoped(
     user, other_user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Recipes for ingredients is owner scoped."""
     onion = make_ingredient("onion")
     theirs = make_recipe(owner=other_user, name="Their Soup")
     add_ingredient(recipe=theirs, ingredient=onion)
@@ -121,6 +129,7 @@ def test_recipes_for_ingredients_is_owner_scoped(
 def test_recipes_for_ingredients_includes_substitute_references(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Recipes for ingredients includes substitute references."""
     onion = make_ingredient("onion")
     shallot = make_ingredient("shallot")
     moussaka = make_recipe(owner=user, name="Moussaka")
@@ -131,6 +140,7 @@ def test_recipes_for_ingredients_includes_substitute_references(
 
 @pytest.mark.django_db
 def test_selected_ingredients_orders_like_the_ingredient_column(make_ingredient):
+    """Selected ingredients orders like the ingredient column."""
     onion = make_ingredient("onion")
     aubergine = make_ingredient("Aubergine")
     carrot = make_ingredient("carrot")
@@ -140,6 +150,7 @@ def test_selected_ingredients_orders_like_the_ingredient_column(make_ingredient)
 
 @pytest.mark.django_db
 def test_selected_ingredients_ignores_unknown_ids(make_ingredient):
+    """Selected ingredients ignores unknown ids."""
     onion = make_ingredient("onion")
     picked = selected_ingredients([onion.pk, 9999])
     assert [i.ingredient_name for i in picked] == ["onion"]
@@ -147,6 +158,7 @@ def test_selected_ingredients_ignores_unknown_ids(make_ingredient):
 
 @pytest.mark.django_db
 def test_selected_ingredients_with_no_ids_is_empty(make_ingredient):
+    """Selected ingredients with no ids is empty."""
     make_ingredient("onion")
     assert list(selected_ingredients([])) == []
 
@@ -155,6 +167,7 @@ def test_selected_ingredients_with_no_ids_is_empty(make_ingredient):
 def test_recipes_referencing_ingredients_is_not_owner_scoped(
     other_user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Recipes referencing ingredients is not owner scoped."""
     onion = make_ingredient("onion")
     theirs = make_recipe(owner=other_user, name="Their Soup")
     add_ingredient(recipe=theirs, ingredient=onion)
@@ -164,6 +177,7 @@ def test_recipes_referencing_ingredients_is_not_owner_scoped(
 
 @pytest.mark.django_db
 def test_delete_ingredients_removes_unused_rows(make_ingredient):
+    """Delete ingredients removes unused rows."""
     onion = make_ingredient("onion")
     keep = make_ingredient("carrot")
     assert delete_ingredients(ingredient_ids=[onion.pk]) == 1
@@ -174,6 +188,7 @@ def test_delete_ingredients_removes_unused_rows(make_ingredient):
 def test_delete_ingredients_repoints_the_ingredient_fk_to_the_replacement(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Delete ingredients repoints the ingredient fk to the replacement."""
     onion = make_ingredient("onion")
     shallot = make_ingredient("shallot")
     moussaka = make_recipe(owner=user, name="Moussaka")
@@ -188,6 +203,7 @@ def test_delete_ingredients_repoints_the_ingredient_fk_to_the_replacement(
 def test_delete_ingredients_repoints_the_substitute_fk_too(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Delete ingredients repoints the substitute fk too."""
     onion = make_ingredient("onion")
     shallot = make_ingredient("shallot")
     leek = make_ingredient("leek")
@@ -203,6 +219,7 @@ def test_delete_ingredients_repoints_the_substitute_fk_too(
 def test_delete_ingredients_leaves_index_in_sequence_untouched(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Delete ingredients leaves index in sequence untouched."""
     onion = make_ingredient("onion")
     shallot = make_ingredient("shallot")
     carrot = make_ingredient("carrot")
@@ -219,6 +236,7 @@ def test_delete_ingredients_leaves_index_in_sequence_untouched(
 def test_delete_ingredients_refuses_a_used_ingredient_without_a_replacement(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Delete ingredients refuses a used ingredient without a replacement."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -231,6 +249,7 @@ def test_delete_ingredients_refuses_a_used_ingredient_without_a_replacement(
 def test_delete_ingredients_refuses_an_unknown_replacement(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Delete ingredients refuses an unknown replacement."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -243,6 +262,7 @@ def test_delete_ingredients_refuses_an_unknown_replacement(
 def test_delete_ingredients_never_deletes_the_replacement(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Delete ingredients never deletes the replacement."""
     onion = make_ingredient("onion")
     shallot = make_ingredient("shallot")
     moussaka = make_recipe(owner=user, name="Moussaka")
@@ -254,6 +274,7 @@ def test_delete_ingredients_never_deletes_the_replacement(
 
 @pytest.mark.django_db
 def test_delete_ingredients_with_no_ids_is_a_no_op(make_ingredient):
+    """Delete ingredients with no ids is a no op."""
     make_ingredient("onion")
     assert delete_ingredients(ingredient_ids=[]) == 0
     assert Ingredient.objects.count() == 1
@@ -263,6 +284,7 @@ def test_delete_ingredients_with_no_ids_is_a_no_op(make_ingredient):
 def test_merge_ingredients_repoints_recipes_onto_the_survivor(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Merge ingredients repoints recipes onto the survivor."""
     aubergine = make_ingredient("aubergine")
     eggplant = make_ingredient("eggplant")
     iir = add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=eggplant)
@@ -276,6 +298,7 @@ def test_merge_ingredients_repoints_recipes_onto_the_survivor(
 def test_merge_ingredients_repoints_substitute_references_too(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Merge ingredients repoints substitute references too."""
     aubergine = make_ingredient("aubergine")
     eggplant = make_ingredient("eggplant")
     courgette = make_ingredient("courgette")
@@ -291,6 +314,7 @@ def test_merge_ingredients_repoints_substitute_references_too(
 
 @pytest.mark.django_db
 def test_merge_ingredients_leaves_the_survivor_row_untouched(make_ingredient):
+    """Merge ingredients leaves the survivor row untouched."""
     aubergine = Ingredient.objects.create(
         ingredient_name="aubergine", family="VEG", dietary_constraint="VGN"
     )
@@ -304,6 +328,7 @@ def test_merge_ingredients_leaves_the_survivor_row_untouched(make_ingredient):
 
 @pytest.mark.django_db
 def test_merge_ingredients_never_deletes_the_survivor(make_ingredient):
+    """Merge ingredients never deletes the survivor."""
     aubergine = make_ingredient("aubergine")
     eggplant = make_ingredient("eggplant")
     merge_ingredients(survivor_id=aubergine.pk, victim_ids=[aubergine.pk, eggplant.pk])
@@ -312,6 +337,7 @@ def test_merge_ingredients_never_deletes_the_survivor(make_ingredient):
 
 @pytest.mark.django_db
 def test_merge_ingredients_is_a_no_op_when_re_run(make_ingredient):
+    """Merge ingredients is a no op when re run."""
     aubergine = make_ingredient("aubergine")
     eggplant = make_ingredient("eggplant")
     merge_ingredients(survivor_id=aubergine.pk, victim_ids=[eggplant.pk])
@@ -320,6 +346,7 @@ def test_merge_ingredients_is_a_no_op_when_re_run(make_ingredient):
 
 @pytest.mark.django_db
 def test_merge_ingredients_rejects_an_unknown_survivor(make_ingredient):
+    """Merge ingredients rejects an unknown survivor."""
     eggplant = make_ingredient("eggplant")
     with pytest.raises(ObjectDoesNotExist):
         merge_ingredients(survivor_id=9999, victim_ids=[eggplant.pk])
@@ -330,6 +357,7 @@ def test_merge_ingredients_rejects_an_unknown_survivor(make_ingredient):
 def test_merge_ingredients_leaves_index_in_sequence_untouched(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Merge ingredients leaves index in sequence untouched."""
     aubergine = make_ingredient("aubergine")
     eggplant = make_ingredient("eggplant")
     moussaka = make_recipe(owner=user, name="Moussaka")
@@ -361,6 +389,7 @@ def test_merge_keeps_both_rows_when_a_recipe_used_survivor_and_victim(
 def test_find_ingredient_duplicates_groups_case_variants(
     without_ci_name_constraint, make_ingredient
 ):
+    """Find ingredient duplicates groups case variants."""
     onion = make_ingredient("onion")
     capital = make_ingredient("Onion")
     make_ingredient("carrot")
@@ -373,6 +402,7 @@ def test_find_ingredient_duplicates_groups_case_variants(
 def test_find_ingredient_duplicates_groups_three_variants(
     without_ci_name_constraint, make_ingredient
 ):
+    """Find ingredient duplicates groups three variants."""
     for name in ("onion", "Onion", "ONION"):
         make_ingredient(name)
     groups = find_ingredient_duplicates()
@@ -384,6 +414,7 @@ def test_find_ingredient_duplicates_groups_three_variants(
 def test_find_ingredient_duplicates_finds_every_clashing_group(
     without_ci_name_constraint, make_ingredient
 ):
+    """Find ingredient duplicates finds every clashing group."""
     for name in ("onion", "Onion", "carrot", "Carrot", "leek"):
         make_ingredient(name)
     groups = find_ingredient_duplicates()
@@ -395,6 +426,7 @@ def test_find_ingredient_duplicates_finds_every_clashing_group(
 
 @pytest.mark.django_db
 def test_find_ingredient_duplicates_on_a_clean_database_is_empty(make_ingredient):
+    """Find ingredient duplicates on a clean database is empty."""
     make_ingredient("onion")
     make_ingredient("carrot")
     assert find_ingredient_duplicates() == []
@@ -404,6 +436,7 @@ def test_find_ingredient_duplicates_on_a_clean_database_is_empty(make_ingredient
 def test_search_ingredients_unused_only_hides_ingredients_recipes_use(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Search ingredients unused only hides ingredients recipes use."""
     onion = make_ingredient("onion")
     make_ingredient("leftover")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
@@ -438,6 +471,7 @@ def test_search_ingredients_unused_only_ignores_who_owns_the_recipe(
 def test_search_ingredients_unused_only_combines_with_the_query(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Search ingredients unused only combines with the query."""
     make_ingredient("spring onion")
     used = make_ingredient("onion")
     make_ingredient("carrot")
@@ -450,6 +484,7 @@ def test_search_ingredients_unused_only_combines_with_the_query(
 def test_search_ingredients_without_the_flag_still_lists_used_ingredients(
     user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Search ingredients without the flag still lists used ingredients."""
     onion = make_ingredient("onion")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
     assert [i.ingredient_name for i in search_ingredients("")] == ["onion"]
@@ -466,6 +501,7 @@ def test_find_plural_duplicates_pairs_a_singular_with_its_plural_row(make_ingred
 
 @pytest.mark.django_db
 def test_find_plural_duplicates_uses_the_rule_not_a_bare_s(make_ingredient):
+    """Find plural duplicates uses the rule not a bare s."""
     tomato = make_ingredient("tomato")
     tomatoes = make_ingredient("tomatoes")
     make_ingredient("tomatos")
@@ -474,6 +510,7 @@ def test_find_plural_duplicates_uses_the_rule_not_a_bare_s(make_ingredient):
 
 @pytest.mark.django_db
 def test_find_plural_duplicates_honours_the_plural_name_override(make_ingredient):
+    """Find plural duplicates honours the plural name override."""
     avocado = make_ingredient("avocado", plural_name="avocados")
     avocados = make_ingredient("avocados")
     assert find_plural_duplicates() == [[avocado, avocados]]
@@ -481,6 +518,7 @@ def test_find_plural_duplicates_honours_the_plural_name_override(make_ingredient
 
 @pytest.mark.django_db
 def test_find_plural_duplicates_matches_case_insensitively(make_ingredient):
+    """Find plural duplicates matches case insensitively."""
     onion = make_ingredient("onion")
     onions = make_ingredient("Onions")
     assert find_plural_duplicates() == [[onion, onions]]
@@ -488,6 +526,7 @@ def test_find_plural_duplicates_matches_case_insensitively(make_ingredient):
 
 @pytest.mark.django_db
 def test_find_plural_duplicates_ignores_invariant_and_lone_rows(make_ingredient):
+    """Find plural duplicates ignores invariant and lone rows."""
     make_ingredient("onion")
     make_ingredient("oats")
     make_ingredient("broccoli", plural_name="broccoli")
@@ -496,6 +535,7 @@ def test_find_plural_duplicates_ignores_invariant_and_lone_rows(make_ingredient)
 
 @pytest.mark.django_db
 def test_find_plural_duplicates_orders_groups_case_insensitively(make_ingredient):
+    """Find plural duplicates orders groups case insensitively."""
     tomato = make_ingredient("tomato")
     tomatoes = make_ingredient("tomatoes")
     carrot = make_ingredient("carrot")
@@ -505,6 +545,7 @@ def test_find_plural_duplicates_orders_groups_case_insensitively(make_ingredient
 
 @pytest.mark.django_db
 def test_search_ingredients_plurals_only_lists_both_halves_of_each_pair(make_ingredient):
+    """Search ingredients plurals only lists both halves of each pair."""
     make_ingredient("onion")
     make_ingredient("onions")
     make_ingredient("carrot")
@@ -514,6 +555,7 @@ def test_search_ingredients_plurals_only_lists_both_halves_of_each_pair(make_ing
 
 @pytest.mark.django_db
 def test_search_ingredients_plurals_only_composes_with_the_query(make_ingredient):
+    """Search ingredients plurals only composes with the query."""
     make_ingredient("onion")
     make_ingredient("onions")
     make_ingredient("carrot")
@@ -526,6 +568,7 @@ def test_search_ingredients_plurals_only_composes_with_the_query(make_ingredient
 def test_search_ingredients_plurals_only_composes_with_unused_only(
     make_ingredient, make_recipe, add_ingredient, user
 ):
+    """Search ingredients plurals only composes with unused only."""
     onion = make_ingredient("onion")
     make_ingredient("onions")
     recipe = make_recipe(owner=user, name="Soup")
@@ -536,6 +579,7 @@ def test_search_ingredients_plurals_only_composes_with_unused_only(
 
 @pytest.mark.django_db
 def test_search_ingredients_plurals_only_defaults_off(make_ingredient):
+    """Search ingredients plurals only defaults off."""
     make_ingredient("carrot")
     assert [i.ingredient_name for i in search_ingredients("")] == ["carrot"]
 
@@ -563,6 +607,7 @@ def test_merge_plural_stores_a_spelling_the_rule_would_not_produce(make_ingredie
 
 @pytest.mark.django_db
 def test_merge_plural_carries_recipes_across(make_ingredient, make_recipe, add_ingredient, user):
+    """Merge plural carries recipes across."""
     apple = make_ingredient("apple")
     apples = make_ingredient("apples")
     recipe = make_recipe(owner=user, name="Crumble")
@@ -576,6 +621,7 @@ def test_merge_plural_carries_recipes_across(make_ingredient, make_recipe, add_i
 def test_merge_plural_carries_substitute_references_across(
     make_ingredient, make_recipe, add_ingredient, user
 ):
+    """Merge plural carries substitute references across."""
     apple = make_ingredient("apple")
     apples = make_ingredient("apples")
     pear = make_ingredient("pear")
@@ -598,6 +644,7 @@ def test_merge_plural_overwrites_an_existing_override(make_ingredient):
 
 @pytest.mark.django_db
 def test_merge_plural_rejects_an_unknown_singular(make_ingredient):
+    """Merge plural rejects an unknown singular."""
     apples = make_ingredient("apples")
     with pytest.raises(ObjectDoesNotExist):
         merge_plural_ingredients(singular_id=0, plural_id=apples.pk)
@@ -605,6 +652,7 @@ def test_merge_plural_rejects_an_unknown_singular(make_ingredient):
 
 @pytest.mark.django_db
 def test_merge_plural_rejects_an_unknown_plural(make_ingredient):
+    """Merge plural rejects an unknown plural."""
     apple = make_ingredient("apple")
     with pytest.raises(ObjectDoesNotExist):
         merge_plural_ingredients(singular_id=apple.pk, plural_id=0)
@@ -612,6 +660,7 @@ def test_merge_plural_rejects_an_unknown_plural(make_ingredient):
 
 @pytest.mark.django_db
 def test_merge_plural_rejects_merging_a_row_into_itself(make_ingredient):
+    """Merge plural rejects merging a row into itself."""
     apple = make_ingredient("apple")
     with pytest.raises(ValueError):
         merge_plural_ingredients(singular_id=apple.pk, plural_id=apple.pk)
@@ -621,6 +670,7 @@ def test_merge_plural_rejects_merging_a_row_into_itself(make_ingredient):
 
 @pytest.mark.django_db
 def test_suggest_singular_picks_the_half_that_pluralises_into_the_other(make_ingredient):
+    """Suggest singular picks the half that pluralises into the other."""
     apple = make_ingredient("apple")
     apples = make_ingredient("apples")
     assert suggest_singular([apples, apple]) == apple.pk
@@ -635,4 +685,5 @@ def test_suggest_singular_falls_back_to_the_first_when_the_rule_disagrees(make_i
 
 
 def test_suggest_singular_of_nothing_is_none():
+    """Suggest singular of nothing is none."""
     assert suggest_singular([]) is None

@@ -52,7 +52,7 @@ repos:
         stages: [commit-msg]
       - id: qa
         name: qa
-        entry: bash scripts/qa.sh
+        entry: uv run poe qa
         require_serial: true
         language: system
         pass_filenames: false

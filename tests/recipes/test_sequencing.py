@@ -8,11 +8,13 @@ from recipes.utils.sequencing import insert_at_index, move_in_sequence, remove_a
 
 @pytest.fixture
 def recipe(user, db):
+    """Recipe."""
     return Recipe.objects.create(recipe_name="Seq Recipe", owner=user)
 
 
 @pytest.fixture
 def group(recipe):
+    """Group."""
     return IngredientGroup.objects.create(recipe=recipe, group_name="G", index_in_sequence=0)
 
 
@@ -28,6 +30,7 @@ def _make_iir(group, index):
 
 @pytest.mark.django_db
 def test_remove_and_compact_closes_gap(group):
+    """Remove and compact closes gap."""
     iir0 = _make_iir(group, 0)
     iir1 = _make_iir(group, 1)
     iir2 = _make_iir(group, 2)
@@ -42,6 +45,7 @@ def test_remove_and_compact_closes_gap(group):
 
 @pytest.mark.django_db
 def test_remove_and_compact_last_item_no_gaps(group):
+    """Remove and compact last item no gaps."""
     iir0 = _make_iir(group, 0)
     iir1 = _make_iir(group, 1)
     siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
@@ -53,6 +57,7 @@ def test_remove_and_compact_last_item_no_gaps(group):
 
 @pytest.mark.django_db
 def test_remove_and_compact_only_item(group):
+    """Remove and compact only item."""
     iir0 = _make_iir(group, 0)
     siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
     remove_and_compact(siblings=siblings, instance=iir0)
@@ -64,6 +69,7 @@ def test_remove_and_compact_only_item(group):
 
 @pytest.mark.django_db
 def test_move_up_swaps_with_predecessor(group):
+    """Move up swaps with predecessor."""
     iir0 = _make_iir(group, 0)
     iir1 = _make_iir(group, 1)
     siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
@@ -76,6 +82,7 @@ def test_move_up_swaps_with_predecessor(group):
 
 @pytest.mark.django_db
 def test_move_down_swaps_with_successor(group):
+    """Move down swaps with successor."""
     iir0 = _make_iir(group, 0)
     iir1 = _make_iir(group, 1)
     siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
@@ -88,6 +95,7 @@ def test_move_down_swaps_with_successor(group):
 
 @pytest.mark.django_db
 def test_move_up_at_top_is_noop(group):
+    """Move up at top is noop."""
     iir0 = _make_iir(group, 0)
     iir1 = _make_iir(group, 1)
     siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
@@ -100,6 +108,7 @@ def test_move_up_at_top_is_noop(group):
 
 @pytest.mark.django_db
 def test_move_down_at_bottom_is_noop(group):
+    """Move down at bottom is noop."""
     iir0 = _make_iir(group, 0)
     iir1 = _make_iir(group, 1)
     siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
@@ -116,7 +125,6 @@ def test_move_down_at_bottom_is_noop(group):
 @pytest.mark.django_db
 def test_insert_at_index_empty_siblings_assigns_zero(recipe):
     """First item into empty parent gets index_in_sequence=0."""
-
     step = Step(recipe=recipe, step_text="First")
     insert_at_index(
         siblings=Step.objects.filter(recipe=recipe),

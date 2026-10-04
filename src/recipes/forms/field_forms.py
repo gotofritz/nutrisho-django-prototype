@@ -24,6 +24,7 @@ class RecipeMetadataForm(forms.ModelForm):
             self.fields["cuisine_name"].initial = self.instance.cuisine.cuisine
 
     def save(self, commit: bool = True) -> Recipe:
+        """Save the recipe, setting or clearing its cuisine from `cuisine_name`."""
         recipe = super().save(commit=False)
         name = self.cleaned_data.get("cuisine_name", "").strip()
         if commit:
@@ -64,7 +65,8 @@ class RecipeFieldForm(forms.ModelForm):
 
     def __init__(self, field_name: str, *args: object, **kwargs: object) -> None:
         if field_name not in EDITABLE_RECIPE_FIELDS:
-            raise ValueError(f"Field '{field_name}' is not editable")
+            msg = f"Field '{field_name}' is not editable"
+            raise ValueError(msg)
         super().__init__(*args, **kwargs)
         for name in list(self.fields):
             if name != field_name:

@@ -10,9 +10,6 @@ class IngredientGroup(models.Model):
     index_in_sequence = models.SmallIntegerField("Where to show this group, for a given recipe?")
     objects = models.Manager()
 
-    def natural_key(self):
-        return self.group_name
-
     class Meta:
         ordering = ["index_in_sequence"]
         constraints = [
@@ -21,3 +18,11 @@ class IngredientGroup(models.Model):
                 name="unique_ingredient_group_in_recipe",
             )
         ]
+
+    def __str__(self) -> str:
+        """Return a readable label."""
+        return str(self.group_name or f"Group {self.index_in_sequence}")
+
+    def natural_key(self):
+        """Return the natural key used by fixtures."""
+        return self.group_name

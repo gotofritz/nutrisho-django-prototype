@@ -1,0 +1,85 @@
+[env]
+DJANGO_SETTINGS_MODULE = "nutrisho.settings.dev"
+
+[tasks.clean]
+help = "Clean up database and migration files"
+shell = "rm -f ./db.sqlite3 src/recipes/migrations/0*"
+
+[tasks.coverage]
+help = "Open the latest coverage report in a web browser"
+cmd = "open htmlcov/index.html"
+
+[tasks.createsuperuser]
+help = "Create a superuser"
+cmd = "python manage.py createsuperuser --noinput --username fritz --email fritzthecat@gmail.com"
+env = {DJANGO_SUPERUSER_PASSWORD = "fritz"}
+
+[tasks.css]
+help = "Build Tailwind CSS (minified)"
+sequence = ["node-install", {cmd = "pnpm run css"}]
+
+[tasks.css-watch]
+help = "Watch and rebuild Tailwind CSS on changes"
+sequence = ["node-install", {cmd = "pnpm run css:watch"}]
+
+[tasks.export]
+help = "Export recipes to YAML (extra args are passed through)"
+cmd = "python manage.py export_recipes_to_yaml recipes_yaml/ --user gotofritz"
+
+[tasks.filldb]
+help = "Fill database with initial data"
+sequence = [
+  "clean",
+  {cmd = "python manage.py makemigrations"},
+  {cmd = "python manage.py migrate"},
+  {cmd = "python manage.py addinitialuser"},
+  {cmd = "python manage.py batch_load_yaml_recipes recipes_yaml/ --user gotofritz"}
+]
+
+[tasks.lint]
+help = "Run ruff (non-mutating)"
+sequence = [
+  {cmd = "ruff check src/ tests/"},
+  {cmd = "ruff format --check src/ tests/"}
+]
+
+[tasks.lint-fix]
+help = "Fix linting issues"
+sequence = [
+  {cmd = "ruff check --fix src/ tests/"},
+  {cmd = "ruff format src/ tests/"}
+]
+
+[tasks.migrate]
+help = "Apply database migrations"
+cmd = "python manage.py migrate"
+
+[tasks.node-install]
+help = "Install Node dependencies via pnpm"
+cmd = "pnpm install"
+
+[tasks.qa]
+help = "Run CSS build, linting, type checking, tests, and hook regressions"
+sequence = ["css", "lint", "typecheck", "test", "test-hooks"]
+
+[tasks.dev]
+help = "Run the dev server on PORT (default 8987); builds CSS first"
+sequence = ["css", {cmd = "python manage.py runserver ${port}"}]
+
+[tasks.dev.args.port]
+help = "Port to listen on"
+positional = true
+default = "8987"
+
+[tasks.test]
+help = "Run tests with coverage (extra args are passed through)"
+cmd = "pytest -vv -s --cov=src --cov-report=html:htmlcov --cov-fail-under=95"
+env = {DJANGO_SETTINGS_MODULE = "nutrisho.settings.test"}
+
+[tasks.test-hooks]
+help = "Run shell regression tests for .claude/hooks"
+cmd = "bash .claude/hooks/test-caveman-patterns.sh"
+
+[tasks.typecheck]
+help = "Run ty for static type checking"
+cmd = "ty check src tests"

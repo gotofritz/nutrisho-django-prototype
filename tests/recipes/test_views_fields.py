@@ -8,6 +8,7 @@ from recipes.models import Recipe
 
 @pytest.fixture
 def auth_client(user):
+    """Auth client."""
     c = Client()
     c.force_login(user)
     return c
@@ -15,17 +16,20 @@ def auth_client(user):
 
 @pytest.fixture
 def recipe(user, db):
+    """Recipe."""
     return Recipe.objects.create(recipe_name="Editable Recipe", owner=user, servings=2)
 
 
 @pytest.mark.django_db
 def test_field_display_get_returns_200(auth_client, recipe):
+    """Field display get returns 200."""
     response = auth_client.get(f"/recipes/{recipe.pk}/field/recipe_name/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_field_display_no_form_elements(auth_client, recipe):
+    """Field display no form elements."""
     response = auth_client.get(f"/recipes/{recipe.pk}/field/recipe_name/")
     content = response.content.decode()
     assert "<form" not in content
@@ -34,30 +38,35 @@ def test_field_display_no_form_elements(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_field_display_shows_current_value(auth_client, recipe):
+    """Field display shows current value."""
     response = auth_client.get(f"/recipes/{recipe.pk}/field/recipe_name/")
     assert recipe.recipe_name.encode() in response.content
 
 
 @pytest.mark.django_db
 def test_field_display_unknown_field_returns_404(auth_client, recipe):
+    """Field display unknown field returns 404."""
     response = auth_client.get(f"/recipes/{recipe.pk}/field/unknown_field/")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_field_display_nonexistent_recipe_returns_404(auth_client, db):
+    """Field display nonexistent recipe returns 404."""
     response = auth_client.get("/recipes/99999/field/recipe_name/")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_field_edit_get_returns_200(auth_client, recipe):
+    """Field edit get returns 200."""
     response = auth_client.get(f"/recipes/{recipe.pk}/field/recipe_name/edit/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_field_edit_returns_form_with_current_value(auth_client, recipe):
+    """Field edit returns form with current value."""
     response = auth_client.get(f"/recipes/{recipe.pk}/field/recipe_name/edit/")
     content = response.content.decode()
     assert "<form" in content
@@ -66,6 +75,7 @@ def test_field_edit_returns_form_with_current_value(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_field_edit_cancel_button_points_to_display(auth_client, recipe):
+    """Field edit cancel button points to display."""
     response = auth_client.get(f"/recipes/{recipe.pk}/field/recipe_name/edit/")
     content = response.content.decode()
     display_url = f"/recipes/{recipe.pk}/field/recipe_name/"
@@ -74,12 +84,14 @@ def test_field_edit_cancel_button_points_to_display(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_field_edit_unknown_field_returns_404(auth_client, recipe):
+    """Field edit unknown field returns 404."""
     response = auth_client.get(f"/recipes/{recipe.pk}/field/unknown_field/edit/")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_field_save_post_valid_saves_and_returns_display(auth_client, recipe):
+    """Field save post valid saves and returns display."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/field/recipe_name/save/",
         {"recipe_name": "Updated Name"},
@@ -93,6 +105,7 @@ def test_field_save_post_valid_saves_and_returns_display(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_field_save_post_invalid_returns_form_with_errors(auth_client, recipe):
+    """Field save post invalid returns form with errors."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/field/recipe_name/save/",
         {"recipe_name": ""},  # required field
@@ -104,7 +117,7 @@ def test_field_save_post_invalid_returns_form_with_errors(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_field_save_blank_servings_returns_form_with_errors(auth_client, recipe):
-    """servings is mandatory: clearing it inline re-renders the edit form, value unchanged."""
+    """Servings is mandatory: clearing it inline re-renders the edit form, value unchanged."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/field/servings/save/",
         {"servings": ""},
@@ -118,12 +131,14 @@ def test_field_save_blank_servings_returns_form_with_errors(auth_client, recipe)
 
 @pytest.mark.django_db
 def test_field_save_nonexistent_recipe_returns_404(auth_client, db):
+    """Field save nonexistent recipe returns 404."""
     response = auth_client.post("/recipes/99999/field/recipe_name/save/", {"recipe_name": "x"})
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_field_save_get_not_allowed(auth_client, recipe):
+    """Field save get not allowed."""
     response = auth_client.get(f"/recipes/{recipe.pk}/field/recipe_name/save/")
     assert response.status_code == 405
 

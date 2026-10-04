@@ -31,9 +31,11 @@ def lossy_fields(recipe: Recipe) -> list[str]:
         if step.extra_info:
             reasons.append(f"step #{step.index_in_sequence}.extra_info")
     for group in recipe.ingredients_group.all():  # ty: ignore[unresolved-attribute]
-        for iir in group.ingredient.all():
-            if iir.substitute_id is not None:
-                reasons.append(f"ingredient {iir.ingredient.ingredient_name!r}.substitute")
+        reasons.extend(
+            f"ingredient {iir.ingredient.ingredient_name!r}.substitute"
+            for iir in group.ingredient.all()
+            if iir.substitute_id is not None
+        )
     return reasons
 
 
@@ -48,17 +50,16 @@ def recipe_to_dict(recipe: Recipe) -> dict:
 
     groups = []
     for group in recipe.ingredients_group.all():  # ty: ignore[unresolved-attribute]
-        ingredients = []
-        for iir in group.ingredient.all():
-            ingredients.append(
-                {
-                    "name": iir.ingredient.ingredient_name,
-                    "measurement": iir.unit or None,
-                    "note": iir.note or None,
-                    "preparation": iir.preparation or None,
-                    "quantity": str(iir.quantity) if iir.quantity is not None else None,
-                }
-            )
+        ingredients = [
+            {
+                "name": iir.ingredient.ingredient_name,
+                "measurement": iir.unit or None,
+                "note": iir.note or None,
+                "preparation": iir.preparation or None,
+                "quantity": str(iir.quantity) if iir.quantity is not None else None,
+            }
+            for iir in group.ingredient.all()
+        ]
         groups.append(
             {
                 "name": group.group_name or None,
@@ -131,7 +132,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         output_dir = Path(options["output_dir"])
         if output_dir.exists() and not output_dir.is_dir():
-            raise CommandError(f"'{output_dir}' exists and is not a directory")
+            msg = f"'{output_dir}' exists and is not a directory"
+            raise CommandError(msg)
         output_dir.mkdir(parents=True, exist_ok=True)
 
         from django.contrib.auth.models import User
@@ -141,7 +143,8 @@ class Command(BaseCommand):
         try:
             owner = User.objects.get(username=username)
         except ObjectDoesNotExist:
-            raise CommandError(f"User '{username}' not found in the database.")
+            msg = f"User '{username}' not found in the database."
+            raise CommandError(msg) from None
 
         recipe_ids = options["ids"]
         qs = Recipe.objects.filter(owner=owner)
@@ -150,7 +153,8 @@ class Command(BaseCommand):
             found = set(qs.values_list("pk", flat=True))
             missing = set(recipe_ids) - found
             if missing:
-                raise CommandError(f"No recipe found with id={sorted(missing)}")
+                msg = f"No recipe found with id={sorted(missing)}"
+                raise CommandError(msg)
 
         # Pre-scan existing files case-insensitively; used only for --missing-only skip logic.
         # Abort early if two existing files differ only in case — the casefold dict would silently
@@ -161,10 +165,11 @@ class Command(BaseCommand):
                 continue
             _key = _f.name.casefold()
             if _key in existing_on_disk:
-                raise CommandError(
+                msg = (
                     f"Ambiguous files in '{output_dir}': '{existing_on_disk[_key]}' and "
                     f"'{_f.name}' collide case-insensitively. Resolve before exporting."
                 )
+                raise CommandError(msg)
             existing_on_disk[_key] = _f.name
 
         # Separate recipes to write from those skipped by --missing-only
@@ -195,19 +200,19 @@ class Command(BaseCommand):
             filename = out_path.name
             key = filename.casefold()
             if key in seen:
-                raise CommandError(
+                msg = (
                     f"Filename collision: '{recipe.recipe_name}' and '{seen[key]}' "
                     f"both map to '{filename}' (case-insensitive). "
                     f"Rename one recipe before exporting."
                 )
+                raise CommandError(msg)
             seen[key] = str(recipe.recipe_name)
 
         # Preflight: ensure no target path is a non-file (e.g. a directory)
         for _recipe, out_path in to_write:
             if out_path.exists() and not out_path.is_file():
-                raise CommandError(
-                    f"Cannot write '{out_path}': path exists and is not a regular file"
-                )
+                msg = f"Cannot write '{out_path}': path exists and is not a regular file"
+                raise CommandError(msg)
 
         # Preflight: refuse recipes carrying data the YAML schema cannot represent.
         # --force converts the refusal into a stderr warning per recipe.

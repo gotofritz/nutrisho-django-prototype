@@ -15,6 +15,8 @@ def other_user(db):
 
 @pytest.fixture
 def make_ingredient(db):
+    """Make ingredient."""
+
     def _make(name: str, *, plural_name: str = "") -> Ingredient:
         return Ingredient.objects.create(ingredient_name=name, plural_name=plural_name)
 
@@ -23,6 +25,8 @@ def make_ingredient(db):
 
 @pytest.fixture
 def make_recipe(db):
+    """Make recipe."""
+
     def _make(*, owner, name: str) -> Recipe:
         return Recipe.objects.create(recipe_name=name, owner=owner, servings=4)
 
@@ -51,6 +55,8 @@ def add_ingredient(db):
 
 @pytest.fixture
 def add_step(db):
+    """Add step."""
+
     def _add(*, recipe, text: str, title: str = "") -> Step:
         return Step.objects.create(
             recipe=recipe,

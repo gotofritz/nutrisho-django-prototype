@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) — Python dependency manager
-- [task](https://taskfile.dev/) — task runner (`brew install go-task`)
+- [poethepoet](https://poethepoet.natn.io/) — task runner (installed by `uv sync`; run as `uv run poe <task>`)
 - [pnpm](https://pnpm.io/) — Node dependency manager (for Tailwind CSS)
 - [jq](https://jqlang.org/) — JSON CLI tool (`brew install jq`)
 
@@ -21,15 +21,16 @@ pnpm css          # compile Tailwind CSS
 ## Running the app
 
 ```bash
-task run
+uv run poe dev          # port 8987
+uv run poe dev 9000     # custom port
 ```
 
-Opens at <http://127.0.0.1:8000/recipes/>.
+Opens at <http://127.0.0.1:8987/recipes/>.
 
 ## Populating the database
 
 ```bash
-task filldb
+uv run poe filldb
 ```
 
 Wipes the DB, runs migrations, creates the initial user, and imports all YAML recipes from `recipes_yaml/`.
@@ -53,9 +54,9 @@ python manage.py delete_recipe --id 42 43 44
 ## Exporting recipes
 
 ```bash
-task export                        # export all to recipes_yaml/
-task export -- --missing-only      # skip existing files
-task export -- --id 42             # single recipe
+uv run poe export                     # export all to recipes_yaml/
+uv run poe export --missing-only   # skip existing files
+uv run poe export --id 42          # single recipe
 ```
 
 Or directly:
@@ -69,10 +70,10 @@ Typical workflow for fixing a recipe: export → edit YAML → delete old record
 ## Quality checks
 
 ```bash
-task qa        # lint + typecheck + tests + hook regression tests
-task lint      # ruff only
-task typecheck # ty only
-task test      # pytest with coverage (≥95% required)
+uv run poe qa        # lint + typecheck + tests + hook regression tests
+uv run poe lint      # ruff only
+uv run poe typecheck # ty only
+uv run poe test      # pytest with coverage (≥95% required)
 ```
 
 ## CSS
@@ -84,11 +85,11 @@ pnpm css         # build once (minified)
 pnpm css:watch   # rebuild on change
 ```
 
-Or via Taskfile:
+Or via poe:
 
 ```bash
-task css
-task css-watch
+uv run poe css
+uv run poe css-watch
 ```
 
 ## Tech stack
@@ -102,7 +103,7 @@ task css-watch
 | Lint | ruff |
 | Types | ty |
 | Tests | pytest + pytest-django |
-| Tasks | Taskfile |
+| Tasks | poethepoet |
 | CSS | Tailwind CSS v4 (pnpm) |
 | HTMX | django-htmx |
 
@@ -135,4 +136,4 @@ TDD: red → green → refactor. See [AGENTS.md](../AGENTS.md) for the full requ
 - `feature/<name>` / `fix/<name>`
 - Imperative present tense, subject ≤ 72 chars
 - Small atomic commits
-- Run `task qa` before opening a PR
+- Run `uv run poe qa` before opening a PR

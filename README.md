@@ -26,7 +26,7 @@ If you have direct access to the server:
 python manage.py batch_load_yaml_recipes my_recipes/ --user <username>
 ```
 
-Then open <http://127.0.0.1:8000/recipes/> in your browser.
+Then open <http://127.0.0.1:8987/recipes/> in your browser.
 
 ---
 

@@ -30,14 +30,6 @@ class IngredientInRecipe(models.Model):
     )
     objects = models.Manager()
 
-    def natural_key(self):
-        return (
-            cast(IngredientGroup, self.ingredient_group).natural_key(),
-            str(self.quantity) if self.quantity is not None else None,
-            self.unit,
-            cast(Ingredient, self.ingredient).ingredient_name,
-        )
-
     class Meta:
         ordering = ["index_in_sequence"]
         constraints = [
@@ -46,3 +38,16 @@ class IngredientInRecipe(models.Model):
                 name="unique_ingredient_in_group",
             )
         ]
+
+    def __str__(self) -> str:
+        """Return a readable label."""
+        return str(self.ingredient)
+
+    def natural_key(self):
+        """Return the natural key used by fixtures."""
+        return (
+            cast(IngredientGroup, self.ingredient_group).natural_key(),
+            str(self.quantity) if self.quantity is not None else None,
+            self.unit,
+            cast(Ingredient, self.ingredient).ingredient_name,
+        )

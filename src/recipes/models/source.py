@@ -17,5 +17,10 @@ class Source(models.Model):
     )
     objects = models.Manager()
 
+    def __str__(self) -> str:
+        """Return a readable label."""
+        return str(self.short_name)
+
     def natural_key(self):
+        """Return the natural key used by fixtures."""
         return self.short_name

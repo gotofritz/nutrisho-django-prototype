@@ -8,6 +8,7 @@ from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Reci
 
 @pytest.fixture
 def auth_client(user):
+    """Auth client."""
     c = Client()
     c.force_login(user)
     return c
@@ -15,16 +16,19 @@ def auth_client(user):
 
 @pytest.fixture
 def recipe(user, db):
+    """Recipe."""
     return Recipe.objects.create(recipe_name="Ingredient Recipe", owner=user)
 
 
 @pytest.fixture
 def group(recipe):
+    """Group."""
     return IngredientGroup.objects.create(recipe=recipe, group_name="Main", index_in_sequence=0)
 
 
 @pytest.fixture
 def iir(group):
+    """Iir."""
     ing = Ingredient.objects.create(ingredient_name="onion")
     return IngredientInRecipe.objects.create(
         ingredient=ing,
@@ -39,18 +43,21 @@ def iir(group):
 
 @pytest.mark.django_db
 def test_ingredient_display_returns_200(auth_client, recipe, iir):
+    """Ingredient display returns 200."""
     response = auth_client.get(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_ingredient_display_no_form_elements(auth_client, recipe, iir):
+    """Ingredient display no form elements."""
     response = auth_client.get(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/")
     assert "<form" not in response.content.decode()
 
 
 @pytest.mark.django_db
 def test_ingredient_display_404_wrong_recipe(auth_client, user, iir, db):
+    """Ingredient display 404 wrong recipe."""
     other = Recipe.objects.create(recipe_name="Other", owner=user)
     response = auth_client.get(f"/recipes/{other.pk}/ingredients/{iir.pk}/")
     assert response.status_code == 404
@@ -58,18 +65,21 @@ def test_ingredient_display_404_wrong_recipe(auth_client, user, iir, db):
 
 @pytest.mark.django_db
 def test_ingredient_edit_returns_200(auth_client, recipe, iir):
+    """Ingredient edit returns 200."""
     response = auth_client.get(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/edit/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_ingredient_edit_has_form(auth_client, recipe, iir):
+    """Ingredient edit has form."""
     response = auth_client.get(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/edit/")
     assert "<form" in response.content.decode()
 
 
 @pytest.mark.django_db
 def test_ingredient_edit_cancel_button_points_to_display(auth_client, recipe, iir):
+    """Ingredient edit cancel button points to display."""
     response = auth_client.get(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/edit/")
     display_url = f"/recipes/{recipe.pk}/ingredients/{iir.pk}/"
     assert display_url in response.content.decode()
@@ -77,6 +87,7 @@ def test_ingredient_edit_cancel_button_points_to_display(auth_client, recipe, ii
 
 @pytest.mark.django_db
 def test_ingredient_save_post_valid_saves_and_returns_display(auth_client, recipe, iir):
+    """Ingredient save post valid saves and returns display."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/ingredients/{iir.pk}/save/",
         {
@@ -95,6 +106,7 @@ def test_ingredient_save_post_valid_saves_and_returns_display(auth_client, recip
 
 @pytest.mark.django_db
 def test_ingredient_save_post_invalid_returns_form(auth_client, recipe, iir):
+    """Ingredient save post invalid returns form."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/ingredients/{iir.pk}/save/",
         {"ingredient_name": "onion", "quantity": "-5", "unit": "kg", "preparation": "", "note": ""},
@@ -105,6 +117,7 @@ def test_ingredient_save_post_invalid_returns_form(auth_client, recipe, iir):
 
 @pytest.mark.django_db
 def test_ingredient_delete_removes_iir(auth_client, recipe, iir):
+    """Ingredient delete removes iir."""
     iir_id = iir.pk
     response = auth_client.post(f"/recipes/{recipe.pk}/ingredients/{iir_id}/delete/")
     assert response.status_code == 200
@@ -113,6 +126,7 @@ def test_ingredient_delete_removes_iir(auth_client, recipe, iir):
 
 @pytest.mark.django_db
 def test_ingredient_delete_reorders_remaining(auth_client, recipe, group):
+    """Ingredient delete reorders remaining."""
     ing = Ingredient.objects.create(ingredient_name="garlic")
     ing2 = Ingredient.objects.create(ingredient_name="salt")
     i1 = IngredientInRecipe.objects.create(
@@ -128,30 +142,35 @@ def test_ingredient_delete_reorders_remaining(auth_client, recipe, group):
 
 @pytest.mark.django_db
 def test_group_display_returns_200(auth_client, recipe, group):
+    """Group display returns 200."""
     response = auth_client.get(f"/recipes/{recipe.pk}/groups/{group.pk}/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_group_display_no_form_elements(auth_client, recipe, group):
+    """Group display no form elements."""
     response = auth_client.get(f"/recipes/{recipe.pk}/groups/{group.pk}/")
     assert "<form" not in response.content.decode()
 
 
 @pytest.mark.django_db
 def test_group_edit_returns_200(auth_client, recipe, group):
+    """Group edit returns 200."""
     response = auth_client.get(f"/recipes/{recipe.pk}/groups/{group.pk}/edit/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_group_edit_has_form(auth_client, recipe, group):
+    """Group edit has form."""
     response = auth_client.get(f"/recipes/{recipe.pk}/groups/{group.pk}/edit/")
     assert "<form" in response.content.decode()
 
 
 @pytest.mark.django_db
 def test_group_save_post_valid_saves_and_returns_display(auth_client, recipe, group):
+    """Group save post valid saves and returns display."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/groups/{group.pk}/save/",
         {"group_name": "Sauce"},
@@ -164,6 +183,7 @@ def test_group_save_post_valid_saves_and_returns_display(auth_client, recipe, gr
 
 @pytest.mark.django_db
 def test_group_save_blank_name_ok_when_only_group(auth_client, recipe, group):
+    """Group save blank name ok when only group."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/groups/{group.pk}/save/",
         {"group_name": ""},
@@ -176,6 +196,7 @@ def test_group_save_blank_name_ok_when_only_group(auth_client, recipe, group):
 
 @pytest.mark.django_db
 def test_group_save_blank_name_rejected_when_multiple_groups(auth_client, recipe, group):
+    """Group save blank name rejected when multiple groups."""
     IngredientGroup.objects.create(recipe=recipe, group_name="Second", index_in_sequence=1)
     response = auth_client.post(
         f"/recipes/{recipe.pk}/groups/{group.pk}/save/",
@@ -189,6 +210,7 @@ def test_group_save_blank_name_rejected_when_multiple_groups(auth_client, recipe
 
 @pytest.mark.django_db
 def test_group_display_shows_placeholder_when_no_name(auth_client, recipe):
+    """Group display shows placeholder when no name."""
     unnamed = IngredientGroup.objects.create(recipe=recipe, group_name="", index_in_sequence=0)
     response = auth_client.get(f"/recipes/{recipe.pk}/groups/{unnamed.pk}/")
     content = response.content.decode()
@@ -197,6 +219,7 @@ def test_group_display_shows_placeholder_when_no_name(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_group_delete_removes_group(auth_client, recipe, group):
+    """Group delete removes group."""
     group_id = group.pk
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/{group_id}/delete/")
     assert response.status_code == 200
@@ -213,6 +236,7 @@ def test_group_add_does_not_create_group(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_group_add_returns_edit_partial(auth_client, recipe):
+    """Group add returns edit partial."""
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/add/")
     content = response.content.decode()
     assert "<form" in content
@@ -221,6 +245,7 @@ def test_group_add_returns_edit_partial(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_group_create_valid_creates_group(auth_client, recipe):
+    """Group create valid creates group."""
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/create/", {"group_name": "Sauce"})
     assert response.status_code == 200
     group = IngredientGroup.objects.get(recipe=recipe)
@@ -230,6 +255,7 @@ def test_group_create_valid_creates_group(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_group_create_response_includes_ingredients_list_and_add_button(auth_client, recipe):
+    """Group create response includes ingredients list and add button."""
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/create/", {"group_name": "Sauce"})
     group = IngredientGroup.objects.get(recipe=recipe)
     content = response.content.decode()
@@ -276,6 +302,7 @@ def test_group_create_reverse_order_drafts_keep_dom_order(auth_client, recipe, g
 
 @pytest.mark.django_db
 def test_group_create_first_group_may_be_nameless(auth_client, recipe):
+    """Group create first group may be nameless."""
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/create/", {"group_name": ""})
     assert response.status_code == 200
     assert IngredientGroup.objects.filter(recipe=recipe).count() == 1
@@ -283,6 +310,7 @@ def test_group_create_first_group_may_be_nameless(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_group_create_second_group_requires_name(auth_client, recipe, group):
+    """Group create second group requires name."""
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/create/", {"group_name": ""})
     assert response.status_code == 200
     assert IngredientGroup.objects.filter(recipe=recipe).count() == 1  # only the fixture group
@@ -291,17 +319,20 @@ def test_group_create_second_group_requires_name(auth_client, recipe, group):
 
 @pytest.fixture
 def second_group(recipe):
+    """Second group."""
     return IngredientGroup.objects.create(recipe=recipe, group_name="Second", index_in_sequence=1)
 
 
 @pytest.mark.django_db
 def test_ingredient_edit_shows_ingredient_name(auth_client, recipe, iir):
+    """Ingredient edit shows ingredient name."""
     response = auth_client.get(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/edit/")
     assert "onion" in response.content.decode()
 
 
 @pytest.mark.django_db
 def test_ingredient_edit_shows_datalist_with_suggestions(auth_client, recipe, iir):
+    """Ingredient edit shows datalist with suggestions."""
     Ingredient.objects.create(ingredient_name="garlic")
     response = auth_client.get(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/edit/")
     content = response.content.decode()
@@ -312,6 +343,7 @@ def test_ingredient_edit_shows_datalist_with_suggestions(auth_client, recipe, ii
 
 @pytest.mark.django_db
 def test_ingredient_edit_field_order_quantity_unit_name(auth_client, recipe, iir):
+    """Ingredient edit field order quantity unit name."""
     response = auth_client.get(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/edit/")
     content = response.content.decode()
     qty_pos = content.index('name="quantity"')
@@ -322,6 +354,7 @@ def test_ingredient_edit_field_order_quantity_unit_name(auth_client, recipe, iir
 
 @pytest.mark.django_db
 def test_ingredient_save_changes_ingredient_name(auth_client, recipe, iir):
+    """Ingredient save changes ingredient name."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/ingredients/{iir.pk}/save/",
         {
@@ -339,6 +372,7 @@ def test_ingredient_save_changes_ingredient_name(auth_client, recipe, iir):
 
 @pytest.mark.django_db
 def test_ingredient_save_reuses_existing_ingredient(auth_client, recipe, iir):
+    """Ingredient save reuses existing ingredient."""
     existing = Ingredient.objects.create(ingredient_name="garlic")
     auth_client.post(
         f"/recipes/{recipe.pk}/ingredients/{iir.pk}/save/",
@@ -368,6 +402,7 @@ def test_ingredient_add_does_not_create_row(auth_client, recipe, group):
 
 @pytest.mark.django_db
 def test_ingredient_create_targets_specified_group(auth_client, recipe, group, second_group):
+    """Ingredient create targets specified group."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/groups/{second_group.pk}/ingredients/create/",
         {"ingredient_name": "carrot", "quantity": "1", "unit": "", "preparation": "", "note": ""},
@@ -379,6 +414,7 @@ def test_ingredient_create_targets_specified_group(auth_client, recipe, group, s
 
 @pytest.mark.django_db
 def test_ingredient_create_valid_returns_display(auth_client, recipe, group):
+    """Ingredient create valid returns display."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/groups/{group.pk}/ingredients/create/",
         {
@@ -461,6 +497,7 @@ def test_ingredient_create_reverse_order_drafts_keep_dom_order(auth_client, reci
 
 @pytest.mark.django_db
 def test_ingredient_create_invalid_creates_nothing_returns_form(auth_client, recipe, group):
+    """Ingredient create invalid creates nothing returns form."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/groups/{group.pk}/ingredients/create/",
         {"ingredient_name": "", "quantity": "", "unit": "", "preparation": "", "note": ""},
@@ -473,6 +510,7 @@ def test_ingredient_create_invalid_creates_nothing_returns_form(auth_client, rec
 
 @pytest.mark.django_db
 def test_ingredient_display_comma_when_both_name_and_preparation(auth_client, recipe, group):
+    """Ingredient display comma when both name and preparation."""
     ing = Ingredient.objects.create(ingredient_name="onion")
     iir = IngredientInRecipe.objects.create(
         ingredient=ing,
@@ -490,6 +528,7 @@ def test_ingredient_display_comma_when_both_name_and_preparation(auth_client, re
 
 @pytest.mark.django_db
 def test_ingredient_display_no_comma_when_preparation_empty(auth_client, recipe, group):
+    """Ingredient display no comma when preparation empty."""
     ing = Ingredient.objects.create(ingredient_name="onion")
     iir = IngredientInRecipe.objects.create(
         ingredient=ing,
@@ -506,6 +545,7 @@ def test_ingredient_display_no_comma_when_preparation_empty(auth_client, recipe,
 
 @pytest.mark.django_db
 def test_ingredient_display_shows_note_in_parentheses(auth_client, recipe, group):
+    """Ingredient display shows note in parentheses."""
     ing = Ingredient.objects.create(ingredient_name="onion")
     iir = IngredientInRecipe.objects.create(
         ingredient=ing,
@@ -520,6 +560,7 @@ def test_ingredient_display_shows_note_in_parentheses(auth_client, recipe, group
 
 @pytest.mark.django_db
 def test_ingredient_display_note_after_preparation(auth_client, recipe, group):
+    """Ingredient display note after preparation."""
     ing = Ingredient.objects.create(ingredient_name="onion")
     iir = IngredientInRecipe.objects.create(
         ingredient=ing,
@@ -537,6 +578,7 @@ def test_ingredient_display_note_after_preparation(auth_client, recipe, group):
 
 @pytest.mark.django_db
 def test_ingredient_display_no_note_when_empty(auth_client, recipe, group):
+    """Ingredient display no note when empty."""
     ing = Ingredient.objects.create(ingredient_name="onion")
     iir = IngredientInRecipe.objects.create(
         ingredient=ing,
@@ -571,6 +613,7 @@ def test_ingredient_create_with_gap_in_sequence_no_integrity_error(auth_client, 
 
 @pytest.fixture
 def three_groups(recipe):
+    """Three groups."""
     g0 = IngredientGroup.objects.create(recipe=recipe, group_name="A", index_in_sequence=0)
     g1 = IngredientGroup.objects.create(recipe=recipe, group_name="B", index_in_sequence=1)
     g2 = IngredientGroup.objects.create(recipe=recipe, group_name="C", index_in_sequence=2)
@@ -579,6 +622,7 @@ def three_groups(recipe):
 
 @pytest.fixture
 def three_iirs(group):
+    """Three iirs."""
     ing0 = Ingredient.objects.create(ingredient_name="alpha")
     ing1 = Ingredient.objects.create(ingredient_name="beta")
     ing2 = Ingredient.objects.create(ingredient_name="gamma")
@@ -596,6 +640,7 @@ def three_iirs(group):
 
 @pytest.mark.django_db
 def test_group_move_up_swaps_indexes(auth_client, recipe, three_groups):
+    """Group move up swaps indexes."""
     g0, g1, _ = three_groups
     auth_client.post(f"/recipes/{recipe.pk}/groups/{g1.pk}/move-up/")
     g0.refresh_from_db()
@@ -606,6 +651,7 @@ def test_group_move_up_swaps_indexes(auth_client, recipe, three_groups):
 
 @pytest.mark.django_db
 def test_group_move_down_swaps_indexes(auth_client, recipe, three_groups):
+    """Group move down swaps indexes."""
     g0, g1, _ = three_groups
     auth_client.post(f"/recipes/{recipe.pk}/groups/{g0.pk}/move-down/")
     g0.refresh_from_db()
@@ -616,6 +662,7 @@ def test_group_move_down_swaps_indexes(auth_client, recipe, three_groups):
 
 @pytest.mark.django_db
 def test_group_move_up_at_first_is_noop(auth_client, recipe, three_groups):
+    """Group move up at first is noop."""
     g0, _, _ = three_groups
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/{g0.pk}/move-up/")
     assert response.status_code == 200
@@ -625,6 +672,7 @@ def test_group_move_up_at_first_is_noop(auth_client, recipe, three_groups):
 
 @pytest.mark.django_db
 def test_group_move_down_at_last_is_noop(auth_client, recipe, three_groups):
+    """Group move down at last is noop."""
     _, _, g2 = three_groups
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/{g2.pk}/move-down/")
     assert response.status_code == 200
@@ -634,6 +682,7 @@ def test_group_move_down_at_last_is_noop(auth_client, recipe, three_groups):
 
 @pytest.mark.django_db
 def test_group_move_returns_groups_list(auth_client, recipe, three_groups):
+    """Group move returns groups list."""
     _, g1, _ = three_groups
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/{g1.pk}/move-up/")
     content = response.content.decode()
@@ -644,6 +693,7 @@ def test_group_move_returns_groups_list(auth_client, recipe, three_groups):
 
 @pytest.mark.django_db
 def test_ingredient_move_up_swaps_indexes(auth_client, recipe, group, three_iirs):
+    """Ingredient move up swaps indexes."""
     i0, i1, _ = three_iirs
     auth_client.post(f"/recipes/{recipe.pk}/ingredients/{i1.pk}/move-up/")
     i0.refresh_from_db()
@@ -654,6 +704,7 @@ def test_ingredient_move_up_swaps_indexes(auth_client, recipe, group, three_iirs
 
 @pytest.mark.django_db
 def test_ingredient_move_down_swaps_indexes(auth_client, recipe, group, three_iirs):
+    """Ingredient move down swaps indexes."""
     i0, i1, _ = three_iirs
     auth_client.post(f"/recipes/{recipe.pk}/ingredients/{i0.pk}/move-down/")
     i0.refresh_from_db()
@@ -664,6 +715,7 @@ def test_ingredient_move_down_swaps_indexes(auth_client, recipe, group, three_ii
 
 @pytest.mark.django_db
 def test_ingredient_move_up_at_first_is_noop(auth_client, recipe, group, three_iirs):
+    """Ingredient move up at first is noop."""
     i0, _, _ = three_iirs
     response = auth_client.post(f"/recipes/{recipe.pk}/ingredients/{i0.pk}/move-up/")
     assert response.status_code == 200
@@ -673,6 +725,7 @@ def test_ingredient_move_up_at_first_is_noop(auth_client, recipe, group, three_i
 
 @pytest.mark.django_db
 def test_ingredient_move_down_at_last_is_noop(auth_client, recipe, group, three_iirs):
+    """Ingredient move down at last is noop."""
     _, _, i2 = three_iirs
     response = auth_client.post(f"/recipes/{recipe.pk}/ingredients/{i2.pk}/move-down/")
     assert response.status_code == 200
@@ -682,6 +735,7 @@ def test_ingredient_move_down_at_last_is_noop(auth_client, recipe, group, three_
 
 @pytest.mark.django_db
 def test_ingredient_move_returns_iir_list(auth_client, recipe, group, three_iirs):
+    """Ingredient move returns iir list."""
     _, i1, _ = three_iirs
     response = auth_client.post(f"/recipes/{recipe.pk}/ingredients/{i1.pk}/move-up/")
     content = response.content.decode()
@@ -695,11 +749,13 @@ def test_ingredient_move_returns_iir_list(auth_client, recipe, group, three_iirs
 
 @pytest.fixture
 def group2(recipe):
+    """Group2."""
     return IngredientGroup.objects.create(recipe=recipe, group_name="Sauce", index_in_sequence=1)
 
 
 @pytest.fixture
 def iir2(group):
+    """Iir2."""
     ing = Ingredient.objects.create(ingredient_name="garlic")
     return IngredientInRecipe.objects.create(
         ingredient=ing, ingredient_group=group, index_in_sequence=1
@@ -708,6 +764,7 @@ def iir2(group):
 
 @pytest.mark.django_db
 def test_ingredient_reassign_moves_to_existing_group(auth_client, recipe, group, group2, iir, iir2):
+    """Ingredient reassign moves to existing group."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/ingredients/reassign/",
         {"ingredient_ids": [iir.pk, iir2.pk], "target_group": group2.pk},
@@ -721,6 +778,7 @@ def test_ingredient_reassign_moves_to_existing_group(auth_client, recipe, group,
 
 @pytest.mark.django_db
 def test_ingredient_reassign_creates_new_group(auth_client, recipe, group, iir, iir2):
+    """Ingredient reassign creates new group."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/ingredients/reassign/",
         {"ingredient_ids": [iir.pk, iir2.pk], "target_group": "new", "new_group_name": "Side"},
@@ -763,8 +821,10 @@ def test_ingredient_reassign_same_group_is_noop(auth_client, recipe, group, iir,
 def test_ingredient_reassign_preserves_visual_order_across_groups(
     auth_client, recipe, group, group2, iir, iir2
 ):
-    """Moved rows keep top-to-bottom page order (group order, then row order),
-    not raw index order interleaved across source groups."""
+    """Moved rows keep top-to-bottom page order (group order, then row order).
+
+    Not raw index order interleaved across source groups.
+    """
     ing = Ingredient.objects.create(ingredient_name="cumin")
     iir3 = IngredientInRecipe.objects.create(
         ingredient=ing, ingredient_group=group2, index_in_sequence=0
@@ -785,9 +845,12 @@ def test_ingredient_reassign_preserves_visual_order_across_groups(
 def test_ingredient_reassign_interleaves_by_page_order_when_target_has_existing_rows(
     auth_client, recipe, group, group2, iir, iir2, db
 ):
-    """Moving iir (group idx=0, row idx=0) into group2 (idx=1) that already has
+    """A moved row lands before an existing target row when its page position is earlier.
+
+    Moving iir (group idx=0, row idx=0) into group2 (idx=1) that already has
     existing_target (idx=0) must place iir BEFORE existing_target because iir's
-    original page position is earlier, not append it at the end."""
+    original page position is earlier, not append it at the end.
+    """
     ing = Ingredient.objects.create(ingredient_name="basil")
     existing_target = IngredientInRecipe.objects.create(
         ingredient=ing, ingredient_group=group2, index_in_sequence=0
@@ -806,6 +869,7 @@ def test_ingredient_reassign_interleaves_by_page_order_when_target_has_existing_
 
 @pytest.mark.django_db
 def test_ingredient_reassign_reindexes_source_group(auth_client, recipe, group, group2, iir, iir2):
+    """Ingredient reassign reindexes source group."""
     ing3 = Ingredient.objects.create(ingredient_name="salt")
     iir3 = IngredientInRecipe.objects.create(
         ingredient=ing3, ingredient_group=group, index_in_sequence=2
@@ -834,6 +898,7 @@ def test_ingredient_reassign_same_group_no_integrity_error(auth_client, recipe, 
 
 @pytest.mark.django_db
 def test_ingredient_reassign_empty_ids_is_noop(auth_client, recipe, group, iir):
+    """Ingredient reassign empty ids is noop."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/ingredients/reassign/",
         {"ingredient_ids": [], "target_group": group.pk},
@@ -848,7 +913,9 @@ def test_ingredient_reassign_all_foreign_ids_new_group_does_not_create_group(
     auth_client, recipe, user, group, iir, db
 ):
     """All posted IDs belong to another recipe; iirs is empty after filtering.
-    target_group=new must not create an orphan empty group."""
+
+    target_group=new must not create an orphan empty group.
+    """
     other_recipe = Recipe.objects.create(recipe_name="Other", owner=user)
     other_group = IngredientGroup.objects.create(
         recipe=other_recipe, group_name="X", index_in_sequence=0
@@ -870,6 +937,7 @@ def test_ingredient_reassign_all_foreign_ids_new_group_does_not_create_group(
 def test_ingredient_reassign_ignores_foreign_recipe_ids(
     auth_client, recipe, user, group, group2, iir, db
 ):
+    """Ingredient reassign ignores foreign recipe ids."""
     other_recipe = Recipe.objects.create(recipe_name="Other", owner=user)
     other_group = IngredientGroup.objects.create(
         recipe=other_recipe, group_name="X", index_in_sequence=0
@@ -888,6 +956,7 @@ def test_ingredient_reassign_ignores_foreign_recipe_ids(
 
 @pytest.mark.django_db
 def test_ingredient_reassign_returns_groups_list(auth_client, recipe, group, group2, iir, iir2):
+    """Ingredient reassign returns groups list."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/ingredients/reassign/",
         {"ingredient_ids": [iir.pk, iir2.pk], "target_group": group2.pk},
@@ -994,7 +1063,7 @@ def test_ingredient_reassign_non_integer_ids_returns_422(auth_client, recipe, gr
 
 @pytest.mark.django_db
 def test_ingredient_reassign_new_group_acquires_recipe_lock(auth_client, recipe, group, iir):
-    """reassign target_group=new must lock the recipe row before computing next index."""
+    """Reassign target_group=new must lock the recipe row before computing next index."""
     from unittest.mock import patch
 
     locked_models = []
@@ -1026,20 +1095,22 @@ def test_ingredient_create_no_orphan_ingredient_on_insert_failure(auth_client, r
 
     from recipes.models import Ingredient
 
-    with patch(
-        "recipes.views.recipe_ingredients.insert_at_index", side_effect=IntegrityError("seq")
+    with (
+        patch(
+            "recipes.views.recipe_ingredients.insert_at_index", side_effect=IntegrityError("seq")
+        ),
+        pytest.raises(IntegrityError),
     ):
-        with pytest.raises(IntegrityError):
-            auth_client.post(
-                f"/recipes/{recipe.pk}/groups/{group.pk}/ingredients/create/",
-                {
-                    "ingredient_name": "orphan-veggie",
-                    "quantity": "",
-                    "unit": "",
-                    "preparation": "",
-                    "note": "",
-                },
-            )
+        auth_client.post(
+            f"/recipes/{recipe.pk}/groups/{group.pk}/ingredients/create/",
+            {
+                "ingredient_name": "orphan-veggie",
+                "quantity": "",
+                "unit": "",
+                "preparation": "",
+                "note": "",
+            },
+        )
     assert not Ingredient.objects.filter(ingredient_name="orphan-veggie").exists()
 
 
@@ -1090,16 +1161,18 @@ def test_reassign_new_group_blank_name_race_rejected(auth_client, recipe, group)
             return 0  # Simulate stale pre-lock read (race: another request saw 0 groups)
         return original_count(qs)
 
-    with patch.object(QuerySet, "select_for_update", mock_lock):
-        with patch.object(QuerySet, "count", mock_count):
-            auth_client.post(
-                f"/recipes/{recipe.pk}/ingredients/reassign/",
-                {
-                    "ingredient_ids": [iir.pk],
-                    "target_group": "new",
-                    "new_group_name": "",
-                },
-            )
+    with (
+        patch.object(QuerySet, "select_for_update", mock_lock),
+        patch.object(QuerySet, "count", mock_count),
+    ):
+        auth_client.post(
+            f"/recipes/{recipe.pk}/ingredients/reassign/",
+            {
+                "ingredient_ids": [iir.pk],
+                "target_group": "new",
+                "new_group_name": "",
+            },
+        )
 
     # Blank group must not be created; stale pre-lock count must not have allowed it
     assert IngredientGroup.objects.filter(recipe=recipe, group_name="").count() == 0
@@ -1535,6 +1608,7 @@ def _add_iir(group, name, index=0):
 
 @pytest.mark.django_db
 def test_deleting_the_last_ingredient_removes_the_now_empty_group(auth_client, recipe, group):
+    """Deleting the last ingredient removes the now empty group."""
     second = _add_group(recipe, "Sauce", 1)
     doomed = _add_iir(second, "cream")
     _add_iir(group, "onion")
@@ -1553,6 +1627,7 @@ def test_emptying_a_recipes_only_group_keeps_it(auth_client, recipe, group):
 
 @pytest.mark.django_db
 def test_deleting_one_of_several_ingredients_keeps_the_group(auth_client, recipe, group):
+    """Deleting one of several ingredients keeps the group."""
     _add_iir(group, "onion", 0)
     doomed = _add_iir(group, "carrot", 1)
     auth_client.post(f"/recipes/{recipe.pk}/ingredients/{doomed.pk}/delete/")
@@ -1561,6 +1636,7 @@ def test_deleting_one_of_several_ingredients_keeps_the_group(auth_client, recipe
 
 @pytest.mark.django_db
 def test_pruned_group_is_removed_from_the_page(auth_client, recipe, group):
+    """Pruned group is removed from the page."""
     second = _add_group(recipe, "Sauce", 1)
     doomed = _add_iir(second, "cream")
     _add_iir(group, "onion")
@@ -1573,6 +1649,7 @@ def test_pruned_group_is_removed_from_the_page(auth_client, recipe, group):
 
 @pytest.mark.django_db
 def test_pruning_a_group_compacts_the_remaining_group_indexes(auth_client, recipe, group):
+    """Pruning a group compacts the remaining group indexes."""
     second = _add_group(recipe, "Sauce", 1)
     third = _add_group(recipe, "Topping", 2)
     doomed = _add_iir(second, "cream")
@@ -1585,6 +1662,7 @@ def test_pruning_a_group_compacts_the_remaining_group_indexes(auth_client, recip
 
 @pytest.mark.django_db
 def test_pruning_a_group_refreshes_the_reassign_select(auth_client, recipe, group):
+    """Pruning a group refreshes the reassign select."""
     second = _add_group(recipe, "Sauce", 1)
     doomed = _add_iir(second, "cream")
     _add_iir(group, "onion")
@@ -1597,6 +1675,7 @@ def test_pruning_a_group_refreshes_the_reassign_select(auth_client, recipe, grou
 
 @pytest.mark.django_db
 def test_reassigning_every_ingredient_out_of_a_group_removes_it(auth_client, recipe, group):
+    """Reassigning every ingredient out of a group removes it."""
     second = _add_group(recipe, "Sauce", 1)
     moved = _add_iir(second, "cream")
     _add_iir(group, "onion")

@@ -1,0 +1,158 @@
+# Exclude a variety of commonly ignored directories.
+
+exclude = [
+  ".bzr",
+  ".direnv",
+  ".eggs",
+  ".git",
+  ".git-rewrite",
+  ".hg",
+  ".ipynb_checkpoints",
+  ".nox",
+  ".pants.d",
+  ".pyenv",
+  ".pytest_cache",
+  ".pytype",
+  ".ruff_cache",
+  ".svn",
+  ".tox",
+  ".venv",
+  ".vscode",
+  "__pypackages__",
+  "_build",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "site-packages",
+  "src/jobs/migrations",
+  "venv"
+]
+# Same as Black.
+line-length = 100
+indent-width = 4
+target-version = "py314"
+
+[format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+# Enable auto-formatting of code examples in docstrings. Markdown,
+# reStructuredText code/literal blocks and doctests are all supported.
+#
+# This is currently disabled by default, but it is planned for this
+# to be opt-out in the future.
+docstring-code-format = false
+# Set the line length limit used when formatting code snippets in
+# docstrings.
+#
+# This only has an effect when the `docstring-code-format` setting is
+# enabled.
+docstring-code-line-length = "dynamic"
+
+[lint]
+select = [
+  # flake8-builtins
+  "A",
+  # flake8-bugbear
+  "B",
+  # flake8-blind-except
+  "BLE",
+  # pyflake8-unused-arguments-arg
+  "ARG",
+  # Enables some of the less annoying pydocstyle rules
+  "D102",
+  "D103",
+  "D105",
+  "D201",
+  "D202",
+  "D204",
+  "D205",
+  "D207",
+  "D208",
+  "D209",
+  "D210",
+  "D211",
+  "D212",
+  "D214",
+  "D215",
+  "D300",
+  "D402",
+  "D403",
+  "D405",
+  "D406",
+  "D414",
+  "D417",
+  "D419",
+  # pyflake-django
+  "DJ",
+  # flake8-datetimez
+  "DTZ",
+  # Enable a subset of the pycodestyle (`E`) codes
+  "E4",
+  "E7",
+  "E9",
+  # eradicate
+  "ERA",
+  # flake8-executable
+  "EXE",
+  # flynt, convert all to f-strings
+  "FLY",
+  # Enable Pyflakes
+  "F",
+  # Enable Isort
+  "I",
+  # flake8-implicit-str-concat
+  "ISC",
+  # pep8-naming
+  "N",
+  # Enable Perflint
+  "PERF",
+  # Enable pygrep-hooks
+  "PGH",
+  # flake8-use-pathlib, replaces by pathlib module when possible
+  "PTH",
+  # Enable Ruff Specific
+  "RUF",
+  # pyflake8-self-slf, simplifies
+  "SIM",
+  # Enable flake8-print
+  "T20",
+  # flake8-tidy-imports-tid
+  "TID",
+  # Enable Tryceratops
+  "TRY",
+  # Enforce : dict | None annotation instead of Optional[Dict]
+  "UP",
+]
+ignore = []
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[lint.per-file-ignores]
+# pytest fixtures are requested by argument name for their side effects (`db`, `user`, ...),
+# so they are never referenced in the test body.
+"tests/**/*.py" = ["ARG001"]
+
+# Settings modules intentionally call read_env() before importing base
+# so .env is loaded into os.environ before base.py reads it at import time.
+"src/nutrisho/settings/*.py" = ["E402"]
+
+# Django's declarative `Meta`/`fields`/`widgets` class attributes are never mutated.
+"src/recipes/forms/*.py" = ["RUF012"]
+"src/recipes/models/*.py" = ["RUF012"]
+
+# `handle(self, *args, **options)` is the signature Django's BaseCommand requires.
+"src/recipes/management/commands/*.py" = ["ARG002"]
+
+# Migrations are generated; their `operations`/`dependencies` lists and RunPython
+# signatures are dictated by Django.
+"src/recipes/migrations/*.py" = ["ARG001", "RUF012", "TRY003"]

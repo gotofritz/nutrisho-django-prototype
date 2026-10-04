@@ -13,5 +13,10 @@ class Tag(models.Model):
     )
     objects = models.Manager()
 
+    def __str__(self) -> str:
+        """Return a readable label."""
+        return str(self.tag)
+
     def natural_key(self):
+        """Return the natural key used by fixtures."""
         return self.tag

@@ -9,6 +9,7 @@ from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Reci
 
 
 def test_format_quantity_strips_trailing_zeros():
+    """Format quantity strips trailing zeros."""
     from decimal import Decimal
 
     from recipes.templatetags.recipe_filters import format_quantity
@@ -22,7 +23,7 @@ def test_format_quantity_strips_trailing_zeros():
 
 
 def test_scale_filter_removed():
-    """scale filter must not exist — quantity is full-recipe amount, not per-serving."""
+    """Scale filter must not exist — quantity is full-recipe amount, not per-serving."""
     from recipes.templatetags import recipe_filters
 
     assert not hasattr(recipe_filters, "scale")
@@ -61,6 +62,7 @@ def _iir(quantity: Decimal | None, unit: str = "") -> IngredientInRecipe:
 
 
 def test_display_ingredient_name_pluralises_above_one():
+    """Display ingredient name pluralises above one."""
     from recipes.templatetags.recipe_filters import display_ingredient_name
 
     assert display_ingredient_name(_iir(Decimal("2"))) == "onions"
@@ -74,6 +76,7 @@ def test_display_ingredient_name_pluralises_below_one():
 
 
 def test_display_ingredient_name_keeps_the_singular_at_exactly_one():
+    """Display ingredient name keeps the singular at exactly one."""
     from recipes.templatetags.recipe_filters import display_ingredient_name
 
     assert display_ingredient_name(_iir(Decimal("1"))) == "onion"
@@ -89,12 +92,14 @@ def test_display_ingredient_name_keeps_the_singular_with_a_unit():
 
 
 def test_display_ingredient_name_keeps_the_singular_without_a_quantity():
+    """Display ingredient name keeps the singular without a quantity."""
     from recipes.templatetags.recipe_filters import display_ingredient_name
 
     assert display_ingredient_name(_iir(None)) == "onion"
 
 
 def test_display_ingredient_name_honours_the_plural_name_override():
+    """Display ingredient name honours the plural name override."""
     from recipes.templatetags.recipe_filters import display_ingredient_name
 
     iir = IngredientInRecipe(
@@ -122,6 +127,7 @@ def test_recipe_detail_pluralises_a_countable_ingredient(client: Client, user):
 
 @pytest.mark.django_db
 def test_recipe_detail_keeps_the_singular_at_one_and_with_a_unit(client: Client, user):
+    """Recipe detail keeps the singular at one and with a unit."""
     recipe = Recipe.objects.create(recipe_name="Singular Test", owner=user, servings=4)
     group = IngredientGroup.objects.create(recipe=recipe, group_name="", index_in_sequence=1)
     onion = Ingredient.objects.create(ingredient_name="onion")

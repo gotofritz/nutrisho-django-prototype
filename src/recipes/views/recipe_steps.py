@@ -11,6 +11,7 @@ from recipes.views._types import AuthedRequest
 
 @require_GET
 def recipe_step_display(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
+    """Show a step."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     return render(
@@ -22,6 +23,7 @@ def recipe_step_display(request: AuthedRequest, recipe_id: int, step_id: int) ->
 
 @require_GET
 def recipe_step_edit(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
+    """Show the step edit form."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     form = StepForm(instance=step)
@@ -34,6 +36,7 @@ def recipe_step_edit(request: AuthedRequest, recipe_id: int, step_id: int) -> Ht
 
 @require_POST
 def recipe_step_save(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
+    """Save a step."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     form = StepForm(data=request.POST, instance=step)
@@ -58,6 +61,7 @@ def recipe_step_save(request: AuthedRequest, recipe_id: int, step_id: int) -> Ht
 
 @require_POST
 def recipe_step_delete(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
+    """Delete a step."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     remove_and_compact(siblings=Step.objects.filter(recipe=recipe), instance=step)
@@ -66,6 +70,7 @@ def recipe_step_delete(request: AuthedRequest, recipe_id: int, step_id: int) -> 
 
 @require_POST
 def recipe_step_move_up(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
+    """Move a step up."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     move_in_sequence(siblings=Step.objects.filter(recipe=recipe), instance=step, direction="up")
@@ -74,6 +79,7 @@ def recipe_step_move_up(request: AuthedRequest, recipe_id: int, step_id: int) ->
 
 @require_POST
 def recipe_step_move_down(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
+    """Move a step down."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     move_in_sequence(siblings=Step.objects.filter(recipe=recipe), instance=step, direction="down")
@@ -93,6 +99,7 @@ def recipe_step_add(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 @require_POST
 def recipe_step_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+    """Create a step."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     form = StepForm(data=request.POST)
     if form.is_valid():

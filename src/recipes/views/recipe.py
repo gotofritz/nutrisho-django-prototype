@@ -24,6 +24,7 @@ def _get_recipe_nav(recipe_id: int, user: AbstractBaseUser) -> dict[str, int]:
 
 @vary_on_headers("HX-Request")
 def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+    """Show a recipe."""
     recipe = get_object_or_404(
         Recipe.objects.prefetch_related(
             "step",

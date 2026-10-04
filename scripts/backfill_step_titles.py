@@ -7,7 +7,7 @@ Throwaway — delete once it has been run. Two modes:
     uv run python scripts/backfill_step_titles.py --yaml recipes_yaml/ --dry-run
     uv run python scripts/backfill_step_titles.py --yaml recipes_yaml/
 
-The YAML mode is not optional housekeeping: `task filldb` rebuilds the database
+The YAML mode is not optional housekeeping: `uv run poe filldb` rebuilds the database
 from recipes_yaml/, so leaving the seed files alone would undo the database
 backfill on the next reset.
 

@@ -27,9 +27,6 @@ class Step(models.Model):
     )
     objects = models.Manager()
 
-    def natural_key(self):
-        return (self.index_in_sequence, cast(str, self.step_text)[:32])
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -38,3 +35,11 @@ class Step(models.Model):
             )
         ]
         ordering = ["index_in_sequence"]
+
+    def __str__(self) -> str:
+        """Return a readable label."""
+        return f"{self.index_in_sequence}. {str(self.step_text)[:32]}"
+
+    def natural_key(self):
+        """Return the natural key used by fixtures."""
+        return (self.index_in_sequence, cast(str, self.step_text)[:32])

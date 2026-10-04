@@ -9,16 +9,19 @@ from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Reci
 
 @pytest.fixture
 def owner(db):
+    """Owner."""
     return User.objects.create_user(username="owner", password="x")
 
 
 @pytest.fixture
 def other(db):
+    """Other."""
     return User.objects.create_user(username="other", password="x")
 
 
 @pytest.fixture
 def owner_client(owner):
+    """Owner client."""
     c = Client()
     c.force_login(owner)
     return c
@@ -26,6 +29,7 @@ def owner_client(owner):
 
 @pytest.fixture
 def other_client(other):
+    """Other client."""
     c = Client()
     c.force_login(other)
     return c
@@ -33,21 +37,25 @@ def other_client(other):
 
 @pytest.fixture
 def recipe(owner, db):
+    """Recipe."""
     return Recipe.objects.create(recipe_name="Owner Recipe", owner=owner)
 
 
 @pytest.fixture
 def step(recipe):
+    """Step."""
     return Step.objects.create(recipe=recipe, step_text="step", index_in_sequence=0)
 
 
 @pytest.fixture
 def group(recipe):
+    """Group."""
     return IngredientGroup.objects.create(recipe=recipe, group_name="g", index_in_sequence=0)
 
 
 @pytest.fixture
 def iir(group):
+    """Iir."""
     ing = Ingredient.objects.create(ingredient_name="onion-own")
     return IngredientInRecipe.objects.create(
         ingredient=ing, ingredient_group=group, index_in_sequence=0
@@ -59,6 +67,7 @@ def iir(group):
 
 @pytest.mark.django_db
 def test_other_user_cannot_view_recipe(other_client, recipe):
+    """Other user cannot view recipe."""
     response = other_client.get(f"/recipes/{recipe.pk}/")
     assert response.status_code == 404
 
@@ -68,12 +77,14 @@ def test_other_user_cannot_view_recipe(other_client, recipe):
 
 @pytest.mark.django_db
 def test_other_user_cannot_get_metadata(other_client, recipe):
+    """Other user cannot get metadata."""
     response = other_client.get(f"/recipes/{recipe.pk}/metadata/")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_other_user_cannot_post_metadata(other_client, recipe):
+    """Other user cannot post metadata."""
     response = other_client.post(f"/recipes/{recipe.pk}/metadata/", {"recipe_name": "Hijacked"})
     assert response.status_code == 404
 
@@ -83,12 +94,14 @@ def test_other_user_cannot_post_metadata(other_client, recipe):
 
 @pytest.mark.django_db
 def test_other_user_cannot_delete(other_client, recipe):
+    """Other user cannot delete."""
     response = other_client.post(f"/recipes/{recipe.pk}/delete/")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_other_user_cannot_get_delete_panel(other_client, recipe):
+    """Other user cannot get delete panel."""
     response = other_client.get(f"/recipes/{recipe.pk}/delete/panel/", HTTP_HX_REQUEST="true")
     assert response.status_code == 404
 
@@ -98,12 +111,14 @@ def test_other_user_cannot_get_delete_panel(other_client, recipe):
 
 @pytest.mark.django_db
 def test_other_user_cannot_scale(other_client, recipe):
+    """Other user cannot scale."""
     response = other_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_other_user_cannot_get_scale_panel(other_client, recipe):
+    """Other user cannot get scale panel."""
     response = other_client.get(f"/recipes/{recipe.pk}/scale/panel/", HTTP_HX_REQUEST="true")
     assert response.status_code == 404
 
@@ -113,6 +128,7 @@ def test_other_user_cannot_get_scale_panel(other_client, recipe):
 
 @pytest.mark.django_db
 def test_other_user_cannot_duplicate(other_client, recipe):
+    """Other user cannot duplicate."""
     response = other_client.post(f"/recipes/{recipe.pk}/duplicate/")
     assert response.status_code == 404
 
@@ -122,12 +138,14 @@ def test_other_user_cannot_duplicate(other_client, recipe):
 
 @pytest.mark.django_db
 def test_other_user_cannot_view_field(other_client, recipe):
+    """Other user cannot view field."""
     response = other_client.get(f"/recipes/{recipe.pk}/field/recipe_name/")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_other_user_cannot_edit_field(other_client, recipe):
+    """Other user cannot edit field."""
     response = other_client.get(f"/recipes/{recipe.pk}/field/recipe_name/edit/")
     assert response.status_code == 404
 
@@ -137,12 +155,14 @@ def test_other_user_cannot_edit_field(other_client, recipe):
 
 @pytest.mark.django_db
 def test_other_user_cannot_view_step(other_client, recipe, step):
+    """Other user cannot view step."""
     response = other_client.get(f"/recipes/{recipe.pk}/steps/{step.pk}/")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_other_user_cannot_add_step(other_client, recipe):
+    """Other user cannot add step."""
     response = other_client.post(f"/recipes/{recipe.pk}/steps/add/")
     assert response.status_code == 404
 
@@ -152,12 +172,14 @@ def test_other_user_cannot_add_step(other_client, recipe):
 
 @pytest.mark.django_db
 def test_other_user_cannot_view_ingredient(other_client, recipe, iir):
+    """Other user cannot view ingredient."""
     response = other_client.get(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_other_user_cannot_add_ingredient(other_client, recipe, group):
+    """Other user cannot add ingredient."""
     response = other_client.post(f"/recipes/{recipe.pk}/groups/{group.pk}/ingredients/add/")
     assert response.status_code == 404
 
@@ -167,12 +189,14 @@ def test_other_user_cannot_add_ingredient(other_client, recipe, group):
 
 @pytest.mark.django_db
 def test_other_user_cannot_view_group(other_client, recipe, group):
+    """Other user cannot view group."""
     response = other_client.get(f"/recipes/{recipe.pk}/groups/{group.pk}/")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_other_user_cannot_add_group(other_client, recipe):
+    """Other user cannot add group."""
     response = other_client.post(f"/recipes/{recipe.pk}/groups/add/")
     assert response.status_code == 404
 
@@ -185,7 +209,9 @@ def test_delete_last_recipe_shows_empty_state_when_other_user_has_recipes(
     owner_client, owner, other, recipe
 ):
     """Owner deletes their only recipe; other user still has one.
-    Should still show empty state for owner (not rely on global exists())."""
+
+    Should still show empty state for owner (not rely on global exists()).
+    """
     Recipe.objects.create(recipe_name="Other's Recipe", owner=other)
     response = owner_client.post(
         f"/recipes/{recipe.pk}/delete/",

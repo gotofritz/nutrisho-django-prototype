@@ -10,11 +10,13 @@ from recipes.views._types import AuthedRequest
 
 def _require_editable_field(field_name: str) -> None:
     if field_name not in EDITABLE_RECIPE_FIELDS:
-        raise Http404(f"Field '{field_name}' is not editable")
+        msg = f"Field '{field_name}' is not editable"
+        raise Http404(msg)
 
 
 @require_GET
 def recipe_field_display(request: AuthedRequest, recipe_id: int, field_name: str) -> HttpResponse:
+    """Show a field."""
     _require_editable_field(field_name)
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     return render(
@@ -30,6 +32,7 @@ def recipe_field_display(request: AuthedRequest, recipe_id: int, field_name: str
 
 @require_GET
 def recipe_field_edit(request: AuthedRequest, recipe_id: int, field_name: str) -> HttpResponse:
+    """Show the field edit form."""
     _require_editable_field(field_name)
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     form = RecipeFieldForm(field_name, instance=recipe)
@@ -42,6 +45,7 @@ def recipe_field_edit(request: AuthedRequest, recipe_id: int, field_name: str) -
 
 @require_POST
 def recipe_field_save(request: AuthedRequest, recipe_id: int, field_name: str) -> HttpResponse:
+    """Save a field."""
     _require_editable_field(field_name)
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     form = RecipeFieldForm(field_name, data=request.POST, instance=recipe)
