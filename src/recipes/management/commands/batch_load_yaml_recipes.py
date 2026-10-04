@@ -62,7 +62,8 @@ def _normalize_quantity(raw: str) -> str:
     if mixed:
         whole, num, den = int(mixed.group(1)), int(mixed.group(2)), int(mixed.group(3))
         if den == 0:
-            raise InvalidOperation(f"zero denominator in fraction: {s!r}")
+            msg = f"zero denominator in fraction: {s!r}"
+            raise InvalidOperation(msg)
         return str(Decimal(whole) + Decimal(num) / Decimal(den))
 
     # "3/4" plain fraction
@@ -70,7 +71,8 @@ def _normalize_quantity(raw: str) -> str:
     if frac:
         den = int(frac.group(2))
         if den == 0:
-            raise InvalidOperation(f"zero denominator in fraction: {s!r}")
+            msg = f"zero denominator in fraction: {s!r}"
+            raise InvalidOperation(msg)
         return str(Decimal(int(frac.group(1))) / Decimal(den))
 
     return s
@@ -81,6 +83,7 @@ class Command(BaseCommand):
 
     @classmethod
     def clean(cls, s):
+        """Collapse newlines and repeated spaces in a YAML scalar."""
         if s is None:
             return None
         tmp = re.sub(r"\n", " ", s)
@@ -105,12 +108,12 @@ class Command(BaseCommand):
                 continue
             text = cls.clean(step_raw.get("text"))
             if not text:
-                raise CommandError(f"{source_path}: step is missing required 'text'")
+                msg = f"{source_path}: step is missing required 'text'"
+                raise CommandError(msg)
             title = cls.clean(step_raw.get("title")) or ""
             if len(title) > MAX_TITLE_LENGTH:
-                raise CommandError(
-                    f"{source_path}: step title {title!r} exceeds {MAX_TITLE_LENGTH} characters"
-                )
+                msg = f"{source_path}: step title {title!r} exceeds {MAX_TITLE_LENGTH} characters"
+                raise CommandError(msg)
             normalized.append({"title": title, "text": text})
         recipe_dict["directions"]["step"] = normalized
 
@@ -141,19 +144,20 @@ class Command(BaseCommand):
                 try:
                     d = Decimal(_normalize_quantity(qty))
                 except InvalidOperation as exc:
-                    raise CommandError(
-                        f"{source_path}: invalid quantity {qty!r} for ingredient '{name}'"
-                    ) from exc
+                    msg = f"{source_path}: invalid quantity {qty!r} for ingredient '{name}'"
+                    raise CommandError(msg) from exc
                 try:
                     DecimalValidator(max_digits=7, decimal_places=2)(d)
                 except DjangoValidationError as exc:
-                    raise CommandError(
+                    msg = (
                         f"{source_path}: quantity {qty!r} for ingredient '{name}' "
                         f"exceeds field limits (max_digits=7, decimal_places=2): {exc.message}"
-                    ) from exc
+                    )
+                    raise CommandError(msg) from exc
                 ingredient_raw["quantity"] = d
 
     def add_arguments(self, parser):
+        """Register command-line arguments."""
         parser.add_argument("paths", nargs="+", type=str, help="Path to recipe")
         parser.add_argument(
             "--user",
@@ -170,34 +174,36 @@ class Command(BaseCommand):
     @classmethod
     def _parse_serves(cls, serves_raw, source_path: Path) -> int:
         if serves_raw is None:
-            raise CommandError(f"{source_path}: missing required 'serves' value")
+            msg = f"{source_path}: missing required 'serves' value"
+            raise CommandError(msg)
         if isinstance(serves_raw, bool):
-            raise CommandError(
-                f"{source_path}: invalid serves value {serves_raw!r} (bool not allowed)"
-            )
+            msg = f"{source_path}: invalid serves value {serves_raw!r} (bool not allowed)"
+            raise CommandError(msg)
         if isinstance(serves_raw, float):
-            raise CommandError(
-                f"{source_path}: invalid serves value {serves_raw!r} (must be a whole number)"
-            )
+            msg = f"{source_path}: invalid serves value {serves_raw!r} (must be a whole number)"
+            raise CommandError(msg)
         try:
             serves = int(serves_raw)
         except (ValueError, TypeError) as exc:
-            raise CommandError(f"{source_path}: invalid serves value {serves_raw!r}") from exc
+            msg = f"{source_path}: invalid serves value {serves_raw!r}"
+            raise CommandError(msg) from exc
         if serves <= 0:
-            raise CommandError(f"{source_path}: serves must be > 0, got {serves}")
+            msg = f"{source_path}: serves must be > 0, got {serves}"
+            raise CommandError(msg)
         if serves > 32767:
-            raise CommandError(
-                f"{source_path}: serves value {serves} exceeds PositiveSmallIntegerField max (32767)"
-            )
+            msg = f"{source_path}: serves value {serves} exceeds PositiveSmallIntegerField max (32767)"
+            raise CommandError(msg)
         return serves
 
     def handle(self, *args, **options):
+        """Import recipes from a YAML file or directory."""
         dry_run = options["dry_run"]
         username = options["user"]
         try:
             owner: User = User.objects.get(username=username)
         except ObjectDoesNotExist:
-            raise CommandError(f"User '{username}' not found in the database.")
+            msg = f"User '{username}' not found in the database."
+            raise CommandError(msg) from None
 
         # Collect files
         files_to_load: list[Path] = []
@@ -216,7 +222,7 @@ class Command(BaseCommand):
         seen_names: dict[str, Path] = {}
         seen_filenames: dict[str, Path] = {}  # casefold(yaml_filename) -> source_path
         for source_path in files_to_load:
-            with open(source_path, "r", encoding="utf-8") as stream:
+            with source_path.open(encoding="utf-8") as stream:
                 recipe_dict = yaml.safe_load(stream)
             self.stdout.write(self.style.NOTICE(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"))
             self.stdout.write(self.style.NOTICE(str(source_path)))
@@ -227,18 +233,18 @@ class Command(BaseCommand):
 
             recipe_name = Command.clean(recipe_dict["title"])
             if recipe_name in seen_names:
-                raise CommandError(
-                    f"Duplicate title '{recipe_name}' in {source_path} and {seen_names[recipe_name]}"
-                )
+                msg = f"Duplicate title '{recipe_name}' in {source_path} and {seen_names[recipe_name]}"
+                raise CommandError(msg)
             seen_names[recipe_name] = source_path
 
             yaml_filename = sanitize_stored_filename(source_path.name)
             fn_key = yaml_filename.casefold()
             if fn_key in seen_filenames:
-                raise CommandError(
+                msg = (
                     f"Filename collision: '{yaml_filename}' from {source_path} "
                     f"matches '{seen_filenames[fn_key]}' (case-insensitive)"
                 )
+                raise CommandError(msg)
             seen_filenames[fn_key] = source_path
 
             payloads.append((source_path, recipe_dict, serves, recipe_name, yaml_filename))
@@ -251,7 +257,8 @@ class Command(BaseCommand):
         )
         if existing:
             conflicts = ", ".join(f"'{n}'" for n in sorted(existing))
-            raise CommandError(f"Recipes already exist in DB for this owner: {conflicts}")
+            msg = f"Recipes already exist in DB for this owner: {conflicts}"
+            raise CommandError(msg)
 
         existing_filenames: set[str] = set()
         for row in Recipe.objects.filter(owner=owner).values("pk", "yaml_filename", "recipe_name"):
@@ -265,7 +272,8 @@ class Command(BaseCommand):
         batch_fn_conflicts = seen_filenames.keys() & existing_filenames
         if batch_fn_conflicts:
             conflicts = ", ".join(f"'{k}'" for k in sorted(batch_fn_conflicts))
-            raise CommandError(f"Filename collision with existing recipe(s) in DB: {conflicts}")
+            msg = f"Filename collision with existing recipe(s) in DB: {conflicts}"
+            raise CommandError(msg)
 
         if dry_run:
             for _path, _rd, serves, recipe_name, _fn in payloads:
@@ -277,7 +285,7 @@ class Command(BaseCommand):
 
         # Phase 3: write — single transaction so partial failures roll back the whole batch
         with transaction.atomic():
-            for source_path, recipe_dict, serves, recipe_name, yaml_filename in payloads:
+            for _source_path, recipe_dict, serves, recipe_name, yaml_filename in payloads:
                 if recipe_dict["cuisine"]:
                     cuisine, _ = Cuisine.objects.get_or_create(cuisine=recipe_dict["cuisine"])
                 else:

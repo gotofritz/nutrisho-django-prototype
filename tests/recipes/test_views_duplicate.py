@@ -8,6 +8,7 @@ from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Reci
 
 @pytest.fixture
 def auth_client(user):
+    """Auth client."""
     c = Client()
     c.force_login(user)
     return c
@@ -15,6 +16,7 @@ def auth_client(user):
 
 @pytest.fixture
 def recipe(user, db):
+    """Recipe."""
     return Recipe.objects.create(
         recipe_name="Original Recipe",
         owner=user,
@@ -25,6 +27,7 @@ def recipe(user, db):
 
 @pytest.fixture
 def recipe_with_content(recipe):
+    """Recipe with content."""
     Step.objects.create(recipe=recipe, step_text="Step one", index_in_sequence=0)
     Step.objects.create(recipe=recipe, step_text="Step two", index_in_sequence=1)
     group = IngredientGroup.objects.create(recipe=recipe, group_name="Main", index_in_sequence=0)
@@ -37,18 +40,21 @@ def recipe_with_content(recipe):
 
 @pytest.mark.django_db
 def test_duplicate_requires_post(auth_client, recipe):
+    """Duplicate requires post."""
     response = auth_client.get(f"/recipes/{recipe.pk}/duplicate/")
     assert response.status_code == 405
 
 
 @pytest.mark.django_db
 def test_duplicate_creates_new_recipe(auth_client, recipe):
+    """Duplicate creates new recipe."""
     auth_client.post(f"/recipes/{recipe.pk}/duplicate/")
     assert Recipe.objects.count() == 2
 
 
 @pytest.mark.django_db
 def test_duplicate_name_has_copy_suffix(auth_client, recipe):
+    """Duplicate name has copy suffix."""
     auth_client.post(f"/recipes/{recipe.pk}/duplicate/")
     copy = Recipe.objects.exclude(pk=recipe.pk).get()
     assert copy.recipe_name == "Original Recipe Copy"
@@ -56,6 +62,7 @@ def test_duplicate_name_has_copy_suffix(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_duplicate_name_avoids_collision(auth_client, recipe, user):
+    """Duplicate name avoids collision."""
     Recipe.objects.create(recipe_name="Original Recipe Copy", owner=user)
     auth_client.post(f"/recipes/{recipe.pk}/duplicate/")
     names = list(Recipe.objects.values_list("recipe_name", flat=True))
@@ -64,6 +71,7 @@ def test_duplicate_name_avoids_collision(auth_client, recipe, user):
 
 @pytest.mark.django_db
 def test_duplicate_copies_metadata(auth_client, recipe):
+    """Duplicate copies metadata."""
     auth_client.post(f"/recipes/{recipe.pk}/duplicate/")
     copy = Recipe.objects.exclude(pk=recipe.pk).get()
     assert copy.short_description == recipe.short_description
@@ -72,6 +80,7 @@ def test_duplicate_copies_metadata(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_duplicate_copies_steps(auth_client, recipe_with_content):
+    """Duplicate copies steps."""
     auth_client.post(f"/recipes/{recipe_with_content.pk}/duplicate/")
     copy = Recipe.objects.exclude(pk=recipe_with_content.pk).get()
     assert Step.objects.filter(recipe=copy).count() == 2
@@ -80,6 +89,7 @@ def test_duplicate_copies_steps(auth_client, recipe_with_content):
 
 @pytest.mark.django_db
 def test_duplicate_copies_ingredient_groups(auth_client, recipe_with_content):
+    """Duplicate copies ingredient groups."""
     auth_client.post(f"/recipes/{recipe_with_content.pk}/duplicate/")
     copy = Recipe.objects.exclude(pk=recipe_with_content.pk).get()
     assert IngredientGroup.objects.filter(recipe=copy).count() == 1
@@ -87,6 +97,7 @@ def test_duplicate_copies_ingredient_groups(auth_client, recipe_with_content):
 
 @pytest.mark.django_db
 def test_duplicate_copies_ingredients_in_groups(auth_client, recipe_with_content):
+    """Duplicate copies ingredients in groups."""
     auth_client.post(f"/recipes/{recipe_with_content.pk}/duplicate/")
     copy = Recipe.objects.exclude(pk=recipe_with_content.pk).get()
     group = IngredientGroup.objects.get(recipe=copy)
@@ -95,6 +106,7 @@ def test_duplicate_copies_ingredients_in_groups(auth_client, recipe_with_content
 
 @pytest.mark.django_db
 def test_duplicate_copies_tags(auth_client, recipe):
+    """Duplicate copies tags."""
     vegan = Tag.objects.create(tag="vegan")
     quick = Tag.objects.create(tag="quick")
     vegan.recipe.add(recipe)
@@ -108,6 +120,7 @@ def test_duplicate_copies_tags(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_duplicate_redirects_to_copy(auth_client, recipe):
+    """Duplicate redirects to copy."""
     response = auth_client.post(f"/recipes/{recipe.pk}/duplicate/")
     copy = Recipe.objects.exclude(pk=recipe.pk).get()
     assert response.status_code == 302
@@ -160,9 +173,11 @@ def test_duplicate_child_integrity_error_propagates_not_loops(auth_client, recip
     Step.objects.create(recipe=recipe, step_text="Step 1", index_in_sequence=0)
     count_before = Recipe.objects.filter(owner=recipe.owner).count()
 
-    with patch("recipes.models.Step.save", side_effect=IntegrityError("dup seq")):
-        with pytest.raises(IntegrityError):
-            auth_client.post(f"/recipes/{recipe.pk}/duplicate/")
+    with (
+        patch("recipes.models.Step.save", side_effect=IntegrityError("dup seq")),
+        pytest.raises(IntegrityError),
+    ):
+        auth_client.post(f"/recipes/{recipe.pk}/duplicate/")
 
     # Transaction rolled back — no extra Recipe created
     assert Recipe.objects.filter(owner=recipe.owner).count() == count_before

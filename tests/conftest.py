@@ -5,6 +5,7 @@ import pytest
 
 @pytest.fixture
 def user(db):
+    """User."""
     from django.contrib.auth.models import User
 
     existing = User.objects.filter(username="gotofritz").first()

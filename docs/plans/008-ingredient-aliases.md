@@ -35,7 +35,7 @@ The alias collision rules below depend on it.
 
 ## TDD phases
 
-Each cycle is **red → green → refactor**. Run `task qa` before the PR; keep
+Each cycle is **red → green → refactor**. Run `uv run poe qa` before the PR; keep
 coverage ≥ 95%.
 
 - **1** `IngredientAlias` model: `alias_name` (case-insensitive unique),

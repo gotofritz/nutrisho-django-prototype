@@ -4,7 +4,7 @@ import os
 
 os.environ.setdefault("SECRET_KEY", "test-insecure-key-not-for-production")
 
-from nutrisho.settings.base import *  # noqa: F401, F403
+from nutrisho.settings.base import *  # noqa: F403
 
 DEBUG = False
 ALLOWED_HOSTS = ["testserver", "localhost", "127.0.0.1"]

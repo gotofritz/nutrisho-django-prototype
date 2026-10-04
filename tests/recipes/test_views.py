@@ -8,6 +8,7 @@ from recipes.models import Recipe
 
 @pytest.fixture
 def auth_client(user):
+    """Auth client."""
     c = Client()
     c.force_login(user)
     return c
@@ -15,11 +16,13 @@ def auth_client(user):
 
 @pytest.fixture
 def recipe(user, db):
+    """Recipe."""
     return Recipe.objects.create(recipe_name="Test Recipe", owner=user)
 
 
 @pytest.fixture
 def two_recipes(user, db):
+    """Two recipes."""
     r1 = Recipe.objects.create(recipe_name="First", owner=user)
     r2 = Recipe.objects.create(recipe_name="Second", owner=user)
     return r1, r2
@@ -27,12 +30,14 @@ def two_recipes(user, db):
 
 @pytest.mark.django_db
 def test_home_view_returns_200(auth_client):
+    """Home view returns 200."""
     response = auth_client.get("/recipes/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_home_view_lists_recipes(auth_client, recipe):
+    """Home view lists recipes."""
     response = auth_client.get("/recipes/")
     assert response.status_code == 200
     assert recipe in response.context["latest_recipe_list"]
@@ -40,6 +45,7 @@ def test_home_view_lists_recipes(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_view_returns_200(auth_client, recipe):
+    """Recipe view returns 200."""
     response = auth_client.get(f"/recipes/{recipe.pk}/")
     assert response.status_code == 200
     assert response.context["recipe"] == recipe
@@ -47,12 +53,14 @@ def test_recipe_view_returns_200(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_view_404_on_missing(auth_client, db):
+    """Recipe view 404 on missing."""
     response = auth_client.get("/recipes/99999/")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_recipe_nav_single_recipe_wraps_to_self(auth_client, recipe):
+    """Recipe nav single recipe wraps to self."""
     response = auth_client.get(f"/recipes/{recipe.pk}/")
     nav = response.context["nav"]
     assert nav["prev_id"] == recipe.pk
@@ -61,6 +69,7 @@ def test_recipe_nav_single_recipe_wraps_to_self(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_nav_wraps_at_boundaries(auth_client, two_recipes):
+    """Recipe nav wraps at boundaries."""
     first, second = two_recipes
     # At last recipe, next wraps to first
     response = auth_client.get(f"/recipes/{second.pk}/")
@@ -105,6 +114,7 @@ def test_field_display_has_data_empty_when_value_blank(auth_client, user):
 
 @pytest.mark.django_db
 def test_field_display_no_data_empty_when_value_present(auth_client, user):
+    """Field display no data empty when value present."""
     r = Recipe.objects.create(recipe_name="Has Desc", owner=user, short_description="Tasty soup")
     response = auth_client.get(f"/recipes/{r.pk}/")
     content = response.content.decode()
@@ -138,6 +148,7 @@ def test_list_has_new_recipe_link(auth_client):
 
 @pytest.mark.django_db
 def test_field_edit_short_description_is_textarea(auth_client, recipe):
+    """Field edit short description is textarea."""
     response = auth_client.get(f"/recipes/{recipe.pk}/field/short_description/edit/")
     content = response.content.decode()
     assert "<textarea" in content

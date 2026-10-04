@@ -15,6 +15,7 @@ class Command(BaseCommand):
     help = "Fix duplicate index_in_sequence values in IngredientGroup and IngredientInRecipe"
 
     def add_arguments(self, parser):
+        """Register command-line arguments."""
         parser.add_argument(
             "--dry-run",
             action="store_true",
@@ -23,6 +24,7 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
+        """Renumber duplicate index_in_sequence values (optionally as a dry run)."""
         dry_run = options["dry_run"]
         if dry_run:
             self.stdout.write("DRY RUN — no changes will be written\n")

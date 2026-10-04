@@ -23,14 +23,15 @@ class IngredientForm(forms.ModelForm):
         fields = ["ingredient_name", "plural_name", "family", "dietary_constraint"]
 
     def clean_ingredient_name(self) -> str:
+        """Strip the name and reject blank or duplicate (case-insensitive) names."""
         name = (self.cleaned_data.get("ingredient_name") or "").strip()
         if not name:
-            raise forms.ValidationError("Ingredient name is required.")
+            msg = "Ingredient name is required."
+            raise forms.ValidationError(msg)
         clash = Ingredient.objects.filter(ingredient_name__iexact=name)
         if self.instance.pk:
             clash = clash.exclude(pk=self.instance.pk)
         if clash.exists():
-            raise forms.ValidationError(
-                "An ingredient with this name already exists — merge them instead."
-            )
+            msg = "An ingredient with this name already exists — merge them instead."
+            raise forms.ValidationError(msg)
         return name

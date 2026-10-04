@@ -134,9 +134,8 @@ def delete_ingredients(*, ingredient_ids: Iterable[int], replacement_id: int | N
             else None
         )
         if replacement is None:
-            raise IngredientInUseError(
-                "Recipes still use these ingredients — pick a replacement first."
-            )
+            msg = "Recipes still use these ingredients — pick a replacement first."
+            raise IngredientInUseError(msg)
         # Lock the referencing rows before rewriting them, matching
         # recipe_ingredient_reassign (a no-op on SQLite, which serializes anyway).
         list(references.select_for_update().values("pk"))
@@ -165,7 +164,8 @@ def merge_ingredients(*, survivor_id: int, victim_ids: Iterable[int]) -> int:
     Returns the number of `Ingredient` rows merged away.
     """
     if not Ingredient.objects.filter(pk=survivor_id).exists():
-        raise ObjectDoesNotExist(f"No Ingredient with id {survivor_id}")
+        msg = f"No Ingredient with id {survivor_id}"
+        raise ObjectDoesNotExist(msg)
     return delete_ingredients(ingredient_ids=victim_ids, replacement_id=survivor_id)
 
 
@@ -211,12 +211,15 @@ def merge_plural_ingredients(*, singular_id: int, plural_id: int) -> None:
     """
     singular = Ingredient.objects.filter(pk=singular_id).first()
     if singular is None:
-        raise ObjectDoesNotExist(f"No Ingredient with id {singular_id}")
+        msg = f"No Ingredient with id {singular_id}"
+        raise ObjectDoesNotExist(msg)
     plural = Ingredient.objects.filter(pk=plural_id).first()
     if plural is None:
-        raise ObjectDoesNotExist(f"No Ingredient with id {plural_id}")
+        msg = f"No Ingredient with id {plural_id}"
+        raise ObjectDoesNotExist(msg)
     if singular.pk == plural.pk:
-        raise ValueError("An ingredient cannot be its own plural.")
+        msg = "An ingredient cannot be its own plural."
+        raise ValueError(msg)
     plural_spelling = cast(str, plural.ingredient_name)
     delete_ingredients(ingredient_ids=[plural.pk], replacement_id=singular.pk)
     singular.plural_name = plural_spelling

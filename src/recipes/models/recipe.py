@@ -10,13 +10,13 @@ from .source import Source
 
 
 class RecipeManager(models.Manager):
-    def get_by_natural_key(self, username: str, recipe_name: str) -> "Recipe":
+    def get_by_natural_key(self, username: str, recipe_name: str) -> Recipe:
+        """Look up a recipe by owner username and recipe name."""
         return self.get(owner__username=username, recipe_name=recipe_name)
 
 
 class Recipe(models.Model):
-    """
-    Recipe model.
+    """Recipe model.
 
     servings is the author's intended serving count. It is mandatory: every
     recipe carries one, and the column is NOT NULL with a default of 1.
@@ -55,17 +55,24 @@ class Recipe(models.Model):
             ),
         ]
 
+    def __str__(self) -> str:
+        """Return a readable label."""
+        return str(self.recipe_name)
+
     def save(self, *args, **kwargs):
+        """Sanitise the stored YAML filename before saving."""
         if self.yaml_filename:
             self.yaml_filename = sanitize_stored_filename(  # ty: ignore[invalid-assignment]
                 str(self.yaml_filename)
             )
         super().save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        """Return the URL of the recipe page."""
+        return reverse("recipes:recipe", kwargs={"recipe_id": self.id})
+
     def natural_key(self) -> tuple[str, str]:
+        """Return the natural key used by fixtures."""
         return (str(self.owner.username), str(self.recipe_name))  # ty: ignore[unresolved-attribute]
 
     natural_key.dependencies = ["auth.user"]  # ty: ignore[unresolved-attribute]
-
-    def get_absolute_url(self):
-        return reverse("recipes:recipe", kwargs={"recipe_id": self.id})

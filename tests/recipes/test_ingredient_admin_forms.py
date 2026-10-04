@@ -8,6 +8,7 @@ from recipes.models import Ingredient
 
 @pytest.mark.django_db
 def test_valid_form_saves_name_family_and_dietary_constraint(make_ingredient):
+    """Valid form saves name family and dietary constraint."""
     onion = make_ingredient("onion")
     form = IngredientForm(
         data={"ingredient_name": "aubergine", "family": "VEG", "dietary_constraint": "VGN"},
@@ -23,6 +24,7 @@ def test_valid_form_saves_name_family_and_dietary_constraint(make_ingredient):
 
 @pytest.mark.django_db
 def test_rename_onto_an_existing_name_is_rejected(make_ingredient):
+    """Rename onto an existing name is rejected."""
     onion = make_ingredient("onion")
     make_ingredient("aubergine")
     form = IngredientForm(data={"ingredient_name": "aubergine"}, instance=onion)
@@ -32,6 +34,7 @@ def test_rename_onto_an_existing_name_is_rejected(make_ingredient):
 
 @pytest.mark.django_db
 def test_rename_onto_an_existing_name_is_rejected_case_insensitively(make_ingredient):
+    """Rename onto an existing name is rejected case insensitively."""
     onion = make_ingredient("onion")
     make_ingredient("Aubergine")
     form = IngredientForm(data={"ingredient_name": "aubergine"}, instance=onion)
@@ -41,6 +44,7 @@ def test_rename_onto_an_existing_name_is_rejected_case_insensitively(make_ingred
 
 @pytest.mark.django_db
 def test_keeping_the_current_name_is_allowed(make_ingredient):
+    """Keeping the current name is allowed."""
     onion = make_ingredient("onion")
     form = IngredientForm(data={"ingredient_name": "onion", "family": "VEG"}, instance=onion)
     assert form.is_valid(), form.errors
@@ -48,6 +52,7 @@ def test_keeping_the_current_name_is_allowed(make_ingredient):
 
 @pytest.mark.django_db
 def test_recasing_an_ingredients_own_name_is_allowed(make_ingredient):
+    """Recasing an ingredients own name is allowed."""
     onion = make_ingredient("onion")
     form = IngredientForm(data={"ingredient_name": "Onion"}, instance=onion)
     assert form.is_valid(), form.errors
@@ -56,6 +61,7 @@ def test_recasing_an_ingredients_own_name_is_allowed(make_ingredient):
 
 @pytest.mark.django_db
 def test_surrounding_whitespace_is_stripped(make_ingredient):
+    """Surrounding whitespace is stripped."""
     onion = make_ingredient("onion")
     form = IngredientForm(data={"ingredient_name": "  aubergine  "}, instance=onion)
     assert form.is_valid(), form.errors
@@ -64,6 +70,7 @@ def test_surrounding_whitespace_is_stripped(make_ingredient):
 
 @pytest.mark.django_db
 def test_whitespace_only_name_is_rejected(make_ingredient):
+    """Whitespace only name is rejected."""
     onion = make_ingredient("onion")
     form = IngredientForm(data={"ingredient_name": "   "}, instance=onion)
     assert not form.is_valid()
@@ -73,6 +80,7 @@ def test_whitespace_only_name_is_rejected(make_ingredient):
 @pytest.mark.django_db
 @pytest.mark.parametrize("field", ["family", "dietary_constraint"])
 def test_unknown_choice_is_rejected(make_ingredient, field):
+    """Unknown choice is rejected."""
     onion = make_ingredient("onion")
     form = IngredientForm(data={"ingredient_name": "onion", field: "NOPE"}, instance=onion)
     assert not form.is_valid()
@@ -81,6 +89,7 @@ def test_unknown_choice_is_rejected(make_ingredient, field):
 
 @pytest.mark.django_db
 def test_family_and_dietary_constraint_may_be_blank(make_ingredient):
+    """Family and dietary constraint may be blank."""
     onion = make_ingredient("onion")
     form = IngredientForm(
         data={"ingredient_name": "onion", "family": "", "dietary_constraint": ""}, instance=onion
@@ -90,6 +99,7 @@ def test_family_and_dietary_constraint_may_be_blank(make_ingredient):
 
 @pytest.mark.django_db
 def test_rejected_rename_does_not_write(make_ingredient):
+    """Rejected rename does not write."""
     onion = make_ingredient("onion")
     make_ingredient("aubergine")
     IngredientForm(data={"ingredient_name": "aubergine"}, instance=onion).is_valid()
@@ -112,6 +122,7 @@ def test_form_saves_a_plural_name_override(make_ingredient):
 
 @pytest.mark.django_db
 def test_blank_plural_name_falls_back_to_the_rule(make_ingredient):
+    """Blank plural name falls back to the rule."""
     tomato = make_ingredient("tomato", plural_name="tomatos")
     form = IngredientForm(data={"ingredient_name": "tomato", "plural_name": ""}, instance=tomato)
     assert form.is_valid(), form.errors

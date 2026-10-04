@@ -8,6 +8,7 @@ from recipes.models import Recipe
 
 @pytest.fixture
 def recipe(user, db):
+    """Recipe."""
     return Recipe.objects.create(recipe_name="Deep Link Recipe", owner=user)
 
 
@@ -77,7 +78,9 @@ def test_non_htmx_unauthenticated_still_gets_302(recipe):
 @pytest.mark.django_db
 def test_htmx_post_unauthenticated_next_is_safe(recipe):
     """HTMX POST (e.g. delete) session expiry: next= must not point to the POST URL.
-    After login, the browser must not GET a POST-only endpoint."""
+
+    After login, the browser must not GET a POST-only endpoint.
+    """
     c = Client()
     response = c.post(
         f"/recipes/{recipe.pk}/delete/",
@@ -164,7 +167,9 @@ def test_htmx_boosted_get_uses_current_url_not_referer(recipe):
 @pytest.mark.django_db
 def test_htmx_boosted_post_uses_referer_not_post_url(recipe):
     """Boosted POST (e.g. Duplicate form) with expired session must not use the POST URL as next=.
-    After login the browser must not GET a POST-only endpoint."""
+
+    After login the browser must not GET a POST-only endpoint.
+    """
     c = Client()  # not logged in
     response = c.post(
         f"/recipes/{recipe.pk}/duplicate/",

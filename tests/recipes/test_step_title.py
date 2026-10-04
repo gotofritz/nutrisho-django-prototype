@@ -24,6 +24,7 @@ from recipes.utils.step_title import sentence_case_heading, split_step_title
     ],
 )
 def test_titles_are_split_off(text: str, expected: tuple[str, str]):
+    """Titles are split off."""
     assert split_step_title(text) == expected
 
 
@@ -56,14 +57,17 @@ def test_titles_are_split_off(text: str, expected: tuple[str, str]):
     ],
 )
 def test_prose_is_left_whole(text: str):
+    """Prose is left whole."""
     assert split_step_title(text) == ("", text)
 
 
 def test_empty_string_stays_empty():
+    """Empty string stays empty."""
     assert split_step_title("") == ("", "")
 
 
 def test_a_title_at_the_field_limit_is_split():
+    """A title at the field limit is split."""
     title = "A" * 128
     assert split_step_title(f"{title}: fold") == (title, "fold")
 
@@ -85,6 +89,7 @@ def test_a_title_at_the_field_limit_is_split():
     ],
 )
 def test_shouted_headings_are_sentence_cased(shouted: str, expected: str):
+    """Shouted headings are sentence cased."""
     assert sentence_case_heading(shouted) == expected
 
 
@@ -101,4 +106,5 @@ def test_shouted_headings_are_sentence_cased(shouted: str, expected: str):
     ],
 )
 def test_headings_that_are_not_shouted_are_left_alone(heading: str):
+    """Headings that are not shouted are left alone."""
     assert sentence_case_heading(heading) == heading

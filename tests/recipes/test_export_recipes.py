@@ -368,7 +368,7 @@ def test_safe_filename_multibyte_chars_capped_by_bytes():
     """Multibyte chars (é=2 B, CJK=3 B) are truncated by byte count, not char count."""
     from recipes.management.commands.export_recipes_to_yaml import safe_filename
 
-    # 200 × 'é' = 200 chars but 400 bytes — must not exceed 255 bytes in output
+    # 200 x 'é' = 200 chars but 400 bytes — must not exceed 255 bytes in output
     result_e = safe_filename("é" * 200)
     assert result_e.endswith(".yml")
     assert len(result_e.encode("utf-8")) <= 255
@@ -525,7 +525,7 @@ def test_export_encodes_unicode_correctly(user, tmp_path):
 
 @pytest.mark.django_db
 def test_serves_always_present_in_export_yaml(user, tmp_path):
-    """servings is mandatory, so every exported recipe carries a 'serves' key."""
+    """Servings is mandatory, so every exported recipe carries a 'serves' key."""
     build_recipe(user, name="Single Serving Dish", servings=1)
     call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
@@ -811,7 +811,7 @@ def test_existing_case_collision_in_output_dir_raises_command_error(user, tmp_pa
     (tmp_path / "SOUP.yml").write_text("old\n")
     build_recipe(user, name="Anything")
 
-    with pytest.raises(CommandError, match="[Cc]ollide|[Aa]mbiguous|[Cc]ollision"):
+    with pytest.raises(CommandError, match=r"[Cc]ollide|[Aa]mbiguous|[Cc]ollision"):
         call_command("export_recipes_to_yaml", str(tmp_path), user="gotofritz")
 
 
@@ -839,7 +839,7 @@ def test_non_yaml_files_differing_in_case_do_not_abort_export(user, tmp_path):
 
 @pytest.mark.django_db
 def test_export_any_user_recipe_is_not_lossy(tmp_path):
-    """owner is no longer lossy: --user round-trips ownership for any username."""
+    """Owner is no longer lossy: --user round-trips ownership for any username."""
     from django.contrib.auth.models import User as DjangoUser
 
     other = DjangoUser.objects.create_user(username="alice", password="x")
@@ -1122,6 +1122,7 @@ def test_export_writes_an_untitled_step_as_a_plain_string(user, tmp_path):
 
 @pytest.mark.django_db
 def test_export_writes_a_titled_step_as_a_mapping(user, tmp_path):
+    """Export writes a titled step as a mapping."""
     recipe = build_recipe(user, name="Titled Dish")
     step = recipe.step.first()
     step.step_title = "RAGÚ"
@@ -1135,6 +1136,7 @@ def test_export_writes_a_titled_step_as_a_mapping(user, tmp_path):
 
 @pytest.mark.django_db
 def test_export_mixes_both_shapes_within_one_recipe(user, tmp_path):
+    """Export mixes both shapes within one recipe."""
     recipe = build_recipe(user, name="Mixed Dish")
     Step.objects.create(
         recipe=recipe, step_text="Warm the milk", step_title="BECHAMEL", index_in_sequence=2
@@ -1151,6 +1153,7 @@ def test_export_mixes_both_shapes_within_one_recipe(user, tmp_path):
 
 @pytest.mark.django_db
 def test_round_trip_preserves_step_titles(user, tmp_path):
+    """Round trip preserves step titles."""
     recipe = build_recipe(user, name="Round Trip Titles")
     step = recipe.step.first()
     step.step_title = "RAGÚ"

@@ -34,6 +34,7 @@ def tag(html: str, element_id: str) -> str:
 
 @pytest.mark.django_db
 def test_manager_redirects_anonymous_user_to_login(client):
+    """Manager redirects anonymous user to login."""
     response = client.get(MANAGE_URL)
     assert response.status_code == 302
     assert "/accounts/login/" in response["Location"]
@@ -41,11 +42,13 @@ def test_manager_redirects_anonymous_user_to_login(client):
 
 @pytest.mark.django_db
 def test_manager_returns_200_for_authenticated_user(auth_client):
+    """Manager returns 200 for authenticated user."""
     assert auth_client.get(MANAGE_URL).status_code == 200
 
 
 @pytest.mark.django_db
 def test_manager_renders_the_four_columns(auth_client):
+    """Manager renders the four columns."""
     html = auth_client.get(MANAGE_URL).content.decode()
     for element_id in ("col-actions", "col-ingredients", "col-recipes", "col-preview"):
         assert tag(html, element_id)
@@ -61,6 +64,7 @@ def test_manager_back_link_goes_somewhere_the_user_can_actually_reach(auth_clien
 
 @pytest.mark.django_db
 def test_manager_has_search_input(auth_client):
+    """Manager has search input."""
     html = auth_client.get(MANAGE_URL).content.decode()
     assert 'name="q"' in html
 
@@ -68,12 +72,14 @@ def test_manager_has_search_input(auth_client):
 @pytest.mark.django_db
 @pytest.mark.parametrize("action", ["edit", "delete", "merge"])
 def test_manager_action_buttons_start_disabled(auth_client, action):
+    """Manager action buttons start disabled."""
     html = auth_client.get(MANAGE_URL).content.decode()
     assert has_bare_attr(tag(html, f"action-{action}"), "disabled")
 
 
 @pytest.mark.django_db
 def test_search_requires_login(client):
+    """Search requires login."""
     response = client.get(SEARCH_URL)
     assert response.status_code == 302
     assert "/accounts/login/" in response["Location"]
@@ -81,6 +87,7 @@ def test_search_requires_login(client):
 
 @pytest.mark.django_db
 def test_search_lists_all_ingredients_case_insensitively_sorted(auth_client, make_ingredient):
+    """Search lists all ingredients case insensitively sorted."""
     make_ingredient("onion")
     make_ingredient("Carrot")
     make_ingredient("aubergine")
@@ -91,6 +98,7 @@ def test_search_lists_all_ingredients_case_insensitively_sorted(auth_client, mak
 
 @pytest.mark.django_db
 def test_search_renders_a_checkbox_per_ingredient(auth_client, make_ingredient):
+    """Search renders a checkbox per ingredient."""
     onion = make_ingredient("onion")
     carrot = make_ingredient("carrot")
     html = squash(auth_client.get(SEARCH_URL).content.decode())
@@ -102,6 +110,7 @@ def test_search_renders_a_checkbox_per_ingredient(auth_client, make_ingredient):
 
 @pytest.mark.django_db
 def test_search_filters_by_query(auth_client, make_ingredient):
+    """Search filters by query."""
     make_ingredient("onion")
     make_ingredient("aubergine")
     html = auth_client.get(SEARCH_URL, {"q": "ONI"}).content.decode()
@@ -111,6 +120,7 @@ def test_search_filters_by_query(auth_client, make_ingredient):
 
 @pytest.mark.django_db
 def test_search_header_reports_found_and_selected_counts(auth_client, make_ingredient):
+    """Search header reports found and selected counts."""
     make_ingredient("onion")
     make_ingredient("aubergine")
     html = auth_client.get(SEARCH_URL).content.decode()
@@ -119,6 +129,7 @@ def test_search_header_reports_found_and_selected_counts(auth_client, make_ingre
 
 @pytest.mark.django_db
 def test_search_column_carries_width_scroll_and_wrap_classes(auth_client):
+    """Search column carries width scroll and wrap classes."""
     html = auth_client.get(SEARCH_URL).content.decode()
     column = tag(html, "col-ingredients")
     assert "max-w-[38ch]" in column
@@ -131,6 +142,7 @@ def test_search_column_carries_width_scroll_and_wrap_classes(auth_client):
 
 @pytest.mark.django_db
 def test_search_on_empty_database_returns_200(auth_client):
+    """Search on empty database returns 200."""
     response = auth_client.get(SEARCH_URL)
     assert response.status_code == 200
     assert "0 found / 0 selected" in response.content.decode()
@@ -140,11 +152,13 @@ RECIPES_URL = "/recipes/ingredients/manage/recipes/"
 
 
 def preview_url(recipe_pk: int) -> str:
+    """Preview url."""
     return f"/recipes/ingredients/manage/preview/{recipe_pk}/"
 
 
 @pytest.mark.django_db
 def test_matches_requires_login(client):
+    """Matches requires login."""
     response = client.get(RECIPES_URL)
     assert response.status_code == 302
     assert "/accounts/login/" in response["Location"]
@@ -154,6 +168,7 @@ def test_matches_requires_login(client):
 def test_matches_lists_recipes_using_the_selected_ingredients(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Matches lists recipes using the selected ingredients."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     make_recipe(owner=user, name="Pancakes")
@@ -167,6 +182,7 @@ def test_matches_lists_recipes_using_the_selected_ingredients(
 def test_matches_renders_no_checkboxes(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Matches renders no checkboxes."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -181,6 +197,7 @@ def test_matches_renders_no_checkboxes(
 def test_matches_header_reports_matches_and_selected_counts(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Matches header reports matches and selected counts."""
     onion = make_ingredient("onion")
     aubergine = make_ingredient("aubergine")
     moussaka = make_recipe(owner=user, name="Moussaka")
@@ -195,6 +212,7 @@ def test_matches_header_reports_matches_and_selected_counts(
 def test_matches_with_empty_selection_lists_nothing(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Matches with empty selection lists nothing."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -205,6 +223,7 @@ def test_matches_with_empty_selection_lists_nothing(
 
 @pytest.mark.django_db
 def test_matches_column_carries_width_scroll_and_wrap_classes(auth_client):
+    """Matches column carries width scroll and wrap classes."""
     html = auth_client.get(RECIPES_URL).content.decode()
     column = tag(html, "col-recipes")
     assert "max-w-[62ch]" in column
@@ -219,6 +238,7 @@ def test_matches_column_carries_width_scroll_and_wrap_classes(auth_client):
 def test_matches_rows_link_to_the_recipe_preview(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Matches rows link to the recipe preview."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -230,6 +250,7 @@ def test_matches_rows_link_to_the_recipe_preview(
 def test_matches_excludes_another_owners_recipes(
     auth_client, other_user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Matches excludes another owners recipes."""
     onion = make_ingredient("onion")
     theirs = make_recipe(owner=other_user, name="Their Soup")
     add_ingredient(recipe=theirs, ingredient=onion)
@@ -239,6 +260,7 @@ def test_matches_excludes_another_owners_recipes(
 
 @pytest.mark.django_db
 def test_preview_requires_login(client, user, make_recipe):
+    """Preview requires login."""
     moussaka = make_recipe(owner=user, name="Moussaka")
     response = client.get(preview_url(moussaka.pk))
     assert response.status_code == 302
@@ -249,6 +271,7 @@ def test_preview_requires_login(client, user, make_recipe):
 def test_preview_shows_name_servings_ingredients_and_steps(
     auth_client, user, make_ingredient, make_recipe, add_ingredient, add_step
 ):
+    """Preview shows name servings ingredients and steps."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -265,6 +288,7 @@ def test_preview_shows_name_servings_ingredients_and_steps(
 def test_preview_shows_step_titles(
     auth_client, user, make_ingredient, make_recipe, add_ingredient, add_step
 ):
+    """Preview shows step titles."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -277,6 +301,7 @@ def test_preview_shows_step_titles(
 def test_preview_has_no_navigation_or_edit_controls(
     auth_client, user, make_ingredient, make_recipe, add_ingredient, add_step
 ):
+    """Preview has no navigation or edit controls."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -290,6 +315,7 @@ def test_preview_has_no_navigation_or_edit_controls(
 
 @pytest.mark.django_db
 def test_preview_404s_for_another_owners_recipe(auth_client, other_user, make_recipe):
+    """Preview 404s for another owners recipe."""
     theirs = make_recipe(owner=other_user, name="Their Soup")
     assert auth_client.get(preview_url(theirs.pk)).status_code == 404
 
@@ -302,6 +328,7 @@ MERGE_URL = "/recipes/ingredients/manage/merge/"
 
 @pytest.mark.django_db
 def test_search_echoes_the_selection_as_checked(auth_client, make_ingredient):
+    """Search echoes the selection as checked."""
     onion = make_ingredient("onion")
     carrot = make_ingredient("carrot")
     html = squash(auth_client.get(SEARCH_URL, {"ingredient_ids": [onion.pk]}).content.decode())
@@ -311,6 +338,7 @@ def test_search_echoes_the_selection_as_checked(auth_client, make_ingredient):
 
 @pytest.mark.django_db
 def test_search_header_counts_the_selection(auth_client, make_ingredient):
+    """Search header counts the selection."""
     onion = make_ingredient("onion")
     make_ingredient("carrot")
     html = auth_client.get(SEARCH_URL, {"ingredient_ids": [onion.pk]}).content.decode()
@@ -319,6 +347,7 @@ def test_search_header_counts_the_selection(auth_client, make_ingredient):
 
 @pytest.mark.django_db
 def test_search_ignores_non_numeric_selection_values(auth_client, make_ingredient):
+    """Search ignores non numeric selection values."""
     make_ingredient("onion")
     html = auth_client.get(SEARCH_URL, {"ingredient_ids": ["oops"]}).content.decode()
     assert "1 found / 0 selected" in html
@@ -340,6 +369,7 @@ def test_ingredient_column_refreshes_matches_on_selection_change(auth_client):
 
 @pytest.mark.django_db
 def test_matches_response_refreshes_the_column_two_count_out_of_band(auth_client, make_ingredient):
+    """Matches response refreshes the column two count out of band."""
     onion = make_ingredient("onion")
     make_ingredient("carrot")
     html = squash(auth_client.get(RECIPES_URL, {"ingredient_ids": [onion.pk]}).content.decode())
@@ -350,6 +380,7 @@ def test_matches_response_refreshes_the_column_two_count_out_of_band(auth_client
 
 @pytest.mark.django_db
 def test_matches_out_of_band_count_respects_the_active_query(auth_client, make_ingredient):
+    """Matches out of band count respects the active query."""
     onion = make_ingredient("onion")
     make_ingredient("carrot")
     html = auth_client.get(RECIPES_URL, {"q": "oni", "ingredient_ids": [onion.pk]})
@@ -359,6 +390,7 @@ def test_matches_out_of_band_count_respects_the_active_query(auth_client, make_i
 @pytest.mark.django_db
 @pytest.mark.parametrize("url", [EDIT_URL, DELETE_URL])
 def test_edit_and_delete_reject_an_empty_selection(auth_client, url):
+    """Edit and delete reject an empty selection."""
     response = auth_client.get(url)
     assert response.status_code == 422
     assert "at least 1 ingredient" in response.content.decode()
@@ -367,6 +399,7 @@ def test_edit_and_delete_reject_an_empty_selection(auth_client, url):
 @pytest.mark.django_db
 @pytest.mark.parametrize("selected", [0, 1])
 def test_merge_rejects_fewer_than_two_selected(auth_client, make_ingredient, selected):
+    """Merge rejects fewer than two selected."""
     ids = [make_ingredient(f"ingredient {i}").pk for i in range(selected)]
     response = auth_client.get(MERGE_URL, {"ingredient_ids": ids})
     assert response.status_code == 422
@@ -376,6 +409,7 @@ def test_merge_rejects_fewer_than_two_selected(auth_client, make_ingredient, sel
 @pytest.mark.django_db
 @pytest.mark.parametrize("url", [EDIT_URL, DELETE_URL])
 def test_edit_and_delete_accept_one_selected(auth_client, make_ingredient, url):
+    """Edit and delete accept one selected."""
     onion = make_ingredient("onion")
     response = auth_client.get(url, {"ingredient_ids": [onion.pk]})
     assert response.status_code == 200
@@ -383,12 +417,14 @@ def test_edit_and_delete_accept_one_selected(auth_client, make_ingredient, url):
 
 @pytest.mark.django_db
 def test_merge_accepts_two_selected(auth_client, make_ingredient):
+    """Merge accepts two selected."""
     ids = [make_ingredient("onion").pk, make_ingredient("onions").pk]
     assert auth_client.get(MERGE_URL, {"ingredient_ids": ids}).status_code == 200
 
 
 @pytest.mark.django_db
 def test_cancel_requires_login(client):
+    """Cancel requires login."""
     response = client.get(CANCEL_URL)
     assert response.status_code == 302
     assert "/accounts/login/" in response["Location"]
@@ -396,6 +432,7 @@ def test_cancel_requires_login(client):
 
 @pytest.mark.django_db
 def test_cancel_restores_the_three_columns(auth_client):
+    """Cancel restores the three columns."""
     html = auth_client.get(CANCEL_URL).content.decode()
     for element_id in ("columns", "col-ingredients", "col-recipes", "col-preview"):
         assert tag(html, element_id)
@@ -405,6 +442,7 @@ def test_cancel_restores_the_three_columns(auth_client):
 def test_cancel_preserves_query_selection_and_counts(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Cancel preserves query selection and counts."""
     onion = make_ingredient("onion")
     make_ingredient("carrot")
     moussaka = make_recipe(owner=user, name="Moussaka")
@@ -418,11 +456,13 @@ def test_cancel_preserves_query_selection_and_counts(
 
 
 def save_url(ingredient_pk: int) -> str:
+    """Save url."""
     return f"/recipes/ingredients/manage/{ingredient_pk}/save/"
 
 
 @pytest.mark.django_db
 def test_edit_renders_one_prefilled_panel_per_selected_ingredient(auth_client, make_ingredient):
+    """Edit renders one prefilled panel per selected ingredient."""
     onion = make_ingredient("onion")
     carrot = make_ingredient("carrot")
     make_ingredient("aubergine")
@@ -435,6 +475,7 @@ def test_edit_renders_one_prefilled_panel_per_selected_ingredient(auth_client, m
 
 @pytest.mark.django_db
 def test_edit_panel_posts_to_its_own_save_url(auth_client, make_ingredient):
+    """Edit panel posts to its own save url."""
     onion = make_ingredient("onion")
     html = auth_client.get(EDIT_URL, {"ingredient_ids": [onion.pk]}).content.decode()
     assert f'hx-post="{save_url(onion.pk)}"' in html
@@ -442,6 +483,7 @@ def test_edit_panel_posts_to_its_own_save_url(auth_client, make_ingredient):
 
 @pytest.mark.django_db
 def test_edit_workspace_carries_the_selection_as_hidden_inputs(auth_client, make_ingredient):
+    """Edit workspace carries the selection as hidden inputs."""
     onion = make_ingredient("onion")
     carrot = make_ingredient("carrot")
     html = squash(
@@ -455,6 +497,7 @@ def test_edit_workspace_carries_the_selection_as_hidden_inputs(auth_client, make
 
 @pytest.mark.django_db
 def test_edit_turns_the_clicked_button_into_cancel(auth_client, make_ingredient):
+    """Edit turns the clicked button into cancel."""
     onion = make_ingredient("onion")
     html = squash(auth_client.get(EDIT_URL, {"ingredient_ids": [onion.pk]}).content.decode())
     assert 'hx-swap-oob="true"' in html
@@ -464,6 +507,7 @@ def test_edit_turns_the_clicked_button_into_cancel(auth_client, make_ingredient)
 
 @pytest.mark.django_db
 def test_save_requires_login(client, make_ingredient):
+    """Save requires login."""
     onion = make_ingredient("onion")
     response = client.post(save_url(onion.pk), {"ingredient_name": "onions"})
     assert response.status_code == 302
@@ -472,6 +516,7 @@ def test_save_requires_login(client, make_ingredient):
 
 @pytest.mark.django_db
 def test_save_rejects_get(auth_client, make_ingredient):
+    """Save rejects get."""
     onion = make_ingredient("onion")
     assert auth_client.get(save_url(onion.pk)).status_code == 405
 
@@ -497,6 +542,7 @@ def test_save_persists_the_rename_and_closes_the_lone_panel(auth_client, make_in
 
 @pytest.mark.django_db
 def test_save_closes_the_workspace_even_without_a_carried_selection(auth_client, make_ingredient):
+    """Save closes the workspace even without a carried selection."""
     onion = make_ingredient("onion")
     response = auth_client.post(save_url(onion.pk), {"ingredient_name": "onions"})
     assert response["HX-Retarget"] == "#columns"
@@ -525,6 +571,7 @@ def test_save_keeps_the_other_panels_open_when_several_are_being_edited(
 def test_save_panel_carries_the_selection_so_it_knows_how_many_are_open(
     auth_client, make_ingredient
 ):
+    """Save panel carries the selection so it knows how many are open."""
     onion = make_ingredient("onion")
     html = auth_client.get(EDIT_URL, {"ingredient_ids": [onion.pk]}).content.decode()
     assert 'hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only"' in html
@@ -541,6 +588,7 @@ def test_edit_exit_button_reads_done_not_cancel(auth_client, make_ingredient):
 @pytest.mark.django_db
 @pytest.mark.parametrize("url", [DELETE_URL, MERGE_URL])
 def test_destructive_workspaces_still_say_cancel(auth_client, make_ingredient, url):
+    """Destructive workspaces still say cancel."""
     ids = [make_ingredient("onion").pk, make_ingredient("carrot").pk]
     html = auth_client.get(url, {"ingredient_ids": ids}).content.decode()
     assert ">Cancel</button>" in html
@@ -548,6 +596,7 @@ def test_destructive_workspaces_still_say_cancel(auth_client, make_ingredient, u
 
 @pytest.mark.django_db
 def test_save_rename_shows_up_in_the_ingredient_column(auth_client, make_ingredient):
+    """Save rename shows up in the ingredient column."""
     onion = make_ingredient("onion")
     auth_client.post(save_url(onion.pk), {"ingredient_name": "spring onion"})
     html = auth_client.get(SEARCH_URL).content.decode()
@@ -556,6 +605,7 @@ def test_save_rename_shows_up_in_the_ingredient_column(auth_client, make_ingredi
 
 @pytest.mark.django_db
 def test_save_returns_only_the_panel_it_was_asked_for(auth_client, make_ingredient):
+    """Save returns only the panel it was asked for."""
     onion = make_ingredient("onion")
     carrot = make_ingredient("carrot")
     html = auth_client.post(
@@ -568,11 +618,13 @@ def test_save_returns_only_the_panel_it_was_asked_for(auth_client, make_ingredie
 
 @pytest.mark.django_db
 def test_save_404s_for_an_unknown_ingredient(auth_client):
+    """Save 404s for an unknown ingredient."""
     assert auth_client.post(save_url(9999), {"ingredient_name": "onions"}).status_code == 404
 
 
 @pytest.mark.django_db
 def test_save_with_a_clashing_name_returns_errors_and_does_not_write(auth_client, make_ingredient):
+    """Save with a clashing name returns errors and does not write."""
     onion = make_ingredient("onion")
     make_ingredient("Aubergine")
     response = auth_client.post(save_url(onion.pk), {"ingredient_name": "aubergine"})
@@ -583,6 +635,7 @@ def test_save_with_a_clashing_name_returns_errors_and_does_not_write(auth_client
 
 @pytest.mark.django_db
 def test_delete_confirm_lists_the_selected_ingredients(auth_client, make_ingredient):
+    """Delete confirm lists the selected ingredients."""
     onion = make_ingredient("onion")
     carrot = make_ingredient("carrot")
     html = auth_client.get(DELETE_URL, {"ingredient_ids": [onion.pk, carrot.pk]}).content.decode()
@@ -594,6 +647,7 @@ def test_delete_confirm_lists_the_selected_ingredients(auth_client, make_ingredi
 def test_delete_confirm_offers_no_replacement_picker_when_nothing_uses_them(
     auth_client, make_ingredient
 ):
+    """Delete confirm offers no replacement picker when nothing uses them."""
     onion = make_ingredient("onion")
     html = auth_client.get(DELETE_URL, {"ingredient_ids": [onion.pk]}).content.decode()
     assert 'name="replacement_id"' not in html
@@ -603,6 +657,7 @@ def test_delete_confirm_offers_no_replacement_picker_when_nothing_uses_them(
 def test_delete_confirm_shows_affected_count_and_replacement_picker_when_used(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Delete confirm shows affected count and replacement picker when used."""
     onion = make_ingredient("onion")
     make_ingredient("shallot")
     for name in ("Moussaka", "Ratatouille"):
@@ -617,6 +672,7 @@ def test_delete_confirm_shows_affected_count_and_replacement_picker_when_used(
 def test_delete_confirm_replacement_choices_exclude_the_victims(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Delete confirm replacement choices exclude the victims."""
     onion = make_ingredient("onion")
     make_ingredient("shallot")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
@@ -630,6 +686,7 @@ def test_delete_confirm_replacement_choices_exclude_the_victims(
 def test_delete_post_removes_unused_ingredients_and_refreshes_the_column(
     auth_client, make_ingredient
 ):
+    """Delete post removes unused ingredients and refreshes the column."""
     onion = make_ingredient("onion")
     make_ingredient("carrot")
     response = auth_client.post(DELETE_URL, {"ingredient_ids": [onion.pk]})
@@ -644,6 +701,7 @@ def test_delete_post_removes_unused_ingredients_and_refreshes_the_column(
 def test_delete_post_with_a_replacement_repoints_and_deletes(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Delete post with a replacement repoints and deletes."""
     onion = make_ingredient("onion")
     shallot = make_ingredient("shallot")
     iir = add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
@@ -660,6 +718,7 @@ def test_delete_post_with_a_replacement_repoints_and_deletes(
 def test_delete_post_without_a_replacement_is_blocked_and_deletes_nothing(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Delete post without a replacement is blocked and deletes nothing."""
     onion = make_ingredient("onion")
     make_ingredient("shallot")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
@@ -673,6 +732,7 @@ def test_delete_post_without_a_replacement_is_blocked_and_deletes_nothing(
 
 @pytest.mark.django_db
 def test_delete_post_requires_login(client, make_ingredient):
+    """Delete post requires login."""
     onion = make_ingredient("onion")
     response = client.post(DELETE_URL, {"ingredient_ids": [onion.pk]})
     assert response.status_code == 302
@@ -683,6 +743,7 @@ def test_delete_post_requires_login(client, make_ingredient):
 def test_merge_chooser_offers_a_survivor_radio_per_selected_ingredient(
     auth_client, make_ingredient
 ):
+    """Merge chooser offers a survivor radio per selected ingredient."""
     aubergine = make_ingredient("aubergine")
     eggplant = make_ingredient("eggplant")
     html = squash(
@@ -695,6 +756,7 @@ def test_merge_chooser_offers_a_survivor_radio_per_selected_ingredient(
 
 @pytest.mark.django_db
 def test_merge_chooser_defaults_to_the_first_candidate(auth_client, make_ingredient):
+    """Merge chooser defaults to the first candidate."""
     aubergine = make_ingredient("aubergine")
     eggplant = make_ingredient("eggplant")
     html = squash(
@@ -707,6 +769,7 @@ def test_merge_chooser_defaults_to_the_first_candidate(auth_client, make_ingredi
 def test_merge_post_collapses_the_rows_and_keeps_the_survivor_selected(
     auth_client, make_ingredient
 ):
+    """Merge post collapses the rows and keeps the survivor selected."""
     aubergine = make_ingredient("aubergine")
     eggplant = make_ingredient("eggplant")
     response = auth_client.post(
@@ -724,6 +787,7 @@ def test_merge_post_collapses_the_rows_and_keeps_the_survivor_selected(
 def test_merge_post_moves_recipes_onto_the_survivor(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Merge post moves recipes onto the survivor."""
     aubergine = make_ingredient("aubergine")
     eggplant = make_ingredient("eggplant")
     iir = add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=eggplant)
@@ -737,6 +801,7 @@ def test_merge_post_moves_recipes_onto_the_survivor(
 
 @pytest.mark.django_db
 def test_merge_post_rejects_a_survivor_outside_the_selection(auth_client, make_ingredient):
+    """Merge post rejects a survivor outside the selection."""
     aubergine = make_ingredient("aubergine")
     eggplant = make_ingredient("eggplant")
     outsider = make_ingredient("courgette")
@@ -751,6 +816,7 @@ def test_merge_post_rejects_a_survivor_outside_the_selection(auth_client, make_i
 
 @pytest.mark.django_db
 def test_merge_post_without_a_survivor_is_rejected(auth_client, make_ingredient):
+    """Merge post without a survivor is rejected."""
     ids = [make_ingredient("aubergine").pk, make_ingredient("eggplant").pk]
     response = auth_client.post(MERGE_URL, {"ingredient_ids": ids})
     assert response.status_code == 422
@@ -759,6 +825,7 @@ def test_merge_post_without_a_survivor_is_rejected(auth_client, make_ingredient)
 
 @pytest.mark.django_db
 def test_merge_post_404s_for_an_unknown_survivor(auth_client, make_ingredient):
+    """Merge post 404s for an unknown survivor."""
     aubergine = make_ingredient("aubergine")
     response = auth_client.post(
         MERGE_URL, {"ingredient_ids": [aubergine.pk, 9999], "survivor_id": 9999}
@@ -769,6 +836,7 @@ def test_merge_post_404s_for_an_unknown_survivor(auth_client, make_ingredient):
 
 @pytest.mark.django_db
 def test_merge_post_with_fewer_than_two_selected_is_blocked(auth_client, make_ingredient):
+    """Merge post with fewer than two selected is blocked."""
     aubergine = make_ingredient("aubergine")
     response = auth_client.post(
         MERGE_URL, {"ingredient_ids": [aubergine.pk], "survivor_id": aubergine.pk}
@@ -779,6 +847,7 @@ def test_merge_post_with_fewer_than_two_selected_is_blocked(auth_client, make_in
 
 @pytest.mark.django_db
 def test_merge_post_requires_login(client, make_ingredient):
+    """Merge post requires login."""
     ids = [make_ingredient("aubergine").pk, make_ingredient("eggplant").pk]
     response = client.post(MERGE_URL, {"ingredient_ids": ids, "survivor_id": ids[0]})
     assert response.status_code == 302
@@ -790,6 +859,7 @@ def test_merge_post_requires_login(client, make_ingredient):
 def test_action_panels_collapse_the_columns_into_a_full_width_workspace(
     auth_client, make_ingredient, url
 ):
+    """Action panels collapse the columns into a full width workspace."""
     onion = make_ingredient("onion")
     html = auth_client.get(url, {"ingredient_ids": [onion.pk]}).content.decode()
     workspace = tag(html, "columns")
@@ -803,12 +873,14 @@ def test_action_panels_collapse_the_columns_into_a_full_width_workspace(
 
 @pytest.mark.django_db
 def test_recipe_list_links_to_the_clean_up_tool(auth_client):
+    """Recipe list links to the clean up tool."""
     html = auth_client.get("/recipes/").content.decode()
     assert MANAGE_URL in html
 
 
 @pytest.mark.django_db
 def test_admin_ingredient_changelist_links_to_the_clean_up_tool(admin_client):
+    """Admin ingredient changelist links to the clean up tool."""
     html = admin_client.get("/admin/recipes/ingredient/").content.decode()
     assert MANAGE_URL in html
 
@@ -834,6 +906,7 @@ def test_preview_opens_the_recipe_in_a_new_tab(
 def test_preview_edit_link_sits_above_the_recipe(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Preview edit link sits above the recipe."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -855,12 +928,14 @@ def test_preview_edit_link_is_not_boosted(
 
 @pytest.mark.django_db
 def test_preview_without_a_recipe_shows_no_edit_link(auth_client):
+    """Preview without a recipe shows no edit link."""
     html = auth_client.get(MANAGE_URL).content.decode()
     assert 'target="_blank"' not in html
 
 
 @pytest.mark.django_db
 def test_manager_offers_an_unused_only_toggle(auth_client):
+    """Manager offers an unused only toggle."""
     html = squash(auth_client.get(MANAGE_URL).content.decode())
     toggle = tag(html, "unused-only")
     assert 'name="unused"' in toggle
@@ -873,6 +948,7 @@ def test_manager_offers_an_unused_only_toggle(auth_client):
 def test_search_unused_only_hides_used_ingredients(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Search unused only hides used ingredients."""
     onion = make_ingredient("onion")
     make_ingredient("leftover")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
@@ -884,6 +960,7 @@ def test_search_unused_only_hides_used_ingredients(
 
 @pytest.mark.django_db
 def test_manager_keeps_the_unused_toggle_ticked(auth_client):
+    """Manager keeps the unused toggle ticked."""
     html = squash(auth_client.get(MANAGE_URL, {"unused": "1"}).content.decode())
     assert 'value="1" checked' in tag(html, "unused-only")
 
@@ -892,6 +969,7 @@ def test_manager_keeps_the_unused_toggle_ticked(auth_client):
 def test_cancel_preserves_the_unused_filter(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Cancel preserves the unused filter."""
     onion = make_ingredient("onion")
     make_ingredient("leftover")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
@@ -921,6 +999,7 @@ def test_delete_leaves_the_unused_filter_applied(
 def test_selection_change_respects_the_unused_filter(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Selection change respects the unused filter."""
     onion = make_ingredient("onion")
     leftover = make_ingredient("leftover")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
@@ -932,12 +1011,14 @@ def test_selection_change_respects_the_unused_filter(
 
 @pytest.mark.django_db
 def test_ingredient_column_sends_the_unused_toggle_with_its_refresh(auth_client):
+    """Ingredient column sends the unused toggle with its refresh."""
     column = tag(squash(auth_client.get(SEARCH_URL).content.decode()), "col-ingredients")
     assert "#unused-only" in column
 
 
 @pytest.mark.django_db
 def test_header_checkbox_is_clear_when_nothing_is_selected(auth_client, make_ingredient):
+    """Header checkbox is clear when nothing is selected."""
     make_ingredient("onion")
     box = tag(squash(auth_client.get(SEARCH_URL).content.decode()), "select-all")
     assert not has_bare_attr(box, "checked")
@@ -946,6 +1027,7 @@ def test_header_checkbox_is_clear_when_nothing_is_selected(auth_client, make_ing
 
 @pytest.mark.django_db
 def test_header_checkbox_is_dashed_when_some_are_selected(auth_client, make_ingredient):
+    """Header checkbox is dashed when some are selected."""
     onion = make_ingredient("onion")
     make_ingredient("carrot")
     box = tag(
@@ -958,6 +1040,7 @@ def test_header_checkbox_is_dashed_when_some_are_selected(auth_client, make_ingr
 
 @pytest.mark.django_db
 def test_header_checkbox_is_ticked_when_every_listed_row_is_selected(auth_client, make_ingredient):
+    """Header checkbox is ticked when every listed row is selected."""
     ids = [make_ingredient(name).pk for name in ("onion", "carrot")]
     box = tag(
         squash(auth_client.get(SEARCH_URL, {"ingredient_ids": ids}).content.decode()),
@@ -985,6 +1068,7 @@ def test_header_checkbox_ignores_selected_rows_the_filter_hides(auth_client, mak
 
 @pytest.mark.django_db
 def test_toggle_all_from_empty_selects_everything_listed(auth_client, make_ingredient):
+    """Toggle all from empty selects everything listed."""
     ids = [make_ingredient(name).pk for name in ("onion", "carrot", "aubergine")]
     html = squash(auth_client.get(SEARCH_URL, {"toggle_all": "1"}).content.decode())
     for ingredient_id in ids:
@@ -994,6 +1078,7 @@ def test_toggle_all_from_empty_selects_everything_listed(auth_client, make_ingre
 
 @pytest.mark.django_db
 def test_toggle_all_from_full_clears_the_selection(auth_client, make_ingredient):
+    """Toggle all from full clears the selection."""
     ids = [make_ingredient(name).pk for name in ("onion", "carrot")]
     html = squash(
         auth_client.get(SEARCH_URL, {"toggle_all": "1", "ingredient_ids": ids}).content.decode()
@@ -1004,6 +1089,7 @@ def test_toggle_all_from_full_clears_the_selection(auth_client, make_ingredient)
 
 @pytest.mark.django_db
 def test_toggle_all_from_partial_selects_everything(auth_client, make_ingredient):
+    """Toggle all from partial selects everything."""
     onion = make_ingredient("onion")
     carrot = make_ingredient("carrot")
     html = squash(
@@ -1019,6 +1105,7 @@ def test_toggle_all_from_partial_selects_everything(auth_client, make_ingredient
 def test_toggle_all_only_takes_what_the_filters_leave(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Toggle all only takes what the filters leave."""
     used = make_ingredient("onion")
     orphan = make_ingredient("leftover")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=used)
@@ -1031,6 +1118,7 @@ def test_toggle_all_only_takes_what_the_filters_leave(
 def test_toggle_all_refreshes_the_matches_and_the_actions(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Toggle all refreshes the matches and the actions."""
     onion = make_ingredient("onion")
     make_ingredient("carrot")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
@@ -1041,6 +1129,7 @@ def test_toggle_all_refreshes_the_matches_and_the_actions(
 
 @pytest.mark.django_db
 def test_toggle_all_on_an_empty_list_selects_nothing(auth_client):
+    """Toggle all on an empty list selects nothing."""
     html = squash(auth_client.get(SEARCH_URL, {"toggle_all": "1"}).content.decode())
     assert "0 found / 0 selected" in html
     assert not has_bare_attr(tag(html, "select-all"), "checked")
@@ -1076,6 +1165,7 @@ def test_selection_change_clears_a_stale_preview(
 def test_a_single_match_loads_itself_into_the_preview(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """A single match loads itself into the preview."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -1089,6 +1179,7 @@ def test_a_single_match_loads_itself_into_the_preview(
 def test_search_also_refreshes_the_preview(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Search also refreshes the preview."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
@@ -1102,6 +1193,7 @@ def test_search_also_refreshes_the_preview(
 def test_full_page_previews_a_lone_match(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Full page previews a lone match."""
     onion = make_ingredient("onion")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
     html = auth_client.get(MANAGE_URL, {"ingredient_ids": [onion.pk]}).content.decode()
@@ -1112,6 +1204,7 @@ def test_full_page_previews_a_lone_match(
 def test_cancel_previews_a_lone_match(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Cancel previews a lone match."""
     onion = make_ingredient("onion")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
     html = auth_client.get(CANCEL_URL, {"ingredient_ids": [onion.pk]}).content.decode()
@@ -1120,6 +1213,7 @@ def test_cancel_previews_a_lone_match(
 
 @pytest.mark.django_db
 def test_an_empty_selection_leaves_the_preview_empty(auth_client, make_ingredient):
+    """An empty selection leaves the preview empty."""
     make_ingredient("onion")
     html = auth_client.get(RECIPES_URL).content.decode()
     assert "preview-title" not in html.split('id="col-preview"')[1]
@@ -1129,6 +1223,7 @@ def test_an_empty_selection_leaves_the_preview_empty(auth_client, make_ingredien
 def test_the_auto_preview_is_owner_scoped(
     auth_client, other_user, make_ingredient, make_recipe, add_ingredient
 ):
+    """The auto preview is owner scoped."""
     onion = make_ingredient("onion")
     add_ingredient(recipe=make_recipe(owner=other_user, name="Their Soup"), ingredient=onion)
     html = auth_client.get(RECIPES_URL, {"ingredient_ids": [onion.pk]}).content.decode()
@@ -1151,6 +1246,7 @@ def test_preview_pluralises_a_countable_ingredient(
 def test_preview_keeps_the_singular_when_a_unit_is_given(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Preview keeps the singular when a unit is given."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion, quantity=Decimal("200"), unit="g")
@@ -1161,6 +1257,7 @@ def test_preview_keeps_the_singular_when_a_unit_is_given(
 
 @pytest.mark.django_db
 def test_manager_offers_a_plurals_only_toggle(auth_client):
+    """Manager offers a plurals only toggle."""
     html = squash(auth_client.get(MANAGE_URL).content.decode())
     toggle = tag(html, "plurals-only")
     assert 'name="plurals"' in toggle
@@ -1183,12 +1280,14 @@ def test_search_plurals_only_lists_both_halves_of_each_pair(auth_client, make_in
 
 @pytest.mark.django_db
 def test_manager_keeps_the_plurals_toggle_ticked(auth_client):
+    """Manager keeps the plurals toggle ticked."""
     html = squash(auth_client.get(MANAGE_URL, {"plurals": "1"}).content.decode())
     assert 'value="1" checked' in tag(html, "plurals-only")
 
 
 @pytest.mark.django_db
 def test_cancel_preserves_the_plurals_filter(auth_client, make_ingredient):
+    """Cancel preserves the plurals filter."""
     make_ingredient("onion")
     make_ingredient("onions")
     make_ingredient("carrot")
@@ -1217,12 +1316,14 @@ def test_merge_leaves_the_plurals_filter_applied(auth_client, make_ingredient):
 
 @pytest.mark.django_db
 def test_ingredient_column_sends_the_plurals_toggle_with_its_refresh(auth_client):
+    """Ingredient column sends the plurals toggle with its refresh."""
     column = tag(squash(auth_client.get(SEARCH_URL).content.decode()), "col-ingredients")
     assert "#plurals-only" in column
 
 
 @pytest.mark.django_db
 def test_edit_panel_offers_the_plural_name_override(auth_client, make_ingredient):
+    """Edit panel offers the plural name override."""
     avocado = make_ingredient("avocado")
     html = auth_client.get(EDIT_URL, {"ingredient_ids": [avocado.pk]}).content.decode()
     assert 'name="plural_name"' in html
@@ -1232,6 +1333,7 @@ def test_edit_panel_offers_the_plural_name_override(auth_client, make_ingredient
 def test_saving_a_plural_override_changes_what_the_recipe_page_shows(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
+    """Saving a plural override changes what the recipe page shows."""
     avocado = make_ingredient("avocado")
     recipe = make_recipe(owner=user, name="Guacamole")
     add_ingredient(recipe=recipe, ingredient=avocado, quantity=Decimal("3"))
@@ -1247,6 +1349,7 @@ MERGE_PLURAL_URL = "/recipes/ingredients/manage/merge-plural/"
 
 @pytest.mark.django_db
 def test_merge_plural_requires_login(client, user):
+    """Merge plural requires login."""
     response = client.get(MERGE_PLURAL_URL)
     assert response.status_code == 302
     assert "/accounts/login/" in response["Location"]
@@ -1254,12 +1357,14 @@ def test_merge_plural_requires_login(client, user):
 
 @pytest.mark.django_db
 def test_manager_offers_a_merge_plural_button_disabled_until_two_are_picked(auth_client):
+    """Manager offers a merge plural button disabled until two are picked."""
     html = auth_client.get(MANAGE_URL).content.decode()
     assert has_bare_attr(tag(html, "action-merge-plural"), "disabled")
 
 
 @pytest.mark.django_db
 def test_merge_plural_button_enables_at_exactly_two(auth_client, make_ingredient):
+    """Merge plural button enables at exactly two."""
     apple = make_ingredient("apple")
     apples = make_ingredient("apples")
     html = auth_client.get(RECIPES_URL, {"ingredient_ids": [apple.pk, apples.pk]}).content.decode()
@@ -1268,6 +1373,7 @@ def test_merge_plural_button_enables_at_exactly_two(auth_client, make_ingredient
 
 @pytest.mark.django_db
 def test_merge_plural_button_disabled_again_at_three(auth_client, make_ingredient):
+    """Merge plural button disabled again at three."""
     ids = [make_ingredient(name).pk for name in ("apple", "apples", "pear")]
     html = auth_client.get(RECIPES_URL, {"ingredient_ids": ids}).content.decode()
     assert has_bare_attr(tag(html, "action-merge-plural"), "disabled")
@@ -1289,6 +1395,7 @@ def test_merge_plural_panel_preselects_the_singular_from_the_rule(auth_client, m
 
 @pytest.mark.django_db
 def test_merge_plural_guards_against_a_lone_selection(auth_client, make_ingredient):
+    """Merge plural guards against a lone selection."""
     apple = make_ingredient("apple")
     response = auth_client.get(MERGE_PLURAL_URL, {"ingredient_ids": [apple.pk]})
     assert response.status_code == 422
@@ -1297,6 +1404,7 @@ def test_merge_plural_guards_against_a_lone_selection(auth_client, make_ingredie
 
 @pytest.mark.django_db
 def test_merge_plural_guards_against_three(auth_client, make_ingredient):
+    """Merge plural guards against three."""
     ids = [make_ingredient(name).pk for name in ("apple", "apples", "pear")]
     response = auth_client.get(MERGE_PLURAL_URL, {"ingredient_ids": ids})
     assert response.status_code == 422
@@ -1304,6 +1412,7 @@ def test_merge_plural_guards_against_three(auth_client, make_ingredient):
 
 @pytest.mark.django_db
 def test_merge_plural_post_merges_and_records_the_plural(auth_client, make_ingredient):
+    """Merge plural post merges and records the plural."""
     apple = make_ingredient("apple")
     apples = make_ingredient("apples")
     response = auth_client.post(
@@ -1318,6 +1427,7 @@ def test_merge_plural_post_merges_and_records_the_plural(auth_client, make_ingre
 
 @pytest.mark.django_db
 def test_merge_plural_post_leaves_the_survivor_selected(auth_client, make_ingredient):
+    """Merge plural post leaves the survivor selected."""
     apple = make_ingredient("apple")
     apples = make_ingredient("apples")
     html = auth_client.post(
@@ -1329,6 +1439,7 @@ def test_merge_plural_post_leaves_the_survivor_selected(auth_client, make_ingred
 
 @pytest.mark.django_db
 def test_merge_plural_post_rejects_a_singular_outside_the_selection(auth_client, make_ingredient):
+    """Merge plural post rejects a singular outside the selection."""
     apple = make_ingredient("apple")
     apples = make_ingredient("apples")
     pear = make_ingredient("pear")
@@ -1342,6 +1453,7 @@ def test_merge_plural_post_rejects_a_singular_outside_the_selection(auth_client,
 
 @pytest.mark.django_db
 def test_merge_plural_post_rejects_a_missing_choice(auth_client, make_ingredient):
+    """Merge plural post rejects a missing choice."""
     apple = make_ingredient("apple")
     apples = make_ingredient("apples")
     response = auth_client.post(MERGE_PLURAL_URL, {"ingredient_ids": [apple.pk, apples.pk]})

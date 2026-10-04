@@ -38,18 +38,22 @@ from recipes.utils.pluralise import pluralise
     ],
 )
 def test_rule_table(singular: str, expected: str):
+    """Rule table."""
     assert pluralise(singular) == expected
 
 
 def test_only_the_last_word_is_pluralised():
+    """Only the last word is pluralised."""
     assert pluralise("spring onion") == "spring onions"
     assert pluralise("sun dried tomato") == "sun dried tomatoes"
 
 
 def test_empty_string_stays_empty():
+    """Empty string stays empty."""
     assert pluralise("") == ""
     assert pluralise("   ") == "   "
 
 
 def test_surrounding_whitespace_does_not_swallow_the_suffix():
+    """Surrounding whitespace does not swallow the suffix."""
     assert pluralise("  onion  ") == "  onions  "

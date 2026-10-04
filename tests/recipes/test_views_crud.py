@@ -8,6 +8,7 @@ from recipes.models import Cuisine, Recipe, Source
 
 @pytest.fixture
 def auth_client(user):
+    """Auth client."""
     c = Client()
     c.force_login(user)
     return c
@@ -15,16 +16,19 @@ def auth_client(user):
 
 @pytest.fixture
 def recipe(user, db):
+    """Recipe."""
     return Recipe.objects.create(recipe_name="Delete Me", owner=user)
 
 
 @pytest.fixture
 def cuisine(db):
+    """Cuisine."""
     return Cuisine.objects.create(cuisine="Italian")
 
 
 @pytest.fixture
 def source(db):
+    """Source."""
     return Source.objects.create(short_name="Moro", source="ISBN 9781856267991")
 
 
@@ -33,18 +37,21 @@ def source(db):
 
 @pytest.mark.django_db
 def test_recipe_new_get_returns_200(auth_client):
+    """Recipe new get returns 200."""
     response = auth_client.get("/recipes/new/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_recipe_new_get_has_form(auth_client):
+    """Recipe new get has form."""
     response = auth_client.get("/recipes/new/")
     assert "form" in response.context
 
 
 @pytest.mark.django_db
 def test_recipe_new_form_has_text_fields(auth_client):
+    """Recipe new form has text fields."""
     response = auth_client.get("/recipes/new/")
     form = response.context["form"]
     for field in (
@@ -59,12 +66,14 @@ def test_recipe_new_form_has_text_fields(auth_client):
 
 @pytest.mark.django_db
 def test_recipe_new_form_has_no_source_fk(auth_client):
+    """Recipe new form has no source fk."""
     response = auth_client.get("/recipes/new/")
     assert "source" not in response.context["form"].fields
 
 
 @pytest.mark.django_db
 def test_recipe_new_form_cuisine_is_charfield(auth_client):
+    """Recipe new form cuisine is charfield."""
     from django.forms import CharField
 
     response = auth_client.get("/recipes/new/")
@@ -73,6 +82,7 @@ def test_recipe_new_form_cuisine_is_charfield(auth_client):
 
 @pytest.mark.django_db
 def test_recipe_new_post_valid_creates_recipe_and_redirects(auth_client, user):
+    """Recipe new post valid creates recipe and redirects."""
     response = auth_client.post(
         "/recipes/new/", {"recipe_name": "Brand New Recipe", "servings": "4"}
     )
@@ -82,6 +92,7 @@ def test_recipe_new_post_valid_creates_recipe_and_redirects(auth_client, user):
 
 @pytest.mark.django_db
 def test_recipe_new_post_saves_metadata(auth_client, user):
+    """Recipe new post saves metadata."""
     response = auth_client.post(
         "/recipes/new/",
         {
@@ -103,6 +114,7 @@ def test_recipe_new_post_saves_metadata(auth_client, user):
 
 @pytest.mark.django_db
 def test_recipe_new_post_creates_cuisine_if_new(auth_client, user):
+    """Recipe new post creates cuisine if new."""
     assert not Cuisine.objects.filter(cuisine="Peruvian").exists()
     auth_client.post(
         "/recipes/new/",
@@ -113,6 +125,7 @@ def test_recipe_new_post_creates_cuisine_if_new(auth_client, user):
 
 @pytest.mark.django_db
 def test_recipe_new_post_reuses_existing_cuisine(auth_client, user, cuisine):
+    """Recipe new post reuses existing cuisine."""
     auth_client.post(
         "/recipes/new/",
         {"recipe_name": "Pasta", "cuisine_name": "Italian", "servings": "4"},
@@ -122,6 +135,7 @@ def test_recipe_new_post_reuses_existing_cuisine(auth_client, user, cuisine):
 
 @pytest.mark.django_db
 def test_recipe_new_post_invalid_returns_200_with_errors(auth_client, user):
+    """Recipe new post invalid returns 200 with errors."""
     response = auth_client.post("/recipes/new/", {"recipe_name": "", "servings": "4"})
     assert response.status_code == 200
     assert "form" in response.context
@@ -130,7 +144,7 @@ def test_recipe_new_post_invalid_returns_200_with_errors(auth_client, user):
 
 @pytest.mark.django_db
 def test_recipe_new_post_without_servings_returns_error(auth_client, user):
-    """servings is mandatory: POST /recipes/new/ without it re-renders with a field error."""
+    """Servings is mandatory: POST /recipes/new/ without it re-renders with a field error."""
     response = auth_client.post("/recipes/new/", {"recipe_name": "No Serves Recipe"})
     assert response.status_code == 200
     assert "servings" in response.context["form"].errors
@@ -139,7 +153,7 @@ def test_recipe_new_post_without_servings_returns_error(auth_client, user):
 
 @pytest.mark.django_db
 def test_recipe_metadata_post_without_servings_returns_error(auth_client, recipe):
-    """servings is mandatory: clearing it on the metadata form is rejected."""
+    """Servings is mandatory: clearing it on the metadata form is rejected."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/",
         {"recipe_name": recipe.recipe_name, "servings": ""},
@@ -150,6 +164,7 @@ def test_recipe_metadata_post_without_servings_returns_error(auth_client, recipe
 
 @pytest.mark.django_db
 def test_recipe_new_post_duplicate_name_returns_error(auth_client, recipe):
+    """Recipe new post duplicate name returns error."""
     response = auth_client.post(
         "/recipes/new/", {"recipe_name": recipe.recipe_name, "servings": "4"}
     )
@@ -209,18 +224,21 @@ def test_recipe_new_htmx_post_valid_returns_hx_redirect(auth_client, user):
 
 @pytest.mark.django_db
 def test_recipe_metadata_get_returns_200(auth_client, recipe):
+    """Recipe metadata get returns 200."""
     response = auth_client.get(f"/recipes/{recipe.pk}/metadata/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_recipe_metadata_get_has_form(auth_client, recipe):
+    """Recipe metadata get has form."""
     response = auth_client.get(f"/recipes/{recipe.pk}/metadata/")
     assert "form" in response.context
 
 
 @pytest.mark.django_db
 def test_recipe_metadata_post_saves_and_redirects(auth_client, recipe):
+    """Recipe metadata post saves and redirects."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/",
         {
@@ -238,6 +256,7 @@ def test_recipe_metadata_post_saves_and_redirects(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_metadata_post_invalid_returns_form(auth_client, recipe):
+    """Recipe metadata post invalid returns form."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/", {"recipe_name": "", "servings": "4"}
     )
@@ -250,6 +269,7 @@ def test_recipe_metadata_post_invalid_returns_form(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_metadata_htmx_get_returns_partial(auth_client, recipe):
+    """Recipe metadata htmx get returns partial."""
     response = auth_client.get(
         f"/recipes/{recipe.pk}/metadata/",
         HTTP_HX_REQUEST="true",
@@ -260,6 +280,7 @@ def test_recipe_metadata_htmx_get_returns_partial(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_metadata_htmx_post_valid_returns_hx_redirect(auth_client, recipe):
+    """Recipe metadata htmx post valid returns hx redirect."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/",
         {"recipe_name": recipe.recipe_name, "cuisine_name": "Spanish", "servings": "4"},
@@ -271,6 +292,7 @@ def test_recipe_metadata_htmx_post_valid_returns_hx_redirect(auth_client, recipe
 
 @pytest.mark.django_db
 def test_recipe_metadata_htmx_post_invalid_returns_partial(auth_client, recipe):
+    """Recipe metadata htmx post invalid returns partial."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/",
         {"recipe_name": "", "servings": "4"},
@@ -283,8 +305,10 @@ def test_recipe_metadata_htmx_post_invalid_returns_partial(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_metadata_boosted_get_returns_full_page(auth_client, recipe):
-    """hx-boost on <body> boosts the list page's Edit metadata link; boosted
-    navigation must get the full page, not the inline panel fragment."""
+    """Boosted Edit metadata navigation gets the full page, not the panel fragment.
+
+    hx-boost on <body> boosts the list page's Edit metadata link.
+    """
     response = auth_client.get(
         f"/recipes/{recipe.pk}/metadata/",
         HTTP_HX_REQUEST="true",
@@ -296,6 +320,7 @@ def test_recipe_metadata_boosted_get_returns_full_page(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_metadata_boosted_post_invalid_returns_full_page(auth_client, recipe):
+    """Recipe metadata boosted post invalid returns full page."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/",
         {"recipe_name": "", "servings": "4"},
@@ -312,6 +337,7 @@ def test_recipe_metadata_boosted_post_invalid_returns_full_page(auth_client, rec
 
 @pytest.mark.django_db
 def test_recipe_list_has_edit_metadata_button(auth_client, recipe):
+    """Recipe list has edit metadata button."""
     response = auth_client.get("/recipes/")
     content = response.content.decode()
     assert f"/recipes/{recipe.pk}/metadata/" in content
@@ -319,6 +345,7 @@ def test_recipe_list_has_edit_metadata_button(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_list_has_view_button(auth_client, recipe):
+    """Recipe list has view button."""
     response = auth_client.get("/recipes/")
     content = response.content.decode()
     assert f'href="{recipe.get_absolute_url()}"' in content
@@ -329,6 +356,7 @@ def test_recipe_list_has_view_button(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_delete_panel_get_returns_partial(auth_client, recipe):
+    """Recipe delete panel get returns partial."""
     response = auth_client.get(
         f"/recipes/{recipe.pk}/delete/panel/",
         HTTP_HX_REQUEST="true",
@@ -339,6 +367,7 @@ def test_recipe_delete_panel_get_returns_partial(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_delete_panel_has_delete_url(auth_client, recipe):
+    """Recipe delete panel has delete url."""
     response = auth_client.get(
         f"/recipes/{recipe.pk}/delete/panel/",
         HTTP_HX_REQUEST="true",
@@ -351,6 +380,7 @@ def test_recipe_delete_panel_has_delete_url(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_delete_removes_recipe(auth_client, recipe):
+    """Recipe delete removes recipe."""
     recipe_id = recipe.pk
     response = auth_client.post(f"/recipes/{recipe_id}/delete/", HTTP_HX_REQUEST="true")
     assert response.status_code == 200
@@ -448,18 +478,21 @@ def test_recipe_delete_non_htmx_redirects_to_list(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_delete_404_on_missing(auth_client, db):
+    """Recipe delete 404 on missing."""
     response = auth_client.post("/recipes/99999/delete/", HTTP_HX_REQUEST="true")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_recipe_delete_get_not_allowed(auth_client, recipe):
+    """Recipe delete get not allowed."""
     response = auth_client.get(f"/recipes/{recipe.pk}/delete/")
     assert response.status_code == 405
 
 
 @pytest.mark.django_db
 def test_recipe_new_short_description_is_textarea(auth_client):
+    """Recipe new short description is textarea."""
     response = auth_client.get("/recipes/new/")
     content = response.content.decode()
     assert "<textarea" in content
@@ -468,6 +501,7 @@ def test_recipe_new_short_description_is_textarea(auth_client):
 
 @pytest.mark.django_db
 def test_recipe_metadata_short_description_is_textarea(auth_client, recipe):
+    """Recipe metadata short description is textarea."""
     response = auth_client.get(f"/recipes/{recipe.pk}/metadata/")
     content = response.content.decode()
     assert "<textarea" in content

@@ -10,6 +10,7 @@ from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Reci
 
 @pytest.fixture
 def auth_client(user):
+    """Auth client."""
     c = Client()
     c.force_login(user)
     return c
@@ -17,16 +18,19 @@ def auth_client(user):
 
 @pytest.fixture
 def recipe(user, db):
+    """Recipe."""
     return Recipe.objects.create(recipe_name="Scale Recipe", owner=user, servings=4)
 
 
 @pytest.fixture
 def group(recipe):
+    """Group."""
     return IngredientGroup.objects.create(recipe=recipe, group_name="Main", index_in_sequence=0)
 
 
 @pytest.fixture
 def iir(group):
+    """Iir."""
     ing = Ingredient.objects.create(ingredient_name="onion-scale")
     return IngredientInRecipe.objects.create(
         ingredient=ing,
@@ -38,6 +42,7 @@ def iir(group):
 
 @pytest.fixture
 def iir_null_quantity(group):
+    """Iir null quantity."""
     ing = Ingredient.objects.create(ingredient_name="salt-scale")
     return IngredientInRecipe.objects.create(
         ingredient=ing,
@@ -52,6 +57,7 @@ def iir_null_quantity(group):
 
 @pytest.mark.django_db
 def test_scale_get_not_allowed(auth_client, recipe):
+    """Scale get not allowed."""
     response = auth_client.get(f"/recipes/{recipe.pk}/scale/")
     assert response.status_code == 405
 
@@ -59,6 +65,7 @@ def test_scale_get_not_allowed(auth_client, recipe):
 @pytest.mark.django_db
 def test_scale_post_updates_servings(auth_client, recipe, group, iir):
     # multiplier=2, old_serves=4 → round(4*2)=8
+    """Scale post updates servings."""
     auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
     recipe.refresh_from_db()
     assert recipe.servings == 8
@@ -67,6 +74,7 @@ def test_scale_post_updates_servings(auth_client, recipe, group, iir):
 @pytest.mark.django_db
 def test_scale_post_multiplies_quantities(auth_client, recipe, group, iir):
     # multiplier=2, quantity=2.00 → 4.00
+    """Scale post multiplies quantities."""
     auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
     iir.refresh_from_db()
     assert iir.quantity == Decimal("4.00")
@@ -75,6 +83,7 @@ def test_scale_post_multiplies_quantities(auth_client, recipe, group, iir):
 @pytest.mark.django_db
 def test_scale_post_fractional_multiplier(auth_client, recipe, group):
     # user example: serves=4, 200g bread, multiplier=3.2 → serves=13, 640g
+    """Scale post fractional multiplier."""
     ing = Ingredient.objects.create(ingredient_name="bread-scale")
     iir = IngredientInRecipe.objects.create(
         ingredient=ing, ingredient_group=group, index_in_sequence=0, quantity=Decimal("200.00")
@@ -88,6 +97,7 @@ def test_scale_post_fractional_multiplier(auth_client, recipe, group):
 
 @pytest.mark.django_db
 def test_scale_post_skips_null_quantities(auth_client, recipe, group, iir_null_quantity):
+    """Scale post skips null quantities."""
     auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
     iir_null_quantity.refresh_from_db()
     assert iir_null_quantity.quantity is None
@@ -95,6 +105,7 @@ def test_scale_post_skips_null_quantities(auth_client, recipe, group, iir_null_q
 
 @pytest.mark.django_db
 def test_scale_post_htmx_returns_hx_redirect(auth_client, recipe, group, iir):
+    """Scale post htmx returns hx redirect."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/scale/",
         {"multiplier": "2"},
@@ -106,12 +117,14 @@ def test_scale_post_htmx_returns_hx_redirect(auth_client, recipe, group, iir):
 
 @pytest.mark.django_db
 def test_scale_post_non_htmx_redirects(auth_client, recipe, group, iir):
+    """Scale post non htmx redirects."""
     response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
     assert response.status_code == 302
 
 
 @pytest.mark.django_db
 def test_scale_post_invalid_multiplier_returns_422(auth_client, recipe):
+    """Scale post invalid multiplier returns 422."""
     response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "abc"})
     assert response.status_code == 422
     assert "form-error" in response.content.decode()
@@ -119,18 +132,21 @@ def test_scale_post_invalid_multiplier_returns_422(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_scale_post_zero_multiplier_returns_422(auth_client, recipe):
+    """Scale post zero multiplier returns 422."""
     response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "0"})
     assert response.status_code == 422
 
 
 @pytest.mark.django_db
 def test_scale_post_negative_multiplier_returns_422(auth_client, recipe):
+    """Scale post negative multiplier returns 422."""
     response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "-1"})
     assert response.status_code == 422
 
 
 @pytest.mark.django_db
 def test_scale_panel_htmx_get_returns_partial(auth_client, recipe):
+    """Scale panel htmx get returns partial."""
     response = auth_client.get(
         f"/recipes/{recipe.pk}/scale/panel/",
         HTTP_HX_REQUEST="true",

@@ -21,12 +21,15 @@ class IngredientInRecipeForm(forms.ModelForm):
             self.fields["ingredient_name"].initial = self.instance.ingredient.ingredient_name
 
     def clean_quantity(self) -> Decimal | None:
+        """Reject negative quantities."""
         qty = self.cleaned_data.get("quantity")
         if qty is not None and qty < 0:
-            raise forms.ValidationError("Quantity must be positive.")
+            msg = "Quantity must be positive."
+            raise forms.ValidationError(msg)
         return qty
 
     def save(self, commit: bool = True) -> IngredientInRecipe:
+        """Save the ingredient row, resolving or creating the ingredient by name."""
         iir = super().save(commit=False)
         name = self.cleaned_data["ingredient_name"].strip()
         if commit:
@@ -64,7 +67,9 @@ class IngredientGroupForm(forms.ModelForm):
         self._group_count = group_count
 
     def clean_group_name(self) -> str:
+        """Strip the group name; require one when several groups exist."""
         name = (self.cleaned_data.get("group_name") or "").strip()
         if self._group_count > 1 and not name:
-            raise forms.ValidationError("Group name required when multiple groups exist.")
+            msg = "Group name required when multiple groups exist."
+            raise forms.ValidationError(msg)
         return name

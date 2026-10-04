@@ -16,9 +16,8 @@ def test_prod_missing_secret_key_raises(monkeypatch):
 
     from django.core.exceptions import ImproperlyConfigured
 
-    with patch("environ.Env.read_env"):
-        with pytest.raises((ImproperlyConfigured, KeyError)):
-            import nutrisho.settings.prod  # noqa: F401
+    with patch("environ.Env.read_env"), pytest.raises((ImproperlyConfigured, KeyError)):
+        import nutrisho.settings.prod  # noqa: F401
 
 
 def test_dev_settings_enable_debug():
@@ -90,7 +89,7 @@ def test_bare_settings_package_raises(monkeypatch):
 
     from django.core.exceptions import ImproperlyConfigured
 
-    with pytest.raises(ImproperlyConfigured, match="nutrisho.settings is not a valid"):
+    with pytest.raises(ImproperlyConfigured, match=r"nutrisho\.settings is not a valid"):
         import nutrisho.settings  # noqa: F401
 
 

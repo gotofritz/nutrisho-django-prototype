@@ -26,6 +26,7 @@ class Command(BaseCommand):
             self.stdout.write(", ".join(f"{i.ingredient_name} (id={i.pk})" for i in group))
 
     def handle(self, *args, **options):
+        """List duplicate ingredients: case clashes and singular/plural pairs."""
         case_groups = find_ingredient_duplicates()
         if case_groups:
             self._list(case_groups)

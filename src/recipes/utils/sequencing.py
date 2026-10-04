@@ -11,9 +11,13 @@ class Sequenced(Protocol):
     pk: int | None
     index_in_sequence: int
 
-    def save(self) -> None: ...
+    def save(self) -> None:
+        """Persist the row."""
+        ...
 
-    def delete(self) -> object: ...
+    def delete(self) -> object:
+        """Delete the row."""
+        ...
 
 
 @transaction.atomic

@@ -13,6 +13,7 @@ from recipes.views._types import AuthedRequest
 
 @require_http_methods(["GET", "POST"])
 def recipe_new(request: AuthedRequest) -> HttpResponse:
+    """Create a recipe."""
     if request.method == "POST":
         form = RecipeMetadataForm(data=request.POST)
         if form.is_valid():
@@ -49,6 +50,7 @@ def _is_panel_request(request: AuthedRequest) -> bool:
 @vary_on_headers("HX-Request", "HX-Boosted")
 @require_http_methods(["GET", "POST"])
 def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+    """Edit recipe metadata."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     if request.method == "POST":
         form = RecipeMetadataForm(data=request.POST, instance=recipe)
@@ -104,6 +106,7 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse
 
 @require_GET
 def recipe_delete_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+    """Show the delete confirmation panel."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     return render(
         request,
@@ -114,6 +117,7 @@ def recipe_delete_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 @require_POST
 def recipe_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+    """Delete a recipe."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     recipe.delete()
     if request.htmx:
@@ -146,6 +150,7 @@ def _next_recipe_url(deleted_id: int, user) -> str:
 
 @require_POST
 def recipe_duplicate(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+    """Duplicate a recipe."""
     original = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     with transaction.atomic():
         # Phase 1: allocate a unique name (retryable on owner/name collision only)
@@ -204,6 +209,7 @@ def recipe_duplicate(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 @require_GET
 def recipe_scale_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+    """Show the scale-servings panel."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     return render(request, "recipes/partials/_scale_panel.html", {"recipe": recipe})
 
@@ -225,11 +231,13 @@ def _scale_error(request: AuthedRequest, recipe: Recipe, msg: str) -> HttpRespon
 
 @require_POST
 def recipe_scale(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+    """Scale a recipe's servings."""
     try:
         multiplier = Decimal(request.POST.get("multiplier", ""))
-        if multiplier <= 0:
-            raise ValueError
+        valid = multiplier > 0
     except InvalidOperation, ValueError:
+        valid = False
+    if not valid:
         recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
         return _scale_error(request, recipe, "Enter a positive number.")
 

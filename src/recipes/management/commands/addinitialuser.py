@@ -7,6 +7,7 @@ class Command(BaseCommand):
     help = "Adds a single recipe (pass it as arg)"
 
     def handle(self, *args, **options):
+        """Create the initial user unless it already exists."""
         try:
             User.objects.create(username="gotofritz")
             self.stdout.write(self.style.SUCCESS("Successfully created user"))

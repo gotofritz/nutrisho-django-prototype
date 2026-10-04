@@ -8,6 +8,7 @@ from recipes.models import Recipe
 
 @pytest.fixture
 def owner(db):
+    """Owner."""
     return User.objects.create_user(username="owner-cascade", password="x")
 
 

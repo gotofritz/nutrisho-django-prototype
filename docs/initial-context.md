@@ -13,13 +13,13 @@ Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuis
 - **Deps**: uv
 - **Lint**: ruff
 - **Types**: ty
-- **Tasks**: Taskfile
+- **Tasks**: poethepoet (tasks in `.poe.toml`, ruff config in `.ruff.toml`)
 - **Tests**: pytest + pytest-django
 
 ## Prerequisites
 
 - `uv` — dependency manager and task runner for Python
-- `task` — Taskfile runner (`brew install go-task` / `go install github.com/go-task/task/v3/cmd/task@latest`)
+- `poethepoet` — task runner (`uv run poe <task>`)
 - `jq` — required by `.claude/hooks/` for JSON parsing (`brew install jq` / `apt install jq`)
 
 ## Project Layout
@@ -272,7 +272,7 @@ Django ORM → `export_recipes_to_yaml` management command → YAML files
 
 ```bash
 source .venv/bin/activate
-task qa          # lint + typecheck + test
+uv run poe qa          # lint + typecheck + test
 ```
 
 See AGENTS.md for full TDD workflow.
