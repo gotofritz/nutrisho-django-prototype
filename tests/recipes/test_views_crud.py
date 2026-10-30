@@ -518,6 +518,31 @@ def test_recipe_metadata_vary_header_present(auth_client, recipe):
 
 
 @pytest.mark.django_db
+def test_recipe_new_post_reuses_existing_cuisine_ignoring_case(auth_client, user, cuisine):
+    """Creating a recipe with `italian` reuses the stored `Italian` (#34)."""
+    auth_client.post(
+        "/recipes/new/",
+        {"recipe_name": "Pasta", "cuisine_name": "italian", "servings": "4"},
+    )
+    recipe = Recipe.objects.get(recipe_name="Pasta", owner=user)
+    assert recipe.cuisine == cuisine
+    assert Cuisine.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_edit_reuses_existing_cuisine_ignoring_case(auth_client, recipe, cuisine):
+    """Editing metadata with `ITALIAN` reuses the stored `Italian` (#34)."""
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/metadata/",
+        {"recipe_name": recipe.recipe_name, "cuisine_name": "ITALIAN", "servings": "4"},
+    )
+    assert response.status_code == 302
+    recipe.refresh_from_db()
+    assert recipe.cuisine == cuisine
+    assert Cuisine.objects.count() == 1
+
+
+@pytest.mark.django_db
 def test_recipe_new_integrity_error_does_not_leave_orphan_cuisine(auth_client, user):
     """When recipe.save() races and raises IntegrityError, no orphan Cuisine row must be left."""
     from unittest.mock import patch

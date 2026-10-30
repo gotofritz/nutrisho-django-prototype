@@ -2,7 +2,8 @@ from decimal import Decimal
 
 from django import forms
 
-from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe
+from recipes.models import IngredientGroup, IngredientInRecipe
+from recipes.services.name_resolution import find_ingredient, resolve_ingredient
 
 
 class IngredientInRecipeForm(forms.ModelForm):
@@ -33,12 +34,11 @@ class IngredientInRecipeForm(forms.ModelForm):
         iir = super().save(commit=False)
         name = self.cleaned_data["ingredient_name"].strip()
         if commit:
-            ingredient, _ = Ingredient.objects.get_or_create(ingredient_name=name)
-            iir.ingredient = ingredient
+            iir.ingredient = resolve_ingredient(name)
             iir.save()
         else:
             self._pending_ingredient_name = None
-            existing = Ingredient.objects.filter(ingredient_name=name).first()
+            existing = find_ingredient(name)
             if existing:
                 iir.ingredient = existing
             else:
@@ -47,11 +47,9 @@ class IngredientInRecipeForm(forms.ModelForm):
 
     def resolve_pending_ingredient(self, iir: IngredientInRecipe) -> None:
         """Create pending Ingredient row and set FK. Call before iir.save() when commit=False."""
-        if getattr(self, "_pending_ingredient_name", None):
-            ingredient, _ = Ingredient.objects.get_or_create(
-                ingredient_name=self._pending_ingredient_name
-            )
-            iir.ingredient = ingredient
+        pending = getattr(self, "_pending_ingredient_name", None)
+        if pending:
+            iir.ingredient = resolve_ingredient(pending)  # ty: ignore[invalid-assignment]  # FK descriptor
             self._pending_ingredient_name = None
 
 

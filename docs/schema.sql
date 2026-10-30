@@ -24,6 +24,7 @@ CREATE TABLE "django_migrations" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMEN
 CREATE TABLE "django_session" ("session_key" varchar(40) NOT NULL PRIMARY KEY, "session_data" text NOT NULL, "expire_date" datetime NOT NULL);
 CREATE INDEX "django_session_expire_date_a5c62663" ON "django_session" ("expire_date");
 CREATE TABLE "recipes_cuisine" ("cuisine" varchar(200) NOT NULL UNIQUE, "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT);
+CREATE UNIQUE INDEX "cuisine_ci_unique" ON "recipes_cuisine" ((LOWER("cuisine")));
 CREATE TABLE "recipes_ingredient" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "ingredient_name" varchar(64) NOT NULL UNIQUE, "dietary_constraint" varchar(32) NOT NULL, "family" varchar(32) NOT NULL, "plural_name" varchar(64) NOT NULL);
 CREATE UNIQUE INDEX "ingredient_name_ci_unique" ON "recipes_ingredient" ((LOWER("ingredient_name")));
 CREATE TABLE "recipes_ingredientgroup" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "index_in_sequence" smallint NOT NULL, "recipe_id" integer NOT NULL REFERENCES "recipes_recipe" ("id") DEFERRABLE INITIALLY DEFERRED, "group_name" varchar(64) NOT NULL, CONSTRAINT "unique_ingredient_group_in_recipe" UNIQUE ("recipe_id", "index_in_sequence"));

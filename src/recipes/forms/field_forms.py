@@ -1,7 +1,8 @@
 from django import forms
 from django.db import transaction
 
-from recipes.models import Cuisine, Recipe
+from recipes.models import Recipe
+from recipes.services.name_resolution import find_cuisine, resolve_cuisine
 
 EDITABLE_RECIPE_FIELDS = frozenset(["recipe_name", "short_description", "servings"])
 
@@ -30,8 +31,7 @@ class RecipeMetadataForm(forms.ModelForm):
         if commit:
             with transaction.atomic():
                 if name:
-                    cuisine, _ = Cuisine.objects.get_or_create(cuisine=name)
-                    recipe.cuisine = cuisine
+                    recipe.cuisine = resolve_cuisine(name)
                 else:
                     recipe.cuisine = None
                 recipe.save()
@@ -40,7 +40,7 @@ class RecipeMetadataForm(forms.ModelForm):
             if not name:
                 recipe.cuisine = None
             else:
-                existing = Cuisine.objects.filter(cuisine=name).first()
+                existing = find_cuisine(name)
                 if existing:
                     recipe.cuisine = existing
                 else:
@@ -49,9 +49,9 @@ class RecipeMetadataForm(forms.ModelForm):
 
     def resolve_pending_cuisine(self, recipe: Recipe) -> None:
         """Create pending Cuisine row and set FK. Call before recipe.save() when commit=False."""
-        if getattr(self, "_pending_cuisine_name", None):
-            cuisine, _ = Cuisine.objects.get_or_create(cuisine=self._pending_cuisine_name)
-            recipe.cuisine = cuisine
+        pending = getattr(self, "_pending_cuisine_name", None)
+        if pending:
+            recipe.cuisine = resolve_cuisine(pending)  # ty: ignore[invalid-assignment]  # FK descriptor
             self._pending_cuisine_name = None
 
 

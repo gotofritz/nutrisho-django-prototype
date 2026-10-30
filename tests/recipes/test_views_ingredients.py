@@ -390,6 +390,49 @@ def test_ingredient_save_reuses_existing_ingredient(auth_client, recipe, iir):
 
 
 @pytest.mark.django_db
+def test_ingredient_save_reuses_existing_ingredient_ignoring_case(auth_client, recipe, iir):
+    """Saving `Onion` when `onion` exists reuses it instead of a 500 (#34)."""
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/ingredients/{iir.pk}/save/",
+        {"ingredient_name": "Onion", "quantity": "2", "unit": "", "preparation": "", "note": ""},
+    )
+    assert response.status_code == 200
+    iir.refresh_from_db()
+    assert iir.ingredient.ingredient_name == "onion"
+    assert Ingredient.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_ingredient_save_switches_to_other_ingredient_ignoring_case(auth_client, recipe, iir):
+    """Saving `GARLIC` points the row at the stored `garlic` (#34)."""
+    garlic = Ingredient.objects.create(ingredient_name="garlic")
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/ingredients/{iir.pk}/save/",
+        {"ingredient_name": "GARLIC", "quantity": "2", "unit": "", "preparation": "", "note": ""},
+    )
+    assert response.status_code == 200
+    iir.refresh_from_db()
+    assert iir.ingredient == garlic
+
+
+@pytest.mark.django_db
+def test_ingredient_create_reuses_existing_ingredient_ignoring_case(
+    auth_client, recipe, group, iir
+):
+    """Adding `Onion` when `onion` exists reuses it instead of a 500 (#34)."""
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/groups/{group.pk}/ingredients/create/",
+        {"ingredient_name": "Onion", "quantity": "1", "unit": "", "preparation": "", "note": ""},
+    )
+    assert response.status_code == 200
+    assert Ingredient.objects.count() == 1
+    assert (
+        IngredientInRecipe.objects.filter(ingredient_group=group, ingredient=iir.ingredient).count()
+        == 2
+    )
+
+
+@pytest.mark.django_db
 def test_ingredient_add_does_not_create_row(auth_client, recipe, group):
     """Add only renders a blank form; the row is created on Save (create)."""
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/{group.pk}/ingredients/add/")

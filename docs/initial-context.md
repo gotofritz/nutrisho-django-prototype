@@ -28,7 +28,7 @@ Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuis
 src/
   nutrisho/      # Django project (settings, urls, wsgi)
   recipes/       # Main app: models, views, templates, management commands
-    services/      # Pure query/mutation functions, no HTTP (ingredient_admin.py)
+    services/      # Pure query/mutation functions, no HTTP (ingredient_admin.py, name_resolution.py)
     templatetags/  # Custom template filters (recipe_filters.py)
     utils/         # Framework-free helpers (sequencing.py, pluralise.py, step_title.py, step_text.py)
 docs/
@@ -79,6 +79,14 @@ preview can never outlive the matches it came from.
 mutation functions with no HTTP concerns, so the HTMX views stay thin and the
 behaviour is testable without a client. Views own request parsing, guards and
 partial selection; services own the ORM.
+
+**Typed names resolve case-insensitively.** `recipes/services/name_resolution.py`
+is the only place the recipe editor turns a typed ingredient or cuisine name into a
+row: `resolve_ingredient` / `resolve_cuisine` strip the name, match it ignoring case
+(keeping the stored spelling) and create it as typed only on a miss;
+`find_ingredient` / `find_cuisine` look up without creating. Both names carry a
+`Lower(...)` unique constraint, so a raw `get_or_create(name=...)` would 500 on
+`Onion` when `onion` exists (#34). Plan 008's aliases extend `resolve_ingredient`.
 
 **Selection lives in the request.** Checkboxes post `ingredient_ids`; every
 re-rendered partial echoes them back. There is no client-side store: a change or a
@@ -271,7 +279,7 @@ because `recipe_scale` *persists* scaled quantities, so doubling a recipe writes
 - `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`)
 - `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient` rows are global (not owner-scoped) and `ingredient_name` is unique case-insensitively; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
 - `Step` — ordered recipe steps; `step_title` is an optional heading, stored as `""` when absent and rendered underlined in front of the step text, followed by a colon
-- `Cuisine`, `Source`, `Tag` — lookup/classification models
+- `Cuisine`, `Source`, `Tag` — lookup/classification models; `Cuisine.cuisine` is unique case-insensitively
 
 ### Data Flow
 
