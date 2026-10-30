@@ -7,6 +7,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from recipes.forms.ingredient_forms import IngredientGroupForm, IngredientInRecipeForm
 from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Recipe
+from recipes.services.name_resolution import resolve_ingredient
 from recipes.utils.sequencing import insert_at_index, move_in_sequence, remove_and_compact
 from recipes.views._types import AuthedRequest
 
@@ -161,10 +162,8 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
             )
             if fresh_group is None:
                 return HttpResponse("", status=404)
-            name = form.cleaned_data["ingredient_name"].strip()
-            ingredient, _ = Ingredient.objects.get_or_create(ingredient_name=name)
             iir = form.save(commit=False)
-            iir.ingredient = ingredient
+            iir.ingredient = resolve_ingredient(form.cleaned_data["ingredient_name"])  # ty: ignore[invalid-assignment]  # FK descriptor
             iir.ingredient_group = fresh_group
             insert_at_index(
                 siblings=IngredientInRecipe.objects.filter(ingredient_group=fresh_group),
