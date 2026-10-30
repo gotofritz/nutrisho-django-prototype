@@ -84,6 +84,29 @@ def remove_and_compact(*, siblings: models.QuerySet, instance: Sequenced) -> Non
 
 
 @transaction.atomic
+def remove_many_and_compact(*, siblings: models.QuerySet, pks: list[int]) -> int:
+    """Delete the siblings whose pk is in pks and close every gap they leave.
+
+    Pks outside siblings are ignored. Each survivor moves down by the number
+    of deleted rows below it, so the sequence keeps its base (legacy 1-based
+    sequences stay 1-based). Survivors are renumbered in ascending order: each
+    target slot is either freed by a delete or vacated by the row before.
+    Returns the number of rows deleted.
+    """
+    rows = list(siblings.select_for_update().order_by("index_in_sequence"))
+    doomed = set(pks)
+    removed = 0
+    for row in rows:
+        if row.pk in doomed:
+            row.delete()
+            removed += 1
+        elif removed:
+            row.index_in_sequence -= removed
+            row.save()
+    return removed
+
+
+@transaction.atomic
 def move_in_sequence(
     *,
     siblings: models.QuerySet,

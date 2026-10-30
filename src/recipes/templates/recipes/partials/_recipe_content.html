@@ -7,11 +7,7 @@
     <div class="recipe-title">
       {% include "./_field_display.html" with field_name="recipe_name" value=recipe.recipe_name %}
     </div>
-    <ol class="recipe-steps" id="steps-list">
-      {% for step in recipe.step.all %}
-      {% include "./_step_display.html" with recipe=recipe step=step %}
-      {% endfor %}
-    </ol>
+    {% include "./_steps_block.html" %}
     <button
       hx-post="{% url 'recipes:step_add' recipe.id %}"
       hx-target=".recipe-steps"

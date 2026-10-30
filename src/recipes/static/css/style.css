@@ -318,12 +318,14 @@ ol.recipe-steps {
   background: #eee;
 }
 
-.ingredient-check {
+.ingredient-check,
+.step-check {
   flex: 0 0 auto;
   margin-right: 2px;
 }
 
-.ingredient-check input[type="checkbox"] {
+.ingredient-check input[type="checkbox"],
+.step-check input[type="checkbox"] {
   cursor: pointer;
 }
 
@@ -363,7 +365,8 @@ ol.recipe-steps {
   pointer-events: none;
 }
 
-#groups-list:has(.is-editing) .reassign-panel form button[type="submit"] {
+#groups-list:has(.is-editing) .reassign-panel form button[type="submit"],
+#steps-block:has(.is-editing) #steps-panel button:not(#steps-cancel) {
   cursor: not-allowed;
   opacity: 0.4;
   pointer-events: none;

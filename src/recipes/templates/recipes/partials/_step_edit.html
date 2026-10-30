@@ -14,8 +14,17 @@
     {{ form.step_title.errors }}
     {{ form.step_text }}
     {{ form.step_text.errors }}
+    {% if split_error %}<p class="form-error">{{ split_error }}</p>{% endif %}
     <button type="submit">Save</button>
     {% if step %}
+    <button
+      type="button"
+      hx-post="{% url 'recipes:step_split' recipe.id step.id %}"
+      hx-on::config-request="var t = this.form.elements.step_text; event.detail.parameters.split_at = Array.from(t.value.slice(0, t.selectionStart)).length"
+      hx-target="closest li"
+      hx-swap="outerHTML"
+      title="Split this step in two where the cursor is"
+    >Split at cursor</button>
     <button
       type="button"
       hx-get="{% url 'recipes:step_display' recipe.id step.id %}"

@@ -1,0 +1,26 @@
+<div id="steps-block">
+  {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+  <div id="steps-panel" class="reassign-panel no-print" hidden>
+    <span id="steps-panel-count"></span>
+    <button
+      type="button"
+      id="steps-merge"
+      hx-post="{% url 'recipes:steps_merge' recipe.id %}"
+      hx-include=".step-select:checked"
+      hx-target="#steps-block"
+      hx-swap="outerHTML"
+    >Merge</button>
+    <button
+      type="button"
+      hx-post="{% url 'recipes:steps_bulk_delete' recipe.id %}"
+      hx-include=".step-select:checked"
+      hx-target="#steps-block"
+      hx-swap="outerHTML"
+      hx-confirm="Delete the selected steps?"
+    >Delete</button>
+    <button type="button" id="steps-cancel">Cancel</button>
+  </div>
+  <ol class="recipe-steps" id="steps-list">
+    {% include "./_steps_list.html" %}
+  </ol>
+</div>
