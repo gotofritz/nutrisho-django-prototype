@@ -8,8 +8,14 @@ Writes two files:
 - **dump** (`docs/dump-<timestamp>.sql`) — schema and every row, enough to
   rebuild the database with `sqlite3 db.sqlite3 < docs/dump-….sql`. Git-ignored:
   it holds the data.
+
+The dump reads through SQLite, so it sees changes still in `db.sqlite3-wal`,
+and it reads inside one transaction, so a save landing mid-dump is either all
+in or all out. In WAL mode that read transaction does not block the app.
 """
 
+import sqlite3
+from collections.abc import Iterator
 from pathlib import Path
 
 from django.conf import settings
@@ -27,6 +33,19 @@ _SCHEMA_SQL = """
 def _write(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
+
+
+def _snapshot_dump(raw: sqlite3.Connection) -> Iterator[str]:
+    """Yield iterdump() lines read from a single snapshot of the database."""
+    if raw.in_transaction:  # already one snapshot (e.g. inside atomic())
+        yield from raw.iterdump()
+        return
+    raw.execute("BEGIN DEFERRED")
+    try:
+        raw.execute("SELECT 1 FROM sqlite_master LIMIT 1")  # a deferred BEGIN reads lazily
+        yield from raw.iterdump()
+    finally:
+        raw.execute("COMMIT")
 
 
 class Command(BaseCommand):
@@ -60,5 +79,5 @@ class Command(BaseCommand):
             return
         stamp = f"{timezone.localtime():%Y%m%d-%H%M%S}"
         dump_path = options["dump"] or docs / f"dump-{stamp}.sql"
-        _write(dump_path, "".join(f"{line}\n" for line in connection.connection.iterdump()))
+        _write(dump_path, "".join(f"{line}\n" for line in _snapshot_dump(connection.connection)))
         self.stdout.write(self.style.SUCCESS(f"Dump written to {dump_path}"))

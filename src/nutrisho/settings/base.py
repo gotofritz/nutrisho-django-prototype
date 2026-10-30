@@ -65,6 +65,19 @@ DATABASES = {
     "default": env.db(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
 }
 
+# Django's SQLite defaults (rollback journal, DEFERRED transactions) make
+# overlapping write requests fail with "database is locked" instead of queueing:
+# IMMEDIATE takes the write lock up front, so writers wait out the timeout, and
+# WAL lets readers carry on while one writes (issue #38). Options in
+# DATABASE_URL win.
+SQLITE_OPTIONS = {
+    "transaction_mode": "IMMEDIATE",
+    "timeout": 20,
+    "init_command": "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;",
+}
+if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
+    DATABASES["default"]["OPTIONS"] = {**SQLITE_OPTIONS, **DATABASES["default"].get("OPTIONS", {})}
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},

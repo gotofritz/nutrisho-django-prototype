@@ -9,7 +9,7 @@ Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuis
 - **Runtime**: Python 3.14
 - **Framework**: Django 6.0
 - **Frontend**: HTMX 2.x (via django-htmx) — inline partial swaps, no full-page reloads
-- **DB**: SQLite (dev)
+- **DB**: SQLite, WAL mode with IMMEDIATE transactions
 - **Deps**: uv
 - **Lint**: ruff
 - **Types**: ty
@@ -289,9 +289,50 @@ scaffolding and are gone (issue #27).
 
 `backup_db` (`uv run poe backup`) writes `docs/schema.sql` (committed, schema
 only, deterministic order) and `docs/dump-<timestamp>.sql` (git-ignored, full
-dump for restoring with `sqlite3`). SQLite only, like the rest of the app.
+dump for restoring with `sqlite3`). SQLite only, like the rest of the app. The
+dump is read inside one read transaction, so it is a consistent snapshot even
+while the app writes (WAL lets those writes carry on).
 
 `delete_recipe --id <N>` removes recipes by primary key.
+
+### Concurrent writes
+
+`settings/base.py` gives SQLite `transaction_mode: IMMEDIATE`, a 20 s busy
+timeout, `journal_mode=WAL` and `synchronous=NORMAL` (issue #38). Write paths
+read and then write inside `atomic()`, and `select_for_update()` is a no-op on
+SQLite, so it is the IMMEDIATE write lock taken at `BEGIN` that serializes
+them; with Django's default DEFERRED mode, overlapping writes fail with
+`database is locked` instead of waiting. The database is three files
+(`db.sqlite3`, `-wal`, `-shm`) that must be copied, moved and deleted together;
+see the developer guide for the backup rules and the one-off switch of an
+existing database. Tests use the same options on a temporary file database.
+
+### How far SQLite goes
+
+Orders of magnitude for a small NVMe VPS, not benchmarks:
+
+- Reads never block each other or the writer; tens of thousands of simple
+  queries a second.
+- Writes queue one at a time. A click here is a short transaction of about
+  1 ms, so several hundred writes a second before anyone waits; 10 active users
+  make about 2.
+- A recipe is a few KB; 100,000 recipes is a few hundred MB.
+
+Signals to move to Postgres, usually one of these rather than a user count:
+
+1. A second app server, or the database on its own host. SQLite must sit on
+   the app machine's local disk, never a network volume.
+2. Writes queue: `database is locked` errors or rising p95 latency on saves
+   despite IMMEDIATE and the 20 s timeout. Start planning at a sustained ~50
+   writes a second.
+3. Long write transactions (bulk imports, large merges) block every other
+   writer for their whole duration.
+4. Features or operations SQLite lacks: `pg_trgm` fuzzy search, read replicas,
+   migrations without a table rebuild.
+
+Until then, keep gunicorn to 2-4 workers. The move itself is mostly a data
+copy: the code already uses `select_for_update` and portable constraints, but
+Postgres enforces the `max_length` caps SQLite ignores.
 
 
 ## Constraints

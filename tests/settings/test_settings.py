@@ -111,3 +111,66 @@ def test_existing_tests_still_pass():
     from django.conf import settings
 
     assert settings.configured
+
+
+SQLITE_OPTIONS = {
+    "transaction_mode": "IMMEDIATE",
+    "timeout": 20,
+    "init_command": "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;",
+}
+
+
+def test_sqlite_database_is_configured_for_concurrent_writes(monkeypatch):
+    """A SQLite DATABASE_URL gets WAL, IMMEDIATE transactions and a 20 s busy timeout."""
+    import sys
+
+    monkeypatch.setenv("DATABASE_URL", "sqlite:////var/lib/nutrisho/db.sqlite3")
+    for mod in list(sys.modules.keys()):
+        if "nutrisho.settings" in mod:
+            del sys.modules[mod]
+
+    import nutrisho.settings.base as base_settings
+
+    assert base_settings.DATABASES["default"]["OPTIONS"] == SQLITE_OPTIONS
+
+
+def test_sqlite_options_in_database_url_win(monkeypatch):
+    """Options given in DATABASE_URL override the SQLite defaults."""
+    import sys
+
+    monkeypatch.setenv("DATABASE_URL", "sqlite:////var/lib/nutrisho/db.sqlite3?timeout=5")
+    for mod in list(sys.modules.keys()):
+        if "nutrisho.settings" in mod:
+            del sys.modules[mod]
+
+    import nutrisho.settings.base as base_settings
+
+    assert base_settings.DATABASES["default"]["OPTIONS"] == {**SQLITE_OPTIONS, "timeout": 5}
+
+
+def test_non_sqlite_database_gets_no_sqlite_options(monkeypatch):
+    """SQLite pragmas and transaction modes are not applied to other engines."""
+    import sys
+
+    monkeypatch.setenv("DATABASE_URL", "postgres://u:p@localhost/nutrisho")
+    for mod in list(sys.modules.keys()):
+        if "nutrisho.settings" in mod:
+            del sys.modules[mod]
+
+    import nutrisho.settings.base as base_settings
+
+    assert "transaction_mode" not in base_settings.DATABASES["default"].get("OPTIONS", {})
+
+
+def test_test_settings_use_the_same_sqlite_options():
+    """Tests run with the shipped SQLite options, on a file so locking is real."""
+    import sys
+
+    for mod in list(sys.modules.keys()):
+        if "nutrisho.settings" in mod:
+            del sys.modules[mod]
+
+    import nutrisho.settings.test as test_settings
+
+    assert test_settings.DATABASES["default"]["OPTIONS"] == SQLITE_OPTIONS
+    assert test_settings.DATABASES["default"]["TEST"]["NAME"].endswith(".sqlite3")

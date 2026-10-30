@@ -27,11 +27,17 @@ uv run poe backup
 This writes the whole database — every recipe, ingredient and user — to
 `docs/dump-<date>-<time>.sql`, and refreshes the table layout in
 `docs/schema.sql`. The dump stays on your machine (git ignores it); keep it
-somewhere safe. To restore one into an empty database:
+somewhere safe. To restore one, stop the app and move the old database aside
+first, together with its `db.sqlite3-wal` and `db.sqlite3-shm` files if they
+are there, then:
 
 ```bash
 sqlite3 db.sqlite3 < docs/dump-20261030-001904.sql
 ```
+
+While the app runs, recent changes can sit in `db.sqlite3-wal` rather than
+`db.sqlite3`. Never delete that file, and never copy `db.sqlite3` on its own as
+a backup: use `uv run poe backup`, which always sees every saved change.
 
 ---
 
