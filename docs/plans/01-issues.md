@@ -43,55 +43,55 @@ the closed **#14**.
 
 | ID | Item | Issue | Redesign |
 |---|---|---|---|
-| A1 | Resolve ingredient and cuisine names case-insensitively | #TBD-A1 | |
-| A2 | Make "Duplicate recipe" copy every field, including step titles | #TBD-A2 | |
-| A3 | Scale recipes at display time instead of rewriting quantities | #TBD-A3 | Split |
-| A4 | Tell the user when an HTMX save fails | #TBD-A4 | Split |
-| A5 | Configure SQLite for concurrent writes (WAL + IMMEDIATE) | #TBD-A5 | |
-| A6 | Replace the user bootstrap commands; remove the hard-coded password | #TBD-A6 | |
-| A7 | Remove `google-genai`, move the debug toolbar to dev, clear lockfile CVEs | #TBD-A7 | |
-| A8 | Harden production security settings | #TBD-A8 | |
-| A9 | Serve static files in production | #TBD-A9 | |
-| A10 | Make production errors and outages visible | #TBD-A10 | |
-| A11 | Make backups automatic, consistent, off-box and restore-tested | #TBD-A11 | |
-| A12 | Add a deployment recipe and runbook for the VPS | #TBD-A12 | |
-| B1 | Restrict the ingredient manager to staff, or commit to single-user | #TBD-B1 | |
-| B2 | Rate-limit the login and admin pages | #TBD-B2 | |
-| B3 | Require login by default and test every route for auth and ownership | #TBD-B3 | |
-| B4 | Make long prose fields `TextField`s | #TBD-B4 | |
-| B5 | Stop the HTML sanitiser truncating text after a stray `<` | #TBD-B5 | |
-| B6 | Confirm before deleting a non-empty ingredient group | #TBD-B6 | |
-| B7 | Self-host the web fonts | #TBD-B7 | Split |
-| B8 | Enforce migrations, `schema.sql` and other cheap invariants in QA/CI | #TBD-B8 | |
-| B9 | Harden the CI workflow | #TBD-B9 | |
-| B10 | Automate dependency updates and vulnerability scanning | #TBD-B10 | |
-| B11 | Delete dead scripts and legacy code | #TBD-B11 | |
-| B12 | Make the documented `manage.py` commands work on a fresh checkout | #TBD-B12 | |
+| A1 | Resolve ingredient and cuisine names case-insensitively | #34 | |
+| A2 | Make "Duplicate recipe" copy every field, including step titles | #35 | |
+| A3 | Scale recipes at display time instead of rewriting quantities | #36 | Split |
+| A4 | Tell the user when an HTMX save fails | #37 | Split |
+| A5 | Configure SQLite for concurrent writes (WAL + IMMEDIATE) | #38 | |
+| A6 | Replace the user bootstrap commands; remove the hard-coded password | #39 | |
+| A7 | Remove `google-genai`, move the debug toolbar to dev, clear lockfile CVEs | #40 | |
+| A8 | Harden production security settings | #41 | |
+| A9 | Serve static files in production | #42 | |
+| A10 | Make production errors and outages visible | #43 | |
+| A11 | Make backups automatic, consistent, off-box and restore-tested | #44 | |
+| A12 | Add a deployment recipe and runbook for the VPS | #45 | |
+| B1 | Restrict the ingredient manager to staff, or commit to single-user | #46 | |
+| B2 | Rate-limit the login and admin pages | #47 | |
+| B3 | Require login by default and test every route for auth and ownership | #48 | |
+| B4 | Make long prose fields `TextField`s | #49 | |
+| B5 | Stop the HTML sanitiser truncating text after a stray `<` | #50 | |
+| B6 | Confirm before deleting a non-empty ingredient group | #51 | |
+| B7 | Self-host the web fonts | #52 | Split |
+| B8 | Enforce migrations, `schema.sql` and other cheap invariants in QA/CI | #53 | |
+| B9 | Harden the CI workflow | #54 | |
+| B10 | Automate dependency updates and vulnerability scanning | #55 | |
+| B11 | Delete dead scripts and legacy code | #56 | |
+| B12 | Make the documented `manage.py` commands work on a fresh checkout | #57 | |
 | B13 | Search, filter and paginate the recipe list | #32 | Design-led |
-| B14 | Responsive layout with a read/cook mode | #TBD-B14 | Design-led |
-| B15 | Add log-out and a proper login page | #TBD-B15 | Design-led |
-| B16 | Make every control keyboard-reachable and named | #TBD-B16 | Split |
-| B17 | Manage focus and announce changes after HTMX swaps | #TBD-B17 | Split |
-| C1 | Move inline JavaScript to static files and add a CSP | #TBD-C1 | Split |
-| C2 | Add browser smoke tests for the HTMX flows | #TBD-C2 | Split |
-| C3 | Fix N+1 queries when HTMX endpoints re-render | #TBD-C3 | |
-| C4 | Show or drop the schema fields the UI hides | #TBD-C4 | Split |
-| C5 | Resolve aliases and plurals on ingredient input | #TBD-C5 | |
-| C6 | Normalise units | #TBD-C6 | |
-| C7 | Tidy the poe test and QA tasks | #TBD-C7 | |
-| C8 | Fix documentation drift | #TBD-C8 | |
-| C9 | Tidy the committed Claude Code configuration | #TBD-C9 | |
-| C10 | Add a demo-data seed command | #TBD-C10 | |
-| C11 | Cut versioned releases with a changelog | #TBD-C11 | |
-| C12 | Upgrade off Django 6.0 before its support ends | #TBD-C12 | |
-| C13 | Fix page structure: landmarks, headings, language, contrast | #TBD-C13 | Split |
-| D1 | Soft-delete recipes with undo | #TBD-D1 | Split |
-| D2 | Pick one styling system | #TBD-D2 | Design-led |
-| D3 | Move domain logic into services and slim the view layer | #TBD-D3 | |
-| D4 | Import recipes from JSON-LD or pasted text | #TBD-D4 | |
-| D5 | Rename reverse accessors to plurals | #TBD-D5 | |
-| D6 | Replace the ingredient datalist with an autocomplete endpoint | #TBD-D6 | |
-| D7 | Squash migrations 0001–0016 | #TBD-D7 | |
+| B14 | Responsive layout with a read/cook mode | #58 | Design-led |
+| B15 | Add log-out and a proper login page | #59 | Design-led |
+| B16 | Make every control keyboard-reachable and named | #60 | Split |
+| B17 | Manage focus and announce changes after HTMX swaps | #61 | Split |
+| C1 | Move inline JavaScript to static files and add a CSP | #62 | Split |
+| C2 | Add browser smoke tests for the HTMX flows | #63 | Split |
+| C3 | Fix N+1 queries when HTMX endpoints re-render | #64 | |
+| C4 | Show or drop the schema fields the UI hides | #65 | Split |
+| C5 | Resolve aliases and plurals on ingredient input | #66 | |
+| C6 | Normalise units | #67 | |
+| C7 | Tidy the poe test and QA tasks | #68 | |
+| C8 | Fix documentation drift | #69 | |
+| C9 | Tidy the committed Claude Code configuration | #70 | |
+| C10 | Add a demo-data seed command | #71 | |
+| C11 | Cut versioned releases with a changelog | #72 | |
+| C12 | Upgrade off Django 6.0 before its support ends | #73 | |
+| C13 | Fix page structure: landmarks, headings, language, contrast | #74 | Split |
+| D1 | Soft-delete recipes with undo | #75 | Split |
+| D2 | Pick one styling system | #76 | Design-led |
+| D3 | Move domain logic into services and slim the view layer | #77 | |
+| D4 | Import recipes from JSON-LD or pasted text | #78 | |
+| D5 | Rename reverse accessors to plurals | #79 | |
+| D6 | Replace the ingredient datalist with an autocomplete endpoint | #80 | |
+| D7 | Squash migrations 0001–0016 | #81 | |
 
 ---
 
@@ -99,7 +99,7 @@ the closed **#14**.
 
 ### A1 · Resolve ingredient and cuisine names case-insensitively
 
-Issue: #TBD-A1 · Sources: LTE-01, QA-2, ARCH-1, COR (case crash, cuisine case)
+Issue: #34 · Sources: LTE-01, QA-2, ARCH-1, COR (case crash, cuisine case)
 
 **Problem.** Migration 0013 made `ingredient_name` unique case-insensitively,
 but the recipe editor resolves typed names with a case-sensitive
@@ -122,7 +122,7 @@ remains outside the service.
 
 ### A2 · Make "Duplicate recipe" copy every field, including step titles
 
-Issue: #TBD-A2 · Sources: LTE-02, UX-2, ARCH-3, LT-1, PERF-3, COR (duplicate)
+Issue: #35 · Sources: LTE-02, UX-2, ARCH-3, LT-1, PERF-3, COR (duplicate)
 
 **Problem.** `recipe_duplicate` copies `Step` rows field by field and was not
 updated when `step_title` arrived (migration 0015): every duplicate loses its
@@ -141,7 +141,7 @@ query count no longer grows with recipe size. Land before #19.
 
 ### A3 · Scale recipes at display time instead of rewriting quantities
 
-Issue: #TBD-A3 · Sources: LTE-05, QA-4, UX-1, ARCH-5, LT-2, COR (scaling) · Redesign: **Split**
+Issue: #36 · Sources: LTE-05, QA-4, UX-1, ARCH-5, LT-2, COR (scaling) · Redesign: **Split**
 
 **Problem.** `recipe_scale` multiplies and **persists** every quantity
 (rounded to 0.01) and servings (rounded to an integer, floor 1). The database
@@ -163,7 +163,7 @@ needed either way and should land now.
 
 ### A4 · Tell the user when an HTMX save fails
 
-Issue: #TBD-A4 · Sources: QA-5, UX-3, COR (silent errors) · Redesign: **Split**
+Issue: #37 · Sources: QA-5, UX-3, COR (silent errors) · Redesign: **Split**
 
 **Problem.** `htmx-config` in `base.html` maps every non-2xx/422 response to
 `swap: false, error: true`, and nothing listens for `htmx:responseError`,
@@ -181,7 +181,7 @@ needed regardless and should land now with a minimal banner.
 
 ### A5 · Configure SQLite for concurrent writes (WAL + IMMEDIATE)
 
-Issue: #TBD-A5 · Sources: QA-1, PERF-1, PR-5, ARCH-4, ARCH-12
+Issue: #38 · Sources: QA-1, PERF-1, PR-5, ARCH-4, ARCH-12
 
 **Problem.** SQLite runs with Django's defaults (rollback journal, `DEFERRED`
 transactions). Write paths read first and write second (`select_for_update` is
@@ -203,7 +203,7 @@ and sees no 500s and a contiguous `index_in_sequence`.
 
 ### A6 · Replace the user bootstrap commands; remove the hard-coded password
 
-Issue: #TBD-A6 · Sources: LTE-04, SEC-01, PR-7, DX-1, OSM-6, OSM-7, AR-6, TD-2
+Issue: #39 · Sources: LTE-04, SEC-01, PR-7, DX-1, OSM-6, OSM-7, AR-6, TD-2
 
 **Problem.** The developer guide's setup runs `addinitialuser`, which calls
 `User.objects.create(username="gotofritz")` with no password, so nobody can log
@@ -222,7 +222,7 @@ password of any account created with `fritz`.
 
 ### A7 · Remove `google-genai`, move the debug toolbar to dev, clear lockfile CVEs
 
-Issue: #TBD-A7 · Sources: LTE-12, SEC-06, PR-10, DX-7, OSM-1, OSM-2, TD-1, DEP-1, DEP-2, DEP-5
+Issue: #40 · Sources: LTE-12, SEC-06, PR-10, DX-7, OSM-1, OSM-2, TD-1, DEP-1, DEP-2, DEP-5
 
 **Problem.** `google-genai` is a runtime dependency nothing imports. About 25
 of the 32 runtime packages exist only because of it, including the only route
@@ -240,7 +240,7 @@ Refresh `filelock`/`virtualenv` (`uv lock --upgrade-package …`) and
 
 ### A8 · Harden production security settings
 
-Issue: #TBD-A8 · Sources: SEC-02, SEC-03, PR-2, ARCH-7, PR-9
+Issue: #41 · Sources: SEC-02, SEC-03, PR-2, ARCH-7, PR-9
 
 **Problem.** `prod.py` only sets `DEBUG = False`. `check --deploy` reports
 W004, W008, W012 and W016. Behind a TLS-terminating proxy, without
@@ -261,7 +261,7 @@ settings and a random key, and it passes.
 
 ### A9 · Serve static files in production
 
-Issue: #TBD-A9 · Sources: PR-1, SEC-07, ARCH-7, PERF-5, PR-9
+Issue: #42 · Sources: PR-1, SEC-07, ARCH-7, PERF-5, PR-9
 
 **Problem.** There is no `STATIC_ROOT`, so `collectstatic` fails, and with
 `DEBUG=False` nothing serves `/static/`: no CSS and **no HTMX**, so the app is
@@ -278,7 +278,7 @@ settings.
 
 ### A10 · Make production errors and outages visible
 
-Issue: #TBD-A10 · Sources: PR-6, SEC-07, ARCH-7, PR-12, SEC-13
+Issue: #43 · Sources: PR-6, SEC-07, ARCH-7, PR-12, SEC-13
 
 **Problem.** There is no `LOGGING` and no `ADMINS`, so with `DEBUG=False` a 500,
 a CSRF failure or a `django.security` event leaves no trace anywhere. There is
@@ -294,7 +294,7 @@ healthchecks.io ping at the backup timer (A11).
 
 ### A11 · Make backups automatic, consistent, off-box and restore-tested
 
-Issue: #TBD-A11 · Sources: LTE-06, SEC-08, PR-4, QA-8, ARCH-8, PERF-1
+Issue: #44 · Sources: LTE-06, SEC-08, PR-4, QA-8, ARCH-8, PERF-1
 
 **Problem.** Since #27 the database is the only copy of the data, and
 `backup_db` is manual, writes into `docs/` inside the checkout (one `git add -f`
@@ -315,7 +315,7 @@ one and compares row counts per table, and the restore procedure is documented.
 
 ### A12 · Add a deployment recipe and runbook for the VPS
 
-Issue: #TBD-A12 · Sources: PR-3, SEC-07, PR-7, SEC-13, PERF-4, ARCH-4, ARCH-7
+Issue: #45 · Sources: PR-3, SEC-07, PR-7, SEC-13, PERF-4, ARCH-4, ARCH-7
 
 **Problem.** There is no WSGI server, no service unit, no proxy config and no
 deploy doc, so the easiest way online is `runserver` with dev settings.
@@ -346,7 +346,7 @@ ingredient-edit click at 2,000 ingredients).
 
 ### B1 · Restrict the ingredient manager to staff, or commit to single-user
 
-Issue: #TBD-B1 · Sources: LTE-09, SEC-05, PR-13, QA-9, ARCH-2, LT-3
+Issue: #46 · Sources: LTE-09, SEC-05, PR-13, QA-9, ARCH-2, LT-3
 
 **Problem.** Recipes are owner-scoped, but `Ingredient`, `Tag`, `Cuisine` and
 `Source` are global, and `/recipes/ingredients/manage/` requires only a login.
@@ -362,7 +362,7 @@ vocabularies before aliases land.
 
 ### B2 · Rate-limit the login and admin pages
 
-Issue: #TBD-B2 · Sources: SEC-04, PR-8
+Issue: #47 · Sources: SEC-04, PR-8
 
 **Problem.** `/accounts/login/` and `/admin/login/` accept unlimited guesses
 and failures are not logged. On a public IP this is the most likely attack.
@@ -373,7 +373,7 @@ env-configured path or restrict it to an allowlist/VPN.
 
 ### B3 · Require login by default and test every route for auth and ownership
 
-Issue: #TBD-B3 · Sources: LTE-10, TD-4, ARCH-6
+Issue: #48 · Sources: LTE-10, TD-4, ARCH-6
 
 **Problem.** Each of ~55 routes is wrapped in `_lr()` by hand (`home` is
 wrapped twice), and recipe ownership is a hand-written
@@ -390,7 +390,7 @@ user gets 404 on every route with a `recipe_id`.
 
 ### B4 · Make long prose fields `TextField`s
 
-Issue: #TBD-B4 · Sources: LTE-03, ARCH-10, ARCH-12
+Issue: #49 · Sources: LTE-03, ARCH-10, ARCH-12
 
 **Problem.** `Step.step_text`, `Step.extra_info` and
 `Recipe.short_description` are `CharField(max_length=512)`. SQLite ignores the
@@ -405,7 +405,7 @@ constraint covers it). Regenerate `docs/schema.sql`. Land before #19.
 
 ### B5 · Stop the HTML sanitiser truncating text after a stray `<`
 
-Issue: #TBD-B5 · Sources: QA-3
+Issue: #50 · Sources: QA-3
 
 **Problem.** `HTMLParser` treats `<letter…` as a tag start and `close()`
 discards the unparsed buffer. `Bake (oven<gas 4) for 20 min. Rest.` renders as
@@ -418,7 +418,7 @@ with no allowed tags keeps its visible text.
 
 ### B6 · Confirm before deleting a non-empty ingredient group
 
-Issue: #TBD-B6 · Sources: COR (group delete), UX-8
+Issue: #51 · Sources: COR (group delete), UX-8
 
 **Problem.** The group's Delete button has no `hx-confirm`, and rows cascade,
 so one click next to Save/Cancel removes the group and every ingredient in it,
@@ -430,7 +430,7 @@ non-empty delete and point to "Move to"), and keep the last group.
 
 ### B7 · Self-host the web fonts
 
-Issue: #TBD-B7 · Sources: SEC-10, PR-11, PERF-5, DEP-11, LTE-15 · Redesign: **Split**
+Issue: #52 · Sources: SEC-10, PR-11, PERF-5, DEP-11, LTE-15 · Redesign: **Split**
 
 **Problem.** `base.html` loads Inconsolata and Lobster from
 `fonts.googleapis.com` on every page: every visitor's IP goes to Google (ruled
@@ -445,7 +445,7 @@ picks. If the redesign is far off, self-host the current two now.
 
 ### B8 · Enforce migrations, `schema.sql` and other cheap invariants in QA/CI
 
-Issue: #TBD-B8 · Sources: LTE-13, QA-7, TD-2, TD-3, AR-3, PR-9
+Issue: #53 · Sources: LTE-13, QA-7, TD-2, TD-3, AR-3, PR-9
 
 **Problem.** AGENTS.md requires a migration for every model change and a
 regenerated `docs/schema.sql`, but nothing checks either (both happen to be
@@ -461,7 +461,7 @@ pytest `addopts` (zero violations today).
 
 ### B9 · Harden the CI workflow
 
-Issue: #TBD-B9 · Sources: LTE-13, SEC-12, OSM-4, DEP-4, DEP-6, DEP-7, DEP-10
+Issue: #54 · Sources: LTE-13, SEC-12, OSM-4, DEP-4, DEP-6, DEP-7, DEP-10
 
 **Problem.** `ci.yml` has no top-level `permissions:`; actions are on mutable
 tags (including third-party `peaceiris/actions-gh-pages` with write access) and
@@ -481,7 +481,7 @@ shields.io endpoint JSON.
 
 ### B10 · Automate dependency updates and vulnerability scanning
 
-Issue: #TBD-B10 · Sources: LTE-13, SEC-06, PR-9, OSM-3, TD-10, DEP-3
+Issue: #55 · Sources: LTE-13, SEC-06, PR-9, OSM-3, TD-10, DEP-3
 
 **Problem.** No Dependabot or Renovate, and no audit step, which is how the
 A7 advisories accumulated unnoticed. Four ecosystems drift independently
@@ -495,7 +495,7 @@ reporting.
 
 ### B11 · Delete dead scripts and legacy code
 
-Issue: #TBD-B11 · Sources: LTE-12, SEC-11, OSM-9, TD-7, LT-9, ARCH-11
+Issue: #56 · Sources: LTE-12, SEC-11, OSM-9, TD-7, LT-9, ARCH-11
 
 **Problem.** Dead code reads as supported, and the scripts that write to the
 database are a hazard once the repo is on a server:
@@ -514,7 +514,7 @@ database are a hazard once the repo is on a server:
 
 ### B12 · Make the documented `manage.py` commands work on a fresh checkout
 
-Issue: #TBD-B12 · Sources: DX-2, AR-2, OSM-8
+Issue: #57 · Sources: DX-2, AR-2, OSM-8
 
 **Problem.** `manage.py` defaults to `nutrisho.settings.prod`; only poe tasks
 get dev settings. AGENTS.md's mandated schema commands
@@ -545,7 +545,7 @@ Scope added to #32 rather than a new issue:
 
 ### B14 · Responsive layout with a read/cook mode
 
-Issue: #TBD-B14 · Sources: UX-4, A11Y-10 · Redesign: **Design-led**
+Issue: #58 · Sources: UX-4, A11Y-10 · Redesign: **Design-led**
 
 **Problem.** `.recipe-contents` is a fixed `1040px × 18cm` card with no media
 queries, so phones pan sideways; the fixed navbar covers the title at 125%
@@ -561,7 +561,7 @@ Keep print working.
 
 ### B15 · Add log-out and a proper login page
 
-Issue: #TBD-B15 · Sources: UX-7 · Redesign: **Design-led**
+Issue: #59 · Sources: UX-7 · Redesign: **Design-led**
 
 **Problem.** There is no log-out control anywhere (`LogoutView` needs a POST
 and no template sends one), so the user cannot sign out of a borrowed device.
@@ -574,7 +574,7 @@ is in C13.)
 
 ### B16 · Make every control keyboard-reachable and named
 
-Issue: #TBD-B16 · Sources: A11Y-1, A11Y-2, A11Y-3, A11Y-5, A11Y-6 · Redesign: **Split**
+Issue: #60 · Sources: A11Y-1, A11Y-2, A11Y-3, A11Y-5, A11Y-6 · Redesign: **Split**
 
 **Problem.** Inline editing starts from clicks on non-focusable `<span>`,
 `<div>` and `<h4>` elements, so keyboard and switch users cannot edit at all.
@@ -594,7 +594,7 @@ step 2", "Select onion"); 24×24px targets labelled "Move step 2 up".
 
 ### B17 · Manage focus and announce changes after HTMX swaps
 
-Issue: #TBD-B17 · Sources: A11Y-4, A11Y-7 · Redesign: **Split**
+Issue: #61 · Sources: A11Y-4, A11Y-7 · Redesign: **Split**
 
 **Problem.** After a move, Save, Cancel or Delete, the swapped region drops
 focus to `<body>`; opening an edit form or the metadata panel does not move
@@ -616,7 +616,7 @@ two inputs. Pairs with A4's error banner.
 
 ### C1 · Move inline JavaScript to static files and add a CSP
 
-Issue: #TBD-C1 · Sources: SEC-09, TD-6, LTE-15, LTE-14 · Redesign: **Split**
+Issue: #62 · Sources: SEC-09, TD-6, LTE-15, LTE-14 · Redesign: **Split**
 
 **Problem.** `base.html` carries ~70 lines of inline JS (autosize, steps panel,
 reassign panel, `panelToggle`) loaded on every page including login; it cannot
@@ -632,7 +632,7 @@ part of it, or first if the redesign is far off.
 
 ### C2 · Add browser smoke tests for the HTMX flows
 
-Issue: #TBD-C2 · Sources: LTE-14, QA-6, TD-6 · Redesign: **Split**
+Issue: #63 · Sources: LTE-14, QA-6, TD-6 · Redesign: **Split**
 
 **Problem.** The suite uses the Django test client, so `hx-include`, OOB swaps,
 `HX-Retarget`, the DOM-position insert calculation, split-at-cursor offsets
@@ -647,7 +647,7 @@ redesigned UI if it is imminent; otherwise start with two or three now.
 
 ### C3 · Fix N+1 queries when HTMX endpoints re-render
 
-Issue: #TBD-C3 · Sources: PERF-2
+Issue: #64 · Sources: PERF-2
 
 **Problem.** The recipe page is a constant 10 queries, but endpoints that
 re-render `_groups_list.html`/`_iir_list.html` pass an un-prefetched recipe.
@@ -662,7 +662,7 @@ grow.
 
 ### C4 · Show or drop the schema fields the UI hides
 
-Issue: #TBD-C4 · Sources: LTE-07, UX-6, LT-6, COR (substitutes) · Redesign: **Split**
+Issue: #65 · Sources: LTE-07, UX-6, LT-6, COR (substitutes) · Redesign: **Split**
 
 **Problem.** Several fields are migrated, copied and backed up but nobody can
 see or set them: `Tag` (no UI at all), `Cuisine` (editable, never shown),
@@ -682,7 +682,7 @@ backend work for now; where these appear on the page is for the design.
 
 ### C5 · Resolve aliases and plurals on ingredient input
 
-Issue: #TBD-C5 · Sources: COR (plurals), OSM-10, plan 008, #14
+Issue: #66 · Sources: COR (plurals), OSM-10, plan 008, #14
 
 **Problem.** With `onion` stored, typing `2 onions` creates an `onions` row,
 recreating the duplicates "Merge plural" exists to remove. Plan 008 (aliases,
@@ -694,7 +694,7 @@ then aliases. Re-point plan 008 at this issue.
 
 ### C6 · Normalise units
 
-Issue: #TBD-C6 · Sources: LTE-11, LT-7
+Issue: #67 · Sources: LTE-11, LT-7
 
 **Problem.** `unit` is free text: `Tbsp` (268), `tbsp` (226), `tbs`, `tbso`;
 `clove`/`cloves`; `l`/`L`; non-units such as `small`, `large`, `to taste`. The
@@ -709,7 +709,7 @@ display time.
 
 ### C7 · Tidy the poe test and QA tasks
 
-Issue: #TBD-C7 · Sources: DX-3, DX-4, DX-8, AR-4, AR-5, DEP-9
+Issue: #68 · Sources: DX-3, DX-4, DX-8, AR-4, AR-5, DEP-9
 
 **Problem.** `poe test <path>` always fails the 95% coverage gate on a subset,
 so the mandated TDD loop can't use it; `-vv -s` prints ~870 lines per passing
@@ -727,7 +727,7 @@ a Python-only `qa` gate, with the CSS build in CI and `dev`;
 
 ### C8 · Fix documentation drift
 
-Issue: #TBD-C8 · Sources: LTE-16, DX-4, DX-6, OSM-8, OSM-10, TD-9, AR-7, AR-12, LT-9
+Issue: #69 · Sources: LTE-16, DX-4, DX-6, OSM-8, OSM-10, TD-9, AR-7, AR-12, LT-9
 
 **Problem.** The developer guide still prescribes `feature/<name>` branches
 (retired in AGENTS.md); README "What it does" lists only browsing. AGENTS.md
@@ -748,7 +748,7 @@ Archive this plan once its issues are filed (the raw reports already live in
 
 ### C9 · Tidy the committed Claude Code configuration
 
-Issue: #TBD-C9 · Sources: DX-5, TD-8, AR-1, AR-8, AR-9, AR-10, AR-11
+Issue: #70 · Sources: DX-5, TD-8, AR-1, AR-8, AR-9, AR-10, AR-11
 
 **Problem.** `.claude/settings.json` (applies to every contributor) switches
 assistants into caveman mode, writes to `~/.claude` and replaces the status
@@ -768,7 +768,7 @@ runs (also in AGENTS.md); `$CLAUDE_PROJECT_DIR` paths; an allowlist for
 
 ### C10 · Add a demo-data seed command
 
-Issue: #TBD-C10 · Sources: DX-9, AR-6
+Issue: #71 · Sources: DX-9, AR-6
 
 **Problem.** A fresh database is empty, so trying the ingredient clean-up tool
 or reviewing a UI change means hand-building recipes with duplicates, plurals,
@@ -780,7 +780,7 @@ prod settings.
 
 ### C11 · Cut versioned releases with a changelog
 
-Issue: #TBD-C11 · Sources: OSM-5
+Issue: #72 · Sources: OSM-5
 
 **Problem.** No tags or releases; `pyproject.toml` has been `0.2.0`
 throughout and `package.json` says `1.0.0`. Once deployed, "what is running"
@@ -792,7 +792,7 @@ mark the `package.json` version irrelevant.
 
 ### C12 · Upgrade off Django 6.0 before its support ends
 
-Issue: #TBD-C12 · Sources: OSM-3, DEP-8
+Issue: #73 · Sources: OSM-3, DEP-8
 
 **Problem.** `Django ~=6.0.0` blocks 6.1 (6.1.2 current). 6.0 gets security
 fixes only until April 2027; nothing tracks that deadline.
@@ -803,7 +803,7 @@ April 2027.
 
 ### C13 · Fix page structure: landmarks, headings, language, contrast
 
-Issue: #TBD-C13 · Sources: A11Y-8, A11Y-9, A11Y-11, A11Y-12, ARCH-11, LTE-15 · Redesign: **Split**
+Issue: #74 · Sources: A11Y-8, A11Y-9, A11Y-11, A11Y-12, ARCH-11, LTE-15 · Redesign: **Split**
 
 **Problem.** `<html lang="">` on every page; the root view (`/`, where login
 lands) is a bare inline `<h1><a>` fragment with no doctype or title, breaking
@@ -823,7 +823,7 @@ name in each action's accessible name and first in DOM order.
 
 ### D1 · Soft-delete recipes with undo
 
-Issue: #TBD-D1 · Sources: UX-8 · Redesign: **Split**
+Issue: #75 · Sources: UX-8 · Redesign: **Split**
 
 Recipe delete is one click plus `confirm()` sitting between frequently used
 buttons; ingredient-tool merges and deletes rewrite every affected recipe with
@@ -835,7 +835,7 @@ net until then.
 
 ### D2 · Pick one styling system
 
-Issue: #TBD-D2 · Sources: LTE-15, AR-5 · Redesign: **Design-led**
+Issue: #76 · Sources: LTE-15, AR-5 · Redesign: **Design-led**
 
 Tailwind v4 provides ~26 utility classes (mostly the ingredient tool) while
 370 lines of hand-written `style.css` cover the rest, and Tailwind is the only
@@ -846,7 +846,7 @@ app).
 
 ### D3 · Move domain logic into services and slim the view layer
 
-Issue: #TBD-D3 · Sources: ARCH-9, LT-4, TD-5
+Issue: #77 · Sources: ARCH-9, LT-4, TD-5
 
 Only the clean-up tool follows the documented services boundary. Duplicate,
 scale, reassign, group pruning, ingredient resolution and step merge/split live
@@ -860,7 +860,7 @@ one view taking `direction` from the URL.
 
 ### D4 · Import recipes from JSON-LD or pasted text
 
-Issue: #TBD-D4 · Sources: LT-5
+Issue: #78 · Sources: LT-5
 
 Since the YAML import was removed (#27), recipes can only be typed in field by
 field. One importer behind a service function, fed by schema.org `Recipe`
@@ -870,7 +870,7 @@ the natural place for alias resolution (C5), unit resolution (C6) and
 
 ### D5 · Rename reverse accessors to plurals
 
-Issue: #TBD-D5 · Sources: ARCH-11
+Issue: #79 · Sources: ARCH-11
 
 `recipe.step`, `recipe.tag`, `recipe.ingredients_group`,
 `ingredient_group.ingredient` (which yields `IngredientInRecipe` rows) and the
@@ -880,7 +880,7 @@ templates. Best done with or after D3.
 
 ### D6 · Replace the ingredient datalist with an autocomplete endpoint
 
-Issue: #TBD-D6 · Sources: PERF-4
+Issue: #80 · Sources: PERF-4
 
 Every inline ingredient edit ships the whole ingredient table as a
 `<datalist>` (114 KB per click at 2,000 ingredients), and the clean-up tool's
@@ -890,7 +890,7 @@ for now; when the table grows, add an `hx-get` autocomplete returning the top
 
 ### D7 · Squash migrations 0001–0016
 
-Issue: #TBD-D7 · Sources: TD-7
+Issue: #81 · Sources: TD-7
 
 A fresh install runs dead data migrations (e.g. ~100 lines in
 `0008_sanitize_yaml_filenames` for a column `0016` drops). With a single
