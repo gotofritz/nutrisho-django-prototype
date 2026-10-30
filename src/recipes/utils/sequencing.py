@@ -40,7 +40,8 @@ def insert_at_index(
     Siblings are locked with select_for_update before the insertion window
     is computed so concurrent creates into the same parent serialize instead
     of racing on the unique (parent, index_in_sequence) constraint. (On
-    SQLite this is a no-op; its single-writer locking serializes anyway.)
+    SQLite this is a no-op; the IMMEDIATE transactions set in settings take
+    the write lock up front, which serializes writers instead.)
 
     lock_parent, if given, is locked first so that concurrent "first insert"
     requests (where siblings is empty and select_for_update locks nothing)
