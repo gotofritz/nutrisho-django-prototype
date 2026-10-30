@@ -16,3 +16,6 @@ DATABASES = {
         "NAME": ":memory:",
     }
 }
+
+# PBKDF2 makes create_user dominate test runtime; MD5 is fine for throwaway users
+PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]

@@ -64,6 +64,19 @@ def test_test_settings_use_in_memory_db():
     assert test_settings.DATABASES["default"]["NAME"] == ":memory:"
 
 
+def test_test_settings_use_fast_password_hasher():
+    """Test settings use MD5 so create_user doesn't pay for PBKDF2 in every test."""
+    import sys
+
+    for mod in list(sys.modules.keys()):
+        if "nutrisho.settings" in mod:
+            del sys.modules[mod]
+
+    import nutrisho.settings.test as test_settings
+
+    assert test_settings.PASSWORD_HASHERS == ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+
 def test_dev_allowed_hosts_reads_env(monkeypatch):
     """Dev ALLOWED_HOSTS reads from env, not hardcoded."""
     import sys
