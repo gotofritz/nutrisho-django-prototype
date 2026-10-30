@@ -1,15 +1,9 @@
 """One-off backfill for issue #20: lift headings out of step text into step_title.
 
-Throwaway — delete once it has been run. Two modes:
+Throwaway — delete once it has been run:
 
     uv run python scripts/backfill_step_titles.py --dry-run
     uv run python scripts/backfill_step_titles.py
-    uv run python scripts/backfill_step_titles.py --yaml recipes_yaml/ --dry-run
-    uv run python scripts/backfill_step_titles.py --yaml recipes_yaml/
-
-The YAML mode is not optional housekeeping: `uv run poe filldb` rebuilds the database
-from recipes_yaml/, so leaving the seed files alone would undo the database
-backfill on the next reset.
 
 The rule itself lives in `recipes/utils/step_title.py`, where it is tested.
 """
@@ -18,8 +12,6 @@ import argparse
 import os
 import sys
 from pathlib import Path
-
-import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
@@ -62,76 +54,14 @@ def backfill_database(*, dry_run: bool) -> int:
     return changed
 
 
-def backfill_yaml(directory: Path, *, dry_run: bool) -> int:
-    """Rewrite titled steps in every YAML file under `directory`. Returns files changed."""
-    changed = 0
-    for path in sorted(directory.iterdir()):
-        if path.suffix.lower() not in {".yml", ".yaml"} or not path.is_file():
-            continue
-        data = yaml.safe_load(path.read_text(encoding="utf-8"))
-        steps = (data or {}).get("directions", {}).get("step")
-        if steps is None:
-            continue
-        if not isinstance(steps, list):
-            steps = [steps]
-        rewritten = []
-        touched = False
-        for step in steps:
-            if isinstance(step, dict):
-                # already split, by an earlier run — only the shouting to fix
-                current = step.get("title") or ""
-                title = sentence_case_heading(current)
-                if title == current:
-                    rewritten.append(step)
-                    continue
-                print(f"  {path.name}: {current!r} -> {title!r}")
-                rewritten.append({**step, "title": title})
-                touched = True
-                continue
-            if not isinstance(step, str):
-                rewritten.append(step)
-                continue
-            title, remainder = split_step_title(step)
-            if not title:
-                rewritten.append(step)
-                continue
-            title = sentence_case_heading(title)
-            print(f"  {path.name}: {title!r} + {remainder[:60]!r}")
-            rewritten.append({"title": title, "text": remainder})
-            touched = True
-        if not touched:
-            continue
-        changed += 1
-        if dry_run:
-            continue
-        data["directions"]["step"] = rewritten
-        with path.open("w", encoding="utf-8") as f:
-            yaml.dump(data, f, allow_unicode=True, sort_keys=True, default_flow_style=False)
-    return changed
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--yaml",
-        type=Path,
-        metavar="DIR",
-        help="Rewrite the YAML files in DIR instead of the database",
-    )
     parser.add_argument("--dry-run", action="store_true", help="Report without writing")
     args = parser.parse_args()
 
-    if args.yaml is not None:
-        if not args.yaml.is_dir():
-            parser.error(f"{args.yaml} is not a directory")
-        changed = backfill_yaml(args.yaml, dry_run=args.dry_run)
-        noun = "file"
-    else:
-        changed = backfill_database(dry_run=args.dry_run)
-        noun = "step"
-
+    changed = backfill_database(dry_run=args.dry_run)
     verb = "would change" if args.dry_run else "changed"
-    print(f"{verb} {changed} {noun}{'' if changed == 1 else 's'}")
+    print(f"{verb} {changed} step{'' if changed == 1 else 's'}")
     return 0
 
 

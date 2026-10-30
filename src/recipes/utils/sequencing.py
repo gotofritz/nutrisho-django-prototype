@@ -32,7 +32,7 @@ def insert_at_index(
 
     requested_index is the row's 0-based position as seen in the client DOM,
     not a raw index_in_sequence value: sibling indexes may be 1-based or have
-    gaps (the YAML importer seeds 1-based sequences), so the target slot is
+    gaps (legacy imported recipes have 1-based sequences), so the target slot is
     resolved against the ordered sibling list. The DOM position may also count
     unsaved sibling drafts, so it is clamped to the list length; missing or
     non-numeric values append.
