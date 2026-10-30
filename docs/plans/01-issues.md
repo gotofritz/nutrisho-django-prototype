@@ -2355,3 +2355,186 @@ requests through the test client, not inferred from reading alone.
 - **Fix:** render `(or <substitute>)` in the display partial (and add
   `substitute` to the `select_related` in the `recipe` view). Add an optional
   substitute name field to the inline form, resolved like `ingredient_name`.
+
+---
+
+## Long-term evolution (software architect review, 2026-10-30)
+
+Scope: how well the codebase will absorb the next year or two of change — new
+fields, new features, more recipes, possibly more users. Ordered by how much
+they cost if left alone.
+
+### LT-1. Duplicating a recipe silently drops step titles (schema drift in hand-written copies)
+
+**Severity: high (data loss, and the pattern will recur).**
+
+`recipe_duplicate` (`src/recipes/views/recipe_crud.py:152`) copies every row
+field by field. `Step.step_title` was added in migration 0015 and the copy at
+`recipe_crud.py:177` was never updated, so the duplicate loses every step
+heading. Verified with a throwaway test: a step titled `RAGU` comes back with
+`step_title == ''`. `test_views_duplicate.py` has no step-title case, so CI is
+green.
+
+The root cause is structural: each new column has to be remembered in every
+place that enumerates fields — the duplicate, the `update_fields` list in
+`recipe_metadata_edit`, the clean-up tool's recipe preview. Nothing fails when
+one is missed.
+
+Direction: copy model instances generically (clone with `pk=None` and override
+the FKs, or iterate `_meta.concrete_fields` and exclude pk/FK), and add a test
+that asserts every concrete field of `Step`, `IngredientGroup` and
+`IngredientInRecipe` survives a duplicate, so the next migration fails CI
+instead of shipping.
+
+### LT-2. Scaling rewrites stored quantities and drifts the servings/quantity ratio
+
+**Severity: high (silent, irreversible data corruption).**
+
+`recipe_scale` (`recipe_crud.py:233`) multiplies and *persists* every
+quantity, rounded to 2 dp, while `servings` is rounded to an integer and
+clamped at 1 (`recipe_crud.py:251`). The two round independently, so the ratio
+the recipe was written for is lost:
+
+- `servings=1`, × 0.5 → servings stays 1, quantities halve. The recipe now
+  claims one serving with half the food. `test_scale_down_sub_half_result_clamps_to_1`
+  pins this behaviour as correct.
+- `servings=5`, × 0.5 → servings 3, quantities for 2.5.
+- × ⅓ then × 3 turns `1` into `0.99`; small quantities (`0.05 tsp`) collapse
+  to `0.00`/`0.03` after a few rounds.
+
+Every scale compounds the error and there is no undo — the database is the
+only copy (README "Backing up").
+
+Direction: make scaling a view-time concern. Keep the stored quantities and
+`servings` as authored, and render with a requested serving count
+(`?serves=6`, or a session value) through a template filter next to
+`format_quantity`. If a persistent "rewrite for N servings" is still wanted,
+compute it from the original values rather than from the previous result.
+This also unlocks per-serving arithmetic for nutrition later, which the
+`Recipe` docstring already flags as blocked.
+
+### LT-3. Decide single-user vs multi-user before more features depend on the answer
+
+**Severity: medium (architectural ambiguity that gets more expensive every feature).**
+
+The model is half multi-tenant. Recipes are owner-scoped (`Recipe.owner`,
+unique name per owner, every view filters by `owner=request.user`), but
+`Ingredient`, `Cuisine`, `Source` and `Tag` are global, and the clean-up tool
+is open to any logged-in user (`views/_auth.py`). Any second account can
+rename, merge or delete ingredients inside the first account's recipes — the
+delete confirmation even counts recipes "across all owners".
+
+Planned work leans on whichever answer is chosen: plan 008's aliases are a
+global table, tags have no owner, and a future import would create global
+ingredients.
+
+Direction: write the decision into `docs/initial-context.md`. If the app is
+personal, say so and gate the global tools behind `is_staff` so a second login
+cannot damage shared data. If multi-user is a goal, introduce per-owner
+vocabularies (or a shared canonical list with per-owner overrides) now, while
+there is one table of ingredients and no aliases yet.
+
+### LT-4. Domain operations live in views, outside the services boundary
+
+**Severity: medium (blocks reuse by any future API, CLI or import).**
+
+`docs/initial-context.md` sets the boundary — services hold pure query and
+mutation functions, views stay thin — but only the clean-up tool follows it.
+Duplicate, scale, reassign-between-groups and group pruning are transactional
+domain logic written inside view functions (`recipe_crud.py`,
+`recipe_ingredients.py`, 567 lines). They cannot be called from a management
+command, a future import or an API without an HTTP request, and they are only
+testable through the client.
+
+Direction: move them into `recipes/services/` (e.g. `recipe_ops.py`) as each is
+next touched, with the views reduced to parse → call → render, matching
+`ingredient_admin.py`. No big-bang refactor needed; LT-1 and LT-2 are natural
+first candidates.
+
+### LT-5. There is no way to get recipes in except typing them field by field
+
+**Severity: medium (caps how far the collection can grow).**
+
+The YAML import was removed with the seed files (#27). New recipes now come
+from "New recipe" plus inline editing, one ingredient and one step per form,
+or from the hand-run SQL in `scripts/sql_to_edit_recipes_hack/`. Plan 008
+assumes recipes "are scraped from many sources", but no scraper or importer is
+in the repo, so the alias work has no input pipeline to hook into.
+
+Direction: one importer behind a service function (LT-4), fed first by the
+format most recipe sites already publish — schema.org `Recipe` JSON-LD — or by
+pasted plain text (one ingredient per line, one step per paragraph). It is the
+natural place to apply plan 008's alias resolution and the step-title
+recognition in `utils/step_title.py`.
+
+### LT-6. Dormant schema: columns and models with no way to set or use them
+
+**Severity: low–medium (carrying cost and false signals for future work).**
+
+Several parts of the schema are migrated, copied and backed up, but have no
+UI and no reader:
+
+- `Step.duration`, `Step.extra_info` — only touched by the duplicate.
+- `Source` (with a self-referential `parent`) — no form sets `Recipe.source`;
+  only `source_instance` is editable. Admin only.
+- `Tag` — no UI to add, show or filter by tags; only the duplicate copies them.
+- `Ingredient.family` and `dietary_constraint` — editable in the clean-up tool
+  but never displayed, filtered on, or rolled up to a recipe ("is this
+  vegetarian?").
+- `Cuisine.cuisine` still has the verbose name `"region.area.subarea just as
+  placeholder"`.
+
+Direction: for each, either surface it (tags and cuisine as list filters,
+dietary constraint rolled up to the recipe) or drop it in a migration. Keeping
+undecided columns means every schema change, duplicate and future import has
+to carry them anyway.
+
+### LT-7. Units are free text, which blocks nutrition, shopping lists and conversion
+
+**Severity: low now, high if any of those are on the roadmap.**
+
+`IngredientInRecipe.unit` is a free `CharField`. `g`, `gr`, `grams`, `Tbsp`
+and `tablespoon` are all different values, and pluralisation already depends
+on "unit is empty" as a proxy for countability. Anything that aggregates
+across rows — a shopping list, nutrition per serving (the project is called
+Nutrisho), metric/imperial conversion — needs a known unit vocabulary first.
+
+Direction: when (if) any of those features is planned, start with a `Unit`
+lookup (canonical name, plural, dimension: mass/volume/count) and a clean-up
+pass in the same spirit as the ingredient tool. Doing it before more data
+accumulates is much cheaper than after.
+
+### LT-8. Recipe browsing does not scale past a few dozen recipes
+
+**Severity: low–medium.**
+
+The home page lists every recipe newest first, with no search, filter or
+pagination (`views/home.py:12`). Prev/next on the detail page walks by `id`
+ascending (`views/recipe.py:13`), the opposite direction to the list, and wraps
+around. With tags and cuisine dormant (LT-6), the only way to find a recipe is
+scrolling.
+
+Direction: a search box on recipe name and ingredient (the clean-up tool's
+`search_ingredients` pattern already exists), cuisine/tag filters once LT-6 is
+decided, and prev/next following the same ordering as the list.
+
+### LT-9. Leftovers from earlier eras that now mislead
+
+**Severity: low (cleanup).**
+
+- `natural_key()` on every model, and `RecipeManager.get_by_natural_key`, were
+  for fixture/YAML serialisation, which is gone. Several are not even unique
+  (`IngredientGroup` returns `group_name`, often `""`; `Step` returns a 32-char
+  prefix), so they would mislead anyone who tried to rely on them.
+- `scripts/sql_to_edit_recipes_hack/` hard-codes `/Users/fritz/...`, writes
+  straight to the tables past the sequencing invariants, and is superseded by
+  inline editing and `delete_recipe`.
+- `docs/plans/005-data-model.md` and `006-admin.md` are drafts that predate
+  most of the current code (005 still asks about `FloatField` vs
+  `DecimalField`; `quantity` has been a `DecimalField` for a while). They should
+  be rewritten against today's model or archived.
+- `docs/initial-context.md` says "no production settings", but
+  `src/nutrisho/settings/prod.py` exists.
+
+Direction: delete the dead code and scripts, archive or rewrite the stale
+plans, and correct the constraint line.
