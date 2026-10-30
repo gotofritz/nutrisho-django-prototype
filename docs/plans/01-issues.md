@@ -1652,3 +1652,149 @@ guard-rails around that health, not about broken code. Ordered by value.
 - **Fix:** add `dependabot.yml` with weekly, grouped updates for `uv`, `npm`
   (pnpm lockfile) and `github-actions`; the existing CI gate is strong enough to
   merge them with confidence.
+
+---
+
+## Dependency ecosystem health (Dependency Manager review, 2026-10-30)
+
+Evidence gathered on 2026-10-30 with `uv tree --outdated`, `uv export` +
+`pip-audit`, `pnpm audit` and `pnpm outdated` against the committed lockfiles.
+Ordered by priority.
+
+### DEP-1 · Remove the unused `google-genai` runtime dependency — high
+
+`google-genai~=1.56` is a production dependency, but nothing in `src/`,
+`tests/` or `scripts/` imports it (`grep -rn genai` finds nothing). It is the
+largest thing in the runtime tree: of the 32 packages `uv export --no-dev`
+installs, about 25 exist only because of it (`httpx`, `requests`,
+`google-auth`, `cryptography`, `cffi`, `pydantic`, `websockets`, `tenacity`,
+`certifi`, …). It is also the only route to a runtime CVE (see DEP-2:
+`certifi`), and its `~=1.56` cap keeps it on 1.x while 2.x is current (2.34).
+
+Fix: `uv remove google-genai`. If an LLM feature is planned, add it back in
+that PR, behind the code that uses it, at the current major.
+
+### DEP-2 · Clear the known vulnerabilities in the lockfiles — high
+
+The committed lockfiles currently resolve to versions with published
+advisories:
+
+| Package | Locked | Fixed in | Pulled in by | Scope |
+| --- | --- | --- | --- | --- |
+| `certifi` | 2026.7.22 | 2026.10.19 | `google-genai` → `httpx`/`requests` | runtime |
+| `filelock` | 4.0.4 (14 CVEs) | 4.2.1 | `pre-commit` → `virtualenv` | dev |
+| `virtualenv` | 21.13.0 (11 CVEs) | 21.14.9 | `pre-commit` | dev |
+| `source-map-js` | 1.2.1 (GHSA-68fv-2mgg-jv7q, high) | 1.2.2 | `@tailwindcss/cli` → `@tailwindcss/node` | build |
+
+None need a constraint change. `certifi` disappears with DEP-1; the rest are
+lockfile refreshes: `uv lock --upgrade-package filelock --upgrade-package
+virtualenv` (or `uv lock --upgrade`) and `pnpm update` (the `^1.2.1` range
+already allows 1.2.2). Run `uv run poe qa` after.
+
+### DEP-3 · Add automated dependency updates and a vulnerability check — high
+
+There is no Dependabot or Renovate config and no audit step in CI, which is
+how DEP-2 accumulated unnoticed. Four ecosystems drift independently: uv
+(`uv.lock`), pnpm (`pnpm-lock.yaml`), GitHub Actions (`ci.yml`) and
+pre-commit hook revs (already behind: `pre-commit-hooks` v5.0.0 → v6.0.0,
+`toml-sort` v0.24.2 → v0.25.0).
+
+Fix:
+- Add `.github/dependabot.yml` with `uv`, `npm` (reads pnpm lockfiles) and
+  `github-actions` ecosystems on a weekly schedule, with grouped minor/patch
+  updates so it stays to a few PRs a week. Use Renovate instead if pre-commit
+  revs should be covered by the same bot; otherwise run
+  `pre-commit autoupdate` as part of the same weekly chore.
+- Add an audit step to CI, e.g. `uvx pip-audit` over `uv export
+  --all-groups --no-hashes` and `pnpm audit --prod=false --audit-level=high`,
+  so a new advisory fails the build instead of waiting for someone to look.
+
+### DEP-4 · CI does not verify that `uv.lock` matches `pyproject.toml` — medium
+
+`ci.yml` runs `uv sync --all-groups`. Without `--locked`, uv silently
+re-resolves and rewrites the lockfile in the runner when `pyproject.toml`
+changed but `uv.lock` was not regenerated, so CI tests a different set of
+versions from the one committed and the drift is never reported. The Node
+side already does the right thing with `pnpm install --frozen-lockfile`.
+
+Fix: `uv sync --locked --all-groups`.
+
+### DEP-5 · Move `django-debug-toolbar` to the dev group — medium
+
+`django-debug-toolbar ~=6.1` is a runtime dependency, but it is only enabled
+in `nutrisho/settings/dev.py`. Production installs carry it for nothing.
+
+Fix: move it to `[dependency-groups] dev`. Change the guard in
+`src/nutrisho/urls.py` from `if settings.DEBUG:` to
+`if "debug_toolbar" in settings.INSTALLED_APPS:`, so a non-dev settings module
+with `DEBUG=True` cannot try to import a package that is not installed. While
+there, lift the `~=6.1` cap: it pins to 6.x and 8.0 is current.
+
+### DEP-6 · GitHub Actions are pinned to old majors and patched with a Node 24 override — medium
+
+`ci.yml` uses `actions/checkout@v4`, `actions/setup-python@v5`,
+`astral-sh/setup-uv@v5`, `actions/upload-artifact@v4`,
+`actions/download-artifact@v4` and `pnpm/action-setup@v4`, and sets
+`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true` to force those Node 20 actions onto
+Node 24. Current majors are checkout v7, setup-python v7, setup-uv v7,
+upload-artifact v7, download-artifact v8 and pnpm/action-setup v6, which run on
+Node 24 natively. The override is a stopgap that will break once those old
+majors stop being compatible.
+
+Fix: bump to the current majors (check each changelog, artifact actions in
+particular), drop the env override, and let DEP-3's `github-actions` updates
+keep them current.
+
+### DEP-7 · Replace the unmaintained `coverage-badge` in the badge job — low
+
+The `badge` job runs `pip install coverage-badge "setuptools<81"`: the tool
+still imports `pkg_resources`, so it needs setuptools held back, and both are
+installed unpinned outside the lockfile on every push to `main`. That is an
+abandoned dependency kept alive by a workaround, and the one install in CI
+that is neither locked nor run through uv.
+
+Fix: use a maintained generator (e.g. `genbadge[coverage]`) via `uvx` with a
+pinned version, or drop the dependency and write a shields.io endpoint JSON
+from `coverage json` output in a few lines of shell.
+
+### DEP-8 · Plan the move off Django 6.0 before its security support ends — low
+
+`Django ~=6.0.0` locks to 6.0.x (6.0.8). Django 6.1 was released in August
+2026 (6.1.2 is current), so 6.0 now gets security fixes only, and those end in
+April 2027. The pin is deliberate, but nothing tracks the deadline.
+
+Fix: schedule an upgrade to 6.1 (or straight to 6.2 LTS when it ships in April
+2027) before April 2027, running with `-W error::DeprecationWarning` first to
+surface removals.
+
+### DEP-9 · Commitizen hook hardcodes `.venv/bin/cz` — low
+
+In `.pre-commit-config.yaml` the `commitizen` hook uses
+`entry: .venv/bin/cz` while the `qa` hook uses `uv run poe qa`. The hardcoded
+path fails on a fresh clone before `uv sync`, and for anyone using
+`UV_PROJECT_ENVIRONMENT` or a venv elsewhere.
+
+Fix: `entry: uv run cz check` to match the `qa` hook.
+
+### DEP-10 · Pin the pnpm version in `package.json` — low
+
+`package.json` has no `packageManager` field; CI asks `pnpm/action-setup` for
+"10" (latest 10.x at run time) and developers use whatever is installed, so
+lockfile format and build-script settings (`allowBuilds` in
+`pnpm-workspace.yaml`) can behave differently between machines.
+
+Fix: add `"packageManager": "pnpm@10.28.0"` (the version in use now) and drop
+`version: 10` from the workflow so CI, corepack and developers all read the
+same pin.
+
+### DEP-11 · Self-host the Google Fonts — low
+
+`recipes/base.html` loads Inconsolata and Lobster from
+`fonts.googleapis.com` on every page. That is the app's only third-party
+runtime dependency: pages render with fallback fonts offline or when Google
+is blocked, and every visitor's IP is sent to Google, which German courts
+have ruled a GDPR violation without consent (LG München I, 2022).
+
+Fix: download the two font files (e.g. via `@fontsource/inconsolata` and
+`@fontsource/lobster` through pnpm, or as static files) and serve them from
+`static/` with `@font-face` in the Tailwind build.
