@@ -1341,3 +1341,149 @@ Suggested brief: design the **cooking view on a phone or tablet** as the
 primary screen and editing as a secondary mode. Include print in the brief,
 since `print.css` is written against the current card layout and will break
 with a new one.
+
+---
+
+## Open source maintainer review — project health (2026-10-30)
+
+Independent pass over dependencies, supply chain, release process, docs and
+onboarding, with the VPS move in mind. Checked on `fix/assessment-2026-10-30`:
+`uv run poe test` passes (764 tests, 97.96 % coverage against a 95 % gate),
+`main` is protected, lint/type/commit-message checks are wired into pre-commit
+and CI. The fundamentals are healthy; the findings below are the gaps.
+
+### OSM-1 — Drop the unused `google-genai` runtime dependency
+
+`google-genai~=1.56` is in `[project].dependencies`, but nothing in `src/`,
+`tests/` or `scripts/` imports it. It is a runtime dependency, so it would ship
+to the VPS: `uv export --no-dev` lists 32 packages, and only 6 of them
+(`django`, `asgiref`, `sqlparse`, `django-environ`, `django-htmx`,
+`django-debug-toolbar`) are reachable from what the app actually uses. The rest
+(`google-auth`, `httpx`, `requests`, `pydantic`, `tenacity`, `anyio`, …) come in
+through `google-genai`. It is also the only route to `certifi`, which
+`pip-audit` currently flags (PYSEC-2026-4320, fixed in 2026.10.18).
+
+- **Fix:** `uv remove google-genai`; re-add it in the PR that first uses it.
+- **Effort:** minutes. **Impact:** smaller attack surface and image, one fewer
+  advisory to chase.
+
+### OSM-2 — Move `django-debug-toolbar` to the dev group
+
+It is a runtime dependency but only `settings/dev.py` and the `DEBUG`-guarded
+block in `urls.py` touch it. A `uv sync --no-dev` on the VPS should not install
+a debugging tool. It is also two majors behind (6.3 installed, 8.0 latest).
+
+- **Fix:** move it to `[dependency-groups].dev`; keep the `if settings.DEBUG`
+  guard in `urls.py`. Bump it while there.
+
+### OSM-3 — No automated dependency or Action updates; Django 6.0 pin needs a plan
+
+There is no `.github/dependabot.yml` (or Renovate config). Today
+`uv tree --outdated` shows Django 6.0.8 against 6.1.2, and `pnpm audit` reports
+one high advisory in a Tailwind build dependency (`source-map-js` < 1.2.2 via
+`@tailwindcss/cli`; build-time only, so low real risk, but nobody is told).
+GitHub Actions versions are not tracked either.
+
+`Django ~=6.0.0` blocks 6.1. Django 6.0 is not an LTS release and its security
+support ends in April 2027, around when 6.2 LTS lands. A self-hosted app wants
+to sit on an LTS and take patch releases promptly.
+
+- **Fix:** add `dependabot.yml` for `uv`, `npm` (pnpm) and `github-actions`,
+  weekly, grouped so it is one PR per ecosystem. Widen the pin to `~=6.1` now,
+  plan the 6.2 LTS move for spring 2027 and then stay on LTS. Turn on
+  Dependabot alerts and private vulnerability reporting in repo settings.
+
+### OSM-4 — Harden the CI workflow
+
+`.github/workflows/ci.yml`:
+
+- No top-level `permissions:` block, so the `qa` job (which runs on PRs) gets
+  whatever the repo's default token scope is. Set `permissions: contents: read`
+  at the top and keep `contents: write` only on `badge`.
+- Actions are pinned to moving tags (`@v4`, `@v5`). `peaceiris/actions-gh-pages`
+  is third-party and runs with a write token; pin it (at least) to a commit SHA.
+  Dependabot (OSM-3) keeps SHA pins current.
+- No `concurrency:` group, so superseded pushes keep running. Add
+  `concurrency: {group: ci-${{ github.ref }}, cancel-in-progress: true}`.
+- No `timeout-minutes`; a hung test burns the default 6 h.
+- `sudo apt-get install -y jq` runs without `apt-get update`, which fails when
+  the runner's package index is stale. `jq` is only needed by the `.claude`
+  hook regression tests; `jq` is preinstalled on `ubuntu-latest`, so the step
+  can probably go.
+
+### OSM-5 — No releases, tags or changelog to deploy from
+
+There are no tags or GitHub releases, `pyproject.toml` has been `0.2.0`
+throughout, and `package.json` says `1.0.0`. Once the app runs on a VPS,
+"what is deployed?" and "roll back to the previous version" need an answer
+other than a commit SHA. `commitizen` is already a dev dependency and every
+commit is Conventional, so this is nearly free.
+
+- **Fix:** configure `[tool.commitizen]` (version source `pyproject.toml`,
+  `update_changelog_on_bump = true`), cut `v0.3.0` with `cz bump`, and deploy
+  tags. Tidy the package metadata while there: `authors` is still the
+  `Your Name <you@example.com>` placeholder and the description is "Quick and
+  dirty django prototype". Mark `package.json` version as irrelevant (or drop
+  it) so there is one version number.
+
+### OSM-6 — `poe createsuperuser` hardcodes a password and would hit the live DB
+
+`.poe.toml` creates user `fritz` with password `fritz`. The task runs with dev
+settings, and dev settings use the same default database file
+(`BASE_DIR/db.sqlite3`) as prod. Run on the VPS out of habit, it plants a
+superuser with a guessable password in the production database.
+
+- **Fix:** drop the hardcoded `DJANGO_SUPERUSER_PASSWORD` and let
+  `createsuperuser` prompt (or read the password from the environment), and
+  take the username from an argument.
+
+### OSM-7 — First-time setup leaves you unable to log in
+
+The developer guide says a fresh checkout is set up with `migrate` then
+`python manage.py addinitialuser`. That command does
+`User.objects.create(username="gotofritz")` with no password, so the user can
+never authenticate, and every view is behind login. Its `help` text says
+"Adds a single recipe (pass it as arg)". It has no test.
+
+- **Fix:** either delete `addinitialuser` and document `createsuperuser`, or
+  make it create a user with a password from an argument/env and add a test.
+
+### OSM-8 — Developer docs have drifted from the rules and from Linux
+
+- `docs/developer-guide.md` still documents `feature/<name>` / `fix/<name>`
+  branches, which `AGENTS.md` says are retired in favour of
+  `[<issue>-]<type>-<slug>`.
+- `README.md` and the developer guide use bare `python manage.py …`
+  (`find_ingredient_duplicates`, `addinitialuser`, `delete_recipe`). `AGENTS.md`
+  forbids that because the system interpreter may be older than 3.14; use
+  `uv run python manage.py …`.
+- Bare `manage.py` defaults to `nutrisho.settings.prod`, so those documented
+  commands silently run with prod settings on a dev box. Fine for the VPS, but
+  the docs should say so or route dev commands through `poe`.
+- macOS-isms: `brew install jq`, and `poe coverage` runs `open`, which does not
+  exist on Linux (the VPS, CI). Use `python -m webbrowser` or drop the task.
+- `README.md` "What it does" still lists only browse/view/navigate; inline
+  editing, scaling, ingredient clean-up and backups have shipped since.
+
+### OSM-9 — Delete dead scripts flagged for removal
+
+- `scripts/backfill_step_titles.py` says "Throwaway — delete once it has been
+  run" and the backfill shipped with #20.
+- `scripts/sql_to_edit_recipes_hack/` was marked for deletion in plan 004
+  (archived), hardcodes `/Users/fritz/work/...`, deletes rows with raw
+  interpolated SQL, and is superseded by `manage.py delete_recipe`.
+
+Dead scripts that write to the database are a hazard once the repo is checked
+out on a server. Delete both.
+
+### OSM-10 — Backlog lives in files that disagree with GitHub
+
+Only two GitHub issues are open (#19, #32). Planned work lives in
+`docs/plans/` and this file instead, and they have drifted:
+`docs/plans/008-ingredient-aliases.md` is "Approved — ready to implement" and
+tracks #14, which is closed; plans 005 and 006 are undated drafts with no
+issue. That makes "what is next before the VPS move" hard to answer.
+
+- **Fix:** once this file is de-duplicated, turn the items worth doing into
+  GitHub issues with a `vps` milestone/label, link plans to open issues, and
+  reopen or re-file #14 for aliases (or archive plan 008).
