@@ -49,6 +49,8 @@ jobs:
           name: coverage-data
           path: .coverage
           if-no-files-found: error
+          # upload-artifact skips dotfiles by default since v4.4
+          include-hidden-files: true
 
   badge:
     needs: qa
@@ -72,16 +74,17 @@ jobs:
 
       - name: Generate coverage badge
         run: |
-          pip install coverage-badge
-          coverage-badge -o coverage.svg -f
+          # coverage-badge still imports pkg_resources, dropped in setuptools 81
+          pip install coverage-badge "setuptools<81"
+          mkdir -p badge-out
+          coverage-badge -o badge-out/coverage.svg -f
 
       - name: Deploy coverage badge
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: ./badge-out
           publish_branch: badges
           keep_files: true
-          destination_dir: .
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'

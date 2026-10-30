@@ -155,3 +155,88 @@ def test_display_ingredient_name_is_blank_for_a_missing_row():
     from recipes.templatetags.recipe_filters import display_ingredient_name
 
     assert display_ingredient_name("") == ""
+
+
+def test_safe_title_html_keeps_underline_and_strikethrough():
+    """A title may carry underline and strikethrough."""
+    from recipes.templatetags.recipe_filters import safe_title_html
+
+    assert safe_title_html("<u>Ragú</u> <s>alla</s> bolognese") == (
+        "<u>Ragú</u> <s>alla</s> bolognese"
+    )
+
+
+def test_safe_title_html_drops_bold_and_italic():
+    """Bold and italic are blurb formatting; a title drops the tags and keeps the text."""
+    from recipes.templatetags.recipe_filters import safe_title_html
+
+    assert safe_title_html("<b>Big</b> <i>soup</i>") == "Big soup"
+
+
+def test_safe_title_html_escapes_everything_else():
+    """Anything outside the allowed tags is dropped, and text is escaped."""
+    from recipes.templatetags.recipe_filters import safe_title_html
+
+    assert safe_title_html('<script>x()</script><a href="/">Fish</a> & chips') == (
+        "x()Fish &amp; chips"
+    )
+
+
+def test_safe_title_html_closes_unclosed_tags():
+    """An unclosed tag would underline everything after the title on the page."""
+    from recipes.templatetags.recipe_filters import safe_title_html
+
+    assert safe_title_html("<u>Ragú") == "<u>Ragú</u>"
+
+
+def test_safe_title_html_drops_stray_closing_tags():
+    """A closing tag with nothing to close is dropped, not emitted."""
+    from recipes.templatetags.recipe_filters import safe_title_html
+
+    assert safe_title_html("Ragú</u></div>") == "Ragú"
+
+
+def test_safe_title_html_keeps_trailing_entity_like_text():
+    """Text ending in something that looks like an entity is not swallowed."""
+    from recipes.templatetags.recipe_filters import safe_title_html
+
+    assert safe_title_html("Fish &chips") == "Fish &amp;chips"
+
+
+def test_safe_blurb_html_keeps_basic_formatting():
+    """A blurb may carry bold, italic, underline and strikethrough."""
+    from recipes.templatetags.recipe_filters import safe_blurb_html
+
+    assert safe_blurb_html("<b>a</b> <i>b</i> <u>c</u> <s>d</s>") == (
+        "<b>a</b> <i>b</i> <u>c</u> <s>d</s>"
+    )
+
+
+def test_safe_blurb_html_turns_new_lines_into_line_breaks():
+    """New lines typed into the textarea survive as line breaks."""
+    from recipes.templatetags.recipe_filters import safe_blurb_html
+
+    assert safe_blurb_html("one\ntwo\r\nthree") == "one<br>two<br>three"
+
+
+def test_safe_blurb_html_keeps_typed_line_breaks():
+    """A `<br>` written by hand is a new line too."""
+    from recipes.templatetags.recipe_filters import safe_blurb_html
+
+    assert safe_blurb_html("one<br>two<br/>three") == "one<br>two<br>three"
+
+
+def test_safe_blurb_html_escapes_everything_else():
+    """Anything outside the allowed tags is dropped, and text is escaped."""
+    from recipes.templatetags.recipe_filters import safe_blurb_html
+
+    assert safe_blurb_html('<img src=x onerror="x()"><b onclick="x()">hi</b> <3') == (
+        "<b>hi</b> &lt;3"
+    )
+
+
+def test_safe_step_html_closes_misnested_tags():
+    """Closing an outer tag closes the ones nested inside it."""
+    from recipes.templatetags.recipe_filters import safe_step_html
+
+    assert safe_step_html("<b><i>x</b>y</i>") == "<b><i>x</i></b>y"

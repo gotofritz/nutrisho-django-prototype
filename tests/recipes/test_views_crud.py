@@ -518,6 +518,31 @@ def test_recipe_metadata_vary_header_present(auth_client, recipe):
 
 
 @pytest.mark.django_db
+def test_recipe_new_post_reuses_existing_cuisine_ignoring_case(auth_client, user, cuisine):
+    """Creating a recipe with `italian` reuses the stored `Italian` (#34)."""
+    auth_client.post(
+        "/recipes/new/",
+        {"recipe_name": "Pasta", "cuisine_name": "italian", "servings": "4"},
+    )
+    recipe = Recipe.objects.get(recipe_name="Pasta", owner=user)
+    assert recipe.cuisine == cuisine
+    assert Cuisine.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_recipe_metadata_edit_reuses_existing_cuisine_ignoring_case(auth_client, recipe, cuisine):
+    """Editing metadata with `ITALIAN` reuses the stored `Italian` (#34)."""
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/metadata/",
+        {"recipe_name": recipe.recipe_name, "cuisine_name": "ITALIAN", "servings": "4"},
+    )
+    assert response.status_code == 302
+    recipe.refresh_from_db()
+    assert recipe.cuisine == cuisine
+    assert Cuisine.objects.count() == 1
+
+
+@pytest.mark.django_db
 def test_recipe_new_integrity_error_does_not_leave_orphan_cuisine(auth_client, user):
     """When recipe.save() races and raises IntegrityError, no orphan Cuisine row must be left."""
     from unittest.mock import patch
@@ -642,13 +667,13 @@ def test_metadata_save_preserves_field_not_in_form(auth_client, recipe, source):
     original_sfu = QuerySet.select_for_update
     edited = []
 
-    def set_yaml_at_lock(qs, *args, **kwargs):
+    def clear_source_at_lock(qs, *args, **kwargs):
         if qs.model is Recipe and not edited:
             edited.append(True)
-            Recipe.objects.filter(pk=recipe.pk).update(yaml_filename="imported.yaml")
+            Recipe.objects.filter(pk=recipe.pk).update(source=None)
         return original_sfu(qs, *args, **kwargs)
 
-    with patch.object(QuerySet, "select_for_update", set_yaml_at_lock):
+    with patch.object(QuerySet, "select_for_update", clear_source_at_lock):
         response = auth_client.post(
             f"/recipes/{recipe.pk}/metadata/",
             {"recipe_name": recipe.recipe_name, "short_description": "Updated", "servings": "2"},
@@ -658,7 +683,7 @@ def test_metadata_save_preserves_field_not_in_form(auth_client, recipe, source):
     assert response.status_code == 200  # HX-Redirect
     recipe.refresh_from_db()
     assert recipe.short_description == "Updated"
-    assert recipe.yaml_filename == "imported.yaml"  # not overwritten
+    assert recipe.source is None  # concurrent edit not overwritten
 
 
 @pytest.mark.django_db

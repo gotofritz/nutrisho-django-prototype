@@ -28,6 +28,17 @@ Update `docs/initial-context.md` before merging changes affecting:
 - boundaries
 - core patterns
 
+## Database Schema
+
+`docs/schema.sql` is the current schema, generated — never hand-edit it.
+Any PR that adds or changes a migration must regenerate it against a freshly
+migrated database and commit the result:
+
+```bash
+uv run python manage.py migrate
+uv run python manage.py backup_db --schema-only
+```
+
 ## Workflow
 
 Use TDD (`red → green → refactor`).

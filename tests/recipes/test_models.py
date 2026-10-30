@@ -175,34 +175,6 @@ def test_ingredient_in_recipe_duplicate_index_rejected(user):
 
 
 @pytest.mark.django_db
-def test_recipe_save_sanitizes_yaml_filename(user):
-    """Recipe.save() must sanitize yaml_filename so unsanitized values never reach the DB."""
-    recipe = Recipe.objects.create(
-        recipe_name="Sanitize Test", owner=user, yaml_filename="foo!bar.yml"
-    )
-    recipe.refresh_from_db()
-    assert recipe.yaml_filename == "foobar.yml"
-
-
-@pytest.mark.django_db
-def test_recipe_save_preserves_already_sanitized_filename(user):
-    """Recipe.save() must not alter an already-sanitized yaml_filename."""
-    recipe = Recipe.objects.create(
-        recipe_name="Preserve Test", owner=user, yaml_filename="my_recipe.yml"
-    )
-    recipe.refresh_from_db()
-    assert recipe.yaml_filename == "my_recipe.yml"
-
-
-@pytest.mark.django_db
-def test_recipe_save_preserves_blank_yaml_filename(user):
-    """Empty yaml_filename stays empty — no fallback substitution on save."""
-    recipe = Recipe.objects.create(recipe_name="No File Test", owner=user, yaml_filename="")
-    recipe.refresh_from_db()
-    assert recipe.yaml_filename == ""
-
-
-@pytest.mark.django_db
 def test_ingredient_in_recipe_protects_ingredient(user):
     """Deleting an Ingredient still referenced by a recipe must raise ProtectedError."""
     from django.db.models import ProtectedError

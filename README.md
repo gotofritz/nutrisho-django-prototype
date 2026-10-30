@@ -4,7 +4,7 @@
 [![Coverage](https://raw.githubusercontent.com/gotofritz/nutrisho-django-prototype/badges/coverage.svg)](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/ci.yml)
 [![License: 0BSD](https://img.shields.io/badge/license-0BSD-green.svg)](LICENSE.md)
 
-A personal recipe manager. Browse, import, and organise your recipes in one place.
+A personal recipe manager. Browse, edit, and organise your recipes in one place.
 
 ---
 
@@ -16,29 +16,28 @@ A personal recipe manager. Browse, import, and organise your recipes in one plac
 
 ---
 
-## Importing recipes
+## Backing up
 
-Recipes live in YAML files. To add a batch, drop them into a folder (e.g. `my_recipes/`) and ask your developer to run the import command.
-
-If you have direct access to the server:
+Recipes live in the database, nowhere else. To take a copy:
 
 ```bash
-python manage.py batch_load_yaml_recipes my_recipes/ --user <username>
+uv run poe backup
 ```
 
-Then open <http://127.0.0.1:8987/recipes/> in your browser.
-
----
-
-## Exporting recipes
-
-To export recipes from the database back to YAML files:
+This writes the whole database — every recipe, ingredient and user — to
+`docs/dump-<date>-<time>.sql`, and refreshes the table layout in
+`docs/schema.sql`. The dump stays on your machine (git ignores it); keep it
+somewhere safe. To restore one, stop the app and move the old database aside
+first, together with its `db.sqlite3-wal` and `db.sqlite3-shm` files if they
+are there, then:
 
 ```bash
-python manage.py export_recipes_to_yaml recipes_yaml/ --user <username>
+sqlite3 db.sqlite3 < docs/dump-20261030-001904.sql
 ```
 
-Use `--missing-only` to skip recipes that already have a file on disk, or `--id 42` to export a single recipe.
+While the app runs, recent changes can sit in `db.sqlite3-wal` rather than
+`db.sqlite3`. Never delete that file, and never copy `db.sqlite3` on its own as
+a backup: use `uv run poe backup`, which always sees every saved change.
 
 ---
 
@@ -50,8 +49,14 @@ A step can carry a **title** — the heading some recipes put in front of the
 instruction, like `RAGÚ` or `FOR THE STOCK`. It is optional: leave it empty and
 the step reads exactly as before. Recipes imported with the heading buried in
 the text (`<u>RAGÚ</u>: Sauté the beef`) were split out in one pass, so the
-heading is now its own field, no longer shouted, and exports carry it
-separately.
+heading is now its own field, no longer shouted.
+
+The title and the short blurb take a little formatting, written as HTML tags.
+The title accepts underline (`<u>…</u>`) and strikethrough (`<s>…</s>`); the
+blurb accepts those plus bold (`<b>…</b>`) and italic (`<i>…</i>`), and keeps
+the new lines you type (a `<br>` works too). Any other tag is dropped and its
+text kept, and a tag you forget to close is closed for you. The browser tab and
+the delete prompt show the title as plain text.
 
 You can also:
 - Add and delete steps
@@ -144,8 +149,8 @@ give the ingredient a **plural** of its own in the Edit panel to fix one
 word inflecting at all, for a `broccoli` or a `fish`. **Merge plural** fills the
 same field in for you, from the row it merges away.
 
-Nothing about this is stored on the recipe or written to YAML: exports always
-carry the singular.
+Nothing about this is stored on the recipe: the database always holds the
+singular.
 
 ---
 

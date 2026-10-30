@@ -50,6 +50,9 @@ from .recipe_steps import (
     recipe_step_move_down,
     recipe_step_move_up,
     recipe_step_save,
+    recipe_step_split,
+    recipe_steps_bulk_delete,
+    recipe_steps_merge,
 )
 
 __all__ = [
@@ -100,4 +103,7 @@ __all__ = [
     "recipe_step_move_down",
     "recipe_step_move_up",
     "recipe_step_save",
+    "recipe_step_split",
+    "recipe_steps_bulk_delete",
+    "recipe_steps_merge",
 ]

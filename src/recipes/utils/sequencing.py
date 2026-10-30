@@ -32,7 +32,7 @@ def insert_at_index(
 
     requested_index is the row's 0-based position as seen in the client DOM,
     not a raw index_in_sequence value: sibling indexes may be 1-based or have
-    gaps (the YAML importer seeds 1-based sequences), so the target slot is
+    gaps (legacy imported recipes have 1-based sequences), so the target slot is
     resolved against the ordered sibling list. The DOM position may also count
     unsaved sibling drafts, so it is clamped to the list length; missing or
     non-numeric values append.
@@ -40,7 +40,8 @@ def insert_at_index(
     Siblings are locked with select_for_update before the insertion window
     is computed so concurrent creates into the same parent serialize instead
     of racing on the unique (parent, index_in_sequence) constraint. (On
-    SQLite this is a no-op; its single-writer locking serializes anyway.)
+    SQLite this is a no-op; the IMMEDIATE transactions set in settings take
+    the write lock up front, which serializes writers instead.)
 
     lock_parent, if given, is locked first so that concurrent "first insert"
     requests (where siblings is empty and select_for_update locks nothing)
@@ -81,6 +82,29 @@ def remove_and_compact(*, siblings: models.QuerySet, instance: Sequenced) -> Non
         if row.index_in_sequence > deleted_index:
             row.index_in_sequence -= 1
             row.save()
+
+
+@transaction.atomic
+def remove_many_and_compact(*, siblings: models.QuerySet, pks: list[int]) -> int:
+    """Delete the siblings whose pk is in pks and close every gap they leave.
+
+    Pks outside siblings are ignored. Each survivor moves down by the number
+    of deleted rows below it, so the sequence keeps its base (legacy 1-based
+    sequences stay 1-based). Survivors are renumbered in ascending order: each
+    target slot is either freed by a delete or vacated by the row before.
+    Returns the number of rows deleted.
+    """
+    rows = list(siblings.select_for_update().order_by("index_in_sequence"))
+    doomed = set(pks)
+    removed = 0
+    for row in rows:
+        if row.pk in doomed:
+            row.delete()
+            removed += 1
+        elif removed:
+            row.index_in_sequence -= removed
+            row.save()
+    return removed
 
 
 @transaction.atomic

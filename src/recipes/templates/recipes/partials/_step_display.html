@@ -7,6 +7,9 @@
       hx-target="closest li"
       hx-swap="outerHTML"
     >{% if step.step_title %}<span class="step-title">{{ step.step_title }}</span>: {% endif %}{{ step.step_text|safe_step_html }}</span>
+    <span class="step-check" onclick="event.stopPropagation()">
+      <input type="checkbox" class="step-select" name="step_ids" value="{{ step.id }}">
+    </span>
     <span class="move-btns" onclick="event.stopPropagation()">
       <button
         hx-post="{% url 'recipes:step_move_up' recipe.id step.id %}"
