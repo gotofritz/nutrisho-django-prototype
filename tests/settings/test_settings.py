@@ -174,3 +174,40 @@ def test_test_settings_use_the_same_sqlite_options():
 
     assert test_settings.DATABASES["default"]["OPTIONS"] == SQLITE_OPTIONS
     assert test_settings.DATABASES["default"]["TEST"]["NAME"].endswith(".sqlite3")
+
+
+def _reload_prod(monkeypatch):
+    import sys
+
+    monkeypatch.setenv("SECRET_KEY", "test-secret")
+    for mod in list(sys.modules.keys()):
+        if "nutrisho.settings" in mod:
+            del sys.modules[mod]
+
+    import nutrisho.settings.prod as prod_settings
+
+    return prod_settings
+
+
+def test_prod_initialises_sentry_when_dsn_set(monkeypatch):
+    """SENTRY_DSN turns on Sentry, without sending personal data."""
+    from unittest.mock import patch
+
+    monkeypatch.setenv("SENTRY_DSN", "https://key@o0.ingest.sentry.io/0")
+    with patch("environ.Env.read_env"), patch("sentry_sdk.init") as init:
+        _reload_prod(monkeypatch)
+
+    init.assert_called_once()
+    assert init.call_args.kwargs["dsn"] == "https://key@o0.ingest.sentry.io/0"
+    assert init.call_args.kwargs["send_default_pii"] is False
+
+
+def test_prod_skips_sentry_without_dsn(monkeypatch):
+    """No SENTRY_DSN, no Sentry."""
+    from unittest.mock import patch
+
+    monkeypatch.delenv("SENTRY_DSN", raising=False)
+    with patch("environ.Env.read_env"), patch("sentry_sdk.init") as init:
+        _reload_prod(monkeypatch)
+
+    init.assert_not_called()

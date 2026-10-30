@@ -27,7 +27,8 @@ requires-python = ">=3.14,<3.15"
 dependencies = [
   "Django ~=6.0.0",
   "django-environ>=0.13.0",
-  "django-htmx>=1.27.0"
+  "django-htmx>=1.27.0",
+  "sentry-sdk>=2.0"
 ]
 
 [tool.coverage.run]
@@ -45,10 +46,10 @@ packages = ["src/nutrisho", "src/recipes"]
 [tool.hatch.build.targets.wheel.sources]
 "src" = ""
 
+[tool.poe]
+include = [".poe.toml"]
+
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "nutrisho.settings.test"
 pythonpath = ["src"]
 testpaths = ["tests"]
-
-[tool.poe]
-include = [".poe.toml"]
