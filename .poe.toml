@@ -5,14 +5,13 @@ DJANGO_SETTINGS_MODULE = "nutrisho.settings.dev"
 help = "Write the schema to docs/schema.sql and a full SQL dump to docs/dump-<timestamp>.sql"
 cmd = "python manage.py backup_db"
 
+[tasks.bootstrap]
+help = "Apply migrations and create the owner superuser from DJANGO_SUPERUSER_* (prompts if unset)"
+sequence = ["migrate", {cmd = "python manage.py bootstrap_owner"}]
+
 [tasks.coverage]
 help = "Open the latest coverage report in a web browser"
 cmd = "open htmlcov/index.html"
-
-[tasks.createsuperuser]
-help = "Create a superuser"
-cmd = "python manage.py createsuperuser --noinput --username fritz --email fritzthecat@gmail.com"
-env = {DJANGO_SUPERUSER_PASSWORD = "fritz"}
 
 [tasks.css]
 help = "Build Tailwind CSS (minified)"

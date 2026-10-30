@@ -16,7 +16,22 @@ cp .env.example .env
 uv sync
 pnpm install
 pnpm css          # compile Tailwind CSS
+uv run poe bootstrap
 ```
+
+`uv run poe bootstrap` applies migrations and creates the owner: one superuser
+(the only account that can log in, including at `/admin/`). It reads
+`DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL` and
+`DJANGO_SUPERUSER_PASSWORD` from the environment or `.env`, and prompts for any
+that are blank. There are no defaults. The password must pass Django's password
+validators, so a short or guessable one is refused. If the username already
+exists it does nothing, so it is safe to re-run; it never changes an existing
+password. To change one, run `uv run python manage.py changepassword <username>`.
+
+On a server, prefer the prompt or a one-off environment variable over writing
+the password into `.env`, and pass `--noinput` to the command
+(`uv run python manage.py bootstrap_owner --noinput`) to fail instead of
+prompting when a variable is missing.
 
 ## Running the app
 
@@ -30,11 +45,7 @@ Opens at <http://127.0.0.1:8987/recipes/>.
 ## The database
 
 `db.sqlite3` is the only copy of the data. A fresh checkout starts empty:
-
-```bash
-uv run poe migrate
-python manage.py addinitialuser
-```
+`uv run poe bootstrap` (see *First-time setup*) creates the tables and the owner.
 
 ### Concurrent writes
 
