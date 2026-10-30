@@ -231,7 +231,7 @@ def test_step_add_form_sends_position(auth_client, recipe):
 def test_step_create_appends_after_one_based_imported_rows(auth_client, recipe):
     """A draft saved at the visual end appends after the last row.
 
-    YAML importer seeds 1-based indexes; the draft must not slip in front of the last row.
+    Legacy imported recipes have 1-based indexes; the draft must not slip in front of the last row.
     """
     Step.objects.create(recipe=recipe, step_text="Imported 1", index_in_sequence=1)
     Step.objects.create(recipe=recipe, step_text="Imported 2", index_in_sequence=2)

@@ -1,10 +1,6 @@
 [env]
 DJANGO_SETTINGS_MODULE = "nutrisho.settings.dev"
 
-[tasks.clean]
-help = "Clean up database and migration files"
-shell = "rm -f ./db.sqlite3 src/recipes/migrations/0*"
-
 [tasks.coverage]
 help = "Open the latest coverage report in a web browser"
 cmd = "open htmlcov/index.html"
@@ -21,20 +17,6 @@ sequence = ["node-install", {cmd = "pnpm run css"}]
 [tasks.css-watch]
 help = "Watch and rebuild Tailwind CSS on changes"
 sequence = ["node-install", {cmd = "pnpm run css:watch"}]
-
-[tasks.export]
-help = "Export recipes to YAML (extra args are passed through)"
-cmd = "python manage.py export_recipes_to_yaml recipes_yaml/ --user gotofritz"
-
-[tasks.filldb]
-help = "Fill database with initial data"
-sequence = [
-  "clean",
-  {cmd = "python manage.py makemigrations"},
-  {cmd = "python manage.py migrate"},
-  {cmd = "python manage.py addinitialuser"},
-  {cmd = "python manage.py batch_load_yaml_recipes recipes_yaml/ --user gotofritz"}
-]
 
 [tasks.lint]
 help = "Run ruff (non-mutating)"

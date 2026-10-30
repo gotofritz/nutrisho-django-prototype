@@ -642,13 +642,13 @@ def test_metadata_save_preserves_field_not_in_form(auth_client, recipe, source):
     original_sfu = QuerySet.select_for_update
     edited = []
 
-    def set_yaml_at_lock(qs, *args, **kwargs):
+    def clear_source_at_lock(qs, *args, **kwargs):
         if qs.model is Recipe and not edited:
             edited.append(True)
-            Recipe.objects.filter(pk=recipe.pk).update(yaml_filename="imported.yaml")
+            Recipe.objects.filter(pk=recipe.pk).update(source=None)
         return original_sfu(qs, *args, **kwargs)
 
-    with patch.object(QuerySet, "select_for_update", set_yaml_at_lock):
+    with patch.object(QuerySet, "select_for_update", clear_source_at_lock):
         response = auth_client.post(
             f"/recipes/{recipe.pk}/metadata/",
             {"recipe_name": recipe.recipe_name, "short_description": "Updated", "servings": "2"},
@@ -658,7 +658,7 @@ def test_metadata_save_preserves_field_not_in_form(auth_client, recipe, source):
     assert response.status_code == 200  # HX-Redirect
     recipe.refresh_from_db()
     assert recipe.short_description == "Updated"
-    assert recipe.yaml_filename == "imported.yaml"  # not overwritten
+    assert recipe.source is None  # concurrent edit not overwritten
 
 
 @pytest.mark.django_db

@@ -25,12 +25,10 @@ license = "0BSD"
 requires-python = ">=3.14,<3.15"
 dependencies = [
   "Django ~=6.0.0",
-  "PyYAML ~=6.0",
   "django-debug-toolbar ~=6.1",
   "django-environ>=0.13.0",
   "django-htmx>=1.27.0",
-  "google-genai~=1.56",
-  "xmltodict"
+  "google-genai~=1.56"
 ]
 
 [tool.coverage.run]
