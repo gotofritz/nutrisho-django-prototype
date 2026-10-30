@@ -61,7 +61,8 @@ Rules that follow from WAL:
   use, and never move `db.sqlite3` without them: committed changes may still
   be in the `-wal` file.
 - Do not back up by copying `db.sqlite3` alone. `uv run poe backup` reads
-  through SQLite and sees everything. For a file copy, use
+  through SQLite, sees everything, and dumps one consistent snapshot even
+  while the app is saving. For a file copy, use
   `sqlite3 db.sqlite3 ".backup copy.sqlite3"`, or stop the app first.
 - Keep the database on a local disk; WAL does not work on network file systems.
 - When restoring or replacing `db.sqlite3`, stop the app and remove the old

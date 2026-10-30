@@ -109,3 +109,36 @@ def test_refuses_a_non_sqlite_database(tmp_path, monkeypatch):
     monkeypatch.setattr(connection, "vendor", "postgresql")
     with pytest.raises(CommandError, match="SQLite"):
         _backup(tmp_path)
+
+
+@pytest.mark.django_db(transaction=True)
+def test_dump_is_one_snapshot_while_the_app_writes(tmp_path):
+    """A save landing mid-dump is either wholly in it or wholly out, never half.
+
+    In WAL mode writers carry on while the dump reads, so table-by-table reads
+    would mix states. A write from another connection, fired as the dump starts,
+    must not show up in tables dumped after it.
+    """
+    import sqlite3
+
+    connection.ensure_connection()
+    raw = connection.connection
+    writer = sqlite3.connect(connection.settings_dict["NAME"], timeout=5)
+    fired = False
+
+    def write_once(statement: str) -> None:
+        nonlocal fired
+        if not fired and "foreign_key_check" in statement:
+            fired = True
+            writer.execute("INSERT INTO recipes_tag (tag) VALUES ('written-mid-dump')")
+            writer.commit()
+
+    raw.set_trace_callback(write_once)
+    try:
+        _, dump = _backup(tmp_path)
+    finally:
+        raw.set_trace_callback(None)
+        writer.close()
+
+    assert fired
+    assert "written-mid-dump" not in dump

@@ -289,7 +289,9 @@ scaffolding and are gone (issue #27).
 
 `backup_db` (`uv run poe backup`) writes `docs/schema.sql` (committed, schema
 only, deterministic order) and `docs/dump-<timestamp>.sql` (git-ignored, full
-dump for restoring with `sqlite3`). SQLite only, like the rest of the app.
+dump for restoring with `sqlite3`). SQLite only, like the rest of the app. The
+dump is read inside one read transaction, so it is a consistent snapshot even
+while the app writes (WAL lets those writes carry on).
 
 `delete_recipe --id <N>` removes recipes by primary key.
 
