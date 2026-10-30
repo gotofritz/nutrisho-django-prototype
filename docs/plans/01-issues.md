@@ -1170,3 +1170,151 @@ ingredients before there is anything to click. Reviewers of UI changes have to
 hand-build that each time. **Fix:** a `seed_demo` management command (or
 fixture) that creates a user's worth of sample recipes, including a few
 deliberate duplicates, exposed as `uv run poe seed`.
+
+
+---
+
+## User impact assessment (Product Engineer, 2026-10-30)
+
+Scope: what the person using Nutrisho actually experiences — reading, cooking
+from, editing and organising recipes — with the planned move to a VPS in mind
+(reachable from any device, over a real network). Each finding was checked
+against the code on this branch; the two data bugs were reproduced with a
+throwaway test against the real views.
+
+### UX-1 · Scaling a recipe permanently rewrites it, and drifts (High)
+
+`recipe_scale` (`src/recipes/views/recipe_crud.py`) does not compute a view: it
+writes the multiplied quantities and servings back to the database. Cooking a
+4-serving recipe for 2 tonight destroys the 4-serving original. It also loses
+precision every time, and decouples servings from quantities:
+
+- quantities are rounded to 0.01 on every scale, servings to a whole number,
+  with a floor of 1;
+- reproduced: a 1-serving recipe with `0.25 tsp` salt, scaled ×0.5 then ×2,
+  ends up **serves 2 with 0.26 tsp** — twice the servings for the same salt.
+  Scaled ÷3 then ×3 it ends up at `0.27`;
+- the panel asks for a bare "Multiply by" factor, so going from 4 to 6 servings
+  means working out 1.5 by hand.
+
+The model docstring already notes quantities are "not normalized to per-serving
+amounts", so the persisted multiply is the only scaling there is.
+
+**Fix:** make scaling a display concern — a `?servings=N` (or session) value
+the recipe page multiplies by at render time, with the stored recipe untouched
+and a "reset" back to the original. Ask for target servings, not a factor.
+Keep the persisted rescale, if at all, as an explicit "save as new servings"
+action. `display_ingredient_name` already pluralises from the rendered
+quantity, so it works unchanged on a computed one.
+
+### UX-2 · Duplicating a recipe drops every step title (High, data loss)
+
+`recipe_duplicate` copies `step_text`, `index_in_sequence`, `duration` and
+`extra_info` but not `step_title`. Reproduced: a step titled `Ragu` comes back
+from Duplicate with an empty title. Since the step-title backfill moved
+headings like `RAGÚ` out of the text into that field, the copy now silently
+loses structure the original has. `tests/recipes/test_views_duplicate.py` only
+creates untitled steps, so nothing catches it.
+
+**Fix:** copy `step_title`, and add a test that compares every copied field of
+`Step` and `IngredientInRecipe` (ideally driven off `_meta.get_fields()` so the
+next new column cannot be forgotten the same way).
+
+### UX-3 · Failed saves are silent (High once on a VPS)
+
+`base.html` configures htmx `responseHandling` so that anything other than
+2xx/422 is `swap: false, error: true`, and nothing listens for
+`htmx:responseError` or `htmx:sendError`. When a save fails, the user sees
+nothing at all: the editor stays open (or the click does nothing) and there is
+no message. Locally this rarely happens; on a VPS it will:
+
+- network blips or a restarting app server (5xx / no response);
+- CSRF failures — the token is baked into `<body hx-headers>` at page load, so
+  logging in again in another tab rotates it and every open tab's edits start
+  failing with 403;
+- a recipe deleted in another tab (404).
+
+The user only finds out later that their edit never landed.
+
+**Fix:** one global handler in `base.html` for `htmx:responseError` and
+`htmx:sendError` that shows a visible, dismissible banner ("Couldn't save —
+check your connection and try again", with a reload hint on 403), and keep the
+edit form open so the typed text is not lost.
+
+### UX-4 · Unusable on a phone or tablet (High once on a VPS)
+
+The recipe page is a fixed-size "card": `.recipe-contents` is `width: 1040px;
+height: 18cm`, `.sidebar` is `width: 28%`, and `style.css` has no media
+queries at all. The viewport meta tag is set, so a phone renders a 1040px page
+and the user pans sideways to read ingredients. The kitchen — phone or tablet
+propped on the counter — is exactly where a recipe is read, and a VPS is what
+makes those devices able to reach the app.
+
+Compounding it, every step, ingredient and title is click-to-edit with no read
+mode: on a touch screen, tapping to scroll or to keep the screen awake opens an
+editor.
+
+**Fix:** a responsive layout (single column below ~768px, ingredients above
+steps), and a read/cook mode that is the default view, with editing behind an
+explicit "Edit" toggle. A cook mode could also keep the screen awake (Wake
+Lock API) and let the user tick off ingredients and steps.
+
+### UX-5 · No way to find a recipe except scrolling (Medium)
+
+`home` lists every recipe, newest first, as a bare name plus four buttons. No
+search, no filter by cuisine or tag, no pagination. The ingredient clean-up
+tool has search; the recipe list — the screen used most — does not. With an
+imported collection this gets worse with every recipe, and "what can I cook
+with the aubergine in the fridge" cannot be answered at all, even though
+`IngredientInRecipe` makes it a single query.
+
+**Fix:** a search box on the list (name, plus ingredient name), reusing the
+htmx partial-swap pattern the ingredient tool already uses; cuisine as a filter
+once it is visible (see UX-6).
+
+### UX-6 · Data the user stores is never shown (Medium)
+
+The recipe page renders title, steps, servings, ingredients and blurb only.
+Stored but never displayed anywhere in the reading view:
+
+- `source_instance` — the URL or book page the recipe came from, entered in
+  the metadata panel and then only visible by reopening that panel; the most
+  useful link back to the original is not clickable;
+- `cuisine` — editable, never shown, so it cannot be browsed by either;
+- `IngredientInRecipe.substitute` — the ingredient tool carefully repoints
+  substitutes on merge/delete, but the recipe page never says "or use X", and
+  the inline ingredient form cannot set one;
+- `Step.duration` and `Step.extra_info`;
+- tags — no UI shows or edits them at all; only Duplicate touches them.
+
+**Fix:** show source (as a link when it is a URL) and cuisine in the sidebar;
+render substitute next to the ingredient and add it to the inline form. Either
+surface duration/extra info/tags or decide they are dead fields and drop them,
+rather than carrying data nobody can see.
+
+### UX-7 · No log-out, and the entry pages are stubs (Medium once on a VPS)
+
+There is no log-out control anywhere (Django's `LogoutView` needs a POST, and
+no template posts to `accounts/logout/`). On a laptop that was fine; on a VPS
+reached from other devices, the user cannot sign out of a borrowed or shared
+one. Related polish for the same move: `/` serves a hard-coded
+`<h1>Nutrisho</h1><a>Recipes</a>` string rather than redirecting to
+`/recipes/`, and the login page is the unstyled `form.as_p` with no app chrome.
+
+**Fix:** a log-out button (POST form) in the list header and recipe navbar;
+redirect `/` to `/recipes/`; give the login page the base template.
+
+### UX-8 · Destructive actions have no undo (Medium)
+
+Deleting a recipe is one click plus a browser `confirm()` on the list, sitting
+between Edit metadata and View; bulk step delete and the ingredient tool's
+delete/merge (which rewrite *every* recipe using the ingredient) are equally
+final. Backups are a manual `poe backup` run, so a mis-click is only
+recoverable if the user happened to back up beforehand and is willing to
+restore the whole database (losing everything since).
+
+**Fix:** soft delete for recipes (a `deleted_at` column, hidden from the list,
+with a short-lived "Undo" toast and a trash view), and move Delete away from
+the frequently used buttons on the list. For the ingredient tool, at minimum
+record merges/deletes so they can be reversed. Automated, off-box backups on
+the VPS are the safety net under all of this.
