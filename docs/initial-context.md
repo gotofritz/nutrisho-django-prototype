@@ -26,7 +26,7 @@ Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuis
 
 ```
 src/
-  nutrisho/      # Django project (settings, urls, wsgi)
+  nutrisho/      # Django project (settings, urls, wsgi, health.py)
   recipes/       # Main app: models, views, templates, management commands
     services/      # Pure query/mutation functions, no HTTP (ingredient_admin.py, name_resolution.py)
     templatetags/  # Custom template filters (recipe_filters.py)
@@ -306,6 +306,22 @@ them; with Django's default DEFERRED mode, overlapping writes fail with
 (`db.sqlite3`, `-wal`, `-shm`) that must be copied, moved and deleted together;
 see the developer guide for the backup rules and the one-off switch of an
 existing database. Tests use the same options on a temporary file database.
+
+### Logging and health check
+
+`settings/base.py` sends every log record to stderr through one handler on the
+root logger (issue #43). The `django`, `recipes` and `nutrisho` loggers carry no
+handlers of their own, only a level from `LOG_LEVEL` (default `INFO`), and
+propagate to root; `django.security` is pinned at `WARNING`. Keep it that way:
+a logger with `propagate: False` or its own handler would bypass the console
+and pytest's `caplog`. Failed logins are logged by a `user_login_failed`
+receiver in `recipes/signals.py`, connected in `RecipesConfig.ready()`.
+Sentry is optional and initialised in `settings/prod.py` only when
+`SENTRY_DSN` is set.
+
+`GET /healthz` (`nutrisho/health.py`) is the one public route: it is marked
+`login_not_required` so it stays open once login is enforced site-wide, never
+cached, and answers 200 or 503 depending on `SELECT 1`.
 
 ### How far SQLite goes
 

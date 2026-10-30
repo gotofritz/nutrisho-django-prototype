@@ -120,6 +120,26 @@ uv run python manage.py backup_db --schema-only     # schema only
 
 `--schema PATH` and `--dump PATH` override either location. SQLite only.
 
+## Errors and outages in production
+
+All logging goes to stderr; under systemd, journald collects it
+(`journalctl -u <service>`). That covers 500s with their tracebacks, CSRF
+rejections and other `django.security` events, and failed logins (a warning on
+`recipes.auth` with the username and client IP, never the password).
+
+- `LOG_LEVEL` — level for the `django`, `recipes` and `nutrisho` loggers;
+  default `INFO`. `django.security` always logs at `WARNING` or above, so a
+  quiet level cannot hide it.
+- `SENTRY_DSN` — optional. When set, `settings/prod.py` initialises Sentry, which
+  reports unhandled exceptions and `ERROR` log records. Personal data is not
+  sent. Unset, Sentry is never initialised.
+
+`GET /healthz` is unauthenticated and never cached. It runs `SELECT 1` and
+answers `200 ok`, or `503 database unavailable` (and logs an error) when the
+database does not respond. Point the deploy smoke check and a free external
+uptime monitor at `https://<host>/healthz`. The backup timer gets its own
+healthchecks.io ping with the backup job (#44).
+
 ## Quality checks
 
 ```bash
@@ -164,7 +184,7 @@ uv run poe css-watch
 
 ```
 src/
-  nutrisho/      # Django project (settings, urls, wsgi)
+  nutrisho/      # Django project (settings, urls, wsgi, health check)
   recipes/       # Main app: models, views, templates, management commands
 docs/
   initial-context.md   # architecture and constraints

@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.http import HttpRequest, HttpResponse
 from django.urls import include, path
 
+from nutrisho.health import healthz
 from recipes.views._auth import htmx_login_required
 
 
@@ -16,6 +17,7 @@ def _root(request: HttpRequest) -> HttpResponse:  # noqa: ARG001 - view signatur
 
 urlpatterns = [
     path("", _root),
+    path("healthz", healthz),
     path("accounts/", include("django.contrib.auth.urls")),
     path("recipes/", include("recipes.urls")),
     path("admin/", admin.site.urls),

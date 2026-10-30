@@ -97,3 +97,30 @@ INTERNAL_IPS = ["127.0.0.1"]
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/recipes/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
+
+# Everything goes to stderr, where journald (or the dev console) collects it.
+# Without this, DEBUG=False drops 500s, CSRF failures and django.security
+# events on the floor (issue #43). django.security never goes below WARNING,
+# so a quiet LOG_LEVEL cannot hide it.
+LOG_LEVEL = env.str("LOG_LEVEL", default="INFO").upper()
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "plain": {"format": "%(levelname)s %(name)s: %(message)s"},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stderr",
+            "formatter": "plain",
+        },
+    },
+    "root": {"handlers": ["console"], "level": "WARNING"},
+    "loggers": {
+        "django": {"handlers": [], "level": LOG_LEVEL},
+        "django.security": {"handlers": [], "level": "WARNING"},
+        "recipes": {"handlers": [], "level": LOG_LEVEL},
+        "nutrisho": {"handlers": [], "level": LOG_LEVEL},
+    },
+}
