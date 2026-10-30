@@ -43,7 +43,7 @@ tests/
 
 ## Architecture
 
-Single Django app (`recipes`) under `src/` layout. No API layer. Frontend is server-rendered Django templates with HTMX inline editing. Debug toolbar enabled in dev.
+Single Django app (`recipes`) under `src/` layout. No API layer. Frontend is server-rendered Django templates with HTMX inline editing. Debug toolbar enabled in dev: it is a `dev` dependency group package, so `urls.py` mounts it only when `debug_toolbar` is in `INSTALLED_APPS` (`settings/dev.py`), and a `uv sync --no-dev` install never imports it.
 
 ### Inline Editing Pattern
 
