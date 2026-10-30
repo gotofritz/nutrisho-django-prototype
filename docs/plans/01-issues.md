@@ -359,3 +359,230 @@ The page shell has its own loose ends:
 - Move the feature-level notes into `docs/features/<feature>.md`.
 - Trim `initial-context.md` to the stack, boundaries, core patterns and
   constraints, at about 100 lines.
+
+
+---
+
+## Security assessment: risk and attack surface (2026-10-30)
+
+Independent review of `main` at `4b84cd3`, written with the planned move to a
+public VPS in mind. Evidence was gathered with
+`manage.py check --deploy` against `nutrisho.settings.prod`, `pip-audit` over
+`uv export --no-dev`, a read of every view's ownership checks, and a payload
+run against the inline HTML sanitiser.
+
+**What is already sound** (so nobody spends time on it): every recipe-scoped
+view looks the recipe up with `owner=request.user` and children with
+`recipe=recipe`, so there is no IDOR on recipes, steps, groups or ingredient
+rows. Model forms whitelist their fields, so `owner` can't be mass-assigned.
+`_InlineHtmlSanitizer` held up against script, attribute, comment, CDATA,
+unclosed-tag and nesting payloads. The `next=` built by `htmx_login_required`
+is checked by `LoginView`, so it is not an open redirect. CSRF is enforced on
+every POST, including HTMX through `hx-headers`. There is no self-signup.
+
+Severity is for the VPS scenario: internet-facing, one or a few users.
+
+### SEC-01 · High · `poe createsuperuser` sets the password `fritz`
+
+`.poe.toml` runs `createsuperuser --noinput --username fritz` with
+`DJANGO_SUPERUSER_PASSWORD = "fritz"`. If anyone runs it on the VPS, the
+result is a superuser with a guessable password behind a public `/admin/`
+that has no rate limit (see SEC-04). That is a full takeover.
+
+- Drop the hard-coded password. Either let `createsuperuser` prompt for it,
+  or read `DJANGO_SUPERUSER_PASSWORD` from the caller's environment with no
+  default.
+- Rotate the password of any account created this way before it reaches a
+  server.
+
+### SEC-02 · High · Known `SECRET_KEY` values, and prod does not refuse them
+
+- A real key, `django-insecure-p8!)m+w+66=…`, sits in git history, from the
+  `settings.py` that predates `django-environ`. Anyone who can read the repo
+  has it.
+- `dev.py` quietly falls back to `dev-insecure-key-not-for-production` when
+  `.env` has none, and `.env.example` ships `change-me-to-a-long-random-string`.
+
+If the VPS ever runs with one of these keys, a forged session cookie or
+password-reset token gets anyone in as any user. `prod.py` only requires
+*some* key to be set.
+
+- In `prod.py`, raise `ImproperlyConfigured` when the key is shorter than 50
+  characters, starts with `django-insecure`, or matches one of the dev, test
+  or example placeholders.
+- Generate a fresh key on the server. Never reuse a local `.env`.
+- Add a CI step: `DJANGO_SETTINGS_MODULE=nutrisho.settings.prod SECRET_KEY=$(openssl rand -hex 40) ALLOWED_HOSTS=example.com uv run python manage.py check --deploy --fail-level WARNING`.
+  This also covers SEC-03.
+
+### SEC-03 · High · Production settings have no HTTPS or cookie hardening
+
+`check --deploy` on `prod.py` reports four warnings: W004 (no HSTS), W008 (no
+`SECURE_SSL_REDIRECT`), W012 (session cookie not `Secure`) and W016 (CSRF
+cookie not `Secure`). As things stand, the session cookie would travel over
+plain HTTP on the first non-TLS request.
+
+The VPS will almost certainly terminate TLS at Caddy or nginx, and two more
+settings are missing for that:
+
+- Without `SECURE_PROXY_SSL_HEADER`, Django thinks every request is HTTP.
+  Turning on `SECURE_SSL_REDIRECT` then causes a redirect loop, and the CSRF
+  Origin check rejects HTTPS form posts.
+- `CSRF_TRUSTED_ORIGINS` is not set.
+
+Fix: add these to `prod.py`, driven by env vars where they vary per host:
+
+- `SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")`
+- `SECURE_SSL_REDIRECT`
+- `SESSION_COOKIE_SECURE`
+- `CSRF_COOKIE_SECURE`
+- `CSRF_TRUSTED_ORIGINS`
+- `SECURE_HSTS_SECONDS`: start low, raise it once HTTPS is confirmed stable.
+
+### SEC-04 · Medium · No brute-force protection on the login pages
+
+`/accounts/login/` and `/admin/login/` accept unlimited password guesses, and
+failed logins are not logged anywhere (see SEC-07). For a personal app on a
+public IP, this is the most likely attack.
+
+- Add `django-axes`, or rate-limit both paths at the reverse proxy
+  (`limit_req` in nginx, `rate_limit` in Caddy) and add a fail2ban jail on the
+  auth log.
+- Since only the owner needs `/admin/`, consider allowing it only from an IP
+  allowlist or a VPN such as Tailscale or WireGuard, or at least moving it
+  off the default path.
+
+### SEC-05 · Medium · Any logged-in user can rewrite every user's ingredients
+
+The `ingredient_manage_*` views only check that the user is logged in, but
+`Ingredient` rows are global. Save, delete-with-replacement, merge and
+merge-plural therefore change recipes owned by *other* users. The delete
+confirmation even counts recipes across all owners on purpose (see
+`docs/initial-context.md`, "Owner scoping"). With one account this is fine.
+The day a second account exists, it is broken access control: one user can
+write to another user's data.
+
+- Gate the `manage/` routes behind `is_staff`, or a `recipes.change_ingredient`
+  permission, and return 403 otherwise.
+- Add tests that a non-staff user gets 403 on each mutating route.
+- Record the rule in `initial-context.md`.
+
+### SEC-06 · Medium · Unused heavy runtime dependencies widen the supply chain
+
+- `google-genai` is a runtime dependency, but nothing in `src/` or `scripts/`
+  imports it. It pulls about 30 transitive packages into production
+  (`cryptography`, `google-auth`, `requests`, `httpx`, `pydantic`, and more).
+  Today, `pip-audit` flags `certifi 2026.7.22` (PYSEC-2026-4320, fixed in
+  2026.10.18), and it arrives only through that tree.
+- `django-debug-toolbar` is also a runtime dependency, although only `dev.py`
+  uses it.
+
+Fix:
+
+- Remove `google-genai`, and move `django-debug-toolbar` to the `dev` group,
+  so that `uv sync --no-dev` on the VPS installs only Django, `django-environ`
+  and `django-htmx`.
+- Add automated scanning: a `.github/dependabot.yml` for the `uv`,
+  `github-actions` and `npm` ecosystems, and a `pip-audit` step in CI.
+
+### SEC-07 · Medium · Nothing in the repo is ready for a VPS deploy
+
+- `STATIC_ROOT` is not set, so `collectstatic` fails.
+- There is no WSGI server (gunicorn or uvicorn) and no static-file strategy
+  (WhiteNoise, or the proxy serving `STATIC_ROOT`).
+- There is no `LOGGING` or `ADMINS`. With `DEBUG=False`, 500 errors, CSRF
+  failures and `django.security` events are silently dropped.
+- `.poe.toml`'s top-level `[env]` forces `nutrisho.settings.dev` on every
+  task. On the server, `poe migrate` and `poe backup` would run with
+  `DEBUG=True` and the fallback key from SEC-02, and `poe dev` would put
+  `runserver` with the debug toolbar on the network.
+
+The gaps make the unsafe shortcut, `runserver` with dev settings, the easiest
+way to get the app online. Fix:
+
+- Set `STATIC_ROOT`.
+- Add gunicorn, bound to `127.0.0.1` or a unix socket, behind the TLS proxy.
+- Log to stderr or journald, including `django.security` and failed logins.
+- Have poe set `DJANGO_SETTINGS_MODULE` only when it is unset, so the server
+  can export `nutrisho.settings.prod`.
+- Write a short deploy runbook in `docs/`.
+
+### SEC-08 · Medium · Backups contain live sessions and are world-readable
+
+`backup_db` dumps every table, including `auth_user` password hashes and
+`django_session`. A leaked dump is therefore a ready-made login: the session
+keys work without cracking anything. The dump is written:
+
+- with the default umask, usually `0644` (world-readable on a shared VPS);
+- inside the checkout, under `docs/`, one `git add -f` away from a commit;
+- with `iterdump()` on a live database, which is not guaranteed to be a
+  consistent snapshot while the app writes.
+
+Fix:
+
+- Skip `django_session`.
+- Write dumps with mode `0600` to a directory set by an env var, outside the
+  repo.
+- Take the full copy with `sqlite3.Connection.backup()`.
+- On the VPS, keep `db.sqlite3` and `.env` at `0600`, owned by the app user
+  and outside any directory the proxy serves.
+- Ship backups off the box encrypted, for example with restic or borg.
+
+### SEC-09 · Low · No Content-Security-Policy
+
+The app renders user-supplied HTML on purpose. The sanitiser is sound, but a
+CSP is cheap defence in depth if it ever regresses. Django 6.0 has one
+built in (`django.middleware.csp.ContentSecurityPolicyMiddleware`,
+`SECURE_CSP`, nonces). Three things stand in the way: the inline `<script>`
+blocks in `base.html`, 18 inline `onclick`/`onchange` handlers in the
+templates, and Google Fonts (SEC-10).
+
+- Move the JS into a static file and replace the inline handlers with the
+  delegated listeners `base.html` already uses.
+- Add `"allowEval": false` to the existing `htmx-config` meta tag.
+- Roll out with `SECURE_CSP_REPORT_ONLY` first, then enforce.
+
+### SEC-10 · Low · Google Fonts leaks every visitor's IP to Google
+
+`base.html` loads Inconsolata and Lobster from `fonts.googleapis.com` on every
+page. On a public EU-hosted site, German courts have ruled this a GDPR breach
+(LG München I, 3 O 17493/20). It is also a third-party dependency, and it
+blocks a strict CSP.
+
+- Self-host the two `woff2` files under `static/` and drop the external link.
+
+### SEC-11 · Low · Leftover raw-SQL scripts bypass the app
+
+`scripts/sql_to_edit_recipes_hack/remove_a_recipe.sh` puts its arguments
+straight into SQL (`WHERE recipe_id=$RECIPE_ID`), hard-codes
+`/Users/fritz/...`, and skips the ORM's cascades and sequence compaction. The
+`delete_recipe` command has replaced it, and the `.sql` files beside it are
+hand-edit snippets.
+
+- Delete the directory, so nobody runs it against the server database.
+
+### SEC-12 · Low · CI token and action pinning
+
+- `ci.yml` has no top-level `permissions:`, so the `qa` job, which runs on
+  every PR, gets the repository's default `GITHUB_TOKEN` scope.
+- Third-party actions are pinned to mutable tags. That includes
+  `peaceiris/actions-gh-pages@v4`, which runs with `contents: write`.
+- `pip install coverage-badge "setuptools<81"` is unpinned in that same
+  write-scoped job.
+
+Fix:
+
+- Set `permissions: contents: read` at workflow level, and keep
+  `contents: write` only on `badge`.
+- Pin actions to commit SHAs. Dependabot from SEC-06 keeps them current.
+- Pin `coverage-badge` to an exact version.
+
+### SEC-13 · Info · VPS baseline (outside the repo, but part of the exposure)
+
+- Allow SSH by key only, with no root login.
+- Firewall everything except 22, 80 and 443.
+- Run `unattended-upgrades`.
+- Run the app under its own unprivileged user, with a systemd unit hardened by
+  `ProtectSystem=strict`, `NoNewPrivileges=yes` and `ReadWritePaths` limited
+  to the database and backup directories.
+- Let Caddy or certbot renew TLS automatically.
+- Add uptime and error alerting, so the logging from SEC-07 reaches a person.
