@@ -1,7 +1,7 @@
 {% extends "./base.html" %}
 
 
-{% block page_title %}{{ recipe.recipe_name }}{% endblock %}
+{% block page_title %}{{ recipe.recipe_name|striptags }}{% endblock %}
 
 {% block content %}
 {% include "./partials/_recipe_content.html" %}

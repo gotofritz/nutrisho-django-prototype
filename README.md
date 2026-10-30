@@ -45,6 +45,13 @@ the step reads exactly as before. Recipes imported with the heading buried in
 the text (`<u>RAGÚ</u>: Sauté the beef`) were split out in one pass, so the
 heading is now its own field, no longer shouted.
 
+The title and the short blurb take a little formatting, written as HTML tags.
+The title accepts underline (`<u>…</u>`) and strikethrough (`<s>…</s>`); the
+blurb accepts those plus bold (`<b>…</b>`) and italic (`<i>…</i>`), and keeps
+the new lines you type (a `<br>` works too). Any other tag is dropped and its
+text kept, and a tag you forget to close is closed for you. The browser tab and
+the delete prompt show the title as plain text.
+
 You can also:
 - Add and delete steps
 - Add ingredients to any group

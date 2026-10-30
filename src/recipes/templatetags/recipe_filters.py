@@ -8,27 +8,58 @@ from django.utils.safestring import mark_safe
 
 register = template.Library()
 
-_ALLOWED_TAGS = frozenset({"i", "b", "s", "u"})
+_INLINE_TAGS = frozenset({"i", "b", "s", "u"})
+_TITLE_TAGS = frozenset({"s", "u"})
 
 
-class _StepHtmlSanitizer(HTMLParser):
-    def __init__(self) -> None:
+class _InlineHtmlSanitizer(HTMLParser):
+    """Keep only `allowed` tags, attribute-free and balanced; escape everything else.
+
+    Balanced because the output is dropped into a larger page: an unclosed `<u>`
+    would underline everything after it. A closing tag closes whatever is still
+    open inside it, a closing tag with nothing to close is dropped, and anything
+    left open is closed at the end. With `line_breaks`, new lines and `<br>`
+    both come out as `<br>`.
+    """
+
+    def __init__(self, allowed: frozenset[str], *, line_breaks: bool = False) -> None:
         super().__init__()
+        self._allowed = allowed
+        self._line_breaks = line_breaks
         self._parts: list[str] = []
+        self._open: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list) -> None:  # noqa: ARG002 - HTMLParser API
-        if tag in _ALLOWED_TAGS:
+        if tag == "br" and self._line_breaks:
+            self._parts.append("<br>")
+        elif tag in self._allowed:
             self._parts.append(f"<{tag}>")
+            self._open.append(tag)
 
     def handle_endtag(self, tag: str) -> None:
-        if tag in _ALLOWED_TAGS:
-            self._parts.append(f"</{tag}>")
+        if tag not in self._open:
+            return
+        while (closing := self._open.pop()) != tag:
+            self._parts.append(f"</{closing}>")
+        self._parts.append(f"</{tag}>")
 
     def handle_data(self, data: str) -> None:
-        self._parts.append(escape(data))
+        text = escape(data)
+        if self._line_breaks:
+            text = text.replace("\r\n", "\n").replace("\n", "<br>")
+        self._parts.append(text)
 
     def result(self) -> str:
+        self.close()
+        self._parts.extend(f"</{tag}>" for tag in reversed(self._open))
+        self._open.clear()
         return "".join(self._parts)
+
+
+def _sanitize(value: str, allowed: frozenset[str], *, line_breaks: bool = False) -> str:
+    sanitizer = _InlineHtmlSanitizer(allowed, line_breaks=line_breaks)
+    sanitizer.feed(value)
+    return mark_safe(sanitizer.result())
 
 
 @register.filter
@@ -63,6 +94,19 @@ def display_ingredient_name(iir: object) -> str:
 @register.filter
 def safe_step_html(value: str) -> str:
     """Render step text allowing only i, b, s, u HTML tags; escape everything else."""
-    sanitizer = _StepHtmlSanitizer()
-    sanitizer.feed(value)
-    return mark_safe(sanitizer.result())
+    return _sanitize(value, _INLINE_TAGS)
+
+
+@register.filter
+def safe_title_html(value: str) -> str:
+    """Render a recipe title allowing only s and u HTML tags; escape everything else."""
+    return _sanitize(value, _TITLE_TAGS)
+
+
+@register.filter
+def safe_blurb_html(value: str) -> str:
+    """Render a blurb allowing i, b, s, u and line breaks; escape everything else.
+
+    The blurb is edited in a textarea, so its new lines become `<br>`.
+    """
+    return _sanitize(value, _INLINE_TAGS, line_breaks=True)

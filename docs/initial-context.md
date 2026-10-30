@@ -202,6 +202,10 @@ Empty text fields (`short_description`, `group_name`, `unit`,
 ### Template Filters (`recipes/templatetags/recipe_filters.py`)
 
 - `safe_step_html` — sanitizes step text, allowing only `<b>`, `<i>`, `<s>`, `<u>` inline tags; escapes everything else. Applied in `_step_display.html`.
+- `safe_title_html` — the same for `Recipe.recipe_name`, allowing only `<s>` and `<u>`. Applied wherever the title is rendered as markup (`_field_display.html`, the recipe list, the delete panel, the metadata page, the clean-up tool's columns 3 and 4). Plain-text contexts — the `<title>` element and the `hx-confirm` prompt — use Django's `striptags` instead.
+- `safe_blurb_html` — the same for `Recipe.short_description`, allowing `<b>`, `<i>`, `<s>`, `<u>` and turning new lines (and `<br>`) into `<br>`. Applied in `_field_display.html`.
+
+  All three share `_InlineHtmlSanitizer`: tags lose their attributes and come out **balanced** — an unclosed tag is closed at the end and a stray closing tag is dropped — since the fragment lands inside a larger page and an unclosed `<u>` would underline everything after it. The markup is stored as typed; sanitizing happens on render only.
 - `format_quantity` — strips trailing decimal zeros from `DecimalField` values (e.g. `2.50 → 2.5`, `4.00 → 4`). Applied in `_ingredient_display.html`.
 - `display_ingredient_name` — the ingredient's name, pluralised when the quantity
   calls for it. Takes the whole `IngredientInRecipe`, since the decision needs

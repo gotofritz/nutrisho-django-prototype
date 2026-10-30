@@ -1,5 +1,5 @@
 {% load static recipe_filters %}
-{% if request.htmx %}<title hx-swap-oob="true">{{ recipe.recipe_name }}</title>{% endif %}
+{% if request.htmx %}<title hx-swap-oob="true">{{ recipe.recipe_name|striptags }}</title>{% endif %}
 {% include "../navbar.html" with template_name="recipes:recipe" %}
 <div class="recipe-contents">
   <div class="recipe-directions">
