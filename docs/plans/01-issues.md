@@ -2185,3 +2185,54 @@ wanted, and regenerate `docs/schema.sql`.
   HTML page with one link, which breaks the documented rule that
   `src/nutrisho/` holds configuration only. Replace it with a redirect to
   `recipes:home`.
+
+### ARCH-12 · How far SQLite goes, and when to move off it — info
+
+Not a defect: guidance to keep next to ARCH-4 and ARCH-8 so the move off
+SQLite is a decision taken on evidence, not a guess. Figures are orders of
+magnitude for a small NVMe VPS, not benchmarks of the actual box.
+
+**Capacity with WAL and the ARCH-4 settings.**
+
+- Reads: readers never block each other or the writer; tens of thousands of
+  simple queries a second.
+- Writes: one writer at a time, the rest queue. Each click here is a short
+  transaction touching a few rows, about 1 ms with `synchronous=NORMAL`, so
+  several hundred to a few thousand writes a second before anyone waits.
+- Expected load: 10 active users clicking every ~5 s is about 2 writes a
+  second. Even 1,000 users would not strain it.
+- Size: a recipe is a few KB; 100,000 recipes is a few hundred MB.
+
+**Signals to move.** Usually one of these, not a user count:
+
+1. A second app server, or the database on its own host, is needed. SQLite
+   must sit on the app machine's local disk, never on a network volume. This
+   is the most common forcing function.
+2. Writes queue: `database is locked` errors, or rising p95 latency on save
+   endpoints, despite `IMMEDIATE` and a 20 s timeout. As a rule of thumb, start
+   planning at a sustained ~50 writes a second.
+3. Long write transactions (bulk imports, large merges) block every other
+   writer for their whole duration; keep them short or run them off-peak.
+4. Features or operations: fuzzy ingredient search (`pg_trgm`), read
+   replicas, migrations without a lock (SQLite rebuilds the table, seconds at
+   this size).
+
+**Until then.** Keep gunicorn to 2-4 workers, and consider Litestream
+(continuous replication of the database to object storage) for
+point-in-time recovery, which is the main operational gain Postgres would
+otherwise bring. It complements the scheduled backups in ARCH-8.
+
+**What to move to.** Postgres, the best-supported Django backend.
+
+- MySQL/MariaDB: works, but offers nothing over Postgres here and has weaker
+  constraint and DDL handling.
+- SQLite-compatible distributed options (libSQL/Turso, LiteFS, rqlite,
+  dqlite): add replicas but keep a single writer, and their Django backends
+  are third-party or thin. Only worth it to keep the SQLite file model.
+- Managed Postgres (Neon, Supabase, the VPS provider's own) avoids running it
+  yourself; Postgres on the same VPS is equally fine at this scale.
+
+**Cost of the move.** Low: the code already uses `select_for_update` and
+portable constraints (`Lower()` unique indexes work on Postgres), so it is
+mostly a data copy. Postgres enforces the `max_length` caps SQLite ignores,
+so check for over-long text first, or do ARCH-10 before moving.
