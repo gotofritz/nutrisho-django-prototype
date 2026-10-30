@@ -2538,3 +2538,237 @@ decided, and prev/next following the same ordering as the list.
 
 Direction: delete the dead code and scripts, archive or rewrite the stale
 plans, and correct the constraint line.
+
+## Accessibility review
+
+Independent accessibility pass, 2026-10-30. Method: read every template, the
+stylesheets and the inline scripts; ran the dev server with sample data and
+audited home, recipe (with each edit form open), new recipe and the ingredient
+manager with axe-core 4.10 (WCAG 2.2 A/AA + best practice, debug toolbar
+excluded) in Chromium; walked each page with the keyboard only; checked
+reflow at 640 and 320 CSS px. Ordered by impact. WCAG success criteria in
+brackets.
+
+### A11Y-1 Inline editing cannot be reached from the keyboard (critical)
+
+[2.1.1 Keyboard, 4.1.2 Name, Role, Value]
+
+Every edit on the recipe page starts from a click on a non-interactive
+element: the title, servings and blurb (`<span class="editable">` in
+`partials/_field_display.html`), each step (`<span>` in `_step_display.html`),
+each ingredient (`<div>` in `_ingredient_display.html`) and each group name
+(`<h4>` in `_group_display.html`). None is focusable (`tabIndex` is -1), so a
+Tab walk of the recipe page goes from the navbar straight to the step
+checkboxes and move buttons and never lands on anything editable. Keyboard and
+switch users cannot edit a recipe at all, and screen-reader users get no hint
+that the text is editable.
+
+Fix: make the trigger a real `<button type="button">` (styled to look like the
+text, or a separate small "Edit" button per row), keeping `hx-get` on it. A
+`tabindex="0" role="button"` element with an extra `keyup[key=='Enter']`
+trigger also works but needs Space handled too, so the button is simpler. Let
+Escape trigger the form's Cancel while we are here.
+
+### A11Y-2 Recipe matches in the ingredient manager are links without `href` (critical)
+
+[2.1.1 Keyboard]
+
+`ingredient_admin/_recipe_matches.html` renders each match as
+`<a hx-get=…>` with no `href`. Such an anchor is not focusable: in the
+keyboard walk, Tab goes from the last ingredient checkbox past the whole
+matches column. Keyboard users cannot open the preview, which is the point of
+column 2.
+
+Fix: render each match as `<button type="button">` styled as a link (it loads
+a fragment, it does not navigate).
+
+### A11Y-3 Icon-only controls have no accessible name (critical)
+
+[1.1.1 Non-text Content, 2.4.4 Link Purpose, 4.1.2 Name, Role, Value]
+
+- `navbar.html`: the three links (all recipes, next, previous) contain only an
+  inline SVG with no title or label. Screen readers announce "link" three
+  times, or read the URL.
+- `nav_recipe.html`: the edit, scale and delete buttons contain only an SVG.
+  The scale icon is an SVG `<text>` "×", so at best it is read as
+  "multiplication sign".
+- The three sidebar buttons toggle a panel open and shut (`panelToggle`) but
+  expose no state.
+
+axe reports these as `link-name` and `button-name` (critical/serious).
+
+Fix: `aria-label` on each link and button ("All recipes", "Next recipe",
+"Previous recipe", "Edit recipe details", "Scale recipe", "Delete recipe"),
+with a matching `title` for a mouse tooltip; `aria-hidden="true"
+focusable="false"` on the included SVGs; `aria-expanded` and `aria-controls`
+on the three toggle buttons, updated in `panelToggle` and when the panel is
+filled or emptied.
+
+### A11Y-4 Focus is dropped or left behind after HTMX swaps (serious)
+
+[2.4.3 Focus Order, 3.2.2 On Input]
+
+Measured with the keyboard in Chromium:
+
+- Pressing Enter on a step's ↓ button moves the step, but `#steps-list` is
+  swapped wholesale and focus falls back to `<body>`. To move a step two
+  places the user has to Tab back in from the top of the page. Same for
+  ingredient and group move buttons.
+- Saving or cancelling the metadata panel empties it and focus goes to
+  `<body>`. The same happens for every inline edit form's Save, Cancel and
+  Delete.
+- Opening the metadata panel with the edit button leaves focus on the button,
+  but the panel is injected into `#metadata-panel` in the left column, which
+  comes earlier in the DOM than the sidebar. The next Tab goes to the scale
+  button; the form is reachable only by Shift+Tabbing back through every step.
+- Opening an inline edit form does not move focus into it.
+- Boosted navigation (Next/Previous, links from the list) swaps the body and
+  leaves focus on `<body>` with no announcement that the page changed.
+
+Fix: put `autofocus` on the first field of each edit/panel form (htmx 2
+focuses it after the swap); give each move button a stable `id`
+(`step-4-down`), so htmx restores focus to it after the list swap; after Save
+or Cancel, focus the display element that replaced the form (needs A11Y-1);
+render the metadata panel next to its trigger in the DOM, or focus its first
+field; on `htmx:afterSettle` of a boosted request, focus the page's `<h1>`
+(with `tabindex="-1"`).
+
+### A11Y-5 Several form controls have no label (serious)
+
+[1.3.1 Info and Relationships, 3.3.2 Labels or Instructions, 4.1.2]
+
+- The step and ingredient selection checkboxes (`.step-select`,
+  `.ingredient-select`) have no label. A screen reader hears "checkbox, not
+  checked" a dozen times with no way to tell which row it belongs to. axe:
+  `label`, critical.
+- The manager's select-all checkbox (`_ingredient_count.html`) sits in an
+  empty `<label>`; the `title` on the label does not name the input. axe:
+  `label`, critical.
+- The step edit form (`_step_edit.html`) renders title and text with
+  placeholders only ("Title (optional)", "New step"). The placeholder is gone
+  as soon as there is text, which is always the case when editing an existing
+  step, so nothing says which box is the title.
+- The reassign panel's "New group name" input is placeholder-only too.
+
+Fix: `aria-label="Select step 2"` / `aria-label="Select onion"` on the row
+checkboxes (number or name from the row), `aria-label="Select all
+ingredients"` on select-all, and real labels (visually hidden is fine) for
+the step title, step text and new group name.
+
+### A11Y-6 Move buttons are unlabelled arrows and too small to hit (serious)
+
+[2.5.8 Target Size (Minimum), 2.4.6 Headings and Labels]
+
+The ↑/↓ buttons are 15.5×15px (`.move-btns button`, 11px font, 1px/4px
+padding) and the row checkboxes are 13×13px, all well under the 24×24px
+minimum, packed in a row of three with 2px gaps. axe flags 22 targets on a
+three-step, three-ingredient recipe. Their accessible names are the glyphs,
+read as "upwards arrow" / "downwards arrow", with no indication of which step
+or ingredient they move.
+
+Fix: at least 24×24px hit area (padding, or `min-width`/`min-height`), and an
+`aria-label` such as "Move step 2 up" / "Move onion down". Disabling ↑ on the
+first row and ↓ on the last would also avoid a no-op request.
+
+### A11Y-7 Status changes and errors are not announced (serious)
+
+[4.1.3 Status Messages, 3.3.1 Error Identification]
+
+Nothing on the site uses a live region, so screen-reader users get no
+feedback from any HTMX action:
+
+- the bulk-steps bar appearing with "2 steps selected", and the reassign
+  panel appearing when an ingredient is ticked;
+- the manager's "N found / N selected" and "N matches / N selected" counts,
+  and the "Saved" after an ingredient save;
+- `.form-error` messages swapped in after a 422 (group name required, scale
+  errors, split errors, merge/delete guard messages);
+- a step, ingredient, group or recipe disappearing after Delete.
+
+The hand-rendered `ingredient_name` and `cuisine_name` inputs also bypass
+Django's automatic `aria-invalid` / `aria-describedby` on errored fields
+(checked: `{{ form.as_p }}` fields get them, these two do not), so their
+errors are not tied to the field.
+
+Fix: `role="status"` on the selection counts, the manager counts and
+"Saved"; `role="alert"` on `.form-error`; add `aria-invalid` and
+`aria-describedby="{{ field.auto_id }}_error"` to the two hand-rendered
+inputs when they have errors; a short polite announcement after a delete.
+
+### A11Y-8 Pages have no language, and the root page is not an HTML document (serious)
+
+[3.1.1 Language of Page, 2.4.2 Page Titled]
+
+`base.html` has `<html lang="">`, so every page except login has no
+language and screen readers pick a voice by guesswork (axe:
+`html-has-lang`, serious). `nutrisho/urls.py` `_root` returns a bare
+`<h1>…<a>` fragment with no doctype, `<title>` or `lang`, which is what a
+user lands on right after logging in.
+
+Fix: `lang="en"` in `base.html`; have `_root` redirect to `recipes:home` (or
+render a template that extends `base.html`).
+
+### A11Y-9 The recipe page has no landmarks or heading outline (moderate)
+
+[1.3.1 Info and Relationships, 2.4.1 Bypass Blocks, 2.4.6 Headings and Labels]
+
+- No page has a `<main>`; the left navbar is a `<div>`, not a `<nav>`.
+- The recipe page has no `<h1>`: the title is a `<span>` inside
+  `div.recipe-title`. There is no heading for the ingredients or the method,
+  "Serves 4" is an `<h3>`, and group names are `<h4>` with no `<h2>` above
+  them. A screen-reader user jumping by heading cannot find the method.
+- The ingredient manager has no heading at all, and its three columns are
+  unlabelled `div`s.
+
+Fix: wrap each page's content in `<main>`; make the navbar
+`<nav aria-label="Recipes">`; make the recipe title the page `<h1>` (the
+editable trigger from A11Y-1 can sit inside it); add `<h2>` "Ingredients" and
+"Method" (visually hidden if the design does not want them); make "Serves"
+a `<p>` and group names `<h3>`; give the manager an `<h1>` and `aria-label`s
+or headings for its columns.
+
+### A11Y-10 The layout does not reflow, and the fixed navbar covers content when zoomed (moderate)
+
+[1.4.10 Reflow, 1.4.4 Resize Text]
+
+`.recipe-contents` is a fixed `width: 1040px; height: 18cm`, centred, and the
+`position: fixed` navbar is 3rem wide. Below about 1136 CSS px of viewport,
+which is a 1366px laptop at 125% zoom, the navbar sits on top of the start of
+the title and the "+ Add step" button. At 200% zoom on a 1280px screen (640
+CSS px) the page scrolls horizontally to 1040px and the navbar covers the
+first letters of the title and steps (checked in Chromium, debug toolbar
+hidden). All type is in px (body 20px, sidebar 14px, panels 12px, move
+buttons 11px), so the browser's default font size setting has no effect.
+
+Fix: `max-width` instead of `width`, stack the sidebar under the method
+below a breakpoint, offset the content by the navbar's width
+(`padding-left: 3rem` on `body` or the container) so they never overlap, drop
+the fixed height on screen, and size type in `rem`. `print.css` already
+resets the width for print, so the print layout is unaffected.
+
+### A11Y-11 Edit fields are nearly invisible (moderate)
+
+[1.4.11 Non-text Contrast]
+
+Inline-edit inputs and textareas get `border: 1px dotted silver` on white,
+about 1.8:1 against the 3:1 minimum, with `background: inherit` and the same
+font as the display text. Once a step or the title switches into edit mode it
+is hard to see that it is now a field, or where it ends. The move buttons'
+`#ccc` border has the same problem.
+
+Fix: a solid border of at least `#767676` (4.5:1 on white) for inputs and
+textareas, and the same for the move buttons.
+
+### A11Y-12 Recipe list actions all have the same names (minor)
+
+[2.4.4 Link Purpose (In Context), 2.4.6 Headings and Labels]
+
+Each row of `home.html` is "Edit metadata", "Delete", "View", "Duplicate",
+then the recipe name. In a screen reader's links or buttons list this is
+dozens of identical "View" and "Delete" entries, and in reading order the
+actions come before the recipe they act on.
+
+Fix: add the recipe name to each action as visually hidden text (e.g.
+`View<span class="sr-only"> {{ recipe.recipe_name|striptags }}</span>`), and
+put the name first in the DOM (CSS `order` can keep the current visual
+layout).
