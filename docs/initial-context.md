@@ -340,7 +340,8 @@ Postgres enforces the `max_length` caps SQLite ignores.
 - Prototype quality: no production settings, no secrets management
 - SQLite only; no migrations for external DBs
 - No REST API yet
-- Auth uses Django's built-in User model
+- Auth uses Django's built-in User model; the owner superuser comes from
+  `bootstrap_owner` (`uv run poe bootstrap`), never from credentials in the repo
 
 ## Boundaries
 
