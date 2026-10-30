@@ -1,397 +1,361 @@
 
 ## Long-term evolution assessment (external architect, 2026-10-30)
 
-Independent review of `main` at `20252bb`. Every "Verified" note was reproduced
-on that commit, either with a throwaway test or a command against a scratch
-database. Issues are ordered by priority within each band. IDs carry an `LTE-`
-prefix so they cannot clash with numbering used elsewhere in this file.
+This is an independent review of `main` at `4b84cd3`. Every "Verified" note was
+reproduced on that commit with a throwaway test. Issues are ordered by priority
+within each band. IDs carry an `LTE-` prefix so they cannot clash with numbering
+used elsewhere in this file. Where an issue overlaps an open GitHub issue, that
+issue is named and the scope here is merged into it.
 
 ### P1: broken or losing data today
 
 #### LTE-01 Resolve ingredient names case-insensitively, in one place
 
-**Problem.** `UniqueConstraint(Lower("ingredient_name"))` (migration 0013) is
-enforced in the database, but every write path still looks names up with a
-case-sensitive `get_or_create(ingredient_name=name)`:
-`views/recipe_ingredients.py:165`, `forms/ingredient_forms.py:36,41,51` and
-`management/commands/batch_load_yaml_recipes.py:325`. A case variant of an
-existing name misses the lookup, tries to insert and hits the constraint.
+**Problem.** The database enforces
+`UniqueConstraint(Lower("ingredient_name"))` (migration 0013), but the
+recipe-page write paths look names up with a case-sensitive
+`get_or_create(ingredient_name=name)`:
 
-- Verified: adding `Onion` to a recipe while `onion` exists returns **HTTP 500**.
-- Verified: the committed corpus cannot be imported into a fresh database. It
-  contains `Ginger`/`ginger`, `Sea salt`/`sea salt`, `Thai basil`/`thai basil`,
-  `Cashew Nuts`/`cashew nuts` and `Sichuan pepper`/`sichuan pepper`, so
-  `batch_load_yaml_recipes recipes_yaml/` aborts with
-  `IntegrityError: UNIQUE constraint failed: index 'ingredient_name_ci_unique'`.
-  That means `poe filldb` is broken on `main`.
+- `views/recipe_ingredients.py:165`
+- `forms/ingredient_forms.py:36`, `:41` and `:51`
 
-**Proposal.** Add one service, `resolve_ingredient(name) -> Ingredient`, that
+A name that differs from an existing one only by case misses the lookup, then
+tries to insert and hits the constraint. Verified: adding `Onion` to a recipe
+while `onion` exists returns **HTTP 500**.
+
+**Proposal.** Add one service, `resolve_ingredient(name) -> Ingredient`. It
 strips the name, looks it up with `ingredient_name__iexact`, and creates a row
-only on a miss. Route the importer, `IngredientInRecipeForm`, and the create and
-save views through it. This is also the hook plan 008 needs: alias resolution
-then becomes one extra lookup inside the same function, not a change to four
-call sites.
+only when nothing matches. Route the form and the create and save views through
+it. Plan 008 step 3 already prescribes exactly this function for aliases.
+Shipping the case-insensitive part now fixes the 500, and alias resolution then
+becomes one more lookup inside the same function.
 
-**Done when** both reproductions above have regression tests, and importing
-`recipes_yaml/` into an empty database succeeds.
+**Done when** the reproduction above has a regression test and every
+`Ingredient.objects.get_or_create` in `src/` goes through the service.
 
-#### LTE-02 Make `poe clean` and `poe filldb` stop deleting committed migrations
+#### LTE-02 Make "Duplicate recipe" copy every field, including step titles
 
-**Problem.** `clean` runs `rm -f ./db.sqlite3 src/recipes/migrations/0*`, and
-`filldb` then runs `makemigrations`. This deletes the 14 committed migrations,
-including the data migration `0008_sanitize_yaml_filenames`, and replaces them
-with one fresh `0001`. The working tree is left dirty. A developer who commits
-afterwards ships a migration history that no existing database can apply.
+**Problem.** `recipe_duplicate` (`views/recipe_crud.py`) copies `Step` rows
+field by field, and the list was not updated when `step_title` arrived
+(migration 0015). Verified: duplicating a recipe whose step is titled `Ragu`
+gives a copy with `step_title == ''`. Any new field on `Step`, `IngredientGroup`
+or `IngredientInRecipe` will be dropped the same way, without warning. The risk
+grows with #19, which adds new fields to `Step` for reusable steps and template
+variables.
 
-Bootstrapping is also inconsistent:
+**Proposal.** Copy rows generically from `_meta.concrete_fields`, leaving out
+the pk and the parent FK. Add a test that walks those same fields, so the next
+new column makes a test fail instead of disappearing.
 
-- `addinitialuser` creates `gotofritz` with `User.objects.create(...)`, so the
-  user has no usable password and cannot log in.
-- `createsuperuser` creates a *different* user, `fritz`, with the password
-  `fritz` and a personal email address, all hard-coded in `.poe.toml`.
-- The recipes are imported for `gotofritz`, so the account that can log in owns
-  no recipes.
+#### LTE-03 Align field lengths with the data
 
-**Proposal.**
+**Problem.** SQLite does not enforce `VARCHAR(n)`. The recipes imported before
+#29 therefore hold values longer than their fields allow. The former
+`recipes_yaml/` corpus contained:
 
-- `clean` deletes only the database.
-- `filldb` runs `migrate`, never `makemigrations`.
-- Merge the two user tasks into one `bootstrap` that creates a single owner
-  whose username and password come from the environment (`.env.example`
-  documents them), using `create_user` or `create_superuser`.
-- Add a CI check, `makemigrations --check --dry-run`, so model changes without a
-  migration are caught.
+- 3 steps longer than the 512 characters `Step.step_text` allows. The longest,
+  in *Borscht*, has 656.
+- 6 blurbs longer than the 512 characters `short_description` allows.
+- 1 ingredient name of 72 characters, where the limit is 64.
 
-#### LTE-03 Make "Duplicate recipe" copy every field, including step titles
+Those rows display fine, but the inline editor's `ModelForm` refuses to save
+them until they are shortened. Merging steps (#33) hits the same 512 limit and
+refuses the merge. Migrating to PostgreSQL would fail on these rows.
 
-**Problem.** `recipe_duplicate` (`views/recipe_crud.py:176-181`) copies `Step`
-field by field and was not updated when `step_title` arrived (migration 0015).
-Verified: duplicating a recipe whose step is titled `Ragu` gives a copy whose
-title is `''`. Every new field on `Step`, `IngredientGroup` or
-`IngredientInRecipe` will be silently dropped the same way.
+To find the affected rows, run:
 
-**Proposal.** Copy rows generically from `_meta.concrete_fields`, excluding the
-pk and the parent FK. Add a test that walks those same fields, so the next new
-column fails a test instead of disappearing.
-
-#### LTE-04 Align field lengths with the data, and validate them on import
-
-**Problem.** SQLite does not enforce `VARCHAR(n)`, so the corpus already stores
-values longer than the model allows:
-
-- 3 steps over `Step.step_text` `max_length=512` (`Borscht` has 656 characters).
-- 6 descriptions over `short_description` 512.
-- 1 ingredient name of 72 characters, over 64.
-
-These recipes import, but the inline editor's `ModelForm` rejects them, so a
-user cannot save an edit to one of those steps without cutting it down first.
-Any move to PostgreSQL would also fail on import. The importer validates only
-step-title length.
+```sql
+SELECT id, length(step_text) FROM recipes_step WHERE length(step_text) > 512;
+SELECT id, length(short_description) FROM recipes_recipe WHERE length(short_description) > 512;
+```
 
 **Proposal.**
 
-- Make `step_text` and `short_description` `TextField`s, since they are prose
-  and have no natural limit.
-- Decide on a real limit for `ingredient_name`.
-- Have the importer validate every field against the model, either with
-  `full_clean()` or a schema (see LTE-08), before the write phase, as it already
-  does for quantities and servings.
+- Make `step_text` and `short_description` `TextField`s. They are prose and
+  have no natural limit. This also removes the merge refusal.
+- Choose a deliberate limit for `ingredient_name`.
 - While touching `Ingredient`, drop `unique=True` from `ingredient_name`. The
   case-insensitive constraint already covers it.
+- Land this before #19, which makes the step model richer.
 
-#### LTE-05 Cut the test suite from 7 minutes to seconds with a fast test password hasher
+#### LTE-04 Bootstrap a usable account on a fresh checkout
 
-**Problem.** `uv run poe test` takes about 7 minutes for 823 tests (verified:
-`823 passed in 421.74s`). Most of that is PBKDF2 hashing in `create_user`, which
-runs per test. The pre-commit hook runs the whole `qa` sequence on every commit
-that touches Python, so this cost lands on every commit.
+**Problem.** The developer guide says a fresh checkout starts with
+`poe migrate` and then `addinitialuser`. Two things go wrong from there:
 
-**Proposal.** In `nutrisho/settings/test.py`, add
-`PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]`.
-Verified on `test_views_steps.py`: 32.2s drops to 1.7s, about 19× faster.
-This is a one-line change and the cheapest high-value item in this list.
+- `addinitialuser` creates `gotofritz` with `User.objects.create(...)`, so the
+  account has no usable password and nobody can log in as it.
+- `poe createsuperuser` creates a *different* user, `fritz`, with the password
+  `fritz` and a personal email address, all hard-coded in `.poe.toml`.
+
+The account that can log in and the account the guide sets up are not the same
+one, and credentials sit in the repository.
+
+**Proposal.** Replace both with one `poe bootstrap` task. It creates a single
+owner via `create_superuser`, takes the username, email and password from the
+environment (documented in `.env.example`), and does nothing if the user
+already exists.
 
 ### P2: architecture that will hurt as the app grows
 
-#### LTE-06 Scale recipes at display time instead of rewriting stored quantities
+#### LTE-05 Scale recipes at display time instead of rewriting stored quantities
 
-**Problem.** `recipe_scale` overwrites every `IngredientInRecipe.quantity`
-(rounded to 0.01) and `Recipe.servings` (rounded to a whole number). This has
-four consequences:
+**Problem.** `recipe_scale` overwrites every `IngredientInRecipe.quantity`,
+rounded to 0.01, and `Recipe.servings`, rounded to a whole number. Since #29 the
+database is the only copy of a recipe, so this destroys data:
 
-- **It is lossy.** Scaling by ⅓ and then by 3 does not restore the original.
-- **The ratio drifts.** `servings=1 × 1.5` stores 2 servings while the
-  quantities are ×1.5.
-- **The source of truth changes.** Viewing "for 6" changes what gets exported
-  to YAML.
-- **Pluralisation inherits it.** `display_ingredient_name`'s docstring already
-  has to explain that it guards against "2 onion" because of persisted scaling.
+- **It can't be undone.** Scaling by ⅓ and then by 3 does not give back the
+  original quantities.
+- **Servings and quantities drift apart.** Scaling `servings=1` by 1.5 stores 2
+  servings while the quantities grow by exactly ×1.5.
+- **It leaks into other code.** `display_ingredient_name` has to guard against
+  "2 onion" because scaled quantities are persisted.
 
 **Proposal.** Treat scaling as presentation. The recipe page accepts a target
-serving count (`?servings=6`, kept in the URL so it can be bookmarked and
-printed), and the template computes the displayed quantities from the stored
-ones. If keeping a scaled version is wanted, offer "Save as scaled copy", which
-reuses duplicate (LTE-03). Stored quantities then always match the source.
+serving count (`?servings=6`), kept in the URL so the scaled view can be
+bookmarked and printed. Displayed quantities are computed from the stored ones.
+If keeping a scaled version is wanted, offer "Save as scaled copy", which reuses
+duplicate (LTE-02).
 
-#### LTE-07 Define the YAML ↔ database contract: source of truth, upsert, backups
+#### LTE-06 Make backups automatic, kept outside the repo, and proven to restore
 
-**Problem.** There are two stores and no rule for which one wins.
+**Problem.** Since #29, `db.sqlite3` is the only copy of the data, and
+`backup_db` is the only protection. It has three gaps:
 
-- The importer only ever inserts.
-- The documented way to fix a recipe is *export → edit YAML → `delete_recipe`
-  → re-import*. That gives the recipe a new id, which breaks bookmarked URLs,
-  and silently drops anything YAML cannot carry (export already lists
-  `source`, `duration`, `extra_info` and `substitute` as lossy).
-- Edits made in the UI live only in `db.sqlite3`, which is untracked and has
-  no backup.
-- `recipes_yaml/` in git drifts away from the database until someone
-  remembers to export.
+- **It is manual.** Nothing runs it, so the newest backup is as old as the
+  last time someone remembered.
+- **It writes into the repository.** Dumps go to `docs/dump-*.sql`, which is
+  git-ignored. A dump contains every row, including `auth_user` password
+  hashes and `django_session` data. It sits next to the code, so it travels
+  with any copy or sync of the working tree.
+- **Restoring is never tested.** The tests check what the dump contains, but
+  never load one back. The documented restore,
+  `sqlite3 db.sqlite3 < dump.sql`, has no test showing it works.
 
 **Proposal.**
 
-1. Declare the database the source of truth, and YAML the
-   interchange and backup format.
-2. Make import an upsert keyed on `(owner, yaml_filename)`, falling back to
-   `(owner, recipe_name)`, behind `--update`, so re-importing an edited file
-   keeps the recipe's id.
-3. Add a `poe backup` task: export plus `dumpdata`.
-4. Add a CI round-trip test: import the corpus, export it, and expect
-   byte-identical files. This would have caught LTE-01.
+- Default the dump directory to a setting (`BACKUP_DIR`, outside the repo),
+  keep the last *N* dumps, and document a cron or launchd line, or run it from
+  `poe dev` at start-up.
+- Add a test that dumps a populated database, restores the dump into a fresh
+  one, and compares row counts per table.
+- Consider SQLite's backup API (`connection.backup()`) or `VACUUM INTO`. Either
+  gives a consistent binary copy that restores faster than replaying SQL.
 
-#### LTE-08 Give the YAML format a typed, versioned schema
+#### LTE-07 Surface the schema fields the UI hides, or remove them
 
-**Problem.** The YAML shape is defined only by two hand-written modules: the
-importer's `_validate_payload` and `_normalize_steps`, and the exporter's dict
-builder. Steps can be either a bare string or a `{title, text}` mapping;
-`group` and `ingredient` can be either a list or a scalar; and there is no
-version field. Every format change (servings, step titles) has meant editing
-both ends in step.
+**Problem.** With YAML gone, several modelled fields cannot be written by
+anything except Django admin, and nothing displays them:
 
-**Proposal.** Define one Pydantic model of a recipe file with a
-`schema_version` field. The importer parses into it, and the exporter
-serialises from it. Plan 005 already names Pydantic for exactly this.
-Validation errors then report the file and the field for free, and LTE-04's
-length checks become declarative.
+| Field or model | State on `main` |
+|---|---|
+| `Tag` | Legacy rows exist. Not shown on the recipe page, not editable, not filterable. Copied by duplicate. |
+| `Cuisine` | Editable in the metadata form, but not shown on the recipe page. |
+| `Source` (model) | Never written by any code path. |
+| `IngredientInRecipe.substitute` | Never written. The clean-up tool only repoints it. |
+| `Step.duration`, `Step.extra_info` | Never written. Split drops them. |
 
-#### LTE-09 Surface the schema fields the UI hides, or remove them
+Every unused column still costs a migration, and code that has to handle it,
+each time the model changes.
 
-**Problem.** Several modelled fields have no way in or out through the UI.
-
-| Field or model | Imported | Exported | Shown on recipe page | Editable |
-|---|---|---|---|---|
-| `Tag` | yes | yes | no | no |
-| `Cuisine` | yes | yes | no | metadata form only |
-| `Source` (model) | no | flagged lossy | no | admin only |
-| `IngredientInRecipe.substitute` | no | flagged lossy | no | no |
-| `Step.duration`, `Step.extra_info` | no | flagged lossy | no | no |
-
-Unused columns cost a migration and a code path every time the model changes,
-and tags and cuisine are imported but cannot be seen.
-
-**Proposal.** Decide field by field. The suggested starting point:
+**Proposal.** Decide field by field. Suggested starting point:
 
 - **Show:** tags, cuisine, `source_instance`, and `substitute` (rendered as
   "or X").
 - **Make editable:** tags.
-- **Drop in a migration:** `Source`, `duration` and `extra_info`, unless there
-  is a concrete plan for them.
+- **Drop in a migration:** `Source`, `duration` and `extra_info`, unless #19
+  or another concrete plan needs them.
 
-#### LTE-10 Let users search, filter and page the recipe list
+#### LTE-08 Search, filter and paginate the recipe list (merge into #32)
 
-**Problem.** `/recipes/` renders all 273 recipes in one unpaginated list, with
-no search and no filter. For a recipe manager the core question is "what can I
-make with aubergine", or "show me Sichuan dishes". The data to answer it exists
-(ingredients, cuisine, tags), but nothing exposes it. Prev/next on the detail
-page also walks by id ascending while the list is sorted newest first, so the
-two orders disagree.
+**Problem.** `/recipes/` shows every recipe in one unpaginated list, with no
+search and no filters. #32 already asks for a site-wide search box with OR
+semantics across title and ingredients. This issue adds the parts #32 does not
+cover:
 
-**Proposal.**
+- **Filters.** Add cuisine and tag chips (they depend on LTE-07) and
+  pagination, using the HTMX active-search pattern the ingredient tool already
+  uses.
+- **Search on plain text.** Since #31, `recipe_name` and `short_description`
+  can contain inline HTML. Search must match against the text with tags
+  stripped, or a query for `u` matches every underlined title. That means a
+  stored plain-text column or a `Replace`/regex annotation; `icontains` on the
+  raw column is not enough. The same applies to the per-owner uniqueness
+  check: `Foo` and `<u>Foo</u>` are currently two different names.
+- **Prev/next order.** Prev/next on the detail page walks by id, ascending,
+  while the list sorts newest first. Carry the list query, including any
+  search, into the detail page so prev/next follows what the user was looking
+  at.
 
-- Add an HTMX active-search box over recipe name and ingredient names (the same
-  pattern the ingredient tool uses).
-- Add filter chips for cuisine and tag (depends on LTE-09) and paginate.
-- Carry the current list query into the detail page so prev/next follows the
-  list.
-
-#### LTE-11 Restrict the global ingredient tool to staff (or commit to single-user)
+#### LTE-09 Restrict the global ingredient tool to staff (or commit to single-user)
 
 **Problem.** Recipes are owner-scoped everywhere, which implies more than one
-user. But `Ingredient`, `Tag` and `Cuisine` are global, and `/recipes/ingredients/manage/`
-requires only a login. Any authenticated user can rename, merge or delete
-ingredients used in other owners' recipes. `initial-context.md` acknowledges
-that the tool reaches recipes the user cannot see.
+user. `Ingredient`, `Tag` and `Cuisine`, however, are global, and
+`/recipes/ingredients/manage/` requires only a login. Any authenticated user can
+rename, merge or delete ingredients used by other people's recipes.
 
-**Proposal.** Pick a direction.
+**Proposal.** Pick a direction:
 
-- **Multi-user:** gate the `manage/` routes behind `is_staff`, or the
+- **Multi-user:** gate the `manage/` routes behind `is_staff`, or behind the
   `recipes.change_ingredient` and `recipes.delete_ingredient` permissions, and
-  test that an ordinary user gets 403.
-- **Single-user:** say so in `initial-context.md` and stop paying for owner
+  test that an ordinary user gets a 403.
+- **Single-user:** state it in `initial-context.md` and stop paying for owner
   scoping.
 
-Staying half-way is the risky option.
+Staying half-way between the two is the risky option.
 
-#### LTE-12 Make login enforcement secure by default with `LoginRequiredMiddleware`
+#### LTE-10 Make login enforcement secure by default with `LoginRequiredMiddleware`
 
-**Problem.** Authentication is opt-in per route. Each of the 50+ entries in
-`recipes/urls.py` is wrapped by hand in `_lr()`, `home` also carries
-`@login_required`, and `nutrisho/urls.py` wraps `_root` separately. A new route
-that misses the wrapper reaches its view anonymously, and the view's
-`owner=request.user` query then fails as a 500 rather than a redirect.
+**Problem.** Authentication is opt-in per route. Each of the roughly 55 entries
+in `recipes/urls.py` is wrapped by hand in `_lr()`. #33 added three more routes
+that needed the same wrapper. A future route that misses it reaches its view
+anonymously, and the view's `owner=request.user` query then fails with a 500
+instead of redirecting.
 
-**Proposal.** Use Django's `LoginRequiredMiddleware` (5.1+), subclassed so
-that `handle_no_permission` keeps the current `HX-Redirect` behaviour from
+**Proposal.** Use Django's `LoginRequiredMiddleware` (5.1+). Subclass it so
+`handle_no_permission` keeps the `HX-Redirect` behaviour from
 `views/_auth.py`, and mark the auth views `@login_not_required`. Then delete
-`_lr()`. Add one test that iterates every URL pattern and asserts an anonymous
-request never gets a 200 or a 500.
+`_lr()`. Add one test that iterates every URL pattern and asserts that an
+anonymous request never gets a 200 or a 500.
 
-#### LTE-13 Normalise units before building anything on quantities
+#### LTE-11 Normalise units before building anything on quantities
 
-**Problem.** `unit` is free text, and the corpus shows it:
+**Problem.** `unit` is free text. The legacy data, as seen in the former
+`recipes_yaml/` corpus, mixes several spellings of the same unit and words that
+are not units:
 
-| Kind of problem | Values in the corpus (count) |
+| Kind of problem | Examples (counts) |
 |---|---|
-| Spelling variants of one unit | `Tbsp` 268, `tbsp` 226, `tbs` 7, `tbso` 2 |
-| Singular and plural both stored | `clove`/`cloves`, `cup`/`cups`, `sprig`/`sprigs` |
+| Same unit, different spelling | `Tbsp` (268), `tbsp` (226), `tbs` (7), `tbso` (2) |
+| Singular and plural stored separately | `clove`/`cloves`, `cup`/`cups`, `sprig`/`sprigs` |
 | Case variants | `l`/`L` |
-| Not units at all | `small`, `medium`, `large`, `to taste` |
+| Words that are not units | `small`, `medium`, `large`, `to taste` |
 
-Concrete effects today:
+This already causes wrong output today:
 
 - The pluralisation gate treats any non-empty unit as a measure, so the page
   renders "2 small onion".
 - Scaling multiplies quantities that sit next to "to taste".
 
-Longer term, shopping lists, unit conversion, and the nutrition features the
-name *Nutrisho* suggests all need canonical units.
+It also blocks later work. Shopping lists, unit conversion, the nutrition
+features the name *Nutrisho* suggests, and #19's templated steps all need
+canonical units.
 
-**Proposal.** Introduce a canonical unit vocabulary with aliases (the same
-shape as plan 008's ingredient aliases), resolve units on input, and migrate
-existing values with a reviewed management command, as was done for
-ingredients. Size words move to `preparation`. Pluralise units too, so the page
-shows "1 clove" and "2 cloves" from one stored value.
+**Proposal.**
+
+- Introduce a canonical unit vocabulary with aliases, the same shape as
+  plan 008's ingredient aliases, and resolve units on input.
+- Migrate existing values with a reviewed management command, the way
+  ingredients were cleaned up.
+- Move size words such as `small` or `large` into `preparation`.
+- Pluralise units too, so "1 clove" and "2 cloves" come from one stored value.
 
 ### P3: tooling, quality and hygiene
 
-#### LTE-14 Prune runtime dependencies
-
-**Problem.** `[project].dependencies` ships three packages that do not belong
-at runtime:
-
-- `google-genai` is imported nowhere.
-- `xmltodict` is used only by the one-off `scripts/import.py`, which reads a
-  hard-coded `/Library/WebServer/...` path.
-- `django-debug-toolbar` is loaded only by `settings/dev.py`.
-
-`scripts/sql_to_edit_recipes_hack/` hard-codes
-`/Users/fritz/...` and deletes rows by hand-written SQL. It predates
-`delete_recipe` and the inline editor, both of which replace it.
-
-**Proposal.**
-
-- Remove `google-genai`.
-- Move `django-debug-toolbar` to the `dev` group.
-- Archive `scripts/import.py` and the SQL hacks, or delete them from the tree
-  (git keeps the history), and drop `xmltodict` with them.
-
-#### LTE-15 Harden CI: locked installs, pinned uv, dependency updates
+#### LTE-12 Prune runtime dependencies and leftover scripts
 
 **Problem.**
 
-- **Lockfile drift is not caught.** CI runs `uv sync --all-groups`, not
-  `--locked`, so a `pyproject.toml` change with a stale `uv.lock` passes. A
-  local `uv sync` with a different uv version also rewrote the lock header
-  during this review.
-- **uv is unpinned.** `setup-uv` installs whatever version is current.
-- **Nothing tracks updates.** There is no Dependabot or Renovate for Python,
-  pnpm, GitHub Actions or the pre-commit hook revisions, on a project pinned to
-  Python 3.14 and Django 6.0, both of which move quickly.
+- `google-genai` is listed in `[project].dependencies`, but nothing imports it.
+- `django-debug-toolbar` is loaded only by `settings/dev.py`, yet it ships as
+  a runtime dependency.
+- `scripts/sql_to_edit_recipes_hack/` hard-codes `/Users/fritz/...` and
+  deletes rows with hand-written SQL. `delete_recipe` and the inline editor
+  have both replaced it.
+
+**Proposal.** Remove `google-genai`, move `django-debug-toolbar` to the `dev`
+group, and delete the SQL hacks. Git keeps the history if they are ever needed.
+
+#### LTE-13 Harden CI: locked installs, schema and migration drift, dependency updates
+
+**Problem.**
+
+- **Lockfile drift passes CI.** CI runs `uv sync --all-groups` without
+  `--locked`, so a `pyproject.toml` change with a stale `uv.lock` passes.
+- **uv is unpinned.** `setup-uv` installs whatever version is current. A local
+  `uv sync` with a different uv version rewrote the lock header during this
+  review.
+- **`docs/schema.sql` relies on memory.** AGENTS.md requires regenerating it
+  in every PR that touches migrations, but nothing checks that it was done.
+  Likewise, nothing checks that model changes come with a migration.
+- **No dependency updates.** There is no Dependabot or Renovate for Python,
+  pnpm, GitHub Actions or the pre-commit hook revisions. The project is pinned
+  to Python 3.14 and Django 6.0, which both move fast.
 
 **Proposal.**
 
-- Run `uv sync --locked --all-groups`.
-- Pin `version:` in `setup-uv`.
-- Add a `.github/dependabot.yml` covering `uv`, `npm` and `github-actions`, and
-  a monthly `pre-commit autoupdate` job.
-- Add `manage.py makemigrations --check` (see LTE-02).
+- Run `uv sync --locked --all-groups` and pin `version:` in `setup-uv`.
+- Add a CI step that runs `migrate`, `makemigrations --check --dry-run`,
+  `backup_db --schema-only`, and finally `git diff --exit-code docs/schema.sql`.
+- Add `.github/dependabot.yml` for `uv`, `npm` and `github-actions`, plus a
+  monthly `pre-commit autoupdate`.
 
-#### LTE-16 Add a small browser test suite for the HTMX flows
+#### LTE-14 Add a small browser test suite for the HTMX flows
 
-**Problem.** All 823 tests use Django's test client and assert on the HTML
-returned. But the UI's correctness depends on things only a browser exercises:
+**Problem.** All tests use Django's test client and assert on the HTML it
+returns. But the UI's correctness depends on things only a browser runs:
 
-- `hx-include` selectors.
-- Out-of-band swaps.
-- `HX-Retarget` handling.
-- The inline JavaScript in `base.html` (reassign panel, textarea sizing).
-- The `indeterminate` checkbox.
+- `hx-include` selectors, out-of-band swaps and `HX-Retarget`.
+- The growing inline JavaScript in `base.html`. #33 added
+  `_syncStepsPanel` alongside the existing reassign-panel logic.
+- #33's split-at-cursor feature, which depends on the textarea's cursor
+  offset and on CRLF normalisation.
 
-`initial-context.md` already documents pitfalls of exactly this kind ("pointing
-it at a container element sends nothing"), and none of them can fail a
-server-side test.
+`initial-context.md` documents pitfalls of exactly this kind, and a server-side
+test cannot catch any of them.
 
-**Proposal.** Add `pytest-playwright` with `live_server`, plus a handful of
-smoke flows:
+**Proposal.** Add `pytest-playwright` with `live_server` and a handful of smoke
+flows:
 
 - Add, edit and reorder a step.
+- Split a step at the cursor, then merge two steps.
 - Add an ingredient to a group.
 - Merge two ingredients in the clean-up tool.
-- Scale a recipe.
 
 Mark them `e2e`, run them in CI, and keep them out of the pre-commit hook.
 
-#### LTE-17 Fix the step HTML sanitizer: trailing text lost, open tags leak
+#### LTE-15 Pick one styling approach and move inline JS into a static file
 
-**Problem.** `_StepHtmlSanitizer` never calls `HTMLParser.close()`, and it does
-not track which tags are open. Verified:
+**Problem.** The frontend mixes two styling systems. Tailwind v4 provides about
+26 utility classes, mostly in the ingredient tool. 370 lines of hand-written
+`style.css` cover everything else. Tailwind is the only reason the project
+needs Node and pnpm, in CI, in pre-commit and in local setup.
 
-- `safe_step_html("heat <")` returns `'heat '`.
-- `"end with <!"` returns `'end with '`. The trailing text is silently dropped.
-- `"A <b>bold"` returns `'A <b>bold'` with no closing tag, so everything after
-  that step on the page renders bold.
+The page shell has its own loose ends:
 
-**Proposal.** Call `close()` after `feed()`. Keep a stack of open allowed tags,
-emit their closing tags at the end, and ignore stray closing tags with no
-matching opener. Add tests for each case.
-
-#### LTE-18 Pick one styling approach and move inline JS into a static file
-
-**Problem.** The frontend mixes two styling systems: Tailwind v4, used for
-about 26 utility classes (mostly in the ingredient tool), and 370 lines of
-hand-written `style.css` for everything else. Tailwind is the only reason the
-project needs Node and pnpm in CI, pre-commit and local setup. Meanwhile
-`base.html` carries a growing block of inline JavaScript that cannot be linted
-or cached, and the page loads Google Fonts from a third-party CDN.
+- `base.html` carries a growing block of inline JavaScript (see LTE-14) that
+  can't be linted, cached or tested.
+- Fonts load from the Google Fonts CDN.
+- `<html lang="">` is empty.
 
 **Proposal.**
 
-- Either move the remaining styles to Tailwind, or convert the 26 utilities to
-  plain CSS and drop the Node toolchain. The second option is cheaper and fits
-  a server-rendered HTMX app.
-- Move the inline scripts into `static/js/app.js`.
+- Choose one styling system. Either move the remaining styles to Tailwind, or
+  convert the 26 utilities to plain CSS and drop the Node toolchain. The second
+  is cheaper and fits a server-rendered HTMX app.
+- Move the inline scripts to `static/js/app.js`.
 - Self-host the two fonts.
-- Set `<html lang="en">`. It is currently `lang=""`.
+- Set `lang="en"`.
 
-#### LTE-19 Fix doc drift and keep `initial-context.md` focused on architecture
+#### LTE-16 Fix doc drift and keep `initial-context.md` focused on architecture
 
 **Problem.**
 
 - `docs/developer-guide.md` still prescribes `feature/<name>` branches, which
   `AGENTS.md` retired.
-- `README.md` and the developer guide use a bare `python manage.py`, which
+- The developer guide and the README use bare `python manage.py`, which
   `AGENTS.md` forbids.
-- Plans 005 and 006 have been "Draft" since May. Plan 005 asks to review
-  "FloatField vs DecimalField", but quantity has been a `DecimalField` for a
-  long time.
-- `initial-context.md`, the document every contributor and agent must read
-  first, has grown into a feature changelog. It includes Miller-column UI
-  behaviour, the panel-closing rules for saves, and the `HX-Retarget` details.
-  That makes the architecture hard to find and the file expensive to read.
+- Plans 005 and 006 have been "Draft" since May. Plan 005 still asks to review
+  "FloatField vs DecimalField", though quantity is already a `DecimalField`.
+- `initial-context.md` is the document every contributor and agent must read
+  first. It is now 310 lines and reads like a feature changelog: Miller-column
+  UI behaviour, panel-closing rules, `HX-Retarget` details. The architecture is
+  hard to find in it, and the whole file has to be read every time.
 
 **Proposal.**
 
 - Fix the branch and command examples.
 - Re-scope or archive plans 005 and 006.
-- Move feature-level notes into `docs/features/<feature>.md`.
-- Keep `initial-context.md` to the stack, boundaries, core patterns and
-  constraints, at no more than about 100 lines.
+- Move the feature-level notes into `docs/features/<feature>.md`.
+- Trim `initial-context.md` to the stack, boundaries, core patterns and
+  constraints, at about 100 lines.
