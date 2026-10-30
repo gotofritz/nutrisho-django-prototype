@@ -1,6 +1,10 @@
 [env]
 DJANGO_SETTINGS_MODULE = "nutrisho.settings.dev"
 
+[tasks.backup]
+help = "Write the schema to docs/schema.sql and a full SQL dump to docs/dump-<timestamp>.sql"
+cmd = "python manage.py backup_db"
+
 [tasks.coverage]
 help = "Open the latest coverage report in a web browser"
 cmd = "open htmlcov/index.html"
