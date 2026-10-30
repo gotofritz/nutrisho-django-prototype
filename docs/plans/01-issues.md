@@ -1798,3 +1798,164 @@ have ruled a GDPR violation without consent (LG München I, 2022).
 Fix: download the two font files (e.g. via `@fontsource/inconsolata` and
 `@fontsource/lobster` through pnpm, or as static files) and serve them from
 `static/` with `@font-face` in the Tailwind build.
+
+---
+
+## Agent-readiness findings (2026-10-30)
+
+Assessed by running the repo the way a coding agent would: fresh checkout, no
+`.env`, `uv sync --all-groups`, then the commands AGENTS.md and the developer
+guide prescribe. The baseline is good: `uv run poe qa` passes in about 16
+seconds (764 tests, 97.96% coverage), `docs/schema.sql` matches a freshly
+migrated database, and AGENTS.md plus `docs/initial-context.md` explain the
+architecture well. The issues below are the places where an agent still gets
+stuck, wastes context, or is told two different things.
+
+### AR-1. The "ask which branch" hook fires after every context compaction
+
+`.claude/settings.json` registers the SessionStart hook with matcher `"*"`, and
+SessionStart fires on `startup`, `resume`, `clear` **and `compact`**. So every
+time a long session auto-compacts, the agent is told mid-task "IMPORTANT: Before
+any work, ask the user which git branch to work on … Wait for the answer", and a
+well-behaved agent stops and waits. In headless or background runs (CI, cloud
+sessions, scheduled jobs) nobody is there to answer, and AGENTS.md repeats the
+same instruction, so the run stalls before it starts.
+
+Fix: restrict the branch prompt to `"matcher": "startup"`, and reword it (in the
+hook and in AGENTS.md) to "if the user has not named a branch and you are in an
+interactive session, ask; otherwise use the branch you were given or an open PR's
+branch". Keep the caveman hook on `*` if re-injection after compaction is wanted.
+
+### AR-2. The documented schema-regeneration commands fail on a fresh checkout
+
+AGENTS.md says any migration PR must run
+`uv run python manage.py migrate` and `uv run python manage.py backup_db --schema-only`.
+`manage.py` defaults `DJANGO_SETTINGS_MODULE` to `nutrisho.settings.prod`, which
+requires `SECRET_KEY`. `.env` is git-ignored, so in a fresh agent container both
+commands die with `ImproperlyConfigured: Set the SECRET_KEY environment
+variable`. The `poe` tasks avoid this (`.poe.toml` sets the dev settings), but
+the mandated commands bypass poe. `python manage.py check` and
+`makemigrations` fail the same way.
+
+The developer guide and README also use a bare `python manage.py …` four times
+(`addinitialuser`, `delete_recipe` ×2, `find_ingredient_duplicates`), which
+AGENTS.md forbids because the system interpreter may not be 3.14.
+
+Fix: either default `manage.py` to `nutrisho.settings.dev` (prod deployments set
+the variable explicitly anyway), or add poe tasks (`schema`, `manage`) and point
+AGENTS.md and the docs at those. Replace every bare `python manage.py` with
+`uv run python manage.py` or a poe task.
+
+### AR-3. Nothing checks for missing migrations or schema drift
+
+AGENTS.md makes the agent responsible for creating migrations and regenerating
+`docs/schema.sql`, but neither `poe qa` nor CI verifies it. An agent that edits a
+model and forgets `makemigrations` gets a green QA run and a green PR, since the
+tests build their database from the models' migrations only as far as they
+exist. The same goes for a stale `schema.sql`. Both are currently in sync, so
+this is about catching the next slip, not an existing bug.
+
+Fix: add to `qa` (or a test) `manage.py makemigrations --check --dry-run`, and a
+check that migrates a temporary SQLite file, runs
+`backup_db --schema-only --schema <tmp>` and diffs it against `docs/schema.sql`.
+`backup_db` already writes deterministic output, so the diff is stable.
+
+### AR-4. `poe test` floods the agent's context
+
+The `test` task runs `pytest -vv -s`, so every QA run prints one line per test
+plus captured output: 870 lines for a passing run today, growing with every
+test. Agents read tool output into their context window, so each mandated
+`poe qa` costs thousands of tokens to learn "all passed", and real failures are
+harder to spot in the noise.
+
+Fix: drop `-vv -s` from the default task (pytest's default `-q`-style summary
+still names each failure), and add a `test-verbose` task for humans who want the
+long form. Optionally add `--tb=short`.
+
+### AR-5. `poe qa` needs Node, pnpm and network to verify Python-only changes
+
+`qa` starts with `css`, which runs a non-frozen `pnpm install` and a Tailwind
+build. No test reads the compiled CSS. An agent that only touched Python must
+still have Node and pnpm installed and network access to the npm registry, or
+the mandated gate fails before the first lint. The non-frozen install can also
+rewrite `pnpm-lock.yaml` as a side effect of "just running the checks".
+
+Fix: use `pnpm install --frozen-lockfile` in `node-install`, and split `qa` into
+a Python gate (`lint`, `typecheck`, `test`, `test-hooks`) that AGENTS.md and the
+pre-commit hook run, with the CSS build kept in CI and `dev`.
+
+### AR-6. An agent cannot log in to check a UI change
+
+Every page is login-only. The developer guide's bootstrap is
+`python manage.py addinitialuser`, which calls `User.objects.create(...)` with no
+password, so the account it creates cannot log in. The working path, the
+`createsuperuser` poe task (user `fritz`, password `fritz`), is not mentioned in
+the developer guide. A fresh database also has no recipes, so even a logged-in
+agent sees an empty list and cannot exercise the HTMX editors without first
+building data by hand.
+
+Fix: make `addinitialuser` (or a new `seed_demo` command) create a user with a
+known dev password and a couple of sample recipes covering groups, substitutes,
+plurals and step titles, refuse to run under prod settings, and document it in
+the developer guide as the way to get a usable local app.
+
+### AR-7. The developer guide contradicts AGENTS.md on branch names
+
+`docs/developer-guide.md` still says branches are `feature/<name>` /
+`fix/<name>`. AGENTS.md says that form is retired in favour of
+`[<issue>-]<type>-<slug>`. Agents read both, and whichever they read last wins.
+
+Fix: update the developer guide's "Branches and commits" section to match
+AGENTS.md (or link to it instead of restating it).
+
+### AR-8. The TDD skill is not discoverable as a skill
+
+AGENTS.md points at `.claude/skills/tdd.md`, which has skill frontmatter, but
+Claude Code only discovers skills laid out as `.claude/skills/<name>/SKILL.md`
+(as the caveman skills are). The file is only read when an agent follows the
+link in AGENTS.md by hand; it never triggers on its own description.
+
+Fix: move it to `.claude/skills/tdd/SKILL.md` and update the AGENTS.md reference.
+
+### AR-9. Hook commands use relative paths
+
+Every hook in `.claude/settings.json` runs `bash .claude/hooks/<script>.sh`
+relative to the current directory. If the agent's shell has moved into `src/` or
+`tests/`, the UserPromptSubmit hook and the status line fail. Claude Code
+provides `$CLAUDE_PROJECT_DIR` for this.
+
+Fix: use `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/<script>.sh"`.
+
+### AR-10. No permission allowlist for the mandated commands
+
+`.claude/settings.json` has no `permissions.allow` block, so in default
+permission mode every `uv run poe qa`, `uv run pytest …` and `git commit` the
+workflow requires is a prompt. For a repo whose rules require running QA after
+each TDD step, that is a lot of interruptions.
+
+Fix: add an allowlist for the read-only and workflow commands (`uv run poe *`,
+`uv run pytest *`, `uv run ruff *`, `uv run ty *`, `git status`, `git diff *`,
+`git log *`).
+
+### AR-11. Caveman mode is not told to leave documentation alone
+
+The SessionStart hook injects caveman mode into every session. Its Boundaries
+section exempts code, commits and PRs, but not documentation. The README is
+user-facing and AGENTS.md requires agents to keep `docs/initial-context.md`
+current, and both are written in full prose today. An agent following the
+injected rules literally will write article-free fragments into them.
+
+Fix: extend the Boundaries line in `.claude/skills/caveman/SKILL.md` (and the
+fallback text in `caveman-activate.sh`) to "Code/commits/PRs/docs (`*.md`):
+write normal."
+
+### AR-12. This issues list lives where agents read it on every start
+
+AGENTS.md tells agents to read `docs/plans/*.md` first, as active plans. This
+file is a review backlog, not a plan, and it breaks the plans' `NNN-` naming.
+As several reviews append to it, every agent session pays for it in startup
+context, and an agent may treat its findings as work it has been asked to do.
+
+Fix: once triaged, move the findings into GitHub issues or individual numbered
+plans, and keep the raw review list out of `docs/plans/` (for example
+`docs/reviews/`).
