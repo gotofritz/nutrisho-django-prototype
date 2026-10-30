@@ -17,7 +17,7 @@
     rel="noopener"
     hx-boost="false"
   >Open to edit &nearr;</a>
-  <h2 class="preview-title">{{ recipe.recipe_name }}</h2>
+  <h2 class="preview-title">{{ recipe.recipe_name|safe_title_html }}</h2>
   <p class="preview-serves">Serves {{ recipe.servings }}</p>
   {% for group in recipe.ingredients_group.all %}
   <div class="preview-group">

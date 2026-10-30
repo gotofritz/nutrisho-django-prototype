@@ -216,3 +216,57 @@ def test_field_save_preserves_concurrent_other_field_change(auth_client, recipe)
     recipe.refresh_from_db()
     assert recipe.servings == 8
     assert recipe.short_description == "Concurrent edit"  # not overwritten
+
+
+@pytest.mark.django_db
+def test_field_display_renders_title_formatting(auth_client, recipe):
+    """Underline and strikethrough in the title render as markup."""
+    recipe.recipe_name = "<u>Ragú</u> <s>old</s> <script>x()</script>"
+    recipe.save()
+    content = auth_client.get(f"/recipes/{recipe.pk}/field/recipe_name/").content.decode()
+    assert "<u>Ragú</u> <s>old</s> x()</span>" in content
+    assert "<script>" not in content
+
+
+@pytest.mark.django_db
+def test_field_display_renders_blurb_formatting(auth_client, recipe):
+    """Basic formatting and new lines in the blurb render as markup."""
+    recipe.short_description = "<b>Rich</b> and <i>quick</i>\n<script>x()</script>"
+    recipe.save()
+    content = auth_client.get(f"/recipes/{recipe.pk}/field/short_description/").content.decode()
+    assert "<b>Rich</b> and <i>quick</i><br>x()</span>" in content
+    assert "<script>" not in content
+
+
+@pytest.mark.django_db
+def test_field_display_empty_blurb_shows_placeholder(auth_client, recipe):
+    """An empty blurb still shows the dash placeholder."""
+    content = auth_client.get(f"/recipes/{recipe.pk}/field/short_description/").content.decode()
+    assert "data-empty" in content
+    assert ">—</span>" in content
+
+
+@pytest.mark.django_db
+def test_field_display_servings_unchanged(auth_client, recipe):
+    """Servings render as plain text, as before."""
+    content = auth_client.get(f"/recipes/{recipe.pk}/field/servings/").content.decode()
+    assert ">2</span>" in content
+
+
+@pytest.mark.django_db
+def test_recipe_page_title_element_strips_tags(auth_client, recipe):
+    """The browser tab cannot render markup, so the <title> element gets plain text."""
+    recipe.recipe_name = "<u>Ragú</u> & co"
+    recipe.save()
+    content = auth_client.get(recipe.get_absolute_url()).content.decode()
+    assert "<title>Ragú &amp; co</title>" in content
+
+
+@pytest.mark.django_db
+def test_recipe_list_renders_title_formatting(auth_client, recipe):
+    """The recipe list renders the title's markup and keeps the delete prompt plain."""
+    recipe.recipe_name = "<s>Old</s> Ragú"
+    recipe.save()
+    content = auth_client.get("/recipes/").content.decode()
+    assert 'class="recipe-name"><s>Old</s> Ragú</a>' in content
+    assert "hx-confirm=\"Delete 'Old Ragú'?\"" in content
