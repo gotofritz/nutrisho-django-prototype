@@ -1960,3 +1960,228 @@ context, and an agent may treat its findings as work it has been asked to do.
 Fix: once triaged, move the findings into GitHub issues or individual numbered
 plans, and keep the raw review list out of `docs/plans/` (for example
 `docs/reviews/`).
+
+## Architecture and design quality findings (2026-10-30)
+
+Independent review as a staff engineer / Django and DBA, with the planned move
+to a VPS in mind. Ordered by severity. ARCH-1 to ARCH-3 were reproduced with a
+throwaway test against the current branch; the rest are from reading the code.
+
+### ARCH-1 · Typing an ingredient name in a different case returns a 500 — high
+
+`Ingredient.ingredient_name` is unique case-insensitively
+(`ingredient_name_ci_unique`, migration 0013), but every place that resolves a
+typed name looks it up case-sensitively:
+
+- `IngredientInRecipeForm.save` (`src/recipes/forms/ingredient_forms.py:36`, `:41`)
+- `IngredientInRecipeForm.resolve_pending_ingredient` (`:51`)
+- `recipe_ingredient_create` (`src/recipes/views/recipe_ingredients.py:165`),
+  which also bypasses the form and repeats the logic a third time
+
+With `onion` in the table, saving an ingredient row as `Onion`, or adding a
+new row as `ONION`, misses the existing row, tries to create a new one, hits
+the constraint and raises an unhandled `IntegrityError`. Both requests answer
+500. The datalist autosuggest makes exact matches likely but does not stop
+anyone typing.
+
+Fix: one `resolve_ingredient(name) -> Ingredient` helper (in `services/`) that
+does `ingredient_name__iexact` first and creates only on a miss, used by all
+three call sites, with tests for the case-variant path. `Cuisine` has the same
+case-sensitive `get_or_create` (`src/recipes/forms/field_forms.py:33`, `:53`)
+and no case-insensitive constraint, so `Italian` and `italian` silently become
+two cuisines; give it the same constraint and helper.
+
+### ARCH-2 · Any signed-in user can rename, merge and delete everyone's ingredients — high (before the VPS)
+
+Recipes are owner-scoped, but `Ingredient` rows are global and the clean-up
+tool under `/recipes/ingredients/manage/` only requires a login (no staff or
+permission check anywhere in `src/recipes/views/ingredient_admin.py`). A
+non-staff second user gets 200 on the manager and can rename, merge or delete
+ingredients that live in other people's recipes; `docs/initial-context.md`
+even notes that "a delete reaches recipes the current user cannot see".
+
+That is fine while one person uses the app on a laptop. On a public VPS with
+more than one account it lets any user rewrite every other user's recipes.
+
+Fix: gate the whole subsystem on a permission (`recipes.change_ingredient` /
+`recipes.delete_ingredient`, or `is_staff`) with an HTMX-aware 403, and test
+it with the existing `other_user` fixture. If the app is meant to stay
+single-user, write that down in `docs/initial-context.md` instead and keep
+account creation admin-only.
+
+### ARCH-3 · Duplicating a recipe drops every step title — medium
+
+`recipe_duplicate` (`src/recipes/views/recipe_crud.py:177`) copies steps by
+hand-listing `step_text`, `index_in_sequence`, `duration` and `extra_info`.
+`Step.step_title` (migration 0015) was added later and never added here, so
+the copy loses all its headings. Confirmed: a step titled `Sauce` duplicates
+with `step_title == ""`.
+
+The root cause is the pattern, not the one field: every new column on `Step`,
+`IngredientGroup` or `IngredientInRecipe` has to be remembered in this view.
+
+Fix: move duplication into a service that copies rows generically (clone the
+instance, clear `pk`, reassign the parent, `bulk_create` per level) so new
+fields come along by default, and add a test that compares every concrete
+field of the original and the copy apart from `id`, the parent FKs and
+`recipe_name`.
+
+### ARCH-4 · SQLite is not configured for concurrent writers — high (for the VPS)
+
+`DATABASES` (`src/nutrisho/settings/base.py:64`) is a bare `env.db()` with no
+`OPTIONS`, so SQLite runs with Django's defaults: rollback journal, `DEFERRED`
+transactions and a 5 s busy timeout. Every mutating view opens
+`transaction.atomic()`, reads (the `select_for_update()` calls are no-ops on
+SQLite) and then writes. With `DEFERRED`, two such transactions from two
+gunicorn workers both take a read lock, and the one that upgrades to a write
+lock second can get `database is locked` straight away: to avoid deadlock,
+SQLite does not wait out the busy timeout when a read transaction tries to
+become a write transaction. The comments in
+`utils/sequencing.py` assume "SQLite's single-writer locking serializes
+anyway", which is only true with `IMMEDIATE` transactions. Locally, with one
+`runserver` process, this never shows.
+
+Fix, in `prod.py` (or `base.py`, the tests use `:memory:`):
+
+```python
+DATABASES["default"]["OPTIONS"] = {
+    "transaction_mode": "IMMEDIATE",
+    "timeout": 20,
+    "init_command": (
+        "PRAGMA journal_mode=WAL;"
+        "PRAGMA synchronous=NORMAL;"
+        "PRAGMA foreign_keys=ON;"
+    ),
+}
+```
+
+and point `DATABASE_URL` at a path outside the code checkout (for example
+`/var/lib/nutrisho/db.sqlite3`) so a redeploy never touches it. SQLite in WAL
+mode is a perfectly good fit for this app on a single VPS; there is no need to
+move to Postgres for it.
+
+### ARCH-5 · Scaling rewrites stored quantities and loses data — medium
+
+`recipe_scale` (`src/recipes/views/recipe_crud.py:233`) multiplies and
+persists every `IngredientInRecipe.quantity`, rounded to 0.01, and rounds
+`servings` to a whole number. Two problems follow from storing the result:
+
+- **Irreversible drift.** `0.25` × 0.5 is stored as `0.13`; scaling back × 2
+  gives `0.26`. Small quantities can round to `0.00` and never come back.
+  Repeated scaling degrades the only copy of the recipe (the YAML seeds are
+  gone, so the database is the source of truth).
+- **Servings and quantities disagree.** 3 servings × 0.5 stores `servings = 2`
+  (1.5 rounded half-up) next to quantities for 1.5 servings. 1 serving × 0.5
+  stores `servings = 1` (clamped) with every quantity halved.
+
+The pluralisation work already established that presentation is computed on
+render and the database keeps the canonical form; scaling is the same kind of
+thing. Fix: keep the stored quantities as authored and scale at display time
+from a requested serving count (query parameter or session), with the
+existing `format_quantity` filter doing the rounding on output only. If a
+permanent rescale is still wanted, make it an explicit, separate "rewrite this
+recipe" action with a warning.
+
+### ARCH-6 · Login is opt-in per URL rather than the default — medium
+
+Authentication is applied by wrapping each route in `_lr(...)`
+(`src/recipes/urls.py`), plus a separate `htmx_login_required` on the root
+view and a plain `login_required` on `home` (so `home` is wrapped twice). A new
+route added without the wrapper is public, and nothing checks for that.
+
+Fix: Django 5.1+ ships `LoginRequiredMiddleware`. Subclass it, override
+`handle_no_permission` to return the existing `HX-Redirect` response for HTMX
+requests (reuse `_next_param`), and mark the few public views (login, logout)
+with `@login_not_required`. Then drop `_lr`, the double decorator on `home`,
+and add one test that walks `get_resolver()` and asserts every non-auth route
+redirects an anonymous client.
+
+### ARCH-7 · `prod.py` is not a production configuration yet — medium
+
+`src/nutrisho/settings/prod.py` only sets `DEBUG = False`. For a VPS behind a
+reverse proxy it is missing:
+
+- `STATIC_ROOT` (so `collectstatic` fails) and a way to serve static files
+  (WhiteNoise, or the proxy serving `STATIC_ROOT`); the built
+  `css/output.css` is git-ignored, so the deploy also needs the Tailwind build
+  step or a CI-built artifact
+- `SECURE_PROXY_SSL_HEADER`, `CSRF_TRUSTED_ORIGINS`, `SESSION_COOKIE_SECURE`,
+  `CSRF_COOKIE_SECURE`, `SECURE_HSTS_SECONDS`, `SECURE_SSL_REDIRECT` (or the
+  proxy doing the redirect)
+- `LOGGING` to stdout/journald, so 500s are visible without `DEBUG`
+- an application server: nothing in `pyproject.toml` provides gunicorn or
+  uvicorn, while `django-debug-toolbar` is a runtime dependency rather than a
+  dev one
+
+`docs/initial-context.md` still lists "no production settings, no secrets
+management" as a constraint, which the VPS move ends.
+
+Fix: fill in `prod.py`, add `uv run python manage.py check --deploy
+--settings=nutrisho.settings.prod --fail-level WARNING` to CI so it stays
+filled in, move `django-debug-toolbar` to the dev group, and update the
+constraints section of `docs/initial-context.md`.
+
+### ARCH-8 · Backups are a developer tool, not an operational one — medium (for the VPS)
+
+`backup_db` (`src/recipes/management/commands/backup_db.py`) writes the full
+dump into `docs/` inside the code checkout, and builds it with
+`iterdump()`, which issues one `SELECT` per table outside any explicit
+transaction. Against a live database (and with WAL, per ARCH-4) a write
+between two of those `SELECT`s yields a dump that is not a consistent
+snapshot. There is no schedule, no retention and no off-box copy, and the
+database is the only copy of the data.
+
+Fix: keep `--schema-only` as it is for `docs/schema.sql`, but give the data
+backup its own path: `VACUUM INTO '<backup dir>/nutrisho-<stamp>.sqlite3'` (or
+`sqlite3.Connection.backup()`), which is transactionally consistent and
+produces a ready-to-use database file. Run it from a systemd timer or cron on
+the VPS, prune old copies, ship them off the box (restic, rclone or the
+provider's object storage), and document and test a restore once.
+
+### ARCH-9 · Business logic lives in views outside the ingredient tool — low
+
+The clean-up tool has a proper `services/` layer, and `docs/initial-context.md`
+describes services as where the ORM lives. The rest of the app does not follow
+it: duplication, scaling, group pruning, ingredient resolution and the
+merge/split step operations are all written inline in views
+(`recipe_ingredients.py` is 567 lines, `recipe_crud.py` 302). The same "lock
+the parent, return 404 if it vanished, `form.save(commit=False)`, save
+selected fields" sequence is repeated in most save views. ARCH-1 and ARCH-3
+are both bugs that a single shared function would have prevented.
+
+Fix: no big-bang refactor. Move logic into `services/recipes.py` as it is
+touched, starting with the two functions ARCH-1 and ARCH-3 need, and keep
+views to request parsing, guards and template choice, as the clean-up tool
+already does.
+
+### ARCH-10 · Free-text columns are capped at arbitrary lengths — low
+
+`Step.step_text` and `Step.extra_info` are `CharField(max_length=512)`, as is
+`Recipe.short_description` (`src/recipes/models/step.py:18`, `:25`,
+`recipe.py:29`). SQLite ignores the length, so the cap exists only in forms;
+step merge already answers 422 when two steps together pass 512 characters,
+and long scraped method text is common. On any other database the column
+would reject the longer text.
+
+Fix: make these `TextField`s (on SQLite the migration is a table rebuild with
+no data change), keep a generous form-level `max_length` if a limit is still
+wanted, and regenerate `docs/schema.sql`.
+
+### ARCH-11 · Model naming and leftover fixture code obscure the schema — low
+
+- Reverse accessors for collections are singular and inconsistent:
+  `recipe.step`, `recipe.tag`, `recipe.ingredients_group`,
+  `ingredient_group.ingredient` (which yields `IngredientInRecipe` rows, not
+  `Ingredient`s), and the `Tag` M2M field is called `recipe`. Templates and
+  views read as if they handle one object (`recipe.step.all`). Renaming
+  `related_name`s to `steps`, `tags`, `ingredient_groups`, `items` changes no
+  SQL, only Python and templates.
+- `natural_key()` methods on every model are left over from the removed YAML
+  import/export. Only `Recipe` has a matching `get_by_natural_key`; the keys
+  on `IngredientGroup` (`group_name`, often `""`) and `Step` (index plus the
+  first 32 characters) are not unique, so they could not round-trip anyway.
+  Delete them, and their tests, unless fixtures are coming back.
+- The project-level root view (`src/nutrisho/urls.py`) is an unstyled inline
+  HTML page with one link, which breaks the documented rule that
+  `src/nutrisho/` holds configuration only. Replace it with a redirect to
+  `recipes:home`.
