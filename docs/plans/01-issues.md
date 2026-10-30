@@ -1587,8 +1587,8 @@ guard-rails around that health, not about broken code. Ordered by value.
   base template, and regressions in client-side state (panel not hiding, Merge
   enabled with one step) are invisible to CI.
 - **Fix:** move the script to `static/js/recipe-editor.js`, loaded only by the
-  recipe page. Add a single Playwright smoke test (Playwright is already
-  available in CI images and needs no Node build) covering: check one step →
+  recipe page. Add a single Playwright smoke test (`pytest-playwright` plus
+  `playwright install chromium` in CI; no Node build needed) covering: check one step →
   panel shows, Merge disabled; check two → Merge enabled; Cancel → panel hides.
 
 ### TD-7. One-off and legacy tooling that should have been deleted
@@ -1606,7 +1606,7 @@ guard-rails around that health, not about broken code. Ordered by value.
 - **Why it matters:** dead tooling reads as supported tooling, keeps tests and
   coverage alive for code with no future, and the raw-SQL scripts bypass every
   invariant the app now enforces (sequence compaction, PROTECT FKs).
-- **Fix:** delete the two scripts directories' contents and
+- **Fix:** delete `scripts/` (both items) and
   `fix_duplicate_sequences` (plus its tests); drop the stale ruff exclude. With
   a single deployment, squash `0001`–`0016` (`squashmigrations`, then remove the
   originals once the VPS has applied the squash) so a fresh install no longer
