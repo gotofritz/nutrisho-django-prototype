@@ -28,8 +28,18 @@
         (root || document).querySelectorAll('textarea').forEach(_resizeTextarea);
       }
       document.addEventListener('DOMContentLoaded', function() { _initTextareas(); });
+      function _syncStepsPanel() {
+        var panel = document.getElementById('steps-panel');
+        if (!panel) return;
+        var n = document.querySelectorAll('.step-select:checked').length;
+        panel.hidden = n < 1;
+        document.getElementById('steps-merge').disabled = n < 2;
+        document.getElementById('steps-panel-count').textContent =
+          n + (n === 1 ? ' step selected' : ' steps selected');
+      }
       document.addEventListener('htmx:afterSettle', function(e) {
         _initTextareas(e.detail.elt);
+        _syncStepsPanel();
         var panel = document.getElementById('reassign-panel');
         if (panel && document.querySelectorAll('.ingredient-select:checked').length === 0) {
           panel.hidden = true;
@@ -57,12 +67,19 @@
           var panel = document.getElementById('reassign-panel');
           if (panel) panel.hidden = n < 1;
         }
+        if (e.target.matches('.step-select')) _syncStepsPanel();
         if (e.target.id === 'reassign-target') {
           var ni = document.getElementById('new-group-name');
           if (ni) ni.hidden = e.target.value !== 'new';
         }
       });
       document.addEventListener('click', function (e) {
+        if (e.target.id === 'steps-cancel') {
+          document.querySelectorAll('.step-select:checked').forEach(function (cb) {
+            cb.checked = false;
+          });
+          _syncStepsPanel();
+        }
         if (e.target.id === 'reassign-cancel') {
           document.querySelectorAll('.ingredient-select:checked').forEach(function (cb) {
             cb.checked = false;

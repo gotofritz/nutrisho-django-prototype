@@ -1,11 +1,12 @@
 {% extends "./base.html" %}
+{% load recipe_filters %}
 
-{% block page_title %}Edit Metadata — {{ recipe.recipe_name }}{% endblock %}
+{% block page_title %}Edit Metadata — {{ recipe.recipe_name|striptags }}{% endblock %}
 
 {% block content %}
 <div class="recipe-contents">
   <h1>Edit Metadata</h1>
-  <h2>{{ recipe.recipe_name }}</h2>
+  <h2>{{ recipe.recipe_name|safe_title_html }}</h2>
   <form action="{% url 'recipes:metadata_edit' recipe.id %}" method="post">
     {% csrf_token %}
     {% for field in form %}

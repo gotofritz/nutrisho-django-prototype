@@ -1,4 +1,5 @@
 {% extends "./base.html" %}
+{% load recipe_filters %}
 
 {% block page_title %}Recipes{% endblock %}
 
@@ -17,7 +18,7 @@
       hx-post="{% url 'recipes:delete' recipe.id %}"
       hx-target="#recipe-{{ recipe.id }}"
       hx-swap="outerHTML"
-      hx-confirm="Delete '{{ recipe.recipe_name }}'?"
+      hx-confirm="Delete '{{ recipe.recipe_name|striptags }}'?"
       class="list-btn btn-delete"
     >Delete</button>
     <a href="{{ recipe.get_absolute_url }}" class="list-btn">View</a>
@@ -25,7 +26,7 @@
       {% csrf_token %}
       <button type="submit" class="list-btn">Duplicate</button>
     </form>
-    <a href="{{ recipe.get_absolute_url }}" class="recipe-name">{{ recipe.recipe_name }}</a>
+    <a href="{{ recipe.get_absolute_url }}" class="recipe-name">{{ recipe.recipe_name|safe_title_html }}</a>
   </li>
   {% endfor %}
 </ul>

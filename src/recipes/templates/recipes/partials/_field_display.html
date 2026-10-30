@@ -1,5 +1,6 @@
+{% load recipe_filters %}
 <span
   hx-get="{% url 'recipes:field_edit' recipe.id field_name %}"
   hx-swap="outerHTML"
   class="editable field-{{ field_name }}"{% if not value %} data-empty{% endif %}
->{{ value|default:"—" }}</span>
+>{% if not value %}—{% elif field_name == "recipe_name" %}{{ value|safe_title_html }}{% elif field_name == "short_description" %}{{ value|safe_blurb_html }}{% else %}{{ value }}{% endif %}</span>

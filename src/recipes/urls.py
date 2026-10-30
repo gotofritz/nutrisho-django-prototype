@@ -50,6 +50,9 @@ from .views import (
     recipe_step_move_down,
     recipe_step_move_up,
     recipe_step_save,
+    recipe_step_split,
+    recipe_steps_bulk_delete,
+    recipe_steps_merge,
 )
 
 
@@ -118,12 +121,19 @@ urlpatterns = [
     # Steps inline edit
     path("<int:recipe_id>/steps/add/", _lr(recipe_step_add), name="step_add"),
     path("<int:recipe_id>/steps/create/", _lr(recipe_step_create), name="step_create"),
+    path("<int:recipe_id>/steps/merge/", _lr(recipe_steps_merge), name="steps_merge"),
+    path(
+        "<int:recipe_id>/steps/bulk-delete/",
+        _lr(recipe_steps_bulk_delete),
+        name="steps_bulk_delete",
+    ),
     path("<int:recipe_id>/steps/<int:step_id>/", _lr(recipe_step_display), name="step_display"),
     path("<int:recipe_id>/steps/<int:step_id>/edit/", _lr(recipe_step_edit), name="step_edit"),
     path("<int:recipe_id>/steps/<int:step_id>/save/", _lr(recipe_step_save), name="step_save"),
     path(
         "<int:recipe_id>/steps/<int:step_id>/delete/", _lr(recipe_step_delete), name="step_delete"
     ),
+    path("<int:recipe_id>/steps/<int:step_id>/split/", _lr(recipe_step_split), name="step_split"),
     path(
         "<int:recipe_id>/steps/<int:step_id>/move-up/",
         _lr(recipe_step_move_up),

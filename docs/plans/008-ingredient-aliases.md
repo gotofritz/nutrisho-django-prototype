@@ -52,11 +52,9 @@ coverage ≥ 95%.
     the canonical British form.
 - **3** Route all *input* paths through `resolve_ingredient`, replacing raw
   `Ingredient.objects.get_or_create(ingredient_name=...)`:
-  - `batch_load_yaml_recipes` importer
   - `IngredientInRecipeForm.save` / `resolve_pending_ingredient` (recipe-page add/edit)
   - ingredient-admin create/edit (the clean-up tool's Edit action)
-  - Tests: importing a recipe naming `eggplant` yields an IIR pointing at
-    `aubergine`; recipe-page add of `eggplant` shows `aubergine`; no duplicate
+  - Tests: recipe-page add of `eggplant` shows `aubergine`; no duplicate
     `Ingredient` row created; no error surfaced.
 - **4** Merge (the clean-up tool's Merge action) records aliases: merging victim → survivor creates
   `IngredientAlias(alias_name=victim.ingredient_name, canonical=survivor)` and

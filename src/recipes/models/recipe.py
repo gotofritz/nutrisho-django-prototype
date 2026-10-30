@@ -3,8 +3,6 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 
-from recipes.utils.filename import sanitize_stored_filename
-
 from .cuisine import Cuisine
 from .source import Source
 
@@ -39,7 +37,6 @@ class Recipe(models.Model):
     )
     cuisine = models.ForeignKey(Cuisine, on_delete=models.SET_NULL, null=True, blank=True)
     servings = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1)])
-    yaml_filename = models.CharField("source YAML filename", max_length=260, blank=True, default="")
     created_date = models.DateTimeField("date created", auto_now_add=True)
     objects = RecipeManager()
 
@@ -58,14 +55,6 @@ class Recipe(models.Model):
     def __str__(self) -> str:
         """Return a readable label."""
         return str(self.recipe_name)
-
-    def save(self, *args, **kwargs):
-        """Sanitise the stored YAML filename before saving."""
-        if self.yaml_filename:
-            self.yaml_filename = sanitize_stored_filename(  # ty: ignore[invalid-assignment]
-                str(self.yaml_filename)
-            )
-        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         """Return the URL of the recipe page."""

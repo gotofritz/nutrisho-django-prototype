@@ -1,9 +1,14 @@
-"""Unit tests for sequencing helpers: remove_and_compact, move_in_sequence."""
+"""Unit tests for sequencing helpers: remove_and_compact, move_in_sequence, et al."""
 
 import pytest
 
 from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Recipe, Step
-from recipes.utils.sequencing import insert_at_index, move_in_sequence, remove_and_compact
+from recipes.utils.sequencing import (
+    insert_at_index,
+    move_in_sequence,
+    remove_and_compact,
+    remove_many_and_compact,
+)
 
 
 @pytest.fixture
@@ -228,3 +233,48 @@ def test_remove_and_compact_already_deleted_is_noop(group):
     assert iir0.index_in_sequence == 0
     assert iir2.index_in_sequence == 1  # unchanged
     assert iir3.index_in_sequence == 2  # not incorrectly compacted to 1
+
+
+# --- remove_many_and_compact ---
+
+
+@pytest.mark.django_db
+def test_remove_many_and_compact_closes_every_gap(group):
+    """Non-contiguous deletes leave a gapless sequence in the original order."""
+    rows = [_make_iir(group, i) for i in range(6)]
+    siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
+    remove_many_and_compact(siblings=siblings, pks=[rows[1].pk, rows[2].pk, rows[4].pk])
+    remaining = list(siblings.order_by("index_in_sequence"))
+    assert [r.pk for r in remaining] == [rows[0].pk, rows[3].pk, rows[5].pk]
+    assert [r.index_in_sequence for r in remaining] == [0, 1, 2]
+
+
+@pytest.mark.django_db
+def test_remove_many_and_compact_keeps_a_one_based_start(group):
+    """Legacy 1-based sequences keep their base; only the gaps close."""
+    rows = [_make_iir(group, i) for i in range(1, 5)]
+    siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
+    remove_many_and_compact(siblings=siblings, pks=[rows[1].pk])
+    assert [r.index_in_sequence for r in siblings.order_by("index_in_sequence")] == [1, 2, 3]
+
+
+@pytest.mark.django_db
+def test_remove_many_and_compact_ignores_foreign_pks(recipe, group):
+    """Pks outside siblings are neither deleted nor counted."""
+    rows = [_make_iir(group, i) for i in range(3)]
+    other_group = IngredientGroup.objects.create(recipe=recipe, group_name="H", index_in_sequence=1)
+    foreign = _make_iir(other_group, 9)
+    siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
+    removed = remove_many_and_compact(siblings=siblings, pks=[rows[0].pk, foreign.pk, 999_999])
+    assert removed == 1
+    assert [r.index_in_sequence for r in siblings.order_by("index_in_sequence")] == [0, 1]
+    assert IngredientInRecipe.objects.filter(pk=foreign.pk).exists()
+
+
+@pytest.mark.django_db
+def test_remove_many_and_compact_with_nothing_is_a_noop(group):
+    """No pks, no change."""
+    rows = [_make_iir(group, i) for i in range(2)]
+    siblings = IngredientInRecipe.objects.filter(ingredient_group=group)
+    assert remove_many_and_compact(siblings=siblings, pks=[]) == 0
+    assert siblings.count() == len(rows)
