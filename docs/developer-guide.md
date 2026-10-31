@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) — Python dependency manager
-- [poethepoet](https://poethepoet.natn.io/) — task runner (installed by `uv sync`; run as `uv run poe <task>`)
+- [GNU Make](https://www.gnu.org/software/make/) — task runner (`make help` lists every target; preinstalled on macOS and most Linux distributions)
 - [pnpm](https://pnpm.io/) — Node dependency manager (for Tailwind CSS)
 - [jq](https://jqlang.org/) — JSON CLI tool (`brew install jq`)
 
@@ -16,10 +16,10 @@ cp .env.example .env
 uv sync
 pnpm install
 pnpm css          # compile Tailwind CSS
-uv run poe bootstrap
+make bootstrap
 ```
 
-`uv run poe bootstrap` applies migrations and creates the owner: one superuser
+`make bootstrap` applies migrations and creates the owner: one superuser
 (the only account that can log in, including at `/admin/`). It reads
 `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL` and
 `DJANGO_SUPERUSER_PASSWORD` from the environment or `.env`, and prompts for any
@@ -36,8 +36,8 @@ prompting when a variable is missing.
 ## Running the app
 
 ```bash
-uv run poe dev          # port 8987
-uv run poe dev 9000     # custom port
+make dev               # port 8987
+make dev PORT=9000     # custom port
 ```
 
 Opens at <http://127.0.0.1:8987/recipes/>.
@@ -45,7 +45,7 @@ Opens at <http://127.0.0.1:8987/recipes/>.
 ## The database
 
 `db.sqlite3` is the only copy of the data. A fresh checkout starts empty:
-`uv run poe bootstrap` (see *First-time setup*) creates the tables and the owner.
+`make bootstrap` (see *First-time setup*) creates the tables and the owner.
 
 ### Concurrent writes
 
@@ -71,7 +71,7 @@ Rules that follow from WAL:
 - Never delete `db.sqlite3-wal` or `db.sqlite3-shm` while the database is in
   use, and never move `db.sqlite3` without them: committed changes may still
   be in the `-wal` file.
-- Do not back up by copying `db.sqlite3` alone. `uv run poe backup` reads
+- Do not back up by copying `db.sqlite3` alone. `make backup` reads
   through SQLite, sees everything, and dumps one consistent snapshot even
   while the app is saving. For a file copy, use
   `sqlite3 db.sqlite3 ".backup copy.sqlite3"`, or stop the app first.
@@ -84,7 +84,7 @@ Rules that follow from WAL:
 Nothing in the data changes: WAL is a different way of writing the same file,
 and the first connection after deploying converts it in place. Once:
 
-1. Stop the app and take a backup (`uv run poe backup`, plus
+1. Stop the app and take a backup (`make backup`, plus
    `cp db.sqlite3 db.sqlite3.pre-wal` — safe while stopped).
 2. Deploy and start the app. Check the mode:
    `sqlite3 db.sqlite3 "PRAGMA journal_mode;"` prints `wal`.
@@ -104,7 +104,7 @@ python manage.py delete_recipe --id 42 43 44
 ## Backing up
 
 ```bash
-uv run poe backup                                   # schema + full dump
+make backup                                        # schema + full dump
 uv run python manage.py backup_db --schema-only     # schema only
 ```
 
@@ -143,11 +143,16 @@ healthchecks.io ping with the backup job (#44).
 ## Quality checks
 
 ```bash
-uv run poe qa        # lint + typecheck + tests + hook regression tests
-uv run poe lint      # ruff only
-uv run poe typecheck # ty only
-uv run poe test      # pytest with coverage (≥95% required)
+make qa                      # lint + typecheck + tests + hook regression tests
+make lint                    # ruff only
+make typecheck               # ty only
+make test                    # pytest with coverage (≥95% required)
+make test ARGS="-k healthz"  # extra arguments go to pytest
 ```
+
+`make` on its own, or `make help`, lists every target with a one-line
+description. A target appears there when its rule line in the `Makefile` ends
+in a `## description` comment, so add one to every new target.
 
 ## CSS
 
@@ -158,11 +163,11 @@ pnpm css         # build once (minified)
 pnpm css:watch   # rebuild on change
 ```
 
-Or via poe:
+Or via make, which runs `pnpm install` first:
 
 ```bash
-uv run poe css
-uv run poe css-watch
+make css
+make css-watch
 ```
 
 ## Tech stack
@@ -176,7 +181,7 @@ uv run poe css-watch
 | Lint | ruff |
 | Types | ty |
 | Tests | pytest + pytest-django |
-| Tasks | poethepoet |
+| Tasks | GNU Make (`Makefile`) |
 | CSS | Tailwind CSS v4 (pnpm) |
 | HTMX | django-htmx |
 
@@ -200,7 +205,7 @@ DJANGO_SETTINGS_MODULE=nutrisho.settings.test uv run pytest -W error::Deprecatio
 ```
 
 Then bump the pin, refresh the lock with
-`uv lock --upgrade-package django`, and run `uv run poe qa`.
+`uv lock --upgrade-package django`, and run `make qa`.
 
 ## Project layout
 
@@ -232,4 +237,4 @@ TDD: red → green → refactor. See [AGENTS.md](../AGENTS.md) for the full requ
 - `feature/<name>` / `fix/<name>`
 - Imperative present tense, subject ≤ 72 chars
 - Small atomic commits
-- Run `uv run poe qa` before opening a PR
+- Run `make qa` before opening a PR

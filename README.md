@@ -21,7 +21,7 @@ A personal recipe manager. Browse, edit, and organise your recipes in one place.
 Recipes live in the database, nowhere else. To take a copy:
 
 ```bash
-uv run poe backup
+make backup
 ```
 
 This writes the whole database — every recipe, ingredient and user — to
@@ -37,7 +37,7 @@ sqlite3 db.sqlite3 < docs/dump-20261030-001904.sql
 
 While the app runs, recent changes can sit in `db.sqlite3-wal` rather than
 `db.sqlite3`. Never delete that file, and never copy `db.sqlite3` on its own as
-a backup: use `uv run poe backup`, which always sees every saved change.
+a backup: use `make backup`, which always sees every saved change.
 
 ---
 

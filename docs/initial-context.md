@@ -13,13 +13,13 @@ Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuis
 - **Deps**: uv
 - **Lint**: ruff
 - **Types**: ty
-- **Tasks**: poethepoet (tasks in `.poe.toml`, ruff config in `.ruff.toml`)
+- **Tasks**: GNU Make (targets in `Makefile`, `make help` lists them; ruff config in `.ruff.toml`)
 - **Tests**: pytest + pytest-django
 
 ## Prerequisites
 
 - `uv` — dependency manager and task runner for Python
-- `poethepoet` — task runner (`uv run poe <task>`)
+- `make` — task runner (`make <target>`, `make help` to list targets)
 - `jq` — required by `.claude/hooks/` for JSON parsing (`brew install jq` / `apt install jq`)
 
 ## Project Layout
@@ -332,7 +332,7 @@ Browser → HTMX views → Django ORM → SQLite. The database is the only copy 
 data; the YAML seed files and their import/export commands were bootstrap
 scaffolding and are gone (issue #27).
 
-`backup_db` (`uv run poe backup`) writes `docs/schema.sql` (committed, schema
+`backup_db` (`make backup`) writes `docs/schema.sql` (committed, schema
 only, deterministic order) and `docs/dump-<timestamp>.sql` (git-ignored, full
 dump for restoring with `sqlite3`). SQLite only, like the rest of the app. The
 dump is read inside one read transaction, so it is a consistent snapshot even
@@ -402,7 +402,7 @@ Postgres enforces the `max_length` caps SQLite ignores.
 - SQLite only; no migrations for external DBs
 - No REST API yet
 - Auth uses Django's built-in User model; the owner superuser comes from
-  `bootstrap_owner` (`uv run poe bootstrap`), never from credentials in the repo
+  `bootstrap_owner` (`make bootstrap`), never from credentials in the repo
 
 ## Boundaries
 
@@ -415,7 +415,7 @@ Postgres enforces the `max_length` caps SQLite ignores.
 
 ```bash
 source .venv/bin/activate
-uv run poe qa          # lint + typecheck + test
+make qa                # lint + typecheck + test
 ```
 
 See AGENTS.md for full TDD workflow.
