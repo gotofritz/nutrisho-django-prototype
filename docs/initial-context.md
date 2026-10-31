@@ -28,7 +28,7 @@ Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuis
 src/
   nutrisho/      # Django project (settings, urls, wsgi, health.py)
   recipes/       # Main app: models, views, templates, management commands
-    services/      # Pure query/mutation functions, no HTTP (ingredient_admin.py, name_resolution.py)
+    services/      # Pure query/mutation functions, no HTTP (ingredient_admin.py, name_resolution.py, recipe_duplication.py)
     templatetags/  # Custom template filters (recipe_filters.py)
     utils/         # Framework-free helpers (sequencing.py, pluralise.py, step_title.py, step_text.py)
 docs/
@@ -55,6 +55,19 @@ Each editable entity (field, step, ingredient, group) has three endpoints:
 HTMX swaps partials in place (`hx-swap="outerHTML"`). The `+ Add` buttons (`hx-post`, `hx-swap="beforeend"`) only render a blank edit form — no row is created until its Save posts to the entity's `POST /<entity>/create/` endpoint and validation passes. The draft form submits its DOM `position` (computed at submit via `hx-on::config-request`) and the server inserts at that position (resolved against the ordered sibling list — legacy imported sequences may be 1-based or gapped), shifting later rows, so saving multiple drafts out of order cannot diverge from the on-screen order; Cancel on an unsaved form just removes it from the DOM, so canceled adds leave no orphan rows. `Delete` buttons use `hx-post` with `hx-swap="outerHTML"`. CSRF token is injected globally via `hx-headers` on `<body>`. HTMX library is served from `django_htmx` static files (`htmx.min.js`).
 
 Ingredient name edit uses an HTML5 `<datalist>` for autosuggest (all existing ingredient names). On save, `ingredient_name` is resolved via get-or-create so renaming creates a new `Ingredient` rather than mutating a shared one.
+
+### Recipe Duplication (`recipes/services/recipe_duplication.py`)
+
+"Duplicate recipe" copies rows generically: `_clone` reads every
+`_meta.concrete_fields` column except the pk and takes overrides by attname
+(`recipe_id`, `ingredient_group_id`), so foreign keys are copied by id and a column
+added to `Recipe`, `Step`, `IngredientGroup` or `IngredientInRecipe` is carried
+over without editing the service (#35). Each level is one `bulk_create` and tags
+one `add`, so a copy costs a fixed number of queries whatever the recipe's size.
+Only the name allocation retries, inside its own savepoint; an IntegrityError on a
+child row rolls the whole copy back. `tests/recipes/test_recipe_duplication.py`
+walks every concrete field of the four models and fails if its fixture leaves one
+at its default, so a new column must be added to that fixture.
 
 ### Ingredient Clean-up Tool (`recipes/services/`, `recipes/views/ingredient_admin.py`)
 
