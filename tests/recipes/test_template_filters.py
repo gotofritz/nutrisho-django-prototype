@@ -1,6 +1,7 @@
 """Tests for recipe_filters template tags."""
 
 from decimal import Decimal
+from fractions import Fraction
 
 import pytest
 from django.test import Client
@@ -52,6 +53,39 @@ def test_recipe_detail_renders_raw_quantities(client: Client, user):
     assert "ingredient-quantity" in content
     # raw quantity rendered; scaling not applied until data is migrated
     assert '<span class="ingredient-quantity">2.5<' in content
+
+
+def test_format_quantity_never_uses_exponent_notation():
+    """Scaled values can carry exponents (1E+2, 3.1E-7); the page shows plain digits."""
+    from recipes.templatetags.recipe_filters import format_quantity
+
+    assert format_quantity(Decimal("1E+2")) == "100"
+    assert format_quantity(Decimal("3.1E-7")) == "0.00000031"
+
+
+def test_scaled_quantity_without_scale_is_the_stored_quantity():
+    """No scale (the unscaled page) passes the stored quantity through."""
+    from recipes.templatetags.recipe_filters import scaled_quantity
+
+    assert scaled_quantity(_iir(Decimal("2.50")), None) == Decimal("2.50")
+    assert scaled_quantity(_iir(None), Fraction(3, 2)) is None
+
+
+def test_scaled_quantity_scales_and_rounds_for_display():
+    """2 for 3 servings is 0.67 for 1."""
+    from recipes.templatetags.recipe_filters import scaled_quantity
+
+    assert scaled_quantity(_iir(Decimal("2")), Fraction(1, 3)) == Decimal("0.67")
+
+
+def test_ingredient_name_at_follows_the_given_quantity():
+    """The plural follows the displayed quantity, not the stored one."""
+    from recipes.templatetags.recipe_filters import ingredient_name_at
+
+    assert ingredient_name_at(_iir(Decimal("0.5")), Decimal("1")) == "onion"
+    assert ingredient_name_at(_iir(Decimal("1")), Decimal("2")) == "onions"
+    assert ingredient_name_at(_iir(Decimal("1"), unit="g"), Decimal("2")) == "onion"
+    assert ingredient_name_at(IngredientInRecipe(quantity=Decimal("1")), Decimal("2")) == ""
 
 
 def _iir(quantity: Decimal | None, unit: str = "") -> IngredientInRecipe:
@@ -112,7 +146,7 @@ def test_display_ingredient_name_honours_the_plural_name_override():
 
 @pytest.mark.django_db
 def test_recipe_detail_pluralises_a_countable_ingredient(client: Client, user):
-    """recipe_scale persists the scaled quantity, so 2 must render as "2 onions"."""
+    """A stored quantity of 2 renders as "2 onions"."""
     recipe = Recipe.objects.create(recipe_name="Plural Test", owner=user, servings=4)
     group = IngredientGroup.objects.create(recipe=recipe, group_name="", index_in_sequence=1)
     onion = Ingredient.objects.create(ingredient_name="onion")
