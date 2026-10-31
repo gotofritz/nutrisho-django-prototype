@@ -8,6 +8,7 @@ from django.views.decorators.vary import vary_on_headers
 
 from recipes.forms.field_forms import RecipeMetadataForm
 from recipes.models import Cuisine, IngredientInRecipe, Recipe
+from recipes.services.recipe_duplication import duplicate_recipe
 from recipes.views._types import AuthedRequest
 
 
@@ -152,54 +153,7 @@ def _next_recipe_url(deleted_id: int, user) -> str:
 def recipe_duplicate(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Duplicate a recipe."""
     original = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
-    with transaction.atomic():
-        # Phase 1: allocate a unique name (retryable on owner/name collision only)
-        n: int | None = None
-        while True:
-            copy_name = _copy_name(original.recipe_name, n)
-            try:
-                with transaction.atomic():
-                    new = Recipe.objects.create(
-                        recipe_name=copy_name,
-                        owner=original.owner,
-                        short_description=original.short_description,
-                        source=original.source,
-                        source_instance=original.source_instance,
-                        cuisine=original.cuisine,
-                        servings=original.servings,
-                    )
-            except IntegrityError:
-                n = 2 if n is None else n + 1
-                continue
-            break
-        # Phase 2: copy children — IntegrityErrors propagate, not retried
-        for step in original.step.order_by("index_in_sequence"):
-            new.step.create(
-                step_text=step.step_text,
-                index_in_sequence=step.index_in_sequence,
-                duration=step.duration,
-                extra_info=step.extra_info,
-            )
-        for group in original.ingredients_group.order_by("index_in_sequence"):
-            new_group = new.ingredients_group.create(
-                group_name=group.group_name,
-                index_in_sequence=group.index_in_sequence,
-            )
-            for iir in IngredientInRecipe.objects.filter(ingredient_group=group).order_by(
-                "index_in_sequence"
-            ):
-                IngredientInRecipe.objects.create(
-                    ingredient=iir.ingredient,
-                    substitute=iir.substitute,
-                    unit=iir.unit,
-                    preparation=iir.preparation,
-                    quantity=iir.quantity,
-                    ingredient_group=new_group,
-                    index_in_sequence=iir.index_in_sequence,
-                    note=iir.note,
-                )
-        for tag in original.tag.all():
-            tag.recipe.add(new)
+    new = duplicate_recipe(original)
     if request.htmx:
         response = HttpResponse()
         response["HX-Redirect"] = new.get_absolute_url()
@@ -287,15 +241,6 @@ def recipe_scale(request: AuthedRequest, recipe_id: int) -> HttpResponse:
         response["HX-Redirect"] = recipe.get_absolute_url()
         return response
     return redirect(recipe.get_absolute_url())
-
-
-_NAME_MAX = 200
-
-
-def _copy_name(base: str, n: int | None = None) -> str:
-    """Build a copy name: 'Base Copy', 'Base Copy 2', 'Base Copy 3', …"""
-    suffix = f" Copy {n}" if n is not None else " Copy"
-    return f"{base[: _NAME_MAX - len(suffix)]}{suffix}"
 
 
 def _cuisine_names() -> list[str]:
