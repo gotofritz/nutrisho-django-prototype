@@ -130,6 +130,16 @@ ol.recipe-steps {
   text-align: end;
 }
 
+.sidebar .scaled-note {
+  margin: 0 0 4px 0;
+  text-align: end;
+  font-style: italic;
+}
+
+.scale-hint {
+  font-size: 0.85em;
+}
+
 .ingredients-list {
   border-top: 3px dotted black;
   padding-top: 3px;

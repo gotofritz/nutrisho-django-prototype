@@ -40,7 +40,7 @@ from .views import (
     recipe_ingredient_save,
     recipe_metadata_edit,
     recipe_new,
-    recipe_scale,
+    recipe_scale_copy,
     recipe_scale_panel,
     recipe_step_add,
     recipe_step_create,
@@ -110,7 +110,7 @@ urlpatterns = [
     path("<int:recipe_id>/delete/panel/", _lr(recipe_delete_panel), name="delete_panel"),
     path("<int:recipe_id>/duplicate/", _lr(recipe_duplicate), name="duplicate"),
     path("<int:recipe_id>/metadata/", _lr(recipe_metadata_edit), name="metadata_edit"),
-    path("<int:recipe_id>/scale/", _lr(recipe_scale), name="scale"),
+    path("<int:recipe_id>/scale/copy/", _lr(recipe_scale_copy), name="scale_copy"),
     path("<int:recipe_id>/scale/panel/", _lr(recipe_scale_panel), name="scale_panel"),
     # Field inline edit
     path(

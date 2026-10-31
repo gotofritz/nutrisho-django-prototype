@@ -1,10 +1,14 @@
 """Custom template filters for recipes."""
 
+from decimal import Decimal
+from fractions import Fraction
 from html.parser import HTMLParser
 
 from django import template
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
+
+from recipes.utils.scaling import round_for_display, scale_quantity
 
 register = template.Library()
 
@@ -67,25 +71,46 @@ def format_quantity(value: object) -> str:
     """Format decimal quantity, stripping trailing zeros (e.g. 2.50 → 2.5, 4.00 → 4)."""
     if value is None:
         return ""
-    s = str(value)
+    # Fixed-point even for exponents a scaled value can carry (3.1E-7, 1E+2).
+    s = format(value, "f") if isinstance(value, Decimal) else str(value)
     return s.rstrip("0").rstrip(".") if "." in s else s
 
 
 @register.filter
+def scaled_quantity(iir: object, scale: Fraction | None) -> Decimal | None:
+    """`iir`'s quantity scaled by `scale` and rounded for display; as stored without one.
+
+    Display-time only (#36): the page computes this on every render from the
+    stored value, so scaling never drifts and is never written back.
+    """
+    quantity = getattr(iir, "quantity", None)
+    if quantity is None or not scale:
+        return quantity
+    return round_for_display(scale_quantity(Decimal(quantity), scale))
+
+
+@register.filter
 def display_ingredient_name(iir: object) -> str:
-    """Name of `iir`'s ingredient, pluralised when the quantity calls for it.
+    """Name of `iir`'s ingredient, pluralised when its stored quantity calls for it.
 
     Takes the whole `IngredientInRecipe` because the decision needs three of its
     fields at once. Plural when the quantity is recorded and is not 1 (`0.5
     onions`, `2 onions`), **and** only when `unit` is empty: `200 g onion` must
-    stay singular, and that check is what keeps mass nouns safe. `recipe_scale`
-    persists scaled quantities, so this is the only thing standing between a
-    doubled recipe and "2 onion".
+    stay singular, and that check is what keeps mass nouns safe.
+    """
+    return ingredient_name_at(iir, getattr(iir, "quantity", None))
+
+
+@register.filter
+def ingredient_name_at(iir: object, quantity: object) -> str:
+    """`display_ingredient_name` for the quantity actually shown, e.g. a scaled one.
+
+    A recipe scaled at display time shows 1 onion as "2 onions" at double the
+    servings, so the plural follows the displayed quantity, not the stored one.
     """
     ingredient = getattr(iir, "ingredient", None)
     if ingredient is None:
         return ""
-    quantity = getattr(iir, "quantity", None)
     if quantity is None or quantity == 1 or getattr(iir, "unit", ""):
         return ingredient.ingredient_name
     return ingredient.plural

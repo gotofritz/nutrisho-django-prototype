@@ -110,9 +110,17 @@ def test_other_user_cannot_get_delete_panel(other_client, recipe):
 
 
 @pytest.mark.django_db
-def test_other_user_cannot_scale(other_client, recipe):
-    """Other user cannot scale."""
-    response = other_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
+def test_other_user_cannot_save_scaled_copy(other_client, recipe):
+    """Other user cannot save a scaled copy, and no copy is made."""
+    response = other_client.post(f"/recipes/{recipe.pk}/scale/copy/", {"servings": "8"})
+    assert response.status_code == 404
+    assert Recipe.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_other_user_cannot_view_scaled_recipe(other_client, recipe):
+    """Other user cannot view the recipe scaled either."""
+    response = other_client.get(f"/recipes/{recipe.pk}/?servings=8")
     assert response.status_code == 404
 
 
