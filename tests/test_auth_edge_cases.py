@@ -98,15 +98,15 @@ def test_htmx_post_unauthenticated_next_is_omitted_or_referer(recipe):
     """HTMX POST with Referer: next= should be Referer, not the POST URL."""
     c = Client()
     response = c.post(
-        f"/recipes/{recipe.pk}/scale/",
-        {"multiplier": "2"},
+        f"/recipes/{recipe.pk}/scale/copy/",
+        {"servings": "8"},
         HTTP_HX_REQUEST="true",
         HTTP_REFERER=f"http://testserver/recipes/{recipe.pk}/",
     )
     assert response.status_code == 200
     hx_redirect = response["HX-Redirect"]
     # next= should NOT be the POST URL
-    assert f"/recipes/{recipe.pk}/scale/" not in hx_redirect
+    assert f"/recipes/{recipe.pk}/scale/copy/" not in hx_redirect
 
 
 @pytest.mark.django_db

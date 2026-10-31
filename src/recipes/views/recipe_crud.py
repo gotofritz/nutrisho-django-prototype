@@ -1,5 +1,3 @@
-from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
-
 from django.db import IntegrityError, transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -7,7 +5,10 @@ from django.views.decorators.http import require_GET, require_http_methods, requ
 from django.views.decorators.vary import vary_on_headers
 
 from recipes.forms.field_forms import RecipeMetadataForm
-from recipes.models import Cuisine, IngredientInRecipe, Recipe
+from recipes.models import Cuisine, Recipe
+from recipes.services.recipe_duplication import duplicate_recipe
+from recipes.services.recipe_scaling import ScaleError, save_scaled_copy
+from recipes.utils.scaling import MAX_SERVINGS, parse_servings
 from recipes.views._types import AuthedRequest
 
 
@@ -152,54 +153,7 @@ def _next_recipe_url(deleted_id: int, user) -> str:
 def recipe_duplicate(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Duplicate a recipe."""
     original = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
-    with transaction.atomic():
-        # Phase 1: allocate a unique name (retryable on owner/name collision only)
-        n: int | None = None
-        while True:
-            copy_name = _copy_name(original.recipe_name, n)
-            try:
-                with transaction.atomic():
-                    new = Recipe.objects.create(
-                        recipe_name=copy_name,
-                        owner=original.owner,
-                        short_description=original.short_description,
-                        source=original.source,
-                        source_instance=original.source_instance,
-                        cuisine=original.cuisine,
-                        servings=original.servings,
-                    )
-            except IntegrityError:
-                n = 2 if n is None else n + 1
-                continue
-            break
-        # Phase 2: copy children — IntegrityErrors propagate, not retried
-        for step in original.step.order_by("index_in_sequence"):
-            new.step.create(
-                step_text=step.step_text,
-                index_in_sequence=step.index_in_sequence,
-                duration=step.duration,
-                extra_info=step.extra_info,
-            )
-        for group in original.ingredients_group.order_by("index_in_sequence"):
-            new_group = new.ingredients_group.create(
-                group_name=group.group_name,
-                index_in_sequence=group.index_in_sequence,
-            )
-            for iir in IngredientInRecipe.objects.filter(ingredient_group=group).order_by(
-                "index_in_sequence"
-            ):
-                IngredientInRecipe.objects.create(
-                    ingredient=iir.ingredient,
-                    substitute=iir.substitute,
-                    unit=iir.unit,
-                    preparation=iir.preparation,
-                    quantity=iir.quantity,
-                    ingredient_group=new_group,
-                    index_in_sequence=iir.index_in_sequence,
-                    note=iir.note,
-                )
-        for tag in original.tag.all():
-            tag.recipe.add(new)
+    new = duplicate_recipe(original)
     if request.htmx:
         response = HttpResponse()
         response["HX-Redirect"] = new.get_absolute_url()
@@ -209,93 +163,54 @@ def recipe_duplicate(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 @require_GET
 def recipe_scale_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
-    """Show the scale-servings panel."""
+    """Show the scale panel, starting from the page's serving count."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
-    return render(request, "recipes/partials/_scale_panel.html", {"recipe": recipe})
+    return _scale_panel(request, recipe, servings=parse_servings(request.GET.get("servings")))
 
 
-# Model field limits: Recipe.servings is a PositiveSmallIntegerField,
-# IngredientInRecipe.quantity is DecimalField(max_digits=7, decimal_places=2).
-_MAX_SERVINGS = 32767
-_MAX_QUANTITY = Decimal("99999.99")
-
-
-def _scale_error(request: AuthedRequest, recipe: Recipe, msg: str) -> HttpResponse:
+def _scale_panel(
+    request: AuthedRequest,
+    recipe: Recipe,
+    *,
+    servings: int | None,
+    error: str = "",
+    status: int = 200,
+) -> HttpResponse:
     return render(
         request,
         "recipes/partials/_scale_panel.html",
-        {"recipe": recipe, "error": msg},
-        status=422,
+        {
+            "recipe": recipe,
+            "servings": servings or recipe.servings,
+            "max_servings": MAX_SERVINGS,
+            "error": error,
+        },
+        status=status,
     )
 
 
 @require_POST
-def recipe_scale(request: AuthedRequest, recipe_id: int) -> HttpResponse:
-    """Scale a recipe's servings."""
+def recipe_scale_copy(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+    """Save the recipe scaled to `servings` as a new recipe; the original is untouched."""
+    original = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    servings = parse_servings(request.POST.get("servings"))
+    if servings is None:
+        return _scale_panel(
+            request,
+            original,
+            servings=None,
+            error=f"Enter a whole number of servings from 1 to {MAX_SERVINGS}.",
+            status=422,
+        )
     try:
-        multiplier = Decimal(request.POST.get("multiplier", ""))
-        valid = multiplier > 0
-    except InvalidOperation, ValueError:
-        valid = False
-    if not valid:
-        recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
-        return _scale_error(request, recipe, "Enter a positive number.")
-
-    with transaction.atomic():
-        recipe = get_object_or_404(
-            Recipe.objects.select_for_update(), id=recipe_id, owner=request.user
-        )
-
-        old_serves = Decimal(recipe.servings)
-        try:
-            new_serves = max(
-                1,
-                int((old_serves * multiplier).quantize(Decimal("1"), rounding=ROUND_HALF_UP)),
-            )
-        except InvalidOperation:
-            return _scale_error(request, recipe, "Result would exceed the maximum serving count.")
-        if new_serves > _MAX_SERVINGS:
-            return _scale_error(request, recipe, "Result would exceed the maximum serving count.")
-
-        # Validate every scaled quantity before writing anything
-        scaled = list(
-            IngredientInRecipe.objects.select_for_update().filter(
-                ingredient_group__recipe=recipe, quantity__isnull=False
-            )
-        )
-        for iir in scaled:
-            try:
-                new_quantity = (iir.quantity * multiplier).quantize(
-                    Decimal("0.01"), rounding=ROUND_HALF_UP
-                )  # type: ignore[operator]
-            except InvalidOperation:
-                return _scale_error(
-                    request, recipe, "Multiplier would overflow an ingredient quantity."
-                )
-            if new_quantity > _MAX_QUANTITY:
-                return _scale_error(
-                    request, recipe, "Multiplier would overflow an ingredient quantity."
-                )
-            iir.quantity = new_quantity
-
-        IngredientInRecipe.objects.bulk_update(scaled, ["quantity"])
-        recipe.servings = new_serves
-        recipe.save(update_fields=["servings"])
-
+        copy = save_scaled_copy(original, servings=servings)
+    except ScaleError as exc:
+        return _scale_panel(request, original, servings=servings, error=str(exc), status=422)
     if request.htmx:
         response = HttpResponse()
-        response["HX-Redirect"] = recipe.get_absolute_url()
+        response["HX-Redirect"] = copy.get_absolute_url()
         return response
-    return redirect(recipe.get_absolute_url())
-
-
-_NAME_MAX = 200
-
-
-def _copy_name(base: str, n: int | None = None) -> str:
-    """Build a copy name: 'Base Copy', 'Base Copy 2', 'Base Copy 3', …"""
-    suffix = f" Copy {n}" if n is not None else " Copy"
-    return f"{base[: _NAME_MAX - len(suffix)]}{suffix}"
+    return redirect(copy.get_absolute_url())
 
 
 def _cuisine_names() -> list[str]:

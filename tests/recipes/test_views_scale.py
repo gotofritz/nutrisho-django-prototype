@@ -1,4 +1,4 @@
-"""Tests for recipe scale (multiply servings + quantities) view."""
+"""Tests for scaling a recipe: display-time `?servings=N` and "Save as scaled copy" (#36)."""
 
 from decimal import Decimal
 
@@ -29,158 +29,56 @@ def group(recipe):
 
 
 @pytest.fixture
-def iir(group):
-    """Iir."""
-    ing = Ingredient.objects.create(ingredient_name="onion-scale")
-    return IngredientInRecipe.objects.create(
-        ingredient=ing,
-        ingredient_group=group,
-        index_in_sequence=0,
-        quantity=Decimal("2.00"),
-    )
+def make_iir(group):
+    """Add an ingredient row to the recipe's group."""
+
+    def _make(name: str, quantity: Decimal | None, unit: str = "") -> IngredientInRecipe:
+        return IngredientInRecipe.objects.create(
+            ingredient=Ingredient.objects.create(ingredient_name=name),
+            ingredient_group=group,
+            index_in_sequence=IngredientInRecipe.objects.filter(ingredient_group=group).count(),
+            quantity=quantity,
+            unit=unit,
+        )
+
+    return _make
 
 
 @pytest.fixture
-def iir_null_quantity(group):
-    """Iir null quantity."""
-    ing = Ingredient.objects.create(ingredient_name="salt-scale")
-    return IngredientInRecipe.objects.create(
-        ingredient=ing,
-        ingredient_group=group,
-        index_in_sequence=1,
-        quantity=None,
-    )
+def iir(make_iir):
+    """2 g flour, for a 4-serving recipe."""
+    return make_iir("flour-scale", Decimal("2.00"), unit="g")
 
 
-# --- Scale view ---
+def _quantity_span(value: str) -> str:
+    return f'<span class="ingredient-quantity">{value}</span>'
 
 
-@pytest.mark.django_db
-def test_scale_get_not_allowed(auth_client, recipe):
-    """Scale get not allowed."""
-    response = auth_client.get(f"/recipes/{recipe.pk}/scale/")
-    assert response.status_code == 405
+# --- Display-time scaling: GET /recipes/<id>/?servings=N ---
 
 
 @pytest.mark.django_db
-def test_scale_post_updates_servings(auth_client, recipe, group, iir):
-    # multiplier=2, old_serves=4 → round(4*2)=8
-    """Scale post updates servings."""
-    auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
-    recipe.refresh_from_db()
-    assert recipe.servings == 8
+def test_recipe_page_shows_stored_quantities_without_servings(auth_client, recipe, iir):
+    """No ?servings: the stored quantities, as before."""
+    content = auth_client.get(f"/recipes/{recipe.pk}/").content.decode()
+    assert _quantity_span("2") in content
+    assert "scaled-note" not in content
 
 
 @pytest.mark.django_db
-def test_scale_post_multiplies_quantities(auth_client, recipe, group, iir):
-    # multiplier=2, quantity=2.00 → 4.00
-    """Scale post multiplies quantities."""
-    auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
-    iir.refresh_from_db()
-    assert iir.quantity == Decimal("4.00")
-
-
-@pytest.mark.django_db
-def test_scale_post_fractional_multiplier(auth_client, recipe, group):
-    # user example: serves=4, 200g bread, multiplier=3.2 → serves=13, 640g
-    """Scale post fractional multiplier."""
-    ing = Ingredient.objects.create(ingredient_name="bread-scale")
-    iir = IngredientInRecipe.objects.create(
-        ingredient=ing, ingredient_group=group, index_in_sequence=0, quantity=Decimal("200.00")
-    )
-    auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "3.2"})
-    recipe.refresh_from_db()
-    iir.refresh_from_db()
-    assert recipe.servings == 13  # round(4 * 3.2) = round(12.8) = 13
-    assert iir.quantity == Decimal("640.00")  # 200 * 3.2 exact
-
-
-@pytest.mark.django_db
-def test_scale_post_skips_null_quantities(auth_client, recipe, group, iir_null_quantity):
-    """Scale post skips null quantities."""
-    auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
-    iir_null_quantity.refresh_from_db()
-    assert iir_null_quantity.quantity is None
-
-
-@pytest.mark.django_db
-def test_scale_post_htmx_returns_hx_redirect(auth_client, recipe, group, iir):
-    """Scale post htmx returns hx redirect."""
-    response = auth_client.post(
-        f"/recipes/{recipe.pk}/scale/",
-        {"multiplier": "2"},
-        HTTP_HX_REQUEST="true",
-    )
+def test_recipe_page_scales_quantities_to_target_servings(auth_client, recipe, iir):
+    """2 g for 4 servings is 3 g for 6."""
+    response = auth_client.get(f"/recipes/{recipe.pk}/?servings=6")
     assert response.status_code == 200
-    assert "HX-Redirect" in response
+    content = response.content.decode()
+    assert _quantity_span("3") in content
+    assert "Serves 6" in content
 
 
 @pytest.mark.django_db
-def test_scale_post_non_htmx_redirects(auth_client, recipe, group, iir):
-    """Scale post non htmx redirects."""
-    response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
-    assert response.status_code == 302
-
-
-@pytest.mark.django_db
-def test_scale_post_invalid_multiplier_returns_422(auth_client, recipe):
-    """Scale post invalid multiplier returns 422."""
-    response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "abc"})
-    assert response.status_code == 422
-    assert "form-error" in response.content.decode()
-
-
-@pytest.mark.django_db
-def test_scale_post_zero_multiplier_returns_422(auth_client, recipe):
-    """Scale post zero multiplier returns 422."""
-    response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "0"})
-    assert response.status_code == 422
-
-
-@pytest.mark.django_db
-def test_scale_post_negative_multiplier_returns_422(auth_client, recipe):
-    """Scale post negative multiplier returns 422."""
-    response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "-1"})
-    assert response.status_code == 422
-
-
-@pytest.mark.django_db
-def test_scale_panel_htmx_get_returns_partial(auth_client, recipe):
-    """Scale panel htmx get returns partial."""
-    response = auth_client.get(
-        f"/recipes/{recipe.pk}/scale/panel/",
-        HTTP_HX_REQUEST="true",
-    )
-    assert response.status_code == 200
-    assert "recipes/partials/_scale_panel.html" in [t.name for t in response.templates]
-
-
-@pytest.mark.django_db
-def test_scale_down_clamps_servings_to_minimum_1(auth_client, user):
-    """Halving a 1-serving recipe must not round servings down to 0."""
-    r = Recipe.objects.create(recipe_name="Tiny Scale", owner=user, servings=1)
-    response = auth_client.post(f"/recipes/{r.pk}/scale/", {"multiplier": "0.5"})
-    assert response.status_code == 302
-    r.refresh_from_db()
-    assert r.servings == 1
-
-
-@pytest.mark.django_db
-def test_scale_down_sub_half_result_clamps_to_1(auth_client, recipe, group, iir):
-    """servings=4, multiplier=0.1 → round(0.4)=0 → clamped to 1; quantities still scale."""
-    response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "0.1"})
-    assert response.status_code == 302
-    recipe.refresh_from_db()
-    iir.refresh_from_db()
-    assert recipe.servings == 1
-    assert iir.quantity == Decimal("0.20")
-
-
-@pytest.mark.django_db
-def test_scale_servings_overflow_returns_422(auth_client, recipe, group, iir):
-    """servings=4 x 10000 = 40000 exceeds PositiveSmallIntegerField; reject, change nothing."""
-    response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "10000"})
-    assert response.status_code == 422
+def test_recipe_page_scaling_writes_nothing(auth_client, recipe, iir):
+    """Scaling is presentation: servings and quantities in the database are untouched."""
+    auth_client.get(f"/recipes/{recipe.pk}/?servings=6")
     recipe.refresh_from_db()
     iir.refresh_from_db()
     assert recipe.servings == 4
@@ -188,66 +86,265 @@ def test_scale_servings_overflow_returns_422(auth_client, recipe, group, iir):
 
 
 @pytest.mark.django_db
-def test_scale_quantity_overflow_returns_422(auth_client, recipe, group):
-    """Scaled quantity exceeding DecimalField(max_digits=7, dp=2) rejects whole scale."""
-    ing = Ingredient.objects.create(ingredient_name="bulk-flour")
-    iir = IngredientInRecipe.objects.create(
-        ingredient=ing, ingredient_group=group, index_in_sequence=0, quantity=Decimal("99999.00")
+def test_recipe_page_scaled_view_says_it_is_temporary_and_offers_reset(auth_client, recipe, iir):
+    """The scaled view names the stored count and links back to the unscaled page."""
+    content = auth_client.get(f"/recipes/{recipe.pk}/?servings=6").content.decode()
+    assert "scaled-note" in content
+    assert "scaled from 4" in content
+    assert f'href="/recipes/{recipe.pk}/"' in content
+    assert "Reset" in content
+
+
+@pytest.mark.django_db
+def test_recipe_page_scaled_ingredients_are_read_only(auth_client, recipe, iir):
+    """Editing a scaled quantity would save the wrong number, so no edit triggers."""
+    content = auth_client.get(f"/recipes/{recipe.pk}/?servings=6").content.decode()
+    assert f"/recipes/{recipe.pk}/ingredients/{iir.pk}/edit/" not in content
+    assert "/field/servings/edit/" not in content
+    assert 'class="ingredient-select"' not in content
+
+
+@pytest.mark.django_db
+def test_recipe_page_small_quantities_are_not_lost(auth_client, recipe, make_iir):
+    """0.01 at 4 servings is 0.0025 at 1 serving, not 0."""
+    make_iir("saffron-scale", Decimal("0.01"), unit="g")
+    content = auth_client.get(f"/recipes/{recipe.pk}/?servings=1").content.decode()
+    assert _quantity_span("0.0025") in content
+
+
+@pytest.mark.django_db
+def test_recipe_page_scaled_quantities_do_not_drift(auth_client, recipe, make_iir):
+    """Every view is computed from the stored value: 1 for 4 is 0.75 for 3, 1 for 4 again."""
+    make_iir("lemon-scale", Decimal("1"), unit="tbsp")
+    assert _quantity_span("0.75") in (
+        auth_client.get(f"/recipes/{recipe.pk}/?servings=3").content.decode()
     )
-    # servings 4 * 1.5 = 6 fits; quantity 99999 * 1.5 = 149998.50 overflows
-    response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "1.5"})
-    assert response.status_code == 422
+    assert _quantity_span("1") in (
+        auth_client.get(f"/recipes/{recipe.pk}/?servings=4").content.decode()
+    )
+
+
+@pytest.mark.django_db
+def test_recipe_page_rounds_to_two_decimals(auth_client, recipe, make_iir):
+    """1 tsp for 3 servings is 0.33 tsp for 1."""
+    recipe.servings = 3
+    recipe.save()
+    make_iir("cumin-scale", Decimal("1"), unit="tsp")
+    content = auth_client.get(f"/recipes/{recipe.pk}/?servings=1").content.decode()
+    assert _quantity_span("0.33") in content
+
+
+@pytest.mark.django_db
+def test_recipe_page_pluralises_on_the_scaled_quantity(auth_client, recipe, make_iir):
+    """1 onion for 4 servings reads "2 onions" for 8, and 2 onions read "1 onion" for 2."""
+    make_iir("onion", Decimal("1"))
+    make_iir("leek", Decimal("2"))
+    doubled = auth_client.get(f"/recipes/{recipe.pk}/?servings=8").content.decode()
+    assert '<span class="ingredient-name">onions</span>' in doubled
+    halved = auth_client.get(f"/recipes/{recipe.pk}/?servings=2").content.decode()
+    assert '<span class="ingredient-name">leek</span>' in halved
+
+
+@pytest.mark.django_db
+def test_recipe_page_leaves_missing_quantities_blank(auth_client, recipe, make_iir):
+    """An ingredient with no quantity ("salt, to taste") has nothing to scale."""
+    make_iir("salt-scale", None)
+    content = auth_client.get(f"/recipes/{recipe.pk}/?servings=8").content.decode()
+    assert _quantity_span("") in content
+
+
+@pytest.mark.django_db
+def test_recipe_page_at_stored_servings_is_the_normal_page(auth_client, recipe, iir):
+    """?servings equal to the stored count is not scaling: the editable page."""
+    content = auth_client.get(f"/recipes/{recipe.pk}/?servings=4").content.decode()
+    assert "scaled-note" not in content
+    assert f"/recipes/{recipe.pk}/ingredients/{iir.pk}/edit/" in content
+
+
+@pytest.mark.parametrize("raw", ["abc", "0", "-1", "1.5", "99999", ""])
+@pytest.mark.django_db
+def test_recipe_page_ignores_invalid_servings(auth_client, recipe, iir, raw):
+    """A bad ?servings shows the recipe as stored rather than erroring."""
+    response = auth_client.get(f"/recipes/{recipe.pk}/?servings={raw}")
+    assert response.status_code == 200
+    content = response.content.decode()
+    assert _quantity_span("2") in content
+    assert "scaled-note" not in content
+
+
+@pytest.mark.django_db
+def test_recipe_page_htmx_scaled_returns_partial(auth_client, recipe, iir):
+    """Boosted navigation to a scaled URL swaps in the scaled content partial."""
+    response = auth_client.get(
+        f"/recipes/{recipe.pk}/?servings=6", HTTP_HX_REQUEST="true", HTTP_HX_BOOSTED="true"
+    )
+    assert "recipes/partials/_recipe_content.html" in [t.name for t in response.templates]
+    assert _quantity_span("3") in response.content.decode()
+
+
+# --- Scale panel ---
+
+
+@pytest.mark.django_db
+def test_scale_panel_htmx_get_returns_partial(auth_client, recipe):
+    """Scale panel htmx get returns partial."""
+    response = auth_client.get(f"/recipes/{recipe.pk}/scale/panel/", HTTP_HX_REQUEST="true")
+    assert response.status_code == 200
+    assert "recipes/partials/_scale_panel.html" in [t.name for t in response.templates]
+
+
+@pytest.mark.django_db
+def test_scale_panel_asks_for_servings_and_shows_the_page(auth_client, recipe):
+    """The panel asks for a serving count and GETs the recipe page with it."""
+    content = auth_client.get(
+        f"/recipes/{recipe.pk}/scale/panel/", HTTP_HX_REQUEST="true"
+    ).content.decode()
+    assert 'method="get"' in content
+    assert f'action="/recipes/{recipe.pk}/"' in content
+    assert 'name="servings"' in content
+    assert 'value="4"' in content
+    assert "multiplier" not in content
+
+
+@pytest.mark.django_db
+def test_scale_panel_prefills_the_current_target(auth_client, recipe):
+    """Opened from a scaled page, the panel starts at that page's serving count."""
+    content = auth_client.get(
+        f"/recipes/{recipe.pk}/scale/panel/?servings=6", HTTP_HX_REQUEST="true"
+    ).content.decode()
+    assert 'value="6"' in content
+
+
+@pytest.mark.django_db
+def test_scaled_page_scale_button_carries_the_target(auth_client, recipe):
+    """The nav scale button reopens the panel at the shown serving count."""
+    content = auth_client.get(f"/recipes/{recipe.pk}/?servings=6").content.decode()
+    assert f"/recipes/{recipe.pk}/scale/panel/?servings=6" in content
+
+
+# --- The in-place multiplier is gone ---
+
+
+@pytest.mark.django_db
+def test_in_place_scale_endpoint_is_gone(auth_client, recipe, iir):
+    """POST /scale/ used to rewrite quantities; it must no longer exist."""
+    response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
+    assert response.status_code == 404
+    iir.refresh_from_db()
+    assert iir.quantity == Decimal("2.00")
+
+
+# --- Save as scaled copy: POST /recipes/<id>/scale/copy/ ---
+
+
+def _copy(auth_client, recipe, servings: str, **headers):
+    return auth_client.post(f"/recipes/{recipe.pk}/scale/copy/", {"servings": servings}, **headers)
+
+
+@pytest.mark.django_db
+def test_scale_copy_get_not_allowed(auth_client, recipe):
+    """Scale copy is POST only."""
+    response = auth_client.get(f"/recipes/{recipe.pk}/scale/copy/")
+    assert response.status_code == 405
+
+
+@pytest.mark.django_db
+def test_scale_copy_creates_a_scaled_copy(auth_client, recipe, iir):
+    """The copy stores the target servings and quantities scaled to match."""
+    _copy(auth_client, recipe, "6")
+    copy = Recipe.objects.exclude(pk=recipe.pk).get()
+    assert copy.servings == 6
+    copied = IngredientInRecipe.objects.get(ingredient_group__recipe=copy)
+    assert copied.quantity == Decimal("3.00")
+
+
+@pytest.mark.django_db
+def test_scale_copy_leaves_the_original_alone(auth_client, recipe, iir):
+    """The original keeps its servings and quantities."""
+    _copy(auth_client, recipe, "6")
     recipe.refresh_from_db()
     iir.refresh_from_db()
     assert recipe.servings == 4
-    assert iir.quantity == Decimal("99999.00")
+    assert iir.quantity == Decimal("2.00")
 
 
 @pytest.mark.django_db
-def test_scale_acquires_row_lock(auth_client, recipe, group, iir):
-    """recipe_scale must call select_for_update() to prevent concurrent-scale data races."""
-    from unittest.mock import patch
-
-    from django.db.models import QuerySet
-
-    locked_models: list[str] = []
-    original_sfu = QuerySet.select_for_update
-
-    def spy_sfu(self, *args, **kwargs):
-        locked_models.append(self.model.__name__)
-        return original_sfu(self, *args, **kwargs)
-
-    with patch.object(QuerySet, "select_for_update", spy_sfu):
-        auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "2"})
-
-    assert locked_models, "select_for_update() was not called; concurrent scales will race"
-
-
-@pytest.mark.django_db
-def test_scale_servings_exact_half_rounds_up(auth_client, user):
-    """5 * 0.5 = 2.5 → 3 with ROUND_HALF_UP, not 2 with banker's rounding."""
-    r = Recipe.objects.create(recipe_name="Half Scale", owner=user, servings=5)
-    auth_client.post(f"/recipes/{r.pk}/scale/", {"multiplier": "0.5"})
-    r.refresh_from_db()
-    assert r.servings == 3
-
-
-@pytest.mark.django_db
-def test_scale_quantity_exact_half_rounds_up(auth_client, recipe, group):
-    """0.05 * 0.5 = 0.025 → 0.03 with ROUND_HALF_UP, not 0.02 with banker's rounding."""
-    ing = Ingredient.objects.create(ingredient_name="half-rounding")
-    iir = IngredientInRecipe.objects.create(
-        ingredient=ing, ingredient_group=group, index_in_sequence=0, quantity=Decimal("0.05")
+def test_scale_copy_keeps_servings_and_quantities_in_step(auth_client, user, group, make_iir):
+    """3 servings scaled to 1 stores 1 serving with amounts for 1, not 2 with amounts for 1.5."""
+    r = group.recipe
+    r.servings = 3
+    r.save()
+    make_iir("rice-scale", Decimal("300"), unit="g")
+    _copy(auth_client, r, "1")
+    copy = Recipe.objects.exclude(pk=r.pk).get()
+    assert copy.servings == 1
+    assert IngredientInRecipe.objects.get(ingredient_group__recipe=copy).quantity == Decimal(
+        "100.00"
     )
-    auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "0.5"})
-    iir.refresh_from_db()
-    assert iir.quantity == Decimal("0.03")
 
 
 @pytest.mark.django_db
-def test_scale_servings_extreme_multiplier_returns_422(auth_client, recipe, group, iir):
-    """Extreme multiplier with non-null servings must return 422, not 500 from InvalidOperation."""
-    response = auth_client.post(f"/recipes/{recipe.pk}/scale/", {"multiplier": "1E+50"})
+def test_scale_copy_skips_null_quantities(auth_client, recipe, make_iir):
+    """Rows without a quantity stay without one."""
+    make_iir("salt-copy", None)
+    _copy(auth_client, recipe, "8")
+    copy = Recipe.objects.exclude(pk=recipe.pk).get()
+    assert IngredientInRecipe.objects.get(ingredient_group__recipe=copy).quantity is None
+
+
+@pytest.mark.django_db
+def test_scale_copy_quantity_exact_half_rounds_up(auth_client, recipe, make_iir):
+    """0.05 for 4 is 0.025 for 2 → 0.03 with ROUND_HALF_UP, not 0.02."""
+    make_iir("half-rounding", Decimal("0.05"), unit="g")
+    _copy(auth_client, recipe, "2")
+    copy = Recipe.objects.exclude(pk=recipe.pk).get()
+    assert IngredientInRecipe.objects.get(ingredient_group__recipe=copy).quantity == Decimal("0.03")
+
+
+@pytest.mark.django_db
+def test_scale_copy_htmx_redirects_to_the_copy(auth_client, recipe, iir):
+    """HTMX: HX-Redirect to the new recipe."""
+    response = _copy(auth_client, recipe, "6", HTTP_HX_REQUEST="true")
+    copy = Recipe.objects.exclude(pk=recipe.pk).get()
+    assert response.status_code == 200
+    assert response["HX-Redirect"] == copy.get_absolute_url()
+
+
+@pytest.mark.django_db
+def test_scale_copy_non_htmx_redirects_to_the_copy(auth_client, recipe, iir):
+    """Plain POST: 302 to the new recipe."""
+    response = _copy(auth_client, recipe, "6")
+    copy = Recipe.objects.exclude(pk=recipe.pk).get()
+    assert response.status_code == 302
+    assert response["Location"] == copy.get_absolute_url()
+
+
+@pytest.mark.parametrize("raw", ["abc", "0", "-1", "1.5", "99999", ""])
+@pytest.mark.django_db
+def test_scale_copy_invalid_servings_returns_422(auth_client, recipe, iir, raw):
+    """A bad serving count re-renders the panel with an error and creates nothing."""
+    response = _copy(auth_client, recipe, raw)
     assert response.status_code == 422
-    recipe.refresh_from_db()
-    assert recipe.servings == 4  # unchanged
+    assert "form-error" in response.content.decode()
+    assert Recipe.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_scale_copy_quantity_overflow_returns_422(auth_client, recipe, make_iir):
+    """A scaled quantity beyond DecimalField(max_digits=7, dp=2) rejects the copy."""
+    make_iir("bulk-flour", Decimal("99999.00"), unit="g")
+    response = _copy(auth_client, recipe, "6")
+    assert response.status_code == 422
+    assert "bulk-flour would be too large at 6 servings." in response.content.decode()
+    assert Recipe.objects.count() == 1
+    assert IngredientInRecipe.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_scale_copy_quantity_rounding_to_zero_returns_422(auth_client, recipe, make_iir):
+    """0.01 for 4 is 0.0025 for 1, which two decimals would store as 0: refuse."""
+    make_iir("saffron-copy", Decimal("0.01"), unit="g")
+    response = _copy(auth_client, recipe, "1")
+    assert response.status_code == 422
+    assert "saffron-copy would round to 0 at 1 serving." in response.content.decode()
+    assert Recipe.objects.count() == 1

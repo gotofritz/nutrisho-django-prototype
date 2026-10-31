@@ -88,6 +88,15 @@ def test_duplicate_copies_steps(auth_client, recipe_with_content):
 
 
 @pytest.mark.django_db
+def test_duplicate_copies_step_titles(auth_client, recipe):
+    """Step headings survive a duplicate (#35)."""
+    Step.objects.create(recipe=recipe, step_title="Prep", step_text="Chop", index_in_sequence=0)
+    auth_client.post(f"/recipes/{recipe.pk}/duplicate/")
+    copy = Recipe.objects.exclude(pk=recipe.pk).get()
+    assert copy.step.get().step_title == "Prep"
+
+
+@pytest.mark.django_db
 def test_duplicate_copies_ingredient_groups(auth_client, recipe_with_content):
     """Duplicate copies ingredient groups."""
     auth_client.post(f"/recipes/{recipe_with_content.pk}/duplicate/")
@@ -174,7 +183,7 @@ def test_duplicate_child_integrity_error_propagates_not_loops(auth_client, recip
     count_before = Recipe.objects.filter(owner=recipe.owner).count()
 
     with (
-        patch("recipes.models.Step.save", side_effect=IntegrityError("dup seq")),
+        patch.object(Step.objects, "bulk_create", side_effect=IntegrityError("dup seq")),
         pytest.raises(IntegrityError),
     ):
         auth_client.post(f"/recipes/{recipe.pk}/duplicate/")

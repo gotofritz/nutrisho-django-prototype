@@ -22,6 +22,13 @@
     </nav>
     <div id="scale-panel"></div>
     <div id="delete-panel"></div>
+    {% if scale %}
+    <h3 class="serves">Serves {{ target_servings }}</h3>
+    <p class="scaled-note">scaled from {{ recipe.servings }}<span class="no-print">, not saved &middot; <a href="{{ recipe.get_absolute_url }}">Reset</a></span></p>
+    <div class="recipe-ingredients">
+      {% include "./_scaled_ingredients.html" %}
+    </div>
+    {% else %}
     <h3 class="serves">Serves {% include "./_field_display.html" with field_name="servings" value=recipe.servings %}</h3>
     <div class="recipe-ingredients">
       <div id="groups-list">
@@ -34,6 +41,7 @@
         class="btn-add"
       >+ Add group</button>
     </div>
+    {% endif %}
     <div class="recipe-description">
       {% include "./_field_display.html" with field_name="short_description" value=recipe.short_description|default:"" %}
     </div>

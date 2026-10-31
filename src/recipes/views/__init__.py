@@ -18,7 +18,7 @@ from .recipe_crud import (
     recipe_duplicate,
     recipe_metadata_edit,
     recipe_new,
-    recipe_scale,
+    recipe_scale_copy,
     recipe_scale_panel,
 )
 from .recipe_fields import recipe_field_display, recipe_field_edit, recipe_field_save
@@ -93,7 +93,7 @@ __all__ = [
     "recipe_ingredient_save",
     "recipe_metadata_edit",
     "recipe_new",
-    "recipe_scale",
+    "recipe_scale_copy",
     "recipe_scale_panel",
     "recipe_step_add",
     "recipe_step_create",

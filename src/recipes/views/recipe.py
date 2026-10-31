@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.vary import vary_on_headers
 
 from recipes.models import IngredientInRecipe, Recipe
+from recipes.utils.scaling import parse_servings, scale_factor
 from recipes.views._types import AuthedRequest
 
 
@@ -38,9 +39,17 @@ def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
         id=recipe_id,
         owner=request.user,
     )
+    # ?servings=N scales the page only; nothing is written back (#36).
+    target = parse_servings(request.GET.get("servings"))
+    scale = scale_factor(servings=int(recipe.servings), target=target)
     template = "recipes/partials/_recipe_content.html" if request.htmx else "recipes/recipe.html"
     return render(
         request,
         template,
-        {"recipe": recipe, "nav": _get_recipe_nav(recipe_id, request.user)},
+        {
+            "recipe": recipe,
+            "nav": _get_recipe_nav(recipe_id, request.user),
+            "scale": scale,
+            "target_servings": target if scale else None,
+        },
     )

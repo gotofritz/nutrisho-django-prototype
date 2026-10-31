@@ -12,7 +12,7 @@
   <button
     type="button"
     onclick="panelToggle(this, 'scale-panel', event)"
-    hx-get="{% url 'recipes:scale_panel' recipe.id %}"
+    hx-get="{% url 'recipes:scale_panel' recipe.id %}{% if target_servings %}?servings={{ target_servings }}{% endif %}"
     hx-target="#scale-panel"
     hx-swap="innerHTML"
   >{% include "../icons/scale.svg" %}</button>
