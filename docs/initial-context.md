@@ -7,7 +7,7 @@ Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuis
 ## Tech Stack
 
 - **Runtime**: Python 3.14
-- **Framework**: Django 6.0
+- **Framework**: Django 6.1 (move to the 6.2 LTS by spring 2027, then stay on LTS releases; see `docs/developer-guide.md`)
 - **Frontend**: HTMX 2.x (via django-htmx) — inline partial swaps, no full-page reloads
 - **DB**: SQLite, WAL mode with IMMEDIATE transactions
 - **Deps**: uv

@@ -170,7 +170,7 @@ uv run poe css-watch
 | Concern | Tool |
 |---|---|
 | Language | Python 3.14 |
-| Framework | Django 6.0 |
+| Framework | Django 6.1 |
 | Database | SQLite |
 | Python deps | uv |
 | Lint | ruff |
@@ -179,6 +179,28 @@ uv run poe css-watch
 | Tasks | poethepoet |
 | CSS | Tailwind CSS v4 (pnpm) |
 | HTMX | django-htmx |
+
+### Django version policy
+
+`pyproject.toml` pins `Django ~=6.1`, which allows any 6.x release from 6.1
+on, and `uv.lock` holds the exact version. Each feature release only gets
+security fixes for a limited time, so the pin has to move on purpose:
+
+- **Now:** 6.1. Its security support runs out around December 2027.
+- **Spring 2027:** move to 6.2, the next long-term support (LTS) release,
+  due around April 2027. That is also when 6.0 loses security support.
+- **After that:** stay on LTS releases and plan each move before the current
+  one's support ends.
+
+Before an upgrade, run the suite with deprecations turned into errors so
+anything the new release removes shows up first:
+
+```bash
+DJANGO_SETTINGS_MODULE=nutrisho.settings.test uv run pytest -W error::DeprecationWarning -W error::PendingDeprecationWarning
+```
+
+Then bump the pin, refresh the lock with
+`uv lock --upgrade-package django`, and run `uv run poe qa`.
 
 ## Project layout
 
