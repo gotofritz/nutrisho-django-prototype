@@ -1,6 +1,6 @@
 """Tests for the bootstrap_owner management command."""
 
-import tomllib
+import re
 from io import StringIO
 from pathlib import Path
 
@@ -147,14 +147,12 @@ def test_addinitialuser_is_gone():
         call_command("addinitialuser")
 
 
-def test_poe_has_no_hard_coded_credentials():
-    """No poe task carries a username, email or password."""
-    poe = tomllib.loads((Path(__file__).resolve().parents[2] / ".poe.toml").read_text())
-    tasks = poe["tasks"]
+def test_makefile_has_no_hard_coded_credentials():
+    """No Makefile target carries a username, email or password."""
+    text = (Path(__file__).resolve().parents[2] / "Makefile").read_text()
 
-    assert "createsuperuser" not in tasks
-    assert "bootstrap" in tasks
-    text = str(tasks)
+    assert "createsuperuser" not in text
+    assert re.search(r"^bootstrap:", text, re.MULTILINE)
     assert "DJANGO_SUPERUSER_PASSWORD" not in text
     assert "fritz" not in text
 

@@ -7,7 +7,6 @@ dev = [
   "commitizen>=4.16.2",
   "django-debug-toolbar>=8.0.0",
   "faker>=37.0.0",
-  "poethepoet>=0.48.0",
   "polyfactory>=2.21.0",
   "pre-commit>=4.6.0",
   "pytest>=8.3.0",
@@ -25,7 +24,7 @@ authors = [{name = "Your Name", email = "you@example.com"}]
 license = "0BSD"
 requires-python = ">=3.14,<3.15"
 dependencies = [
-  "Django ~=6.0.0",
+  "Django ~=6.1",
   "django-environ>=0.13.0",
   "django-htmx>=1.27.0",
   "sentry-sdk>=2.0"
@@ -45,9 +44,6 @@ packages = ["src/nutrisho", "src/recipes"]
 
 [tool.hatch.build.targets.wheel.sources]
 "src" = ""
-
-[tool.poe]
-include = [".poe.toml"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "nutrisho.settings.test"
