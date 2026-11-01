@@ -4,7 +4,8 @@ from functools import wraps
 from urllib.parse import quote, urlparse
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse, HttpResponseForbidden
 
 _SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS", "TRACE"})
 
@@ -67,3 +68,26 @@ def htmx_login_required(view_func):
         return redirect(redirect_to)
 
     return _wrapped
+
+
+_STAFF_ONLY = "Only staff can use the ingredient clean-up tool."
+
+
+def htmx_staff_required(view_func):
+    """Like htmx_login_required, then 403 for a signed-in user who is not staff.
+
+    Anonymous users still go to the login page. An htmx request gets a short
+    plain-text 403: the htmx config never swaps a 403, so a full page would only
+    be wasted bytes, and the global banner reports the failure. A full-page
+    request raises PermissionDenied so Django renders `403.html`.
+    """
+
+    @wraps(view_func)
+    def _staff_only(request, *args, **kwargs):
+        if request.user.is_staff:  # type: ignore[union-attr]
+            return view_func(request, *args, **kwargs)
+        if getattr(request, "htmx", None):
+            return HttpResponseForbidden(_STAFF_ONLY, content_type="text/plain")
+        raise PermissionDenied(_STAFF_ONLY)
+
+    return htmx_login_required(_staff_only)

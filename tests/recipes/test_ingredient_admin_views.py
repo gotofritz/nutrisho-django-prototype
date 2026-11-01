@@ -11,6 +11,18 @@ MANAGE_URL = "/recipes/ingredients/manage/"
 SEARCH_URL = "/recipes/ingredients/manage/search/"
 
 
+@pytest.fixture
+def user(user):
+    """The default user, made staff: the clean-up tool is staff-only (#46).
+
+    Overrides the shared fixture for this module, so `auth_client` is a staff
+    client here. Access for non-staff is covered in test_ingredient_admin_access.py.
+    """
+    user.is_staff = True
+    user.save(update_fields=["is_staff"])
+    return user
+
+
 def squash(html: str) -> str:
     """Collapse runs of whitespace so assertions ignore template line breaks."""
     return re.sub(r"\s+", " ", html)
@@ -41,8 +53,8 @@ def test_manager_redirects_anonymous_user_to_login(client):
 
 
 @pytest.mark.django_db
-def test_manager_returns_200_for_authenticated_user(auth_client):
-    """Manager returns 200 for authenticated user."""
+def test_manager_returns_200_for_staff_user(auth_client):
+    """Manager returns 200 for a staff user."""
     assert auth_client.get(MANAGE_URL).status_code == 200
 
 

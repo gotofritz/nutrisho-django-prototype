@@ -104,7 +104,7 @@ an existing recipe.
 A self-contained subsystem under `/recipes/ingredients/manage/`, separate from both
 the per-recipe inline editor and Django admin. `Ingredient` rows are shared by every
 recipe, so this is where duplicates and spelling variants get edited, deleted or
-merged. Login-only, like the rest of the app; the `manage/` URL prefix keeps it clear
+merged. Staff-only (see **Shared vocabularies** below); the `manage/` URL prefix keeps it clear
 of the per-recipe `<recipe_id>/ingredients/...` routes.
 
 The UI is four Miller columns — actions, ingredients, matching recipes, recipe
@@ -171,6 +171,13 @@ selection so the view can tell the two cases apart.
 **Owner scoping.** Recipes are owner-scoped and column 3 stays that way, but
 ingredients are global: the delete confirmation counts affected recipes across all
 owners, since a delete reaches recipes the current user cannot see.
+
+**Staff only (#46).** Every route is wrapped in `htmx_staff_required`
+(`recipes/views/_auth.py`): anonymous users go to the login page as before, a
+signed-in user who is not `is_staff` gets 403. An htmx request gets a short
+plain-text 403, which the htmx config never swaps, so the global banner reports
+it; a full-page visit raises `PermissionDenied` and Django renders `403.html`.
+The home page shows the "Manage ingredients" link to staff only.
 
 **Canonical names.** British spelling wins, enforced by
 `UniqueConstraint(Lower("ingredient_name"), name="ingredient_name_ci_unique")`
@@ -320,6 +327,24 @@ recorded and is not 1, **and** `unit` is empty. The unit check is what keeps mas
 nouns safe — `200 g onion` must never become `200 g onions`. A page scaled with
 `?servings=N` decides on the displayed quantity instead (`ingredient_name_at`), so
 doubling 1 onion reads "2 onions".
+
+### Shared vocabularies (multi-user)
+
+Nutrisho is multi-user (#46). Recipes belong to their owner; the vocabularies
+they draw on are split by who may change them:
+
+- **Ingredients**: a global, staff-curated list plus a private list per user
+  (plan 011). Only staff rename, merge or delete global ingredients, which is
+  why the clean-up tool is staff-only. Until plan 011 lands, typing an unknown
+  name in the recipe editor still creates a global row.
+- **Tags**: global tags curated by staff plus private tags per user (plan 011).
+- **Cuisines**: one global, curated list; users pick from it and cannot add to
+  it (plan 011). The editor still creates a cuisine on a miss until then.
+- **Sources**: global, unchanged for now.
+
+Every route that changes a global row checks `is_staff`, and its tests use the
+`other_user` fixture to show a signed-in non-staff user is refused and nothing
+is written.
 
 ### Key Models
 
