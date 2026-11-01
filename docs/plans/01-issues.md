@@ -2236,3 +2236,122 @@ otherwise bring. It complements the scheduled backups in ARCH-8.
 portable constraints (`Lower()` unique indexes work on Postgres), so it is
 mostly a data copy. Postgres enforces the `max_length` caps SQLite ignores,
 so check for over-long text first, or do ARCH-10 before moving.
+
+## Day-to-day correctness (code review, 2026-10-30)
+
+Each finding below was reproduced against the current branch with throwaway
+requests through the test client, not inferred from reading alone.
+
+### Typing an existing ingredient in a different case crashes the save (500)
+
+- **Where:** `forms/ingredient_forms.py` (`IngredientInRecipeForm.save`,
+  `resolve_pending_ingredient`), `views/recipe_ingredients.py`
+  (`recipe_ingredient_create`).
+- **What:** the recipe editor resolves the typed name with an exact,
+  case-sensitive lookup (`get_or_create(ingredient_name=name)`), while migration
+  0013 made names unique case-insensitively (`ingredient_name_ci_unique`). With
+  `Onion` stored, adding or editing a row as `onion` misses the lookup, tries to
+  insert, hits the constraint, and `get_or_create` re-raises the
+  `IntegrityError`. Both `.../ingredients/create/` and `.../ingredients/<id>/save/`
+  answer 500. The clean-up tool already compares with `iexact`; the per-recipe
+  editor, which is used far more often, does not.
+- **Fix:** resolve by `ingredient_name__iexact` and reuse the stored row (keeping
+  its canonical spelling) in all three places. Add a test per endpoint.
+
+### Typing a plural recreates the duplicates the clean-up tool removes
+
+- **Where:** same name resolution as above.
+- **What:** with `onion` stored, entering `2 onions` creates a new `onions`
+  `Ingredient` row. Plan 009 says a plural is a display form and an `onions` row
+  is bad data, and "Merge plural" exists to fold such rows back, but the
+  everyday input path keeps producing them. Typing the plural is natural when
+  the quantity is above one, so this will recur.
+- **Fix:** when no row matches the typed name, also match it against existing
+  rows' `plural` (rule or override, case-insensitively) and use the singular.
+  This is the same "resolve on input" idea as the alias plan (008) and could
+  share its lookup.
+
+### Duplicating a recipe drops every step title
+
+- **Where:** `views/recipe_crud.py`, `recipe_duplicate`.
+- **What:** the step copy lists `step_text`, `index_in_sequence`, `duration`
+  and `extra_info`, but not `step_title` (added in migration 0015). The copy of
+  a recipe with "For the stock: …" steps comes back with every heading gone.
+  `test_views_duplicate.py` does not check titles, so this went unnoticed.
+- **Fix:** copy `step_title`; add an assertion to the duplicate tests. Worth
+  copying the model fields generically, so the next new column is not missed
+  the same way.
+
+### Scaling is lossy and can permanently zero out quantities
+
+- **Where:** `views/recipe_crud.py`, `recipe_scale`.
+- **What:** scaling rewrites stored quantities, rounded to 0.01, and servings,
+  rounded to a whole number with a floor of 1. Reproduced on a 1-serving recipe
+  with `0.25` of an ingredient:
+  - ×0.5 leaves servings at 1 but stores `0.13`, so servings and quantities
+    no longer agree;
+  - a further ×0.01 stores `0.00`;
+  - ×100 then gives 100 servings and still `0.00`. The original amount is gone,
+    with no undo.
+  Ordinary use drifts too: ×1.5 on 3 servings shows "Serves 5" (4.5 rounded)
+  next to quantities scaled for 4.5, and halving then doubling does not return
+  the original values.
+- **Fix:** prefer scaling at display time (a `?servings=` or multiplier applied
+  in the template filter) and leave the stored quantities as the source data.
+  If scaling must stay persistent, at least refuse a multiplier that would
+  round a non-zero quantity to zero or move servings by something other than
+  the multiplier.
+
+### Server errors in HTMX requests are silent outside DEBUG
+
+- **Where:** `templates/recipes/base.html` (`htmx-config` `responseHandling`).
+- **What:** every status other than 2xx, 3xx and 422 is set to
+  `swap: false, error: true`, and nothing listens for `htmx:responseError` or
+  `htmx:sendError`. With `DEBUG=True`, `django_htmx_script` shows the error
+  page; with `DEBUG=False` (prod settings), a 403, 404 or 500 does nothing
+  visible. The user presses Save, the edit form stays as it was, and nothing
+  says the change was not stored. Typical triggers are the 500 above, a CSRF
+  failure after logging in again in another tab (the token in `hx-headers` is
+  fixed at page render), or the server being down.
+- **Fix:** add a small `htmx:responseError` / `htmx:sendError` listener in
+  `base.html` that shows a visible "Not saved: <status>, reload the page"
+  banner. This needs no server change.
+
+### Deleting a group silently deletes all its ingredients
+
+- **Where:** `templates/recipes/partials/_group_edit.html` (Delete button),
+  `views/recipe_ingredients.py`, `recipe_group_delete`.
+- **What:** the group's Delete button has no `hx-confirm`, and
+  `IngredientInRecipe.ingredient_group` is `on_delete=CASCADE`, so one click
+  next to Save/Cancel removes the group and every ingredient row in it, with
+  no undo. Recipe delete and bulk step delete both ask first. The view also
+  lets the recipe's last group go, although `_prune_empty_group` deliberately
+  keeps it.
+- **Fix:** add `hx-confirm` naming how many ingredients will go, or refuse to
+  delete a non-empty group and point to "Move to" first. Keep the last group,
+  as the prune rule does.
+
+### Cuisine names duplicate by case
+
+- **Where:** `forms/field_forms.py`, `RecipeMetadataForm.save`.
+- **What:** cuisine is resolved with an exact `get_or_create`, so typing
+  `italian` with `Italian` stored creates a second cuisine. This is the same
+  variant problem that ingredients solved with migration 0013. It does not
+  crash, because `Cuisine.cuisine` is only case-sensitively unique, but the
+  datalist grows near-duplicates over time.
+- **Fix:** resolve by `cuisine__iexact` and keep the stored spelling.
+  Optionally add a `Lower("cuisine")` unique constraint once existing
+  duplicates are merged.
+
+### Ingredient substitutes are stored but never shown or editable
+
+- **Where:** `IngredientInRecipe.substitute`,
+  `templates/recipes/partials/_ingredient_display.html`, `IngredientInRecipeForm`.
+- **What:** the model, the clean-up tool (which carefully repoints
+  `substitute` on merge and delete) and the duplicate view all handle
+  substitutes, but the recipe page never renders one and the inline form
+  cannot set or clear one. Any imported "or use X" information is invisible to
+  someone cooking from the page.
+- **Fix:** render `(or <substitute>)` in the display partial (and add
+  `substitute` to the `select_related` in the `recipe` view). Add an optional
+  substitute name field to the inline form, resolved like `ingredient_name`.
