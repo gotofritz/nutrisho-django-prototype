@@ -274,3 +274,57 @@ def test_safe_step_html_closes_misnested_tags():
     from recipes.templatetags.recipe_filters import safe_step_html
 
     assert safe_step_html("<b><i>x</b>y</i>") == "<b><i>x</i></b>y"
+
+
+@pytest.mark.parametrize(
+    ("stored", "rendered"),
+    [
+        ("Bake (oven<gas 4) for 20 min. Rest.", "Bake (oven&lt;gas 4) for 20 min. Rest."),
+        (
+            "Mix until temp<a few degrees. Then serve hot.",
+            "Mix until temp&lt;a few degrees. Then serve hot.",
+        ),
+        ("a<b", "a&lt;b"),
+        ("a</b", "a&lt;/b"),
+        ("a<!b", "a&lt;!b"),
+        ("a<!-- b", "a&lt;!-- b"),
+    ],
+)
+def test_safe_step_html_keeps_text_after_a_stray_less_than(stored: str, rendered: str):
+    """A `<` that never becomes a tag is text, not the start of a tag to swallow (#50)."""
+    from recipes.templatetags.recipe_filters import safe_step_html
+
+    assert safe_step_html(stored) == rendered
+
+
+def test_safe_title_html_keeps_text_after_a_stray_less_than():
+    """Titles share the sanitiser, so they keep the text too (#50)."""
+    from recipes.templatetags.recipe_filters import safe_title_html
+
+    assert safe_title_html("<u>Ragú</u> for 2<4 people") == "<u>Ragú</u> for 2&lt;4 people"
+    assert safe_title_html("<u>Fish<chips") == "<u>Fish&lt;chips</u>"
+
+
+def test_safe_blurb_html_keeps_text_and_line_breaks_after_a_stray_less_than():
+    """Blurbs share the sanitiser, and the kept text still gets its line breaks (#50)."""
+    from recipes.templatetags.recipe_filters import safe_blurb_html
+
+    assert safe_blurb_html("oven<gas 4\nthen rest") == "oven&lt;gas 4<br>then rest"
+
+
+@pytest.mark.parametrize("seed", range(200))
+def test_safe_step_html_keeps_the_visible_text_of_tagless_input(seed: int):
+    """Input that holds no tag at all comes out with every character of its text (#50).
+
+    Without `>` nothing can close a tag, so whatever the parser makes of the
+    `<`s, all of the input is text and must survive escaping.
+    """
+    from html import unescape
+    from random import Random
+
+    from recipes.templatetags.recipe_filters import safe_step_html
+
+    rng = Random(seed)
+    stored = "".join(rng.choices("ab1 <</!-?.()\"'", k=rng.randint(1, 30)))
+
+    assert unescape(safe_step_html(stored)) == stored

@@ -2,6 +2,7 @@
 
 from decimal import Decimal
 from fractions import Fraction
+from html import unescape
 from html.parser import HTMLParser
 
 from django import template
@@ -23,7 +24,8 @@ class _InlineHtmlSanitizer(HTMLParser):
     would underline everything after it. A closing tag closes whatever is still
     open inside it, a closing tag with nothing to close is dropped, and anything
     left open is closed at the end. With `line_breaks`, new lines and `<br>`
-    both come out as `<br>`.
+    both come out as `<br>`. A `<` that never becomes a tag (`oven<gas 4`) is
+    text: `HTMLParser.close()` would silently drop it and everything after it.
     """
 
     def __init__(self, allowed: frozenset[str], *, line_breaks: bool = False) -> None:
@@ -54,6 +56,12 @@ class _InlineHtmlSanitizer(HTMLParser):
         self._parts.append(text)
 
     def result(self) -> str:
+        # `feed()` holds back what it cannot parse yet: an unfinished tag, or text
+        # ending in a possible entity. `close()` would drop the tag, so emit it
+        # all as text, unescaped as `convert_charrefs` would have done (#50).
+        if self.rawdata:
+            self.handle_data(unescape(self.rawdata))
+            self.rawdata = ""
         self.close()
         self._parts.extend(f"</{tag}>" for tag in reversed(self._open))
         self._open.clear()
