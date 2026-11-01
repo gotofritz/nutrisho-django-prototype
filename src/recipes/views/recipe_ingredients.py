@@ -9,6 +9,7 @@ from recipes.forms.ingredient_forms import IngredientGroupForm, IngredientInReci
 from recipes.models import IngredientGroup, IngredientInRecipe, Recipe
 from recipes.services.name_resolution import ingredient_names_for, resolve_ingredient
 from recipes.utils.sequencing import insert_at_index, move_in_sequence, remove_and_compact
+from recipes.views._announce import announce
 from recipes.views._types import AuthedRequest
 
 
@@ -124,13 +125,14 @@ def recipe_ingredient_delete(request: AuthedRequest, recipe_id: int, iir_id: int
         )
         pruned = _prune_empty_group(recipe, group)
     if not pruned:
-        return HttpResponse("")
+        return announce(HttpResponse(""), "Ingredient deleted.")
     # The row swap alone would leave an empty group block on the page, and the
     # reassign <select> would still offer the group that just went.
-    return HttpResponse(
+    response = HttpResponse(
         f'<div id="group-block-{group_pk}" hx-swap-oob="delete"></div>'
         + _reassign_select_oob(recipe, request)
     )
+    return announce(response, "Ingredient deleted.")
 
 
 @require_POST
@@ -323,7 +325,7 @@ def recipe_group_delete(request: AuthedRequest, recipe_id: int, group_id: int) -
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     remove_and_compact(siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group)
-    return HttpResponse(_reassign_select_oob(recipe, request))
+    return announce(HttpResponse(_reassign_select_oob(recipe, request)), "Group deleted.")
 
 
 @require_POST

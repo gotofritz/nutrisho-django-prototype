@@ -1,4 +1,4 @@
-{% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+{% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
 <div id="reassign-panel" class="reassign-panel" hidden>
   <form
     hx-post="{% url 'recipes:ingredient_reassign' recipe.id %}"

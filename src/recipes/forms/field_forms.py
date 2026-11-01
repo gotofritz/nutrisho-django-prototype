@@ -30,7 +30,10 @@ class RecipeMetadataForm(forms.ModelForm):
     class Meta:
         model = Recipe
         fields = _METADATA_MODEL_FIELDS
-        widgets = {"short_description": forms.Textarea(attrs={"rows": 3})}
+        widgets = {
+            "recipe_name": forms.TextInput(attrs={"autofocus": True}),
+            "short_description": forms.Textarea(attrs={"rows": 3}),
+        }
 
     def __init__(self, *args: object, owner: AbstractBaseUser, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
@@ -100,3 +103,5 @@ class RecipeFieldForm(forms.ModelForm):
         for name in list(self.fields):
             if name != field_name:
                 del self.fields[name]
+        # htmx focuses [autofocus] in swapped-in content (#61).
+        self.fields[field_name].widget.attrs["autofocus"] = True

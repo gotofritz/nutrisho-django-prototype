@@ -21,7 +21,7 @@ class IngredientInRecipeForm(forms.ModelForm):
         model = IngredientInRecipe
         fields = ["quantity", "unit", "preparation", "note"]
         widgets = {
-            "quantity": forms.NumberInput(attrs={"step": "any"}),
+            "quantity": forms.NumberInput(attrs={"step": "any", "autofocus": True}),
         }
 
     def __init__(self, *args: object, owner: AbstractBaseUser, **kwargs: object) -> None:
@@ -63,7 +63,12 @@ class IngredientInRecipeForm(forms.ModelForm):
 
 
 class IngredientGroupForm(forms.ModelForm):
-    group_name = forms.CharField(max_length=64, required=False, label="Group name")
+    group_name = forms.CharField(
+        max_length=64,
+        required=False,
+        label="Group name",
+        widget=forms.TextInput(attrs={"autofocus": True}),
+    )
 
     class Meta:
         model = IngredientGroup

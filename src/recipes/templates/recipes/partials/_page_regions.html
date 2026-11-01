@@ -1,0 +1,11 @@
+{% comment %}
+Page-wide regions that must survive every navigation: the save-error banner
+(#37) and the polite live region for announcements (#61). base.html renders
+them; _recipe_content.html renders them again for a boosted visit, since that
+partial replaces the whole <body>.
+{% endcomment %}
+<div id="save-error" class="save-error" role="alert" hidden>
+  <span id="save-error-message">Your change was not saved.</span>
+  <button type="button" id="save-error-dismiss" aria-label="Dismiss">&times;</button>
+</div>
+<div id="a11y-status" class="visually-hidden" role="status" aria-live="polite"></div>
