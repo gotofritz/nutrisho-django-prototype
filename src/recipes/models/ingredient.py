@@ -7,6 +7,10 @@ from django.db.models.functions import Lower
 
 from recipes.utils.pluralise import pluralise
 
+# Imported data has a 72-character name (#49). plural_name shares the limit:
+# merging a plural pair writes one ingredient name into the other's plural_name.
+INGREDIENT_NAME_MAX_LENGTH = 128
+
 
 class Ingredient(models.Model):
     id = models.AutoField(primary_key=True)
@@ -35,7 +39,7 @@ class Ingredient(models.Model):
         ("CHM", "Chemical"),
         ("MSC", "Misc"),
     ]
-    ingredient_name = models.CharField(max_length=64)
+    ingredient_name = models.CharField(max_length=INGREDIENT_NAME_MAX_LENGTH)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         verbose_name="private to this user; blank means global (staff-curated)",
@@ -46,7 +50,7 @@ class Ingredient(models.Model):
     )
     plural_name = models.CharField(
         "plural display form; blank derives it from the rule",
-        max_length=64,
+        max_length=INGREDIENT_NAME_MAX_LENGTH,
         blank=True,
         default="",
     )

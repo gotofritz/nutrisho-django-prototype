@@ -106,6 +106,18 @@ def test_step_save_post_valid_saves_and_returns_display(auth_client, recipe, ste
 
 
 @pytest.mark.django_db
+def test_step_save_accepts_text_longer_than_512(auth_client, recipe, step):
+    """Imported steps run to 656 characters; editing one must not refuse it (#49)."""
+    long_text = "a" * 656
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/steps/{step.pk}/save/", {"step_text": long_text}
+    )
+    assert "<form" not in response.content.decode()
+    step.refresh_from_db()
+    assert step.step_text == long_text
+
+
+@pytest.mark.django_db
 def test_step_save_post_invalid_returns_form(auth_client, recipe, step):
     """Step save post invalid returns form."""
     response = auth_client.post(

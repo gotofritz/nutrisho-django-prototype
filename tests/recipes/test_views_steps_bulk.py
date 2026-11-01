@@ -3,6 +3,7 @@
 import pytest
 
 from recipes.models import Recipe, Step
+from recipes.models.recipe import PROSE_MAX_LENGTH
 
 
 @pytest.fixture
@@ -202,9 +203,21 @@ def test_merge_with_invalid_ids_is_422(auth_client, recipe, steps):
 
 
 @pytest.mark.django_db
+def test_merge_allows_text_longer_than_512(auth_client, recipe, add_step):
+    """The old 512 cap is gone (#49): merging two long steps succeeds."""
+    first = add_step(recipe=recipe, text="a" * 500)
+    second = add_step(recipe=recipe, text="b" * 20)
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/steps/merge/", {"step_ids": [first.pk, second.pk]}
+    )
+    assert response.status_code == 200
+    assert _texts(recipe) == ["a" * 500 + " " + "b" * 20]
+
+
+@pytest.mark.django_db
 def test_merge_refuses_text_longer_than_a_step_holds(auth_client, recipe, add_step):
     """Merging must not truncate: an over-long result writes nothing."""
-    long_text = "a" * 500  # a step holds 512 characters
+    long_text = "a" * (PROSE_MAX_LENGTH - 10)
     first = add_step(recipe=recipe, text=long_text)
     second = add_step(recipe=recipe, text="b" * 20)
     response = auth_client.post(

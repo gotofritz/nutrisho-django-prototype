@@ -2,6 +2,7 @@
 
 import django.db
 import pytest
+from django.db import models
 
 from recipes.models import (
     Cuisine,
@@ -13,6 +14,8 @@ from recipes.models import (
     Step,
     Tag,
 )
+from recipes.models.ingredient import INGREDIENT_NAME_MAX_LENGTH
+from recipes.models.recipe import PROSE_MAX_LENGTH
 from recipes.utils.step_title import MAX_TITLE_LENGTH
 
 
@@ -253,6 +256,30 @@ def test_ingredient_plural_name_defaults_to_blank():
     assert ingredient.plural_name == ""
     assert Ingredient._meta.get_field("plural_name").null is False  # ty: ignore[unresolved-attribute]
     assert Ingredient._meta.get_field("plural_name").blank is True  # ty: ignore[unresolved-attribute]
+
+
+@pytest.mark.parametrize(
+    ("model", "name"),
+    [(Step, "step_text"), (Step, "extra_info"), (Recipe, "short_description")],
+)
+def test_long_prose_fields_are_text_fields(model, name):
+    """Prose has no database length limit (#49); forms cap it generously."""
+    field = model._meta.get_field(name)
+    assert isinstance(field, models.TextField)
+    assert field.max_length == PROSE_MAX_LENGTH
+    assert field.formfield().max_length == PROSE_MAX_LENGTH
+
+
+def test_ingredient_name_and_plural_share_one_limit():
+    """A merge writes an ingredient name into plural_name, so both must fit it."""
+    for name in ("ingredient_name", "plural_name"):
+        field = Ingredient._meta.get_field(name)  # ty: ignore[unresolved-attribute]
+        assert field.max_length == INGREDIENT_NAME_MAX_LENGTH == 128
+
+
+def test_ingredient_name_has_no_column_unique():
+    """Uniqueness is the case-insensitive constraints' job, not a column UNIQUE."""
+    assert Ingredient._meta.get_field("ingredient_name").unique is False  # ty: ignore[unresolved-attribute]
 
 
 @pytest.mark.django_db

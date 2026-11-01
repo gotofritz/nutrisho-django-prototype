@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth.models import AbstractBaseUser
 
 from recipes.models import IngredientGroup, IngredientInRecipe
+from recipes.models.ingredient import INGREDIENT_NAME_MAX_LENGTH
 from recipes.services.name_resolution import find_ingredient, resolve_ingredient
 
 
@@ -14,7 +15,7 @@ class IngredientInRecipeForm(forms.ModelForm):
     private rows, and an unknown name becomes private to them (plan 011).
     """
 
-    ingredient_name = forms.CharField(max_length=64, required=True)
+    ingredient_name = forms.CharField(max_length=INGREDIENT_NAME_MAX_LENGTH, required=True)
 
     class Meta:
         model = IngredientInRecipe
