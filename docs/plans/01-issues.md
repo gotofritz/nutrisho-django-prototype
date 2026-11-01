@@ -901,3 +901,152 @@ recipes. The tests confirm only that login is needed. The design accepts this,
 which is fine for one user and becomes a data-integrity risk once the VPS has a
 second account. **Fix.** Gate the tool on `is_staff` (or a permission) and add 403
 tests for a non-staff user. This may duplicate a security finding.
+
+---
+
+## Performance / efficiency assessment (2026-10-30)
+
+Independent pass by a performance reviewer, with the planned move to a VPS in
+mind. Numbers below were measured, not estimated: a throwaway pytest file seeded
+recipes of three sizes and counted queries per request with
+`CaptureQueriesContext` (in-memory SQLite, test settings), then was deleted.
+
+What is already fine and needs no work: the recipe page is a constant 10
+queries regardless of size (the `Prefetch` in `views/recipe.py` does its job),
+the home list is 3, `recipe_scale` already uses `bulk_update`, and the template
+loader is cached outside DEBUG. Absolute timings are small today (tens of ms),
+so the items below are about how cost scales and about the VPS runtime, not
+about a slow app right now.
+
+### PERF-1 — SQLite runs DEFERRED transactions: concurrent writes fail instantly with "database is locked" (high, VPS)
+
+`DATABASES["default"]` is SQLite with no `OPTIONS`, so Django opens every
+`transaction.atomic()` as `BEGIN DEFERRED`. Almost every write path in the app
+reads first (`select_for_update()` is a no-op on SQLite, so it is a plain read)
+and writes second: `insert_at_index`, `move_in_sequence`, `remove_and_compact`,
+`recipe_ingredient_reassign`, `recipe_scale`, the field/metadata saves. When two
+such transactions overlap, the second one cannot upgrade its read lock to a
+write lock and SQLite returns `SQLITE_BUSY` **immediately**, without honouring
+the busy timeout, because waiting would deadlock. Under gunicorn/uvicorn with
+more than one worker or thread, that is a 500 on an ordinary double-click on ↑,
+or two HTMX requests in flight at once.
+
+Reproduced outside Django with two connections doing read-then-write:
+
+| mode | result for the second writer |
+|---|---|
+| `DEFERRED`, rollback journal (current) | `database is locked` after 0.00 s |
+| `DEFERRED`, WAL | `database is locked` after 0.00 s |
+| `IMMEDIATE`, WAL | waits on `BEGIN` up to the timeout, then proceeds once the first commits |
+
+The code comments assume "SQLite's single-writer locking serializes anyway"
+(`utils/sequencing.py`); that is only true with `IMMEDIATE`.
+
+**Proposal.** In the settings used on the VPS (Django ≥ 5.1 supports both keys):
+
+```python
+DATABASES["default"]["OPTIONS"] = {
+    "transaction_mode": "IMMEDIATE",
+    "timeout": 5,
+    "init_command": (
+        "PRAGMA journal_mode=WAL;"
+        "PRAGMA synchronous=NORMAL;"
+        "PRAGMA busy_timeout=5000;"
+    ),
+}
+```
+
+WAL also lets reads proceed while a write is in progress, and
+`synchronous=NORMAL` is the standard safe pairing with WAL (no corruption on
+power loss, at most the last transaction lost). Only apply when the engine is
+SQLite, since `env.db()` may later point at Postgres. Add a test that the
+options are present, and note the WAL `-wal`/`-shm` side files in the backup
+procedure (`backup_db` should use SQLite's backup API or `VACUUM INTO`, not a
+file copy).
+
+### PERF-2 — N+1 queries whenever a mutation re-renders a group or the preview pane (medium)
+
+The recipe page prefetches groups, rows and ingredients, but the HTMX endpoints
+that re-render the same partials after a mutation pass a bare `Recipe` (or
+`IngredientGroup`) fetched with `get_object_or_404`. `_groups_list.html` and
+`_iir_list.html` then run one query per group for `group.ingredient.all` and
+one per row for `iir.ingredient` (via `display_ingredient_name`). The column-4
+preview in the ingredient clean-up tool has the same problem plus one more
+query per row for `iir.substitute`.
+
+Queries per request, by recipe size (groups × rows per group, steps):
+
+| endpoint | 1×5, 5 | 3×10, 12 | 6×20, 30 |
+|---|---|---|---|
+| recipe page (reference) | 10 | 10 | 10 |
+| `group_move_up/down` | 15 | 45 | 138 |
+| `ingredient_reassign` (1 row → new group) | 29 | 61 | 164 |
+| `ingredient_move_up/down` | 19 | 24 | 34 |
+| `ingredient_manage_preview` | 16 | 68 | 251 |
+
+Affected call sites: every `render(..., "_groups_list.html", {"recipe": recipe})`
+and `_iir_list.html` render in `views/recipe_ingredients.py`, `_group_block.html`
+in `recipe_group_create`, and `ingredient_manage_preview` / `_matches_context`
+in `views/ingredient_admin.py`.
+
+**Proposal.** One helper next to the recipe view, e.g.
+`recipe_with_contents(recipe_id, owner)`, holding the existing `Prefetch`
+(extended with `select_related("ingredient", "substitute")`), and use it for
+every render that walks groups or rows. For `_iir_list.html`, prefetch on the
+group (`group.ingredient.select_related("ingredient")`). Lock in the win with
+`django_assert_num_queries` tests that seed two sizes and assert the count does
+not grow with size. Matters more if the database later moves to Postgres, where
+each query is a network round-trip rather than an in-process call.
+
+### PERF-3 — `recipe_duplicate` issues one INSERT per child row plus two lazy FK loads per ingredient (medium-low)
+
+Duplicating a 6×20-ingredient, 30-step recipe takes 414 queries inside one
+transaction (34 for the smallest seed), all while holding SQLite's single write
+lock. Each step and each `IngredientInRecipe` is a separate `create()`, and
+`ingredient=iir.ingredient, substitute=iir.substitute` loads both related
+`Ingredient` rows just to copy their ids.
+
+**Proposal.** Copy by id (`ingredient_id=iir.ingredient_id`,
+`substitute_id=iir.substitute_id`) and use `bulk_create` for steps and for each
+group's rows (groups need their new pk first, which `bulk_create` returns on
+SQLite and Postgres). That brings it to a handful of queries independent of
+size. While there: the step copy does not pass `step_title`, so duplicates
+silently lose step titles (a correctness bug, found incidentally; it needs its
+own test).
+
+### PERF-4 — Response size grows with the whole ingredient table, and nothing is compressed (low-medium, grows with data)
+
+- Every inline ingredient edit and every "+ Add ingredient" ships the full
+  `Ingredient` name list as a `<datalist>` (`_all_ingredient_names()`). Measured
+  with 2,000 ingredients: **114 KB per click**, for one form field.
+- The clean-up tool's column 2 renders every ingredient, unpaginated: **597 KB**
+  for the page at 2,000 ingredients, and each search keystroke re-renders the
+  column.
+- There is no compression anywhere: no `GZipMiddleware`, and no reverse proxy
+  is configured yet. That HTML is very repetitive and would shrink about 10×.
+
+**Proposal.** First, enable gzip/zstd on the VPS reverse proxy (Caddy or nginx)
+for `text/html`, `text/css` and `application/javascript`. That is a config line
+with the biggest effect and no code change. Then, if the ingredient table keeps
+growing, replace the datalist with a small autocomplete endpoint
+(`hx-get` with `hx-trigger="input changed delay:200ms"`, returning the top 20
+`istartswith`/`icontains` matches). Column 2 can stay unpaginated until a real
+ingredient count makes it hurt.
+
+### PERF-5 — Static assets are not cacheable, and fonts block first render (low)
+
+- `STATIC_ROOT` and a hashed storage backend are not configured, so filenames
+  never change (`style.css`, `output.css`). Browsers have to revalidate every
+  asset on each full page load, and a far-future `Cache-Control` cannot be set
+  safely. Use `ManifestStaticFilesStorage` (or WhiteNoise's
+  `CompressedManifestStaticFilesStorage`, which also pre-compresses) and serve
+  `/static/` with `Cache-Control: public, max-age=31536000, immutable`.
+- `base.html` loads Google Fonts through the legacy `css?family=` endpoint: a
+  render-blocking, third-party stylesheet on every full page load, for two
+  fonts (Lobster for headings, Inconsolata for steps) and without
+  `display=swap`. Self-host the two `woff2` files under `static/`, declare them
+  with `@font-face { font-display: swap; }`, and `<link rel="preload">` them.
+  That removes two extra origins (DNS, TLS) from first paint and keeps the app
+  independent of Google's CDN. `hx-boost` already avoids re-fetching head assets
+  between pages, so this only affects first load and hard refreshes, hence the
+  low priority.
