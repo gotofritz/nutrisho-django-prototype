@@ -2,7 +2,7 @@ from typing import cast
 
 from django.db import models
 
-from .recipe import Recipe
+from .recipe import PROSE_MAX_LENGTH, Recipe
 
 
 class Step(models.Model):
@@ -13,16 +13,16 @@ class Step(models.Model):
         blank=True,
         default="",
     )
-    step_text = models.CharField(
+    step_text = models.TextField(
         "The description of a step",
-        max_length=512,
+        max_length=PROSE_MAX_LENGTH,
     )
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="step")
     index_in_sequence = models.SmallIntegerField("What step is this, for a given recipe?")
     duration = models.DurationField("How long the step should take", null=True)
-    extra_info = models.CharField(
+    extra_info = models.TextField(
         "any extra info",
-        max_length=512,
+        max_length=PROSE_MAX_LENGTH,
         blank=True,
     )
     objects = models.Manager()

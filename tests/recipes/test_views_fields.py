@@ -104,6 +104,19 @@ def test_field_save_post_valid_saves_and_returns_display(auth_client, recipe):
 
 
 @pytest.mark.django_db
+def test_field_save_accepts_a_description_longer_than_512(auth_client, recipe):
+    """Imported blurbs exceed 512 characters; the inline editor must save them (#49)."""
+    long_text = "a" * 600
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/field/short_description/save/",
+        {"short_description": long_text},
+    )
+    assert "<form" not in response.content.decode()
+    recipe.refresh_from_db()
+    assert recipe.short_description == long_text
+
+
+@pytest.mark.django_db
 def test_field_save_post_invalid_returns_form_with_errors(auth_client, recipe):
     """Field save post invalid returns form with errors."""
     response = auth_client.post(

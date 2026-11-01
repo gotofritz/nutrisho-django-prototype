@@ -6,6 +6,10 @@ from django.urls import reverse
 from .cuisine import Cuisine
 from .source import Source
 
+# Form-only cap on long prose (Recipe.short_description, Step.step_text and
+# .extra_info). They are TextFields, so the database has no limit (#49).
+PROSE_MAX_LENGTH = 4000
+
 
 class RecipeManager(models.Manager):
     def get_by_natural_key(self, username: str, recipe_name: str) -> Recipe:
@@ -25,8 +29,8 @@ class Recipe(models.Model):
 
     id = models.AutoField(primary_key=True)
     recipe_name = models.CharField("Recipe main name", max_length=200)
-    short_description = models.CharField(
-        "A short blurb about the recipe", max_length=512, blank=True, default=""
+    short_description = models.TextField(
+        "A short blurb about the recipe", max_length=PROSE_MAX_LENGTH, blank=True, default=""
     )
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True, blank=True)
