@@ -1318,3 +1318,26 @@ with a short-lived "Undo" toast and a trash view), and move Delete away from
 the frequently used buttons on the list. For the ingredient tool, at minimum
 record merges/deletes so they can be reversed. Automated, off-box backups on
 the VPS are the safety net under all of this.
+
+### If the app is redesigned
+
+A redesign is planned, which changes the order of the work above but not the
+problems.
+
+- **Solve in the design, do not patch first:** UX-4 (responsive layout, read
+  mode before edit mode), UX-5 (search), UX-6 (where source, cuisine and
+  substitutes live on the page) and UX-7 (log-out, login page). The current
+  CSS is a fixed 1040px "index card"; making it responsive now is work the
+  redesign throws away.
+- **Design decides the interaction, code does the rest regardless:** UX-1 (the
+  design asks for target servings and makes clear scaling is temporary; making
+  scaling non-destructive is backend work either way), UX-3 (the design defines
+  the error banner and saving states; the global htmx error handler is needed
+  either way), UX-8 (undo toast or trash view, Delete placement; soft delete is
+  a model change).
+- **Unaffected, fix now:** UX-2, the step title lost on Duplicate.
+
+Suggested brief: design the **cooking view on a phone or tablet** as the
+primary screen and editing as a secondary mode. Include print in the brief,
+since `print.css` is written against the current card layout and will break
+with a new one.
