@@ -48,6 +48,32 @@
       document.addEventListener('input', function(e) {
         if (e.target.tagName === 'TEXTAREA') _resizeTextarea(e.target);
       });
+      // A failed htmx request is not swapped (see htmx-config), so an open edit
+      // form keeps its text; this banner tells the user the change did not land.
+      function _showSaveError(detail, hint) {
+        var banner = document.getElementById('save-error');
+        if (!banner) return;
+        var verb = detail.requestConfig && detail.requestConfig.verb;
+        var what = verb === 'get' ? 'That did not load.' : 'Your change was not saved.';
+        document.getElementById('save-error-message').textContent = what + ' ' + hint;
+        banner.hidden = false;
+      }
+      document.addEventListener('htmx:responseError', function(e) {
+        var status = e.detail.xhr.status;
+        _showSaveError(e.detail, status === 403 || status === 404
+          ? 'Reload the page and try again.'
+          : 'Please try again.');
+      });
+      ['htmx:sendError', 'htmx:timeout'].forEach(function(name) {
+        document.addEventListener(name, function(e) {
+          _showSaveError(e.detail, 'Check your connection and try again.');
+        });
+      });
+      document.addEventListener('htmx:afterRequest', function(e) {
+        var verb = e.detail.requestConfig && e.detail.requestConfig.verb;
+        var banner = document.getElementById('save-error');
+        if (banner && e.detail.successful && verb !== 'get') banner.hidden = true;
+      });
       function panelToggle(btn, panelId, event) {
         var panel = document.getElementById(panelId);
         if (panel && panel.innerHTML.trim()) {
@@ -59,6 +85,10 @@
   </head>
 
   <body hx-boost="true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <div id="save-error" class="save-error" role="alert" hidden>
+      <span id="save-error-message">Your change was not saved.</span>
+      <button type="button" id="save-error-dismiss" aria-label="Dismiss">&times;</button>
+    </div>
     {% block content %}{% endblock %}
     <script>
       document.addEventListener('change', function (e) {
@@ -74,6 +104,9 @@
         }
       });
       document.addEventListener('click', function (e) {
+        if (e.target.id === 'save-error-dismiss') {
+          document.getElementById('save-error').hidden = true;
+        }
         if (e.target.id === 'steps-cancel') {
           document.querySelectorAll('.step-select:checked').forEach(function (cb) {
             cb.checked = false;
