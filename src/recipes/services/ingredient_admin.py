@@ -20,8 +20,22 @@ class IngredientInUseError(Exception):
     """Raised when a delete would strand recipes that still reference an ingredient."""
 
 
+class IngredientScopeError(IngredientInUseError):
+    """Raised when a private replacement would land in another user's recipe.
+
+    A private row is invisible to everyone but its owner (plan 011), so it may
+    only replace ingredients in its owner's recipes. Subclasses
+    `IngredientInUseError` so the views answer it the same way: 422, nothing
+    written.
+    """
+
+
 def search_ingredients(
-    query: str, *, unused_only: bool = False, plurals_only: bool = False
+    query: str,
+    *,
+    unused_only: bool = False,
+    plurals_only: bool = False,
+    private_only: bool = False,
 ) -> QuerySet:
     """`Ingredient` rows whose name contains `query`, case-insensitively.
 
@@ -42,8 +56,13 @@ def search_ingredients(
     form, not a second ingredient, so such a pair is bad data: this is how the
     owner finds them and merges the plural into the singular. Composes with the
     other two filters.
+
+    `private_only` narrows the list to rows private to one user (plan 011): the
+    candidates for promotion to the global list.
     """
-    matches = Ingredient.objects.all()
+    matches = Ingredient.objects.select_related("owner")
+    if private_only:
+        matches = matches.filter(owner__isnull=False)
     if query:
         matches = matches.filter(ingredient_name__icontains=query)
     if plurals_only:
@@ -136,6 +155,15 @@ def delete_ingredients(*, ingredient_ids: Iterable[int], replacement_id: int | N
         if replacement is None:
             msg = "Recipes still use these ingredients — pick a replacement first."
             raise IngredientInUseError(msg)
+        if (
+            replacement.owner_id is not None
+            and references.exclude(ingredient_group__recipe__owner=replacement.owner_id).exists()
+        ):
+            msg = (
+                f"“{replacement.ingredient_name}” is private to {replacement.owner}, but "
+                "another user's recipe uses these ingredients — promote it first."
+            )
+            raise IngredientScopeError(msg)
         # Lock the referencing rows before rewriting them, matching
         # recipe_ingredient_reassign (a no-op on SQLite, which serializes anyway).
         list(references.select_for_update().values("pk"))
@@ -167,6 +195,37 @@ def merge_ingredients(*, survivor_id: int, victim_ids: Iterable[int]) -> int:
         msg = f"No Ingredient with id {survivor_id}"
         raise ObjectDoesNotExist(msg)
     return delete_ingredients(ingredient_ids=victim_ids, replacement_id=survivor_id)
+
+
+@transaction.atomic
+def promote_ingredients(ingredient_ids: Iterable[int]) -> list[int]:
+    """Make private rows global, folding in every same-named private row.
+
+    For each selected private row: if a global row already has its name
+    (ignoring case) it is merged into that row, otherwise it simply loses its
+    owner. Either way every other user's private row of that name is then
+    merged into the global one, so everyone's recipes share it. Global rows in
+    the selection are left as they are.
+
+    Returns the ids of the resulting global rows, in selection order, so the
+    view can keep them ticked.
+    """
+    promoted: list[int] = []
+    for ingredient in list(selected_ingredients(ingredient_ids)):
+        if not Ingredient.objects.filter(pk=ingredient.pk).exists():
+            continue  # folded into an earlier selected row of the same name
+        name = cast(str, ingredient.ingredient_name)
+        same_name = Ingredient.objects.filter(ingredient_name__iexact=name)
+        target = same_name.filter(owner__isnull=True).first()
+        if target is None:
+            ingredient.owner = None
+            ingredient.save(update_fields=["owner"])
+            target = ingredient
+        victims = list(same_name.filter(owner__isnull=False).values_list("pk", flat=True))
+        delete_ingredients(ingredient_ids=victims, replacement_id=target.pk)
+        if target.pk not in promoted:
+            promoted.append(target.pk)
+    return promoted
 
 
 def suggest_singular(candidates: Sequence[Ingredient]) -> int | None:

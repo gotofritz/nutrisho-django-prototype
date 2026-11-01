@@ -15,52 +15,52 @@ from recipes.services.name_resolution import (
 
 
 @pytest.mark.django_db
-def test_resolve_ingredient_reuses_row_ignoring_case(make_ingredient):
+def test_resolve_ingredient_reuses_row_ignoring_case(make_ingredient, user):
     """`Onion` resolves to the stored `onion` and keeps its spelling."""
     onion = make_ingredient("onion")
-    assert resolve_ingredient("Onion") == onion
+    assert resolve_ingredient("Onion", owner=user) == onion
     assert Ingredient.objects.count() == 1
     onion.refresh_from_db()
     assert onion.ingredient_name == "onion"
 
 
 @pytest.mark.django_db
-def test_resolve_ingredient_strips_whitespace(make_ingredient):
+def test_resolve_ingredient_strips_whitespace(make_ingredient, user):
     """Surrounding whitespace is not part of the name."""
     onion = make_ingredient("onion")
-    assert resolve_ingredient("  ONION ") == onion
+    assert resolve_ingredient("  ONION ", owner=user) == onion
 
 
 @pytest.mark.django_db
-def test_resolve_ingredient_creates_on_miss_as_typed():
+def test_resolve_ingredient_creates_on_miss_as_typed(user):
     """A new name is created with the spelling the user typed."""
-    ingredient = resolve_ingredient(" Shallot ")
+    ingredient = resolve_ingredient(" Shallot ", owner=user)
     assert ingredient.ingredient_name == "Shallot"
     assert Ingredient.objects.count() == 1
 
 
 @pytest.mark.django_db
-def test_resolve_ingredient_does_not_match_substrings(make_ingredient):
+def test_resolve_ingredient_does_not_match_substrings(make_ingredient, user):
     """`iexact` is an equality test: `onion` does not resolve to `red onion`."""
     make_ingredient("red onion")
-    assert resolve_ingredient("onion").ingredient_name == "onion"
+    assert resolve_ingredient("onion", owner=user).ingredient_name == "onion"
     assert Ingredient.objects.count() == 2
 
 
 @pytest.mark.django_db
-def test_resolve_ingredient_treats_like_wildcards_literally(make_ingredient):
+def test_resolve_ingredient_treats_like_wildcards_literally(make_ingredient, user):
     """`%` and `_` in a name are characters, not LIKE wildcards."""
     make_ingredient("salt")
-    assert resolve_ingredient("s_lt").ingredient_name == "s_lt"
-    assert resolve_ingredient("%").ingredient_name == "%"
+    assert resolve_ingredient("s_lt", owner=user).ingredient_name == "s_lt"
+    assert resolve_ingredient("%", owner=user).ingredient_name == "%"
 
 
 @pytest.mark.django_db
-def test_find_ingredient_ignores_case_and_never_creates(make_ingredient):
+def test_find_ingredient_ignores_case_and_never_creates(make_ingredient, user):
     """`find_ingredient` looks up only."""
     onion = make_ingredient("onion")
-    assert find_ingredient(" ONION") == onion
-    assert find_ingredient("leek") is None
+    assert find_ingredient(" ONION", owner=user) == onion
+    assert find_ingredient("leek", owner=user) is None
     assert Ingredient.objects.count() == 1
 
 
