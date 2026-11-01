@@ -1050,3 +1050,123 @@ ingredient count makes it hurt.
   independent of Google's CDN. `hx-boost` already avoids re-fetching head assets
   between pages, so this only affects first load and hard refreshes, hence the
   low priority.
+
+
+---
+
+## Developer experience review (2026-10-30)
+
+Walked through onboarding as a new contributor on a clean checkout: Developer
+Guide first-time setup, database, running the app, `uv run poe qa`. Everything
+below was reproduced, not inferred. QA itself is in good shape (764 tests,
+~98% coverage, ~14 s end to end).
+
+### DX-1 (high) — Following the Developer Guide, you cannot log in
+
+Every view is behind `login_required`, but the guide's only user step is
+`python manage.py addinitialuser`, which runs `User.objects.create(username="gotofritz")`
+with no password. That user can never authenticate, so a new contributor hits
+the login page and stops. Its `help` text also says "Adds a single recipe".
+
+The path that does work, `uv run poe createsuperuser`, is undocumented and
+hard-codes the owner's username, email and the password `fritz`.
+
+**Fix:** delete `addinitialuser`; have `poe createsuperuser` read
+`DJANGO_SUPERUSER_USERNAME/EMAIL/PASSWORD` from `.env` (add placeholders to
+`.env.example`) or prompt interactively; put `uv run poe migrate` and
+`uv run poe createsuperuser` in the guide's *First-time setup*.
+
+### DX-2 (high) — `manage.py` defaults to production settings, and the docs say to use it
+
+`manage.py` does `setdefault("DJANGO_SETTINGS_MODULE", "nutrisho.settings.prod")`.
+Only `poe` tasks get dev settings (via `[env]` in `.poe.toml`). Yet the docs tell
+contributors to call it directly: the Developer Guide (`python manage.py
+addinitialuser`, `delete_recipe`), README (`python manage.py
+find_ingredient_duplicates`) and AGENTS.md (`uv run python manage.py migrate` /
+`backup_db --schema-only`). Verified on a clean checkout:
+
+- no `.env` yet → `ImproperlyConfigured: Set the SECRET_KEY environment variable`
+- with `.env` → `manage.py runserver` serves pages but
+  `/static/css/output.css` is a 404 (DEBUG off), so the app is unstyled and the
+  debug toolbar missing, with no hint why
+
+The bare `python` in the guide and README also contradicts AGENTS.md's
+"never invoke a bare `python`".
+
+**Fix:** add a passthrough `poe manage` task (`python manage.py`, inheriting the
+dev `[env]`) and route every documented command through `uv run poe ...`.
+Keeping `manage.py` on prod is the safer default for deploys; if it is switched
+to dev instead, deploy docs must set `DJANGO_SETTINGS_MODULE` explicitly.
+
+### DX-3 (medium) — `poe test <path>` always fails, and its output buries failures
+
+The task's help says extra args pass through, but `--cov-fail-under=95` applies
+to whatever subset you ran: `uv run poe test tests/recipes/test_pluralise.py`
+passes 21/21 and then reports `FAIL Required test coverage of 95% not reached.
+Total coverage: 14.42%`. So the red→green TDD loop AGENTS.md mandates can't use
+the documented test task. Separately, `-vv -s` prints every test id plus the
+full migration log (~800 lines), pushing a failure off-screen.
+
+**Fix:** split into `test` (plain `pytest`, args pass through) and `test-cov`
+(coverage + threshold) used by `qa`; drop `-vv -s` from the default.
+
+### DX-4 (medium) — Contribution conventions are stale or not enforced
+
+- `docs/developer-guide.md` *Branches and commits* still says
+  `feature/<name>` / `fix/<name>`, the form AGENTS.md calls retired.
+- Commit-message format (commitizen) and `qa` are enforced only by pre-commit,
+  but no doc says to run `uv run pre-commit install`. Without it nothing checks
+  commits locally, and CI never checks them either.
+- PRs are squash-merged, so the PR title becomes the `main` subject, yet AGENTS.md
+  admits "getting it right is manual".
+
+**Fix:** update the guide's branch section to match AGENTS.md, add
+`uv run pre-commit install` to *First-time setup*, and add a CI job that lints
+the PR title against Conventional Commits.
+
+### DX-5 (medium) — Committed Claude Code config imposes personal tooling on every contributor
+
+`.claude/settings.json` (committed, so it applies to anyone who opens the repo
+in Claude Code) runs a SessionStart hook that switches the contributor's
+assistant into "caveman" mode by default (`full`), writes a flag to their
+`~/.claude/.caveman-active`, and replaces their status line. Also, `poe qa`
+(and so the pre-commit hook and CI) runs `test-hooks`, the caveman scripts'
+regression suite. That makes `jq` a hard prerequisite of the app's QA, and is
+the only reason CI installs it.
+
+**Fix:** move the caveman hooks and status line to user-level config or a
+git-ignored `.claude/settings.local.json`, and take `test-hooks` out of `qa`
+(keep it as its own task if the scripts stay). Keep the branch-prompt hook
+project-level if wanted.
+
+### DX-6 (low) — AGENTS.md prescribes libraries the code doesn't use
+
+AGENTS.md says CLI: `click`, models: `pydantic`, tests may use `faker`,
+`polyfactory`, `pytest-data`. In practice CLIs are Django management commands
+(argparse), there is no pydantic code (it is importable only transitively via
+`google-genai`), `pytest-data` isn't installed, and `faker`/`polyfactory` are
+dev deps no test imports. A contributor or agent following AGENTS.md
+literally will add a second CLI or validation style.
+
+**Fix:** align AGENTS.md with actual practice (management commands, plain
+pytest fixtures in `conftest.py`) and drop the unused dev deps.
+
+### DX-7 (low) — Unused runtime dependency `google-genai`
+
+Declared in `[project].dependencies` but never imported in `src/`, `tests/` or
+`scripts/`. It drags a large transitive tree (`websockets`, `pydantic`, google
+auth, ...) into every install. **Fix:** remove it until a feature needs it.
+
+### DX-8 (low) — `poe coverage` is macOS-only
+
+It runs `open htmlcov/index.html`; on Linux it fails with
+`Failed to spawn: open`. **Fix:** `python -m webbrowser -t htmlcov/index.html`.
+
+### DX-9 (low) — No demo data for trying features locally
+
+A fresh database is empty. Features like the ingredient clean-up tool (merge,
+plural pairs, unused-only) need several recipes with duplicate and plural
+ingredients before there is anything to click. Reviewers of UI changes have to
+hand-build that each time. **Fix:** a `seed_demo` management command (or
+fixture) that creates a user's worth of sample recipes, including a few
+deliberate duplicates, exposed as `uv run poe seed`.
