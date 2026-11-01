@@ -28,7 +28,7 @@ Nutrisho is a Django recipe manager prototype. Stores recipes, ingredients, cuis
 src/
   nutrisho/      # Django project (settings, urls, wsgi, health.py)
   recipes/       # Main app: models, views, templates, management commands
-    services/      # Pure query/mutation functions, no HTTP (ingredient_admin.py, name_resolution.py, recipe_duplication.py, recipe_scaling.py)
+    services/      # Pure query/mutation functions, no HTTP (cuisine_admin.py, ingredient_admin.py, name_resolution.py, recipe_duplication.py, recipe_scaling.py)
     templatetags/  # Custom template filters (recipe_filters.py)
     utils/         # Framework-free helpers (sequencing.py, pluralise.py, scaling.py, step_title.py, step_text.py)
 docs/
@@ -375,9 +375,19 @@ they draw on are split by who may change them:
   top-level row for staff). Users pick from the tree: the editor's datalist
   holds every dotted path (`cuisine_paths()`), `find_cuisine` takes a path or
   an unambiguous bare name, and an unknown name is a form error. Staff edit
-  the tree in Django admin; `Cuisine.clean()` forbids dots in names, loops and
-  a fourth level. Names are unique ignoring case among siblings
+  the tree in the cuisine tool at `/recipes/cuisines/manage/` (linked from the
+  home page next to "Manage ingredients"; Django admin works too).
+  `Cuisine.clean()` forbids dots in names, loops and a fourth level, and the
+  tool's `CuisineForm` surfaces those and the uniqueness rules as form errors.
+  Names are unique ignoring case among siblings
   (`cuisine_ci_unique_per_parent`) and among areas (`cuisine_ci_unique`).
+  The tool is a smaller sibling of the ingredient one: a searchable list of
+  every path, the staff member's own recipes for the selection, and Add,
+  Edit (rename or move), Merge and Delete. Its pure functions live in
+  `services/cuisine_admin.py`. Merge and Delete act on every user's recipes,
+  Delete's replacement is optional (without one, recipes lose their cuisine),
+  and both refuse a node that still has children. The recipe page shows the
+  cuisine path in the description block, marked `no-print`.
 - **Sources**: global, unchanged for now.
 
 Every route that changes a global row checks `is_staff`, and its tests use the

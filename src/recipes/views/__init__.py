@@ -1,3 +1,12 @@
+from .cuisine_admin import (
+    cuisine_manage,
+    cuisine_manage_add,
+    cuisine_manage_columns,
+    cuisine_manage_delete,
+    cuisine_manage_edit,
+    cuisine_manage_merge,
+    cuisine_manage_save,
+)
 from .home import home
 from .ingredient_admin import (
     ingredient_manage,
@@ -57,6 +66,13 @@ from .recipe_steps import (
 )
 
 __all__ = [
+    "cuisine_manage",
+    "cuisine_manage_add",
+    "cuisine_manage_columns",
+    "cuisine_manage_delete",
+    "cuisine_manage_edit",
+    "cuisine_manage_merge",
+    "cuisine_manage_save",
     "home",
     "ingredient_manage",
     "ingredient_manage_cancel",

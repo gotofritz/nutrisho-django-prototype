@@ -43,6 +43,7 @@
     </div>
     {% endif %}
     <div class="recipe-description">
+      {% if recipe.cuisine %}<p class="recipe-cuisine no-print">Cuisine: {{ recipe.cuisine.path }}</p>{% endif %}
       {% include "./_field_display.html" with field_name="short_description" value=recipe.short_description|default:"" %}
     </div>
   </div>

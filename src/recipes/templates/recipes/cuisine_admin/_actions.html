@@ -1,0 +1,49 @@
+{% comment %}
+Column 1 actions, re-rendered out of band whenever the selection changes so the
+`disabled` state comes from the server.
+{% endcomment %}
+<div
+  id="cuisine-actions"
+  class="action-buttons contents"
+  {% if oob %}hx-swap-oob="true"{% endif %}
+>
+  <button
+    type="button"
+    id="cuisine-action-add"
+    class="rounded border border-gray-400 px-3 py-1"
+    hx-get="{% url 'recipes:cuisine_manage_add' %}"
+    hx-target="#cuisine-columns"
+    hx-swap="outerHTML"
+    hx-include=".cuisine-pick:checked, #cuisine-search"
+  >Add</button>
+  <button
+    type="button"
+    id="cuisine-action-edit"
+    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
+    hx-get="{% url 'recipes:cuisine_manage_edit' %}"
+    hx-target="#cuisine-columns"
+    hx-swap="outerHTML"
+    hx-include=".cuisine-pick:checked, #cuisine-search"
+    {% if selected_count != 1 %}disabled{% endif %}
+  >Edit</button>
+  <button
+    type="button"
+    id="cuisine-action-merge"
+    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
+    hx-get="{% url 'recipes:cuisine_manage_merge' %}"
+    hx-target="#cuisine-columns"
+    hx-swap="outerHTML"
+    hx-include=".cuisine-pick:checked, #cuisine-search"
+    {% if selected_count < 2 %}disabled{% endif %}
+  >Merge</button>
+  <button
+    type="button"
+    id="cuisine-action-delete"
+    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
+    hx-get="{% url 'recipes:cuisine_manage_delete' %}"
+    hx-target="#cuisine-columns"
+    hx-swap="outerHTML"
+    hx-include=".cuisine-pick:checked, #cuisine-search"
+    {% if selected_count < 1 %}disabled{% endif %}
+  >Delete</button>
+</div>

@@ -1,0 +1,18 @@
+<div id="cuisine-columns" class="columns workspace min-w-0 grow h-full min-h-0 overflow-y-auto overflow-x-hidden break-words">
+  {% include "./_selection.html" %}
+  <form
+    {% if node %}hx-post="{% url 'recipes:cuisine_manage_save' node.pk %}"{% else %}hx-post="{% url 'recipes:cuisine_manage_add' %}"{% endif %}
+    hx-target="#cuisine-columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #cuisine-search"
+  >
+    {% csrf_token %}
+    <p class="cuisine-form-intro">
+      {% if node %}Rename or move <strong>{{ node.path }}</strong>.{% else %}Add a cuisine.{% endif %}
+      Cuisines go at most three deep: area, region, subregion.
+    </p>
+    {{ form.as_p }}
+    <button type="submit" class="panel-save rounded border border-gray-400 px-3 py-1">{% if node %}Save{% else %}Add{% endif %}</button>
+    {% include "./_cancel.html" %}
+  </form>
+</div>

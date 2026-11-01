@@ -1,0 +1,28 @@
+<div id="cuisine-columns" class="columns workspace min-w-0 grow h-full min-h-0 overflow-y-auto overflow-x-hidden break-words">
+  {% include "./_selection.html" %}
+  <form
+    hx-post="{% url 'recipes:cuisine_manage_merge' %}"
+    hx-target="#cuisine-columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #cuisine-search"
+  >
+    {% csrf_token %}
+    <p class="merge-intro">
+      Which cuisine should survive? The others are deleted and every user's recipes move to it.
+      A cuisine that still contains others can't be merged away.
+    </p>
+    <ul class="merge-candidates">
+      {% for row in candidates %}
+      <li class="merge-candidate">
+        <label>
+          <input type="radio" name="survivor_id" value="{{ row.cuisine.pk }}" {% if forloop.first %}checked{% endif %}>
+          <span class="cuisine-path">{{ row.path }}</span>
+        </label>
+      </li>
+      {% endfor %}
+    </ul>
+    {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+    <button type="submit" class="panel-merge rounded border border-gray-400 px-3 py-1">Merge</button>
+    {% include "./_cancel.html" %}
+  </form>
+</div>

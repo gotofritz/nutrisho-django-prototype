@@ -1,0 +1,26 @@
+{% extends "../base.html" %}
+
+{% block page_title %}Manage cuisines{% endblock %}
+
+{% block content %}
+<div class="cuisine-manager flex h-screen items-stretch gap-4 p-4">
+  <div id="col-actions" class="col-actions flex shrink-0 flex-col gap-2">
+    <a href="{% url 'recipes:home' %}" class="back-link">&larr; back</a>
+    <input
+      type="search"
+      name="q"
+      id="cuisine-search"
+      class="rounded border border-gray-400 px-2 py-1"
+      placeholder="search&hellip;"
+      value="{{ query }}"
+      hx-get="{% url 'recipes:cuisine_manage_columns' %}"
+      hx-trigger="input changed delay:250ms, search"
+      hx-target="#cuisine-columns"
+      hx-swap="outerHTML"
+      hx-include=".cuisine-pick:checked"
+    >
+    {% include "./_actions.html" %}
+  </div>
+  {% include "./_columns.html" %}
+</div>
+{% endblock %}

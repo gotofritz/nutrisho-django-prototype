@@ -3,6 +3,13 @@ from django.urls import path
 from recipes.views._auth import htmx_login_required, htmx_staff_required
 
 from .views import (
+    cuisine_manage,
+    cuisine_manage_add,
+    cuisine_manage_columns,
+    cuisine_manage_delete,
+    cuisine_manage_edit,
+    cuisine_manage_merge,
+    cuisine_manage_save,
     home,
     ingredient_manage,
     ingredient_manage_cancel,
@@ -118,6 +125,22 @@ urlpatterns = [
         _staff(ingredient_manage_save),
         name="ingredient_manage_save",
     ),
+    # Staff cuisine tool: the shared cuisine tree (plan 011).
+    path("cuisines/manage/", _staff(cuisine_manage), name="cuisine_manage"),
+    path(
+        "cuisines/manage/columns/",
+        _staff(cuisine_manage_columns),
+        name="cuisine_manage_columns",
+    ),
+    path("cuisines/manage/add/", _staff(cuisine_manage_add), name="cuisine_manage_add"),
+    path("cuisines/manage/edit/", _staff(cuisine_manage_edit), name="cuisine_manage_edit"),
+    path(
+        "cuisines/manage/<int:cuisine_id>/save/",
+        _staff(cuisine_manage_save),
+        name="cuisine_manage_save",
+    ),
+    path("cuisines/manage/merge/", _staff(cuisine_manage_merge), name="cuisine_manage_merge"),
+    path("cuisines/manage/delete/", _staff(cuisine_manage_delete), name="cuisine_manage_delete"),
     path("<int:recipe_id>/", _lr(recipe), name="recipe"),
     path("<int:recipe_id>/delete/", _lr(recipe_delete), name="delete"),
     path("<int:recipe_id>/delete/panel/", _lr(recipe_delete_panel), name="delete_panel"),

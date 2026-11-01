@@ -1,0 +1,44 @@
+{% load recipe_filters %}
+<div id="cuisine-columns" class="columns flex min-h-0 min-w-0 grow items-stretch gap-4">
+  <div
+    id="col-cuisines"
+    class="col-cuisines basis-[38ch] min-w-0 max-w-[38ch] h-full min-h-0 overflow-y-auto overflow-x-hidden break-words rounded border border-gray-300 p-2"
+    hx-get="{% url 'recipes:cuisine_manage_columns' %}"
+    hx-trigger="change[target.classList.contains('cuisine-pick')]"
+    hx-target="#cuisine-columns"
+    hx-swap="outerHTML"
+    hx-include=".cuisine-pick:checked, #cuisine-search"
+  >
+    <p class="column-count sticky top-0 border-b border-gray-200 bg-white pb-1 mb-2 text-sm font-semibold text-gray-600">{{ rows|length }} cuisine{{ rows|length|pluralize }} / {{ selected_count }} selected</p>
+    <ul class="cuisine-rows">
+      {% for row in rows %}
+      <li class="cuisine-row cuisine-depth-{{ row.depth }}">
+        <label>
+          <input
+            type="checkbox"
+            class="cuisine-pick"
+            name="cuisine_ids"
+            value="{{ row.cuisine.pk }}"
+            {% if row.cuisine.pk in selected_ids %}checked{% endif %}
+          >
+          <span class="cuisine-path">{{ row.path }}</span>
+          {% if row.recipe_count %}<span class="cuisine-recipe-count text-sm text-gray-600">({{ row.recipe_count }})</span>{% endif %}
+        </label>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div
+    id="col-cuisine-recipes"
+    class="col-recipes basis-[62ch] min-w-0 max-w-[62ch] h-full min-h-0 overflow-y-auto overflow-x-hidden break-words rounded border border-gray-300 p-2"
+  >
+    <p class="column-count sticky top-0 border-b border-gray-200 bg-white pb-1 mb-2 text-sm font-semibold text-gray-600">{{ recipes|length }} of your recipes</p>
+    <ul class="recipe-rows">
+      {% for recipe in recipes %}
+      <li class="recipe-row">
+        <a class="recipe-match underline decoration-dotted" href="{% url 'recipes:recipe' recipe.pk %}">{{ recipe.recipe_name|safe_title_html }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
