@@ -357,7 +357,12 @@ they draw on are split by who may change them:
   why the clean-up tool is staff-only. Typing an unknown name in the recipe
   editor creates a row private to the recipe's owner (`Ingredient.owner`);
   staff promote it to global in the clean-up tool.
-- **Tags**: global tags curated by staff plus private tags per user (plan 011).
+- **Tags**: global tags curated by staff (in Django admin, owner blank) plus
+  private tags per user (`Tag.owner`). The metadata form takes tags as
+  comma-separated names; `resolve_tag` finds a global tag, then the owner's
+  own, and creates a private one on a miss. Unique ignoring case within the
+  global list and within each owner's tags; migration 0019 merged existing
+  case-only duplicates into the most-used spelling.
 - **Cuisines**: one global, curated list; users pick from it and cannot add to
   it (plan 011). The editor still creates a cuisine on a miss until then.
 - **Sources**: global, unchanged for now.
@@ -371,7 +376,7 @@ is written.
 - `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`)
 - `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient.owner` is NULL for the global list or the user a row is private to, and `ingredient_name` is unique case-insensitively among global rows and within each owner's private rows; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
 - `Step` — ordered recipe steps; `step_title` is an optional heading, stored as `""` when absent and rendered underlined in front of the step text, followed by a colon
-- `Cuisine`, `Source`, `Tag` — lookup/classification models; `Cuisine.cuisine` is unique case-insensitively
+- `Cuisine`, `Source`, `Tag` — lookup/classification models; `Cuisine.cuisine` is unique case-insensitively; `Tag.owner` is NULL for a global tag or the user it is private to
 
 ### Data Flow
 

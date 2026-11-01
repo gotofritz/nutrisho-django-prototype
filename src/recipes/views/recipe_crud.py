@@ -16,7 +16,7 @@ from recipes.views._types import AuthedRequest
 def recipe_new(request: AuthedRequest) -> HttpResponse:
     """Create a recipe."""
     if request.method == "POST":
-        form = RecipeMetadataForm(data=request.POST)
+        form = RecipeMetadataForm(data=request.POST, owner=request.user)
         if form.is_valid():
             form.instance.owner = request.user
             try:
@@ -39,7 +39,7 @@ def recipe_new(request: AuthedRequest) -> HttpResponse:
     return render(
         request,
         "recipes/recipe_new.html",
-        {"form": RecipeMetadataForm(), "all_cuisines": _cuisine_names()},
+        {"form": RecipeMetadataForm(owner=request.user), "all_cuisines": _cuisine_names()},
     )
 
 
@@ -54,7 +54,7 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse
     """Edit recipe metadata."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     if request.method == "POST":
-        form = RecipeMetadataForm(data=request.POST, instance=recipe)
+        form = RecipeMetadataForm(data=request.POST, instance=recipe, owner=recipe.owner)
         if form.is_valid():
             try:
                 with transaction.atomic():
@@ -74,6 +74,7 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse
                             "cuisine",
                         ]
                     )
+                    form.save_tags(recipe)
             except IntegrityError:
                 form.add_error("recipe_name", "You already have a recipe with that name.")
             else:
@@ -92,7 +93,7 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse
             template,
             {"recipe": recipe, "form": form, "all_cuisines": _cuisine_names()},
         )
-    form = RecipeMetadataForm(instance=recipe)
+    form = RecipeMetadataForm(instance=recipe, owner=recipe.owner)
     template = (
         "recipes/partials/_metadata_panel.html"
         if _is_panel_request(request)

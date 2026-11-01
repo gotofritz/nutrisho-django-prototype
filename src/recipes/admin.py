@@ -24,7 +24,8 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ("tag",)
+    list_display = ("tag", "owner")
+    list_filter = (("owner", admin.EmptyFieldListFilter),)
 
 
 @admin.register(IngredientGroup)

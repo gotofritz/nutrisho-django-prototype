@@ -58,13 +58,14 @@ def test_recipe_field_form_servings_required(user):
 def test_recipe_metadata_form_servings_required(user):
     """Servings is mandatory: the metadata form rejects a blank value."""
     form = RecipeMetadataForm(
+        owner=User(),
         data={
             "recipe_name": "No Serves",
             "short_description": "",
             "servings": "",
             "source_instance": "",
             "cuisine_name": "",
-        }
+        },
     )
     assert not form.is_valid()
     assert "servings" in form.errors
@@ -73,7 +74,7 @@ def test_recipe_metadata_form_servings_required(user):
 @pytest.mark.django_db
 def test_recipe_metadata_form_servings_initial_is_one(user):
     """An unbound metadata form pre-fills servings with the model default."""
-    form = RecipeMetadataForm()
+    form = RecipeMetadataForm(owner=User())
     assert form.fields["servings"].initial == 1
 
 
@@ -162,6 +163,7 @@ def test_recipe_metadata_form_commit_false_does_not_create_cuisine(user):
 
     recipe = Recipe.objects.create(recipe_name="Test", owner=user)
     form = RecipeMetadataForm(
+        owner=User(),
         data={
             "recipe_name": "Test",
             "short_description": "",
@@ -184,6 +186,7 @@ def test_recipe_metadata_form_commit_false_clears_cuisine_when_blank(user):
     cuisine = Cuisine.objects.create(cuisine="Italian")
     recipe = Recipe.objects.create(recipe_name="Test", owner=user, cuisine=cuisine)
     form = RecipeMetadataForm(
+        owner=User(),
         data={
             "recipe_name": "Test",
             "short_description": "",
@@ -206,6 +209,7 @@ def test_recipe_metadata_form_commit_false_sets_existing_cuisine(user):
     cuisine = Cuisine.objects.create(cuisine="Thai")
     recipe = Recipe.objects.create(recipe_name="Test", owner=user)
     form = RecipeMetadataForm(
+        owner=User(),
         data={
             "recipe_name": "Test",
             "short_description": "",
@@ -248,6 +252,7 @@ def test_recipe_metadata_form_commit_false_new_cuisine_resolved_via_helper(user)
 
     recipe = Recipe.objects.create(recipe_name="Test", owner=user)
     form = RecipeMetadataForm(
+        owner=User(),
         data={
             "recipe_name": "Test",
             "short_description": "",
