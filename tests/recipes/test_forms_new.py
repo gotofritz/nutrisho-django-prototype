@@ -157,8 +157,8 @@ def test_ingredient_in_recipe_form_commit_false_does_not_create_ingredient(user)
 
 
 @pytest.mark.django_db
-def test_recipe_metadata_form_commit_false_does_not_create_cuisine(user):
-    """save(commit=False) must not write Cuisine to DB — side-effect free."""
+def test_recipe_metadata_form_rejects_an_unknown_cuisine(user):
+    """An unknown cuisine is a form error and never written (plan 011)."""
     from recipes.models import Cuisine
 
     recipe = Recipe.objects.create(recipe_name="Test", owner=user)
@@ -173,8 +173,8 @@ def test_recipe_metadata_form_commit_false_does_not_create_cuisine(user):
         },
         instance=recipe,
     )
-    assert form.is_valid()
-    form.save(commit=False)
+    assert not form.is_valid()
+    assert "cuisine_name" in form.errors
     assert not Cuisine.objects.filter(cuisine="ghost-cuisine").exists()
 
 
@@ -243,32 +243,6 @@ def test_ingredient_form_commit_false_sets_existing_ingredient(user):
     assert form.is_valid()
     iir = form.save(commit=False)
     assert iir.ingredient == ing
-
-
-@pytest.mark.django_db
-def test_recipe_metadata_form_commit_false_new_cuisine_resolved_via_helper(user):
-    """resolve_pending_cuisine() must create Cuisine row and assign FK before save()."""
-    from recipes.models import Cuisine
-
-    recipe = Recipe.objects.create(recipe_name="Test", owner=user)
-    form = RecipeMetadataForm(
-        owner=User(),
-        data={
-            "recipe_name": "Test",
-            "short_description": "",
-            "servings": "4",
-            "source_instance": "",
-            "cuisine_name": "brand-new-cuisine",
-        },
-        instance=recipe,
-    )
-    assert form.is_valid()
-    result = form.save(commit=False)
-    assert not Cuisine.objects.filter(cuisine="brand-new-cuisine").exists()
-    form.resolve_pending_cuisine(result)
-    assert result.cuisine is not None
-    assert result.cuisine.cuisine == "brand-new-cuisine"  # ty: ignore[unresolved-attribute]
-    assert Cuisine.objects.filter(cuisine="brand-new-cuisine").exists()
 
 
 @pytest.mark.django_db

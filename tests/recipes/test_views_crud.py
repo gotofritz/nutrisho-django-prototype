@@ -99,7 +99,7 @@ def test_recipe_new_post_saves_metadata(auth_client, user):
             "recipe_name": "Meta Recipe",
             "short_description": "A test",
             "servings": "4",
-            "cuisine_name": "Italian",
+            "cuisine_name": "med.italy",
             "source_instance": "p.42",
         },
     )
@@ -108,19 +108,19 @@ def test_recipe_new_post_saves_metadata(auth_client, user):
     assert recipe.short_description == "A test"
     assert recipe.servings == 4
     assert recipe.cuisine is not None
-    assert recipe.cuisine.cuisine == "Italian"
+    assert recipe.cuisine.path == "med.italy"
     assert recipe.source_instance == "p.42"
 
 
 @pytest.mark.django_db
-def test_recipe_new_post_creates_cuisine_if_new(auth_client, user):
-    """Recipe new post creates cuisine if new."""
-    assert not Cuisine.objects.filter(cuisine="Peruvian").exists()
+def test_recipe_new_post_rejects_an_unknown_cuisine(auth_client, user):
+    """Cuisines are a curated list (plan 011): an unknown one is an error, not a new row."""
     auth_client.post(
         "/recipes/new/",
-        {"recipe_name": "Ceviche", "cuisine_name": "Peruvian", "servings": "4"},
+        {"recipe_name": "Gagh", "cuisine_name": "Klingon", "servings": "4"},
     )
-    assert Cuisine.objects.filter(cuisine="Peruvian").exists()
+    assert not Cuisine.objects.filter(cuisine="Klingon").exists()
+    assert not Recipe.objects.filter(recipe_name="Gagh").exists()
 
 
 @pytest.mark.django_db
@@ -130,7 +130,7 @@ def test_recipe_new_post_reuses_existing_cuisine(auth_client, user, cuisine):
         "/recipes/new/",
         {"recipe_name": "Pasta", "cuisine_name": "Italian", "servings": "4"},
     )
-    assert Cuisine.objects.filter(cuisine="Italian").count() == 1
+    assert Cuisine.objects.filter(cuisine__iexact="Italian").count() == 1
 
 
 @pytest.mark.django_db
@@ -243,7 +243,7 @@ def test_recipe_metadata_post_saves_and_redirects(auth_client, recipe):
         f"/recipes/{recipe.pk}/metadata/",
         {
             "recipe_name": recipe.recipe_name,
-            "cuisine_name": "French",
+            "cuisine_name": "eu.france",
             "source_instance": "p.10",
             "servings": "4",
         },
@@ -251,7 +251,7 @@ def test_recipe_metadata_post_saves_and_redirects(auth_client, recipe):
     assert response.status_code == 302
     recipe.refresh_from_db()
     assert recipe.source_instance == "p.10"
-    assert recipe.cuisine.cuisine == "French"
+    assert recipe.cuisine.path == "eu.france"
 
 
 @pytest.mark.django_db
@@ -283,7 +283,7 @@ def test_recipe_metadata_htmx_post_valid_returns_hx_redirect(auth_client, recipe
     """Recipe metadata htmx post valid returns hx redirect."""
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/",
-        {"recipe_name": recipe.recipe_name, "cuisine_name": "Spanish", "servings": "4"},
+        {"recipe_name": recipe.recipe_name, "cuisine_name": "med.spain", "servings": "4"},
         HTTP_HX_REQUEST="true",
     )
     assert response.status_code == 200
@@ -526,7 +526,7 @@ def test_recipe_new_post_reuses_existing_cuisine_ignoring_case(auth_client, user
     )
     recipe = Recipe.objects.get(recipe_name="Pasta", owner=user)
     assert recipe.cuisine == cuisine
-    assert Cuisine.objects.count() == 1
+    assert Cuisine.objects.filter(cuisine__iexact="italian").count() == 1
 
 
 @pytest.mark.django_db
@@ -539,7 +539,7 @@ def test_recipe_metadata_edit_reuses_existing_cuisine_ignoring_case(auth_client,
     assert response.status_code == 302
     recipe.refresh_from_db()
     assert recipe.cuisine == cuisine
-    assert Cuisine.objects.count() == 1
+    assert Cuisine.objects.filter(cuisine__iexact="italian").count() == 1
 
 
 @pytest.mark.django_db

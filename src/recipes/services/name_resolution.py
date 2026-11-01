@@ -1,8 +1,9 @@
 """Resolve names typed into the recipe editor to `Ingredient`, `Tag` and `Cuisine` rows.
 
-Both names are unique ignoring case, so `Onion` typed on a phone that
+Names are unique ignoring case, so `Onion` typed on a phone that
 auto-capitalises is the stored `onion`, not a second row. Lookups are
-case-insensitive and keep the stored spelling; a miss creates the row as typed.
+case-insensitive and keep the stored spelling; a miss creates an ingredient or
+tag as typed, but never a cuisine, which only staff add.
 Ingredients and tags are scoped to the recipe's owner: the global list plus
 their own private rows (plan 011).
 Every editor path goes through here rather than calling `get_or_create` on the
@@ -13,6 +14,7 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.db.models import F, Q, QuerySet
 
 from recipes.models import Cuisine, Ingredient, Tag
+from recipes.models.cuisine import MAX_CUISINE_DEPTH, PATH_SEPARATOR
 
 
 def _visible_ingredients(owner: AbstractBaseUser) -> QuerySet:
@@ -69,13 +71,37 @@ def resolve_tag(name: str, *, owner: AbstractBaseUser) -> Tag:
     return Tag.objects.create(tag=name.strip(), owner=owner)
 
 
-def find_cuisine(name: str) -> Cuisine | None:
-    """The cuisine called `name` ignoring case and surrounding space, if any."""
-    return Cuisine.objects.filter(cuisine__iexact=name.strip()).first()
+def find_cuisine(text: str) -> Cuisine | None:
+    """The cuisine node `text` names, ignoring case; never creates one.
+
+    `text` is a dotted path from the area down (`med.italy.sicily`), or a bare
+    node name when exactly one node has it (`sicily`, but not `north`, which
+    sits under thailand, vietnam and mexico). Cuisines are a curated global
+    tree (plan 011): the editor picks from it and staff add to it in admin.
+    """
+    parts = [part.strip() for part in text.strip().split(PATH_SEPARATOR)]
+    if not all(parts):
+        return None
+    node = None
+    for part in parts:
+        node = Cuisine.objects.filter(parent=node, cuisine__iexact=part).first()
+        if node is None:
+            break
+    if node is not None or len(parts) > 1:
+        return node
+    named = list(Cuisine.objects.filter(cuisine__iexact=parts[0])[:2])
+    return named[0] if len(named) == 1 else None
 
 
-def resolve_cuisine(name: str) -> Cuisine:
-    """The cuisine called `name` ignoring case, created as typed on a miss."""
-    name = name.strip()
-    cuisine, _ = Cuisine.objects.get_or_create(cuisine__iexact=name, defaults={"cuisine": name})
-    return cuisine
+def cuisine_paths() -> list[str]:
+    """Every node's dotted path, sorted: the editor's cuisine suggestions."""
+    nodes = {c.pk: c for c in Cuisine.objects.all()}
+    paths = []
+    for cuisine in nodes.values():
+        names = [str(cuisine.cuisine)]
+        parent_id = cuisine.parent_id
+        while parent_id is not None and parent_id in nodes and len(names) <= MAX_CUISINE_DEPTH:
+            names.insert(0, str(nodes[parent_id].cuisine))
+            parent_id = nodes[parent_id].parent_id
+        paths.append(PATH_SEPARATOR.join(names))
+    return sorted(paths, key=str.lower)

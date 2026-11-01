@@ -9,7 +9,6 @@ from recipes.models import Cuisine, Ingredient, Recipe
 from recipes.services.name_resolution import (
     find_cuisine,
     find_ingredient,
-    resolve_cuisine,
     resolve_ingredient,
 )
 
@@ -65,26 +64,12 @@ def test_find_ingredient_ignores_case_and_never_creates(make_ingredient, user):
 
 
 @pytest.mark.django_db
-def test_resolve_cuisine_reuses_row_ignoring_case():
-    """`italian` resolves to the stored `Italian`."""
-    italian = Cuisine.objects.create(cuisine="Italian")
-    assert resolve_cuisine(" italian ") == italian
-    assert Cuisine.objects.count() == 1
-
-
-@pytest.mark.django_db
-def test_resolve_cuisine_creates_on_miss_as_typed():
-    """A new cuisine is created with the spelling the user typed."""
-    assert resolve_cuisine("Peruvian ").cuisine == "Peruvian"
-
-
-@pytest.mark.django_db
 def test_find_cuisine_ignores_case_and_never_creates():
-    """`find_cuisine` looks up only."""
-    italian = Cuisine.objects.create(cuisine="Italian")
-    assert find_cuisine("ITALIAN") == italian
-    assert find_cuisine("Thai") is None
-    assert Cuisine.objects.count() == 1
+    """`find_cuisine` looks up only; the editor never creates a cuisine (plan 011)."""
+    before = Cuisine.objects.count()
+    assert find_cuisine("MED.ITALY") == Cuisine.objects.get(cuisine="italy")
+    assert find_cuisine("Klingon") is None
+    assert Cuisine.objects.count() == before
 
 
 @pytest.mark.django_db
@@ -97,11 +82,19 @@ def test_cuisine_names_are_unique_ignoring_case():
 
 @pytest.fixture
 def without_cuisine_ci_constraint(db):
-    """Drop the case-insensitive cuisine index so pre-#34 clashes can exist."""
+    """Recreate the pre-#34 state: a flat table whose names may clash by case.
+
+    Migration 0021 seeds the cuisine tree, whose repeated leaf names (`north`)
+    would look like clashes to 0017's merge, so the tree goes first, leaves up.
+    """
     from django.db import connection
 
+    Cuisine.objects.filter(parent__parent__isnull=False).delete()
+    Cuisine.objects.filter(parent__isnull=False).delete()
+    Cuisine.objects.all().delete()
     with connection.cursor() as cursor:
         cursor.execute("DROP INDEX cuisine_ci_unique")
+        cursor.execute("DROP INDEX cuisine_ci_unique_per_parent")
 
 
 def _merge():
