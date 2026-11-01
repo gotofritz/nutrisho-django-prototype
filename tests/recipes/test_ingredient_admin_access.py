@@ -56,6 +56,7 @@ def _read_routes(recipe_id: int) -> list[str]:
         MANAGE + "delete/",
         MANAGE + "merge/",
         MANAGE + "merge-plural/",
+        MANAGE + "promote/",
     ]
 
 
@@ -124,6 +125,18 @@ def test_merge_plural_is_forbidden_to_non_staff_and_writes_nothing(other_client,
     assert Ingredient.objects.filter(pk__in=[onion.pk, onions.pk]).count() == 2
     onion.refresh_from_db()
     assert onion.plural_name == ""
+
+
+@pytest.mark.django_db
+def test_promote_is_forbidden_to_non_staff_and_writes_nothing(other_client, other_user):
+    """Promoting is refused and the row stays private."""
+    yuzu = Ingredient.objects.create(ingredient_name="yuzu", owner=other_user)
+    response = other_client.post(
+        MANAGE + "promote/", {"ingredient_ids": [yuzu.pk]}, HTTP_HX_REQUEST="true"
+    )
+    assert response.status_code == 403
+    yuzu.refresh_from_db()
+    assert yuzu.owner == other_user
 
 
 @pytest.mark.django_db

@@ -10,7 +10,7 @@
   hx-trigger="change[target.classList.contains('ingredient-pick')]"
   hx-target="#col-recipes"
   hx-swap="outerHTML"
-  hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only"
+  hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only"
 >
   {% include "./_ingredient_count.html" %}
   <ul class="ingredient-rows">
@@ -25,6 +25,7 @@
           {% if ingredient.pk in selected_ids %}checked{% endif %}
         >
         <span class="ingredient-name">{{ ingredient.ingredient_name }}</span>
+        {% include "./_owner_badge.html" %}
       </label>
     </li>
     {% endfor %}

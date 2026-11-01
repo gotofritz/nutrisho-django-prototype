@@ -1,6 +1,8 @@
 from typing import cast
 
+from django.conf import settings
 from django.db import models
+from django.db.models import F, Q
 from django.db.models.functions import Lower
 
 from recipes.utils.pluralise import pluralise
@@ -33,7 +35,15 @@ class Ingredient(models.Model):
         ("CHM", "Chemical"),
         ("MSC", "Misc"),
     ]
-    ingredient_name = models.CharField(max_length=64, unique=True)
+    ingredient_name = models.CharField(max_length=64)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name="private to this user; blank means global (staff-curated)",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="private_ingredients",
+    )
     plural_name = models.CharField(
         "plural display form; blank derives it from the rule",
         max_length=64,
@@ -54,12 +64,20 @@ class Ingredient(models.Model):
     class Meta:
         constraints = [
             # British spelling is canonical, so Onion and onion are the same
-            # ingredient. Clear existing clashes with the find_ingredient_duplicates
-            # command and the clean-up tool before applying this.
+            # ingredient: unique ignoring case within the global list...
             models.UniqueConstraint(
                 Lower("ingredient_name"),
+                condition=Q(owner__isnull=True),
                 name="ingredient_name_ci_unique",
-            )
+            ),
+            # ...and within each user's private list. A private row may share a
+            # name with another user's row, or with a global one (which wins
+            # at resolution, see recipes.services.name_resolution).
+            models.UniqueConstraint(
+                Lower("ingredient_name"),
+                F("owner"),
+                name="ingredient_name_ci_unique_per_owner",
+            ),
         ]
 
     def __str__(self) -> str:

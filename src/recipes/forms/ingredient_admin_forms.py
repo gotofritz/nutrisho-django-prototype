@@ -1,6 +1,7 @@
 """Forms for the shared-Ingredient clean-up tool."""
 
 from django import forms
+from django.db.models import Q
 
 from recipes.models import Ingredient
 
@@ -29,6 +30,12 @@ class IngredientForm(forms.ModelForm):
             msg = "Ingredient name is required."
             raise forms.ValidationError(msg)
         clash = Ingredient.objects.filter(ingredient_name__iexact=name)
+        # A global row clashes only with global rows; a private one also with
+        # its owner's rows, and with global rows, which would shadow it.
+        owner_id = self.instance.owner_id
+        clash = clash.filter(
+            Q(owner__isnull=True) | Q(owner=owner_id) if owner_id else Q(owner__isnull=True)
+        )
         if self.instance.pk:
             clash = clash.exclude(pk=self.instance.pk)
         if clash.exists():

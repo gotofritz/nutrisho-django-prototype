@@ -1,6 +1,7 @@
 """Tests for new focused forms (Plan 004, Step 3)."""
 
 import pytest
+from django.contrib.auth.models import User
 
 from recipes.forms.field_forms import EDITABLE_RECIPE_FIELDS, RecipeFieldForm, RecipeMetadataForm
 from recipes.forms.ingredient_forms import IngredientGroupForm, IngredientInRecipeForm
@@ -101,13 +102,14 @@ def test_step_form_accepts_valid_step():
 def test_ingredient_form_accepts_valid_decimal_quantity():
     """Ingredient form accepts valid decimal quantity."""
     form = IngredientInRecipeForm(
+        owner=User(),
         data={
             "ingredient_name": "salt",
             "quantity": "2.50",
             "unit": "cups",
             "preparation": "",
             "note": "",
-        }
+        },
     )
     assert form.is_valid()
 
@@ -115,7 +117,7 @@ def test_ingredient_form_accepts_valid_decimal_quantity():
 def test_ingredient_form_rejects_negative_quantity():
     """Ingredient form rejects negative quantity."""
     form = IngredientInRecipeForm(
-        data={"quantity": "-1", "unit": "cups", "preparation": "", "note": ""}
+        data={"quantity": "-1", "unit": "cups", "preparation": "", "note": ""}, owner=User()
     )
     assert not form.is_valid()
     assert "quantity" in form.errors
@@ -134,18 +136,19 @@ def test_ingredient_group_form_accepts_named_group():
 
 
 @pytest.mark.django_db
-def test_ingredient_in_recipe_form_commit_false_does_not_create_ingredient(db):
+def test_ingredient_in_recipe_form_commit_false_does_not_create_ingredient(user):
     """save(commit=False) must not write Ingredient to DB — side-effect free."""
     from recipes.models import Ingredient
 
     form = IngredientInRecipeForm(
+        owner=user,
         data={
             "ingredient_name": "ghost-veggie",
             "quantity": "",
             "unit": "",
             "preparation": "",
             "note": "",
-        }
+        },
     )
     assert form.is_valid()
     form.save(commit=False)
@@ -224,7 +227,14 @@ def test_ingredient_form_commit_false_sets_existing_ingredient(user):
 
     ing = Ingredient.objects.create(ingredient_name="basil")
     form = IngredientInRecipeForm(
-        data={"ingredient_name": "basil", "quantity": "", "unit": "", "preparation": "", "note": ""}
+        owner=user,
+        data={
+            "ingredient_name": "basil",
+            "quantity": "",
+            "unit": "",
+            "preparation": "",
+            "note": "",
+        },
     )
     assert form.is_valid()
     iir = form.save(commit=False)
@@ -257,18 +267,19 @@ def test_recipe_metadata_form_commit_false_new_cuisine_resolved_via_helper(user)
 
 
 @pytest.mark.django_db
-def test_ingredient_form_commit_false_new_ingredient_resolved_via_helper():
+def test_ingredient_form_commit_false_new_ingredient_resolved_via_helper(user):
     """resolve_pending_ingredient() must create Ingredient row and assign FK before save()."""
     from recipes.models import Ingredient
 
     form = IngredientInRecipeForm(
+        owner=user,
         data={
             "ingredient_name": "brand-new-spice",
             "quantity": "",
             "unit": "",
             "preparation": "",
             "note": "",
-        }
+        },
     )
     assert form.is_valid()
     iir = form.save(commit=False)

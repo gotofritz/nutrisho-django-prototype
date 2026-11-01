@@ -129,7 +129,12 @@ row: `resolve_ingredient` / `resolve_cuisine` strip the name, match it ignoring 
 (keeping the stored spelling) and create it as typed only on a miss;
 `find_ingredient` / `find_cuisine` look up without creating. Both names carry a
 `Lower(...)` unique constraint, so a raw `get_or_create(name=...)` would 500 on
-`Onion` when `onion` exists (#34). Plan 008's aliases extend `resolve_ingredient`.
+`Onion` when `onion` exists (#34). Ingredient lookups take `owner` (the recipe's
+owner) and see only the global list plus that owner's private rows, a global row
+winning over a private one of the same name; a miss creates a row **private** to
+the owner (plan 011). `ingredient_names_for(owner)` feeds the editor's datalist
+from the same two sources, so no user ever sees another's private names. Plan
+008's aliases extend `resolve_ingredient`.
 
 **Selection lives in the request.** Checkboxes post `ingredient_ids`; every
 re-rendered partial echoes them back. There is no client-side store: a change or a
@@ -169,8 +174,20 @@ because closing would discard whatever is typed in them; the panels carry the
 selection so the view can tell the two cases apart.
 
 **Owner scoping.** Recipes are owner-scoped and column 3 stays that way, but
-ingredients are global: the delete confirmation counts affected recipes across all
-owners, since a delete reaches recipes the current user cannot see.
+the tool works on every ingredient, global or private: the delete confirmation
+counts affected recipes across all owners, since a delete reaches recipes the
+current user cannot see. Column 2 and the merge chooser badge a private row with
+its owner (`_owner_badge.html`). A private row may only replace ingredients in
+its own owner's recipes: `delete_ingredients` (and so every merge) raises
+`IngredientScopeError`, a 422 with nothing written, rather than repoint another
+user's recipe onto a row that user cannot see.
+
+**Promote** is the fifth column-1 action (plan 011). `promote_ingredients` makes
+each selected private row global, or merges it into the global row that already
+has its name, then merges every other user's private row of that name into the
+result, so all their recipes share it. The confirmation lists what each row
+will fold in; the promoted rows stay ticked. The **Private only** filter
+narrows column 2 to promotion candidates.
 
 **Staff only (#46).** Every route is wrapped in `htmx_staff_required`
 (`recipes/views/_auth.py`): anonymous users go to the login page as before, a
@@ -181,7 +198,9 @@ The home page shows the "Manage ingredients" link to staff only.
 
 **Canonical names.** British spelling wins, enforced by
 `UniqueConstraint(Lower("ingredient_name"), name="ingredient_name_ci_unique")`
-(migration 0013) and mirrored in `IngredientForm`, which points a clashing rename at
+(migration 0013; since migration 0018 it covers global rows only, and
+`ingredient_name_ci_unique_per_owner` does the same within each user's private
+rows) and mirrored in `IngredientForm`, which points a clashing rename at
 the merge action. Databases predating the constraint are cleaned up with the
 `find_ingredient_duplicates` command, which lists case-only clashes; merge them
 before migrating.
@@ -212,7 +231,7 @@ table applied at write time, so storage and display stay canonical. See
 `docs/plans/008-ingredient-aliases.md`.
 
 **Column-2 filters.** The views carry them as one typed mapping (`_Filters`:
-`query`, `unused_only`, `plurals_only`), forwarded as `**filters` into the
+`query`, `unused_only`, `plurals_only`, `private_only`), forwarded as `**filters` into the
 context helpers, so adding a filter does not widen every call site.
 
 Deleting the last `IngredientInRecipe` in a group, or moving every row out of it
@@ -335,8 +354,9 @@ they draw on are split by who may change them:
 
 - **Ingredients**: a global, staff-curated list plus a private list per user
   (plan 011). Only staff rename, merge or delete global ingredients, which is
-  why the clean-up tool is staff-only. Until plan 011 lands, typing an unknown
-  name in the recipe editor still creates a global row.
+  why the clean-up tool is staff-only. Typing an unknown name in the recipe
+  editor creates a row private to the recipe's owner (`Ingredient.owner`);
+  staff promote it to global in the clean-up tool.
 - **Tags**: global tags curated by staff plus private tags per user (plan 011).
 - **Cuisines**: one global, curated list; users pick from it and cannot add to
   it (plan 011). The editor still creates a cuisine on a miss until then.
@@ -349,7 +369,7 @@ is written.
 ### Key Models
 
 - `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`)
-- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient` rows are global (not owner-scoped) and `ingredient_name` is unique case-insensitively; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
+- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient.owner` is NULL for the global list or the user a row is private to, and `ingredient_name` is unique case-insensitively among global rows and within each owner's private rows; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
 - `Step` — ordered recipe steps; `step_title` is an optional heading, stored as `""` when absent and rendered underlined in front of the step text, followed by a colon
 - `Cuisine`, `Source`, `Tag` — lookup/classification models; `Cuisine.cuisine` is unique case-insensitively
 

@@ -1,0 +1,4 @@
+{% comment %}
+Marks a row private to one user (plan 011); global rows carry no badge.
+{% endcomment %}
+{% if ingredient.owner_id %}<span class="ingredient-owner text-sm text-gray-500">· {{ ingredient.owner }}</span>{% endif %}
