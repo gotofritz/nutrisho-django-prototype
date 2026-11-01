@@ -4,7 +4,7 @@
     hx-post="{% url 'recipes:cuisine_manage_delete' %}"
     hx-target="#cuisine-columns"
     hx-swap="outerHTML"
-    hx-include=".workspace-pick, #cuisine-search, #cuisine-unused-only"
+    hx-include=".workspace-pick, #cuisine-search, #cuisine-unused-only, #cuisine-loose-only"
   >
     {% csrf_token %}
     <p class="delete-summary">

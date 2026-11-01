@@ -32,11 +32,15 @@ class CuisineRow:
     recipe_count: int
 
 
-def cuisine_rows(query: str = "", *, unused_only: bool = False) -> list[CuisineRow]:
+def cuisine_rows(
+    query: str = "", *, unused_only: bool = False, loose_only: bool = False
+) -> list[CuisineRow]:
     """Every node whose path contains `query` (ignoring case), sorted by path.
 
     `unused_only` keeps nodes with no recipe, from any user, on them or
     anywhere below them: the ones that can go without touching a recipe.
+    `loose_only` keeps top-level nodes with nothing inside them, which is where
+    migration 0021 left the old names it couldn't place in the tree.
     Paths are built in Python from one query, since the tree is a few hundred
     rows and SQLite has no convenient recursive path expression here.
     """
@@ -65,6 +69,9 @@ def cuisine_rows(query: str = "", *, unused_only: bool = False) -> list[CuisineR
             )
     if unused_only:
         rows = [row for row in rows if row.cuisine.pk not in used]
+    if loose_only:
+        parents = {node.parent_id for node in nodes.values()}
+        rows = [row for row in rows if row.depth == 0 and row.cuisine.pk not in parents]
     return sorted(rows, key=lambda row: row.path.lower())
 
 

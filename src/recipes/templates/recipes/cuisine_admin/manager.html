@@ -17,7 +17,7 @@
       hx-trigger="input changed delay:250ms, search"
       hx-target="#cuisine-columns"
       hx-swap="outerHTML"
-      hx-include=".cuisine-pick:checked, #cuisine-unused-only"
+      hx-include=".cuisine-pick:checked, #cuisine-unused-only, #cuisine-loose-only"
     >
     {% comment %}
     Unused means no recipe from any user on the node or anywhere below it, so
@@ -34,9 +34,28 @@
         hx-trigger="change"
         hx-target="#cuisine-columns"
         hx-swap="outerHTML"
-        hx-include=".cuisine-pick:checked, #cuisine-search"
+        hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-loose-only"
       >
       Unused only
+    </label>
+    {% comment %}
+    Top-level cuisines with nothing inside them. The seeded list all sits under
+    its areas, so these are mostly old names migration 0021 couldn't place.
+    {% endcomment %}
+    <label class="loose-toggle">
+      <input
+        type="checkbox"
+        id="cuisine-loose-only"
+        name="loose"
+        value="1"
+        {% if loose_only %}checked{% endif %}
+        hx-get="{% url 'recipes:cuisine_manage_columns' %}"
+        hx-trigger="change"
+        hx-target="#cuisine-columns"
+        hx-swap="outerHTML"
+        hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only"
+      >
+      Loose only
     </label>
     {% include "./_actions.html" %}
   </div>

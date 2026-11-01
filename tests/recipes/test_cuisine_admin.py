@@ -328,3 +328,32 @@ def test_delete_still_refuses_a_node_whose_children_are_not_all_selected(staff_c
     response = staff_client.post(MANAGE + "delete/", {"cuisine_ids": [italy.pk, sicily.pk]})
     assert response.status_code == 422
     assert Cuisine.objects.filter(pk__in=[italy.pk, sicily.pk]).count() == 2
+
+
+# --- Loose only ------------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_loose_only_lists_top_level_cuisines_with_nothing_inside(staff_client):
+    """Where migration 0021 left unmatched names; the seeded tree never shows."""
+    Cuisine.objects.create(cuisine="Klingon")
+    html = staff_client.get(MANAGE + "columns/", {"loose": "1"}).content.decode()
+    assert _picked_paths(html) == {"Klingon"}
+
+
+@pytest.mark.django_db
+def test_loose_only_combines_with_unused_only(staff_client, user):
+    """Together they list the loose rows no recipe uses."""
+    used = Cuisine.objects.create(cuisine="Klingon")
+    Cuisine.objects.create(cuisine="Vulcan")
+    Recipe.objects.create(recipe_name="Gagh", owner=user, cuisine=used)
+    html = staff_client.get(MANAGE + "columns/", {"loose": "1", "unused": "1"}).content.decode()
+    assert _picked_paths(html) == {"Vulcan"}
+
+
+@pytest.mark.django_db
+def test_page_has_the_loose_only_checkbox(staff_client):
+    """The toggle sits in column 1 and keeps its state on a full page load."""
+    assert 'id="cuisine-loose-only"' in staff_client.get(MANAGE).content.decode()
+    html = staff_client.get(MANAGE, {"loose": "1"}).content.decode()
+    assert re.search(r'id="cuisine-loose-only"[^>]*\bchecked\b', html, flags=re.DOTALL)

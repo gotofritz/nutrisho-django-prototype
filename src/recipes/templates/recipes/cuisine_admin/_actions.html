@@ -14,7 +14,7 @@ Column 1 actions, re-rendered out of band whenever the selection changes so the
     hx-get="{% url 'recipes:cuisine_manage_add' %}"
     hx-target="#cuisine-columns"
     hx-swap="outerHTML"
-    hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only"
+    hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only, #cuisine-loose-only"
   >Add</button>
   <button
     type="button"
@@ -23,7 +23,7 @@ Column 1 actions, re-rendered out of band whenever the selection changes so the
     hx-get="{% url 'recipes:cuisine_manage_edit' %}"
     hx-target="#cuisine-columns"
     hx-swap="outerHTML"
-    hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only"
+    hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only, #cuisine-loose-only"
     {% if selected_count != 1 %}disabled{% endif %}
   >Edit</button>
   <button
@@ -33,7 +33,7 @@ Column 1 actions, re-rendered out of band whenever the selection changes so the
     hx-get="{% url 'recipes:cuisine_manage_merge' %}"
     hx-target="#cuisine-columns"
     hx-swap="outerHTML"
-    hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only"
+    hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only, #cuisine-loose-only"
     {% if selected_count < 2 %}disabled{% endif %}
   >Merge</button>
   <button
@@ -43,7 +43,7 @@ Column 1 actions, re-rendered out of band whenever the selection changes so the
     hx-get="{% url 'recipes:cuisine_manage_delete' %}"
     hx-target="#cuisine-columns"
     hx-swap="outerHTML"
-    hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only"
+    hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only, #cuisine-loose-only"
     {% if selected_count < 1 %}disabled{% endif %}
   >Delete</button>
 </div>
