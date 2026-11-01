@@ -1849,10 +1849,11 @@ AGENTS.md and the docs at those. Replace every bare `python manage.py` with
 ### AR-3. Nothing checks for missing migrations or schema drift
 
 AGENTS.md makes the agent responsible for creating migrations and regenerating
-`docs/schema.sql`, but neither `poe qa` nor CI verifies it. An agent that edits a
-model and forgets `makemigrations` gets a green QA run and a green PR, since the
-tests build their database from the models' migrations only as far as they
-exist. The same goes for a stale `schema.sql`. Both are currently in sync, so
+`docs/schema.sql`, but neither `poe qa` nor CI verifies it. The test database is built
+from the migrations, so a forgotten migration only fails a test that happens to
+touch the changed column; a new constraint, default, `choices` or `on_delete`
+change slips through with a green QA run and a green PR. A stale `schema.sql`
+is never caught. Both are currently in sync, so
 this is about catching the next slip, not an existing bug.
 
 Fix: add to `qa` (or a test) `manage.py makemigrations --check --dry-run`, and a
