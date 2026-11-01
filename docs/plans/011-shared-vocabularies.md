@@ -1,6 +1,6 @@
 # Plan 011: Shared Vocabularies
 
-## Status: In progress — PR 1 in review, PR 2 in review
+## Status: In progress — PRs 1-3 in review, PR 4 waiting on the cuisine list
 
 Tracks [issue #46](https://github.com/gotofritz/nutrisho-django-prototype/issues/46).
 
@@ -39,10 +39,11 @@ owner.
    A version of the tool for non-staff, scoped to their own private
    ingredients, is backlog (#93). Must land before plan 008 (aliases), whose
    aliases are then global and staff-defined.
-3. **Global and private tags.** `Tag.owner`, same constraints; a way to add and
-   remove tags in the recipe editor (there is none today, only Django admin).
-   A recipe can carry global tags and its owner's private tags, never another
-   user's.
+3. **Global and private tags.** `Tag.owner`, same constraints; tags are edited
+   on the metadata form as comma-separated names (before this, only Django
+   admin could). A recipe can carry global tags and its owner's private tags,
+   never another user's. Global tags are curated in Django admin; a Promote
+   action for tags can follow if private tags need it.
 4. **Curated cuisine list.** Three levels, `area.region.subregion`, via
    `parent = FK("self")`; a recipe may point at any depth (`middle east`,
    `med.italy`, `med.italy.sicily`) and filtering by a node finds everything
