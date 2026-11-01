@@ -25,7 +25,7 @@ def test_two_users_may_each_have_a_private_tag_with_the_same_name(user, other_us
     """Private names only clash within one owner."""
     Tag.objects.create(tag="quick", owner=user)
     Tag.objects.create(tag="Quick", owner=other_user)
-    assert Tag.objects.count() == 2
+    assert Tag.objects.filter(tag__iexact="quick").count() == 2
 
 
 @pytest.mark.django_db
@@ -90,7 +90,7 @@ def test_new_recipe_gets_its_tags(user):
     form.instance.owner = user
     recipe = form.save()
     assert _tag_names(recipe) == ["Vegan", "quick"]
-    assert set(Tag.objects.values_list("owner", flat=True)) == {user.pk}
+    assert set(recipe.tag.values_list("owner", flat=True)) == {user.pk}  # ty: ignore[unresolved-attribute]  # reverse M2M
 
 
 @pytest.mark.django_db
@@ -169,5 +169,5 @@ def test_migration_merges_case_duplicate_tags_into_the_most_used(without_tag_ci_
     upper.recipe.add(a, b)
     module = importlib.import_module("recipes.migrations.0019_tag_owner")
     module.merge_case_duplicate_tags(apps, None)
-    assert list(Tag.objects.all()) == [upper]
+    assert list(Tag.objects.filter(tag__iexact="vegan")) == [upper]
     assert sorted(upper.recipe.values_list("recipe_name", flat=True)) == ["A", "B"]

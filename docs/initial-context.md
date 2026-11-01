@@ -124,10 +124,11 @@ behaviour is testable without a client. Views own request parsing, guards and
 partial selection; services own the ORM.
 
 **Typed names resolve case-insensitively.** `recipes/services/name_resolution.py`
-is the only place the recipe editor turns a typed ingredient or cuisine name into a
-row: `resolve_ingredient` / `resolve_cuisine` strip the name, match it ignoring case
-(keeping the stored spelling) and create it as typed only on a miss;
-`find_ingredient` / `find_cuisine` look up without creating. Both names carry a
+is the only place the recipe editor turns a typed ingredient, tag or cuisine name
+into a row: `resolve_ingredient` / `resolve_tag` strip the name, match it ignoring
+case (keeping the stored spelling) and create it as typed only on a miss;
+`find_ingredient` / `find_tag` / `find_cuisine` look up without creating, and
+nothing creates a cuisine (see **Shared vocabularies**). The names carry a
 `Lower(...)` unique constraint, so a raw `get_or_create(name=...)` would 500 on
 `Onion` when `onion` exists (#34). Ingredient lookups take `owner` (the recipe's
 owner) and see only the global list plus that owner's private rows, a global row
@@ -363,8 +364,20 @@ they draw on are split by who may change them:
   own, and creates a private one on a miss. Unique ignoring case within the
   global list and within each owner's tags; migration 0019 merged existing
   case-only duplicates into the most-used spelling.
-- **Cuisines**: one global, curated list; users pick from it and cannot add to
-  it (plan 011). The editor still creates a cuisine on a miss until then.
+- **Cuisines**: one global, curated tree, `area.region.subregion`
+  (`med.italy.sicily`), via `Cuisine.parent` (PROTECT). A recipe points at any
+  depth: `middle east` for a dish many countries claim, `med.italy` with no
+  region. Areas are not all places: `anglo` is the US, UK, Ireland, Canada,
+  Australia and New Zealand. Migration 0021 seeds the list agreed with the
+  owner and folds the old flat names in (adjectives such as `Italian` via its
+  `ALIASES`, else a node name occurring once; `fusion` and `modern` became
+  global **tags**, being styles, not places; anything unmatched stays as a
+  top-level row for staff). Users pick from the tree: the editor's datalist
+  holds every dotted path (`cuisine_paths()`), `find_cuisine` takes a path or
+  an unambiguous bare name, and an unknown name is a form error. Staff edit
+  the tree in Django admin; `Cuisine.clean()` forbids dots in names, loops and
+  a fourth level. Names are unique ignoring case among siblings
+  (`cuisine_ci_unique_per_parent`) and among areas (`cuisine_ci_unique`).
 - **Sources**: global, unchanged for now.
 
 Every route that changes a global row checks `is_staff`, and its tests use the
@@ -376,7 +389,7 @@ is written.
 - `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`)
 - `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient.owner` is NULL for the global list or the user a row is private to, and `ingredient_name` is unique case-insensitively among global rows and within each owner's private rows; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
 - `Step` — ordered recipe steps; `step_title` is an optional heading, stored as `""` when absent and rendered underlined in front of the step text, followed by a colon
-- `Cuisine`, `Source`, `Tag` — lookup/classification models; `Cuisine.cuisine` is unique case-insensitively; `Tag.owner` is NULL for a global tag or the user it is private to
+- `Cuisine`, `Source`, `Tag` — lookup/classification models; `Cuisine` is a node of the cuisine tree (`parent`, at most three levels), its name unique case-insensitively among its siblings; `Tag.owner` is NULL for a global tag or the user it is private to
 
 ### Data Flow
 

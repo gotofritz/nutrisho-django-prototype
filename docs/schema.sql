@@ -23,8 +23,10 @@ CREATE UNIQUE INDEX "django_content_type_app_label_model_76bd3d3b_uniq" ON "djan
 CREATE TABLE "django_migrations" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "app" varchar(255) NOT NULL, "name" varchar(255) NOT NULL, "applied" datetime NOT NULL);
 CREATE TABLE "django_session" ("session_key" varchar(40) NOT NULL PRIMARY KEY, "session_data" text NOT NULL, "expire_date" datetime NOT NULL);
 CREATE INDEX "django_session_expire_date_a5c62663" ON "django_session" ("expire_date");
-CREATE TABLE "recipes_cuisine" ("cuisine" varchar(200) NOT NULL UNIQUE, "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT);
-CREATE UNIQUE INDEX "cuisine_ci_unique" ON "recipes_cuisine" ((LOWER("cuisine")));
+CREATE TABLE "recipes_cuisine" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "cuisine" varchar(200) NOT NULL, "parent_id" integer NULL REFERENCES "recipes_cuisine" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE UNIQUE INDEX "cuisine_ci_unique" ON "recipes_cuisine" ((LOWER("cuisine"))) WHERE "parent_id" IS NULL;
+CREATE UNIQUE INDEX "cuisine_ci_unique_per_parent" ON "recipes_cuisine" ((LOWER("cuisine")), "parent_id");
+CREATE INDEX "recipes_cuisine_parent_id_b01b6ab4" ON "recipes_cuisine" ("parent_id");
 CREATE TABLE "recipes_ingredient" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "dietary_constraint" varchar(32) NOT NULL, "family" varchar(32) NOT NULL, "plural_name" varchar(64) NOT NULL, "owner_id" integer NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "ingredient_name" varchar(64) NOT NULL);
 CREATE UNIQUE INDEX "ingredient_name_ci_unique" ON "recipes_ingredient" ((LOWER("ingredient_name"))) WHERE "owner_id" IS NULL;
 CREATE UNIQUE INDEX "ingredient_name_ci_unique_per_owner" ON "recipes_ingredient" ((LOWER("ingredient_name")), "owner_id");

@@ -5,7 +5,8 @@ from django.views.decorators.http import require_GET, require_http_methods, requ
 from django.views.decorators.vary import vary_on_headers
 
 from recipes.forms.field_forms import RecipeMetadataForm
-from recipes.models import Cuisine, Recipe
+from recipes.models import Recipe
+from recipes.services.name_resolution import cuisine_paths
 from recipes.services.recipe_duplication import duplicate_recipe
 from recipes.services.recipe_scaling import ScaleError, save_scaled_copy
 from recipes.utils.scaling import MAX_SERVINGS, parse_servings
@@ -64,7 +65,6 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse
                     if not locked:
                         return HttpResponse("", status=404)
                     form.save(commit=False)
-                    form.resolve_pending_cuisine(recipe)
                     recipe.save(
                         update_fields=[
                             "recipe_name",
@@ -215,4 +215,4 @@ def recipe_scale_copy(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 
 def _cuisine_names() -> list[str]:
-    return list(Cuisine.objects.values_list("cuisine", flat=True).order_by("cuisine"))
+    return cuisine_paths()

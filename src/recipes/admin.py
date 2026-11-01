@@ -14,7 +14,12 @@ from .models import (
 
 @admin.register(Cuisine)
 class CuisineAdmin(admin.ModelAdmin):
-    list_display = ("cuisine",)
+    """The curated cuisine tree (plan 011): one row per area, region or subregion."""
+
+    list_display = ("__str__", "cuisine", "parent")
+    list_select_related = ("parent__parent",)
+    search_fields = ("cuisine",)
+    autocomplete_fields = ("parent",)
 
 
 @admin.register(Recipe)

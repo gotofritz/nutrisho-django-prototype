@@ -1,6 +1,6 @@
 # Plan 011: Shared Vocabularies
 
-## Status: In progress — PRs 1-3 in review, PR 4 waiting on the cuisine list
+## Status: Done — PRs 1-4 shipped
 
 Tracks [issue #46](https://github.com/gotofritz/nutrisho-django-prototype/issues/46).
 
@@ -46,16 +46,17 @@ owner.
    action for tags can follow if private tags need it.
 4. **Curated cuisine list.** Three levels, `area.region.subregion`, via
    `parent = FK("self")`; a recipe may point at any depth (`middle east`,
-   `med.italy`, `med.italy.sicily`) and filtering by a node finds everything
-   below it. Areas are not all geographic: `fusion`, `modern`, `eu`, `med`,
-   `middle east`, `asia`, `south asia` (working name for "sub continent"),
-   `anglo` (US, UK, Australia, New Zealand…), `latin`. The list is drafted for
-   review first; loaded by a data migration; existing cuisines mapped onto it;
-   `resolve_cuisine` stops creating on a miss and the editor validates against
-   the list.
+   `med.italy`, `med.italy.sicily`). Areas: `eu`, `med`, `middle east`,
+   `africa`, `asia` (with the Pacific islands), `south asia`, `anglo` (US, UK,
+   Ireland, Canada, Australia, New Zealand) and `latin` (the rest of the
+   Americas). `fusion` and `modern` are global tags rather than cuisines: the
+   cuisine records where the cook is based. Seeded by migration 0021, which
+   folds existing flat cuisines in; the editor only picks from the tree; staff
+   edit it in Django admin.
 
-## Open questions
+## Follow-ups
 
-- Cuisine list: final contents, the name for "sub continent", and where
-  sub-Saharan Africa goes (draft under review).
-- Sources: stay global, or become private per user?
+- Users' own clean-up tool for private ingredients: #93 (backlog).
+- Sources stay global; revisit if they need to be per user.
+- Filtering recipes by a cuisine node and everything under it, once there is
+  a recipe filter to put it in.

@@ -2,9 +2,9 @@ from django import forms
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import transaction
 
-from recipes.models import Recipe
+from recipes.models import Cuisine, Recipe
 from recipes.models.tag import TAG_MAX_LENGTH
-from recipes.services.name_resolution import find_cuisine, resolve_cuisine, resolve_tag
+from recipes.services.name_resolution import find_cuisine, resolve_tag
 
 EDITABLE_RECIPE_FIELDS = frozenset(["recipe_name", "short_description", "servings"])
 
@@ -12,7 +12,10 @@ _METADATA_MODEL_FIELDS = ["recipe_name", "short_description", "servings", "sourc
 
 
 class RecipeMetadataForm(forms.ModelForm):
-    """Form for creating or editing recipe metadata. Cuisine uses text+datalist.
+    """Form for creating or editing recipe metadata.
+
+    Cuisine is text plus a datalist of the tree's dotted paths
+    (`med.italy.sicily`); a bare unambiguous name (`sicily`) is accepted too.
 
     `tags` is comma-separated names, resolved within `owner`'s vocabulary (the
     recipe's owner): global tags or their private ones, an unknown name
@@ -33,7 +36,7 @@ class RecipeMetadataForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self._owner = owner
         if self.instance and self.instance.pk and self.instance.cuisine:
-            self.fields["cuisine_name"].initial = self.instance.cuisine.cuisine
+            self.fields["cuisine_name"].initial = self.instance.cuisine.path
         if self.instance and self.instance.pk:
             names = self.instance.tag.values_list("tag", flat=True)
             self.fields["tags"].initial = ", ".join(sorted(names, key=str.lower))
@@ -56,36 +59,29 @@ class RecipeMetadataForm(forms.ModelForm):
         tags = [resolve_tag(name, owner=self._owner) for name in self.cleaned_data["tags"]]
         recipe.tag.set(tags)  # ty: ignore[unresolved-attribute]  # reverse M2M
 
+    def clean_cuisine_name(self) -> Cuisine | None:
+        """The picked cuisine node, None when blank; unknown names are an error.
+
+        Cuisines are a curated tree (plan 011), so the editor never creates one.
+        """
+        text = (self.cleaned_data.get("cuisine_name") or "").strip()
+        if not text:
+            return None
+        cuisine = find_cuisine(text)
+        if cuisine is None:
+            msg = "Pick a cuisine from the list (staff can add new ones)."
+            raise forms.ValidationError(msg)
+        return cuisine
+
     def save(self, commit: bool = True) -> Recipe:
-        """Save the recipe, setting or clearing its cuisine from `cuisine_name`."""
+        """Save the recipe with the picked cuisine; tags too when committing."""
         recipe = super().save(commit=False)
-        name = self.cleaned_data.get("cuisine_name", "").strip()
+        recipe.cuisine = self.cleaned_data.get("cuisine_name")
         if commit:
             with transaction.atomic():
-                if name:
-                    recipe.cuisine = resolve_cuisine(name)
-                else:
-                    recipe.cuisine = None
                 recipe.save()
                 self.save_tags(recipe)
-        else:
-            self._pending_cuisine_name = None
-            if not name:
-                recipe.cuisine = None
-            else:
-                existing = find_cuisine(name)
-                if existing:
-                    recipe.cuisine = existing
-                else:
-                    self._pending_cuisine_name = name
         return recipe
-
-    def resolve_pending_cuisine(self, recipe: Recipe) -> None:
-        """Create pending Cuisine row and set FK. Call before recipe.save() when commit=False."""
-        pending = getattr(self, "_pending_cuisine_name", None)
-        if pending:
-            recipe.cuisine = resolve_cuisine(pending)  # ty: ignore[invalid-assignment]  # FK descriptor
-            self._pending_cuisine_name = None
 
 
 class RecipeFieldForm(forms.ModelForm):
