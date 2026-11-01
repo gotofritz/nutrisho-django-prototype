@@ -1487,3 +1487,168 @@ issue. That makes "what is next before the VPS move" hard to answer.
 - **Fix:** once this file is de-duplicated, turn the items worth doing into
   GitHub issues with a `vps` milestone/label, link plans to open issues, and
   reopen or re-file #14 for aliases (or archive plan 008).
+
+---
+
+## Technical debt and engineering sustainability audit (2026-10-30)
+
+Independent pass focused on what makes the codebase harder or riskier to keep
+changing. Baseline at audit time: `ruff`, `ty` and 764 tests all green in ~9 s,
+98% reported line coverage, `makemigrations --check` clean, and `docs/schema.sql`
+matches a freshly migrated database. The findings below are about the
+guard-rails around that health, not about broken code. Ordered by value.
+
+### TD-1. Unused `google-genai` runtime dependency; dev-only toolbar shipped as runtime
+
+- **Evidence:** `google-genai~=1.56` is in `[project].dependencies`, but nothing
+  in `src/`, `tests/` or `scripts/` imports it. `uv tree --no-dev` shows it pulls
+  in `httpx`, `requests`, `google-auth`, `websockets`, `pydantic`, `tenacity`, …
+  — most of the 45 runtime packages. `django-debug-toolbar` is also a runtime
+  dependency although only `settings/dev.py` and the `DEBUG` branch of
+  `nutrisho/urls.py` use it.
+- **Why it matters:** every unused package is attack surface, upgrade churn and
+  install time on the VPS, for zero behaviour. It also hides the fact that
+  `pydantic` (mandated in `AGENTS.md`) is only present by accident (see TD-9).
+- **Fix:** drop `google-genai`; move `django-debug-toolbar` to the `dev`
+  dependency group; `uv lock`. Re-add an LLM SDK when a feature actually needs it.
+
+### TD-2. Coverage gate is blind to modules no test imports
+
+- **Evidence:** `src/recipes/management/` and `src/recipes/management/commands/`
+  have no `__init__.py`. coverage.py only discovers unexecuted files inside
+  packages, so a command no test imports never appears in the report.
+  `addinitialuser.py` (0% covered) is missing from the report entirely. Adding
+  the two `__init__.py` files makes it show up, and the total drops from 98% to
+  97% (verified locally, then reverted).
+- **Why it matters:** the `--cov-fail-under=95` gate cannot catch a new,
+  completely untested management command — exactly the kind of one-off,
+  data-mutating code that most needs a test.
+- **Fix:** add the two `__init__.py` files (Django's `startapp` layout has them
+  anyway). Consider `branch = true` in `[tool.coverage.run]` while there: the
+  views are dense with guard branches that line coverage counts as covered as
+  soon as the `if` line runs.
+
+### TD-3. Nothing enforces the migration / `schema.sql` rules in CI
+
+- **Evidence:** `AGENTS.md` requires every migration PR to regenerate
+  `docs/schema.sql`, but CI only runs `poe qa` (CSS, lint, types, tests, hook
+  tests). There is no `makemigrations --check` and no schema drift check. Both
+  happen to be clean today.
+- **Why it matters:** a model change without a migration, or a migration
+  without the regenerated schema, merges green. The schema file is advertised
+  as "current", so silent drift makes it actively misleading.
+- **Fix:** add a `poe check-migrations` task (and include it in `qa`) that runs
+  `manage.py makemigrations --check --dry-run`, migrates a temp SQLite DB
+  (`DATABASE_URL=sqlite:///<tmp>`), runs `backup_db --schema-only --schema <tmp>`
+  and `diff`s it against `docs/schema.sql`.
+
+### TD-4. Login and ownership are enforced per route by hand, with no structural test
+
+- **Evidence:** all 50 routes in `recipes/urls.py` are individually wrapped in
+  `_lr(...)`; recipe ownership is a hand-written
+  `get_object_or_404(Recipe, id=recipe_id, owner=request.user)` repeated 38
+  times across the view modules. `test_views_ownership.py` checks 16 hand-picked
+  endpoints out of ~40 recipe-scoped ones; no test iterates the URLconf.
+- **Why it matters:** both protections are correct today, but each new endpoint
+  must remember both. Forgetting `_lr` ships a public endpoint; forgetting
+  `owner=` ships an IDOR. Neither would fail any existing test.
+- **Fix:** add one parametrised test that walks `get_resolver().url_patterns`
+  under `recipes:` and asserts (a) an anonymous request gets the login
+  redirect / `HX-Redirect`, (b) a different user gets 404 for every route with a
+  `recipe_id` kwarg. Optionally go further: replace `_lr` with a subclass of
+  Django's `LoginRequiredMiddleware` whose `handle_no_permission` returns the
+  HTMX redirect (opt-out via `@login_not_required` for the login views), and a
+  small `owned_recipe(request, recipe_id)` helper for the 38 lookups.
+
+### TD-5. View-layer boilerplate: four lists per endpoint and copy-pasted up/down pairs
+
+- **Evidence:** adding one endpoint means editing the view module, the import
+  block and `__all__` in `views/__init__.py`, the import block in `urls.py`, and
+  the `path()` entry. Up/down moves are separate views for steps, groups and
+  ingredients (6 views, 6 routes); `recipe_ingredient_move_up` and
+  `_move_down` are ~30 identical lines differing only in `direction=`,
+  including a twice-repeated `HX-Retarget`/`HX-Reswap` block each.
+- **Why it matters:** the barrel adds merge-conflict hot spots and busywork to
+  every feature, and the duplicated bodies already have to be fixed in pairs.
+- **Fix:** have `urls.py` import the view modules
+  (`from recipes.views import recipe_steps` → `recipe_steps.recipe_step_edit`)
+  and delete the re-export barrel. Collapse each up/down pair into one view
+  taking `direction` from the URL (`<str:direction>` constrained to
+  `up|down`), keeping the URL names the templates use.
+
+### TD-6. Page-specific JavaScript lives inline in `base.html` and is untested
+
+- **Evidence:** `base.html` carries ~70 lines of inline JS: textarea autosize,
+  the steps selection panel (`_syncStepsPanel`, Merge disabled below two), the
+  ingredient reassign panel, `panelToggle`. It loads on every page, including
+  login. No test executes it — the pytest suite can only assert the markup the
+  JS relies on.
+- **Why it matters:** each new bulk-action UI adds more global listeners to the
+  base template, and regressions in client-side state (panel not hiding, Merge
+  enabled with one step) are invisible to CI.
+- **Fix:** move the script to `static/js/recipe-editor.js`, loaded only by the
+  recipe page. Add a single Playwright smoke test (Playwright is already
+  available in CI images and needs no Node build) covering: check one step →
+  panel shows, Merge disabled; check two → Merge enabled; Cancel → panel hides.
+
+### TD-7. One-off and legacy tooling that should have been deleted
+
+- **Evidence:**
+  - `scripts/backfill_step_titles.py` says "Throwaway — delete once it has been
+    run"; issue #20's backfill has shipped.
+  - `scripts/sql_to_edit_recipes_hack/` hard-codes
+    `/Users/fritz/work/nutrisho-django-prototype/nutrisho/db.sqlite3` and deletes
+    via raw SQL, superseded by the `delete_recipe` command and the inline editor.
+  - `fix_duplicate_sequences` exists to be run "before applying migration 0007".
+  - Migration `0008_sanitize_yaml_filenames` carries ~100 lines of frozen
+    sanitising logic for a column that `0016` drops.
+  - `.ruff.toml` excludes `src/jobs/migrations`, which does not exist.
+- **Why it matters:** dead tooling reads as supported tooling, keeps tests and
+  coverage alive for code with no future, and the raw-SQL scripts bypass every
+  invariant the app now enforces (sequence compaction, PROTECT FKs).
+- **Fix:** delete the two scripts directories' contents and
+  `fix_duplicate_sequences` (plus its tests); drop the stale ruff exclude. With
+  a single deployment, squash `0001`–`0016` (`squashmigrations`, then remove the
+  originals once the VPS has applied the squash) so a fresh install no longer
+  runs dead data migrations.
+
+### TD-8. The Claude hook regression test tests a copy of the regexes
+
+- **Evidence:** `.claude/hooks/test-caveman-patterns.sh` defines `ACT`, `NEG`
+  and `DEACT` as string literals, duplicating the patterns inline in
+  `caveman-mode-tracker.sh` lines 25, 26 and 70. It never sources or extracts
+  them. Yet it runs in `poe qa` (and therefore CI and every pre-commit), and is
+  why CI installs `jq`.
+- **Why it matters:** editing the hook's pattern cannot fail the test, so the
+  test only adds runtime and a CI dependency to the app's quality gate.
+- **Fix:** move the three patterns into `caveman-config.sh` and source it from
+  both scripts, so the test exercises the real values. Alternatively take
+  `test-hooks` out of `qa` — assistant tooling is not part of the product.
+
+### TD-9. Project standards and plans have drifted from the code
+
+- **Evidence:**
+  - `AGENTS.md` mandates `click` for CLIs and `pydantic` for models; neither is
+    imported anywhere (CLIs are Django management commands, models are Django
+    models), and `pydantic` is only installed transitively via TD-1.
+  - `docs/plans/005-data-model.md` and `006-admin.md` have been "Draft" since
+    May with no TDD cycles; 005's "review `quantity` FloatField vs
+    DecimalField" is already done (`DecimalField(max_digits=7, decimal_places=2)`).
+  - `pyproject.toml` still says `description = "Quick and dirty django
+    prototype"` and `authors = [{name = "Your Name", email = "you@example.com"}]`.
+- **Why it matters:** contributors (human or agent) follow `AGENTS.md` and the
+  active plans literally; stale rules produce code that fights the codebase.
+- **Fix:** replace the library rules with what the project actually uses
+  (Django management commands, Django forms/models); archive or rewrite 005
+  and 006 as concrete plans; fix the package metadata.
+
+### TD-10. No automated dependency updates
+
+- **Evidence:** no `.github/dependabot.yml` or Renovate config. Python deps are
+  floor-pinned and frozen by `uv.lock`; Tailwind by `pnpm-lock.yaml`. CI sets
+  `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` to keep older action majors running.
+- **Why it matters:** Django security releases, and the action deprecations the
+  env var is papering over, only get picked up when someone remembers.
+- **Fix:** add `dependabot.yml` with weekly, grouped updates for `uv`, `npm`
+  (pnpm lockfile) and `github-actions`; the existing CI gate is strong enough to
+  merge them with confidence.
