@@ -105,6 +105,19 @@ def test_ingredient_save_post_valid_saves_and_returns_display(auth_client, recip
 
 
 @pytest.mark.django_db
+def test_ingredient_save_accepts_a_name_longer_than_64(auth_client, recipe, iir):
+    """One imported ingredient name runs to 72 characters (#49)."""
+    long_name = "a" * 72
+    response = auth_client.post(
+        f"/recipes/{recipe.pk}/ingredients/{iir.pk}/save/",
+        {"ingredient_name": long_name, "quantity": "1", "unit": "", "preparation": "", "note": ""},
+    )
+    assert "<form" not in response.content.decode()
+    iir.refresh_from_db()
+    assert iir.ingredient.ingredient_name == long_name
+
+
+@pytest.mark.django_db
 def test_ingredient_save_post_invalid_returns_form(auth_client, recipe, iir):
     """Ingredient save post invalid returns form."""
     response = auth_client.post(
