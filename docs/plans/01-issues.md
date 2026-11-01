@@ -586,3 +586,164 @@ Fix:
   to the database and backup directories.
 - Let Caddy or certbot renew TLS automatically.
 - Add uptime and error alerting, so the logging from SEC-07 reaches a person.
+
+## Production readiness for a VPS (SRE review, 2026-10-30)
+
+Independent review of what stands between `main` and a public VPS deployment.
+Checked by running `manage.py check --deploy` and `collectstatic` against
+`nutrisho.settings.prod` with a throwaway `SECRET_KEY` and `ALLOWED_HOSTS`.
+Ordered by priority: **Blocker** means the deployed site will not work or will
+lose data without it.
+
+### PR-1 (Blocker): `collectstatic` fails and nothing serves static files when `DEBUG=False`
+
+- `base.py` has no `STATIC_ROOT`, so `manage.py collectstatic` raises
+  `ImproperlyConfigured`.
+- With `DEBUG=False`, `runserver`/gunicorn do not serve `/static/`, so the
+  site renders with no Tailwind CSS, no `style.css` and no HTMX — the app is
+  unusable, not just unstyled.
+- Fix: set `STATIC_ROOT = env.path("STATIC_ROOT", default=BASE_DIR / "staticfiles")`
+  (and git-ignore it), add `whitenoise` with
+  `CompressedManifestStaticFilesStorage` (hashed filenames give safe
+  long-lived caching), or serve `STATIC_ROOT` from the reverse proxy. Add a
+  test that `collectstatic --noinput` succeeds under prod settings.
+
+### PR-2 (Blocker): every POST returns 403 behind a TLS-terminating reverse proxy
+
+- Behind Caddy/nginx terminating HTTPS, Django sees plain HTTP, so
+  `request.is_secure()` is False. The CSRF middleware builds the expected
+  origin as `http://<host>`, the browser sends `Origin: https://<host>`, and
+  every form and HTMX POST fails CSRF. Turning on `SECURE_SSL_REDIRECT` without
+  the fix below causes a redirect loop instead.
+- `check --deploy` also reports W004 (HSTS), W008 (SSL redirect), W012
+  (`SESSION_COOKIE_SECURE`), W016 (`CSRF_COOKIE_SECURE`).
+- Fix in `prod.py`: `SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")`
+  (proxy must set the header and the app must only listen on localhost),
+  `CSRF_TRUSTED_ORIGINS` from env, `SECURE_SSL_REDIRECT`, `SESSION_COOKIE_SECURE`,
+  `CSRF_COOKIE_SECURE`, and HSTS starting at a short `SECURE_HSTS_SECONDS`
+  (e.g. 3600) before raising it. Make all of them env-driven so a local
+  prod-settings smoke run still works.
+
+### PR-3 (Blocker): no production server, deployment recipe or runbook
+
+- No WSGI server in dependencies (`gunicorn`/`granian`), no systemd unit, no
+  reverse-proxy config, no Dockerfile, no deploy doc. `initial-context.md`
+  still says "no production settings, no secrets management".
+- VPS-specific traps the runbook must cover:
+  - Python is pinned to 3.14, which Debian/Ubuntu LTS do not ship: use
+    `uv python install 3.14` + `uv sync --frozen --no-dev`.
+  - `output.css` is a git-ignored Tailwind build artifact, so the VPS either
+    needs Node + pnpm or CSS is built in CI and shipped as part of a release
+    artifact. Prefer building in CI so the server needs no Node toolchain.
+  - Secrets: `prod.py` reads `.env` from the repo root. Prefer a systemd
+    `EnvironmentFile=` owned by root, mode 0600, outside the checkout.
+  - Release steps: `uv sync --frozen`, `migrate`, `collectstatic`, restart
+    service, smoke-check.
+- Fix: add `gunicorn` (or `granian`) to runtime deps, commit
+  `deploy/nutrisho.service`, `deploy/Caddyfile` (Caddy gives automatic TLS
+  certificates), and `docs/deployment.md` with the steps above.
+
+### PR-4 (Blocker): no backups that would survive losing the VPS
+
+- `backup_db` writes the dump into `docs/` inside the code checkout, builds the
+  whole dump as one in-memory string, has no rotation, and is manual. A lost
+  or rebuilt VPS loses every recipe.
+- The SQLite file defaults to `BASE_DIR/db.sqlite3`, i.e. inside the git
+  checkout, where a careless `git clean -fdx` or redeploy-by-reclone deletes
+  it.
+- Fix: put the DB outside the checkout via `DATABASE_URL`
+  (e.g. `sqlite:////var/lib/nutrisho/db.sqlite3`); schedule a consistent online
+  backup (`sqlite3 db ".backup …"` or Python's `Connection.backup()`, not a
+  file copy of a live DB) via a systemd timer, with retention, and ship it
+  off-box (restic/rclone to object storage, or Litestream for continuous
+  replication). Document and test a restore once.
+
+### PR-5 (High): SQLite is not tuned for a multi-worker server
+
+- Default SQLite settings (rollback journal, deferred transactions, 5 s
+  timeout) give intermittent `database is locked` errors as soon as two
+  gunicorn workers write at the same time — likely with the many small HTMX
+  saves this UI makes.
+- Fix (Django ≥ 5.1 supports these): in `DATABASES["default"]["OPTIONS"]` set
+  `"transaction_mode": "IMMEDIATE"`, `"timeout": 20`, and an `init_command`
+  with `PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;`. Apply only when
+  the engine is SQLite. Keeps SQLite viable on a small VPS without moving to
+  Postgres.
+
+### PR-6 (High): server errors are silently discarded in production
+
+- There is no `LOGGING` setting. Django's default only logs to the console
+  when `DEBUG=True`; with `DEBUG=False` errors go to `mail_admins`, but there
+  are no `ADMINS` and no email backend. A 500 on the VPS leaves no traceback
+  anywhere.
+- Fix: add a `LOGGING` config in `base.py` sending `django` and `recipes`
+  loggers to stderr at INFO/WARNING (journald collects it under systemd),
+  with `LOG_LEVEL` from env. Optionally add Sentry (free tier) via
+  `SENTRY_DSN`, only initialised when set.
+
+### PR-7 (High): poe tasks force dev settings, and `createsuperuser` sets the password "fritz"
+
+- `.poe.toml` sets `DJANGO_SETTINGS_MODULE = "nutrisho.settings.dev"` for
+  every task. On the VPS, `uv run poe migrate` or `uv run poe backup` would
+  run with `DEBUG=True` and the debug toolbar loaded, and
+  `uv run poe createsuperuser` creates superuser `fritz` with password
+  `fritz` against whatever `DATABASE_URL` the `.env` points at.
+- Fix: let tasks respect an already-set `DJANGO_SETTINGS_MODULE` (or move the
+  dev default into the individual dev tasks), make `createsuperuser` prompt
+  or read `DJANGO_SUPERUSER_PASSWORD` from the environment, and document that
+  ops commands on the VPS use `manage.py` (which already defaults to prod).
+
+### PR-8 (Medium): no brute-force protection on public login forms
+
+- `/accounts/login/` and `/admin/login/` accept unlimited attempts. On a
+  public IP these get scanned within hours.
+- Fix: `django-axes` (lockout per user+IP) or fail2ban on the proxy access
+  log; consider moving admin off `/admin/` via an env-configured path.
+
+### PR-9 (Medium): CI does not check deploy-critical things
+
+- CI runs tests with test settings only, so PR-1/PR-2 regressions and
+  missing migrations would not be caught.
+- Fix: add CI steps with prod settings and dummy env:
+  `manage.py check --deploy --fail-level WARNING`,
+  `manage.py makemigrations --check --dry-run`, and
+  `manage.py collectstatic --noinput`. Add `.github/dependabot.yml` for the
+  `uv`, `npm` (pnpm) and `github-actions` ecosystems so security fixes to
+  Django and friends arrive as PRs.
+
+### PR-10 (Medium): unused and dev-only packages in runtime dependencies
+
+- `google-genai` is a runtime dependency but nothing in `src/` or `scripts/`
+  imports it. It pulls in a large tree (google-auth, httpx, pydantic, …)
+  that becomes attack and upgrade surface on the server.
+- `django-debug-toolbar` is a runtime dependency although only `dev.py`
+  uses it.
+- Fix: drop `google-genai`; move `django-debug-toolbar` to the `dev` group
+  so `uv sync --no-dev` on the VPS installs neither.
+
+### PR-11 (Medium): page loads fonts from Google Fonts
+
+- `base.html` loads Inconsolata and Lobster from `fonts.googleapis.com`,
+  which sends every visitor's IP to Google. For a site hosted and used in the
+  EU this has been ruled a GDPR violation (LG München I, 3 O 17493/20), and it
+  is also an external runtime dependency.
+- Fix: self-host the two fonts as static files (`@font-face` in
+  `style.css`), which also lets a strict `Content-Security-Policy`
+  (`default-src 'self'`) be added later.
+
+### PR-12 (Medium): no health endpoint or uptime monitoring
+
+- Nothing to point an uptime checker or the deploy smoke-check at; `/`
+  redirects to login.
+- Fix: add an unauthenticated `GET /healthz` that runs `SELECT 1` and returns
+  200/503, exclude it from login enforcement, and point a free external
+  monitor (e.g. UptimeRobot, healthchecks.io for the backup timer) at it.
+
+### PR-13 (Medium, before adding a second account): any user can merge or delete shared ingredients
+
+- Ingredients are global, and the ingredient manager
+  (`/recipes/ingredients/manage/…`) only requires login. Merge and plural-merge
+  rewrite ingredient references in every user's recipes. Fine while the VPS has
+  one account; once there is a second, one user can change everyone's recipes.
+- Fix: restrict the manager views to `is_staff` (or a permission) and test
+  that a non-staff user gets 403.
