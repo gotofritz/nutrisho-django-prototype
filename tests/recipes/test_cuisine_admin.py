@@ -5,6 +5,8 @@ of the cuisine tree, the staff member's recipes using the selection, and Add,
 Edit, Merge and Delete actions.
 """
 
+import re
+
 import pytest
 from django.test import Client
 
@@ -269,3 +271,60 @@ def test_delete_confirmation_counts_every_owners_recipes(staff_client, user, oth
     Recipe.objects.create(recipe_name="B", owner=other_user, cuisine=malta)
     html = staff_client.get(MANAGE + "delete/", {"cuisine_ids": [malta.pk]}).content.decode()
     assert "2 recipes" in html
+
+
+# --- Unused only -----------------------------------------------------------------
+
+
+def _picked_paths(html: str) -> set[str]:
+    """Paths of the listed rows."""
+    return set(re.findall(r'<span class="cuisine-path">([^<]+)</span>', html))
+
+
+@pytest.mark.django_db
+def test_unused_only_hides_used_nodes_and_their_ancestors(staff_client, other_user):
+    """A node is used if any user's recipe sits on it or anywhere below it."""
+    Recipe.objects.create(
+        recipe_name="Caponata", owner=other_user, cuisine=_node("med.italy.sicily")
+    )
+    html = staff_client.get(MANAGE + "columns/", {"unused": "1", "q": "med.italy"}).content.decode()
+    paths = _picked_paths(html)
+    assert "med.italy.sicily" not in paths
+    assert "med.italy" not in paths
+    assert "med.italy.sardinia" in paths
+
+
+@pytest.mark.django_db
+def test_unused_only_combines_with_search(staff_client, user):
+    """The filter and the search narrow together."""
+    Recipe.objects.create(recipe_name="Caponata", owner=user, cuisine=_node("med.italy.sicily"))
+    html = staff_client.get(MANAGE + "columns/", {"unused": "1", "q": "italy.s"}).content.decode()
+    assert _picked_paths(html) == {"med.italy.sardinia", "med.italy.south tyrol"}
+
+
+@pytest.mark.django_db
+def test_page_has_the_unused_only_checkbox(staff_client):
+    """The toggle sits in column 1 and keeps its state on a full page load."""
+    assert 'id="cuisine-unused-only"' in staff_client.get(MANAGE).content.decode()
+    html = staff_client.get(MANAGE, {"unused": "1"}).content.decode()
+    assert re.search(r'id="cuisine-unused-only"[^>]*\bchecked\b', html, flags=re.DOTALL)
+
+
+@pytest.mark.django_db
+def test_delete_takes_a_whole_branch_when_every_child_is_selected(staff_client):
+    """Selecting a node and everything below it deletes the lot."""
+    new_zealand = _node("anglo.new zealand")
+    branch = [new_zealand.pk, _node("anglo.new zealand.maori").pk]
+    response = staff_client.post(MANAGE + "delete/", {"cuisine_ids": branch})
+    assert response.status_code == 200
+    assert not Cuisine.objects.filter(pk__in=branch).exists()
+
+
+@pytest.mark.django_db
+def test_delete_still_refuses_a_node_whose_children_are_not_all_selected(staff_client):
+    """Leaving one child behind would orphan it: 422, nothing written."""
+    italy = _node("med.italy")
+    sicily = _node("med.italy.sicily")
+    response = staff_client.post(MANAGE + "delete/", {"cuisine_ids": [italy.pk, sicily.pk]})
+    assert response.status_code == 422
+    assert Cuisine.objects.filter(pk__in=[italy.pk, sicily.pk]).count() == 2

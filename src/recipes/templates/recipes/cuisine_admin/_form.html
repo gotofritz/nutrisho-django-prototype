@@ -4,7 +4,7 @@
     {% if node %}hx-post="{% url 'recipes:cuisine_manage_save' node.pk %}"{% else %}hx-post="{% url 'recipes:cuisine_manage_add' %}"{% endif %}
     hx-target="#cuisine-columns"
     hx-swap="outerHTML"
-    hx-include=".workspace-pick, #cuisine-search"
+    hx-include=".workspace-pick, #cuisine-search, #cuisine-unused-only"
   >
     {% csrf_token %}
     <p class="cuisine-form-intro">

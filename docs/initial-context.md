@@ -386,7 +386,10 @@ they draw on are split by who may change them:
   Edit (rename or move), Merge and Delete. Its pure functions live in
   `services/cuisine_admin.py`. Merge and Delete act on every user's recipes,
   Delete's replacement is optional (without one, recipes lose their cuisine),
-  and both refuse a node that still has children. The recipe page shows the
+  and both refuse a node unless everything inside it is selected too (nodes
+  then go leaves first, as `parent` is PROTECT). "Unused only" lists nodes with
+  no recipe from any user on them or below them, so a dead branch can be
+  selected and deleted whole. The recipe page shows the
   cuisine path in the description block, marked `no-print`.
 - **Sources**: global, unchanged for now.
 

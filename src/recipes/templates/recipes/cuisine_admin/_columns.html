@@ -7,7 +7,7 @@
     hx-trigger="change[target.classList.contains('cuisine-pick')]"
     hx-target="#cuisine-columns"
     hx-swap="outerHTML"
-    hx-include=".cuisine-pick:checked, #cuisine-search"
+    hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only"
   >
     <p class="column-count sticky top-0 border-b border-gray-200 bg-white pb-1 mb-2 text-sm font-semibold text-gray-600">{{ rows|length }} cuisine{{ rows|length|pluralize }} / {{ selected_count }} selected</p>
     <ul class="cuisine-rows">

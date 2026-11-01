@@ -65,10 +65,17 @@ def _actions(request: AuthedRequest, *, selected_ids: list[int], oob: bool) -> s
     )
 
 
-def _columns_context(request: AuthedRequest, *, query: str, selected_ids: list[int]) -> dict:
+def _unused_only(data: QueryDict) -> bool:
+    return data.get("unused") == "1"
+
+
+def _columns_context(
+    request: AuthedRequest, *, query: str, unused_only: bool, selected_ids: list[int]
+) -> dict:
     return {
         "query": query,
-        "rows": cuisine_rows(query),
+        "unused_only": unused_only,
+        "rows": cuisine_rows(query, unused_only=unused_only),
         "selected_ids": selected_ids,
         "selected_count": len(selected_ids),
         "recipes": list(recipes_for_cuisines(cuisine_ids=selected_ids, owner=request.user)),
@@ -76,8 +83,13 @@ def _columns_context(request: AuthedRequest, *, query: str, selected_ids: list[i
 
 
 def _columns_response(request: AuthedRequest, *, selected_ids: list[int]) -> HttpResponse:
-    query = _payload(request).get("q", "")
-    context = _columns_context(request, query=query, selected_ids=selected_ids)
+    data = _payload(request)
+    context = _columns_context(
+        request,
+        query=data.get("q", ""),
+        unused_only=_unused_only(data),
+        selected_ids=selected_ids,
+    )
     return HttpResponse(
         render_to_string(_T + "_columns.html", context, request=request)
         + _actions(request, selected_ids=selected_ids, oob=True)
@@ -116,7 +128,12 @@ def _guard(request: AuthedRequest, *, action: str, selected_ids: list[int]) -> H
 def cuisine_manage(request: AuthedRequest) -> HttpResponse:
     """Full page: column 1 plus the columns block."""
     selected_ids = _selected_ids(request.GET)
-    context = _columns_context(request, query=request.GET.get("q", ""), selected_ids=selected_ids)
+    context = _columns_context(
+        request,
+        query=request.GET.get("q", ""),
+        unused_only=_unused_only(request.GET),
+        selected_ids=selected_ids,
+    )
     return render(request, _T + "manager.html", context)
 
 

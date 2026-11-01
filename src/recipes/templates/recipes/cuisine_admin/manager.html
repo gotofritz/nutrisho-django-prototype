@@ -17,8 +17,27 @@
       hx-trigger="input changed delay:250ms, search"
       hx-target="#cuisine-columns"
       hx-swap="outerHTML"
-      hx-include=".cuisine-pick:checked"
+      hx-include=".cuisine-pick:checked, #cuisine-unused-only"
     >
+    {% comment %}
+    Unused means no recipe from any user on the node or anywhere below it, so
+    a whole unused branch can be selected and deleted in one go.
+    {% endcomment %}
+    <label class="unused-toggle">
+      <input
+        type="checkbox"
+        id="cuisine-unused-only"
+        name="unused"
+        value="1"
+        {% if unused_only %}checked{% endif %}
+        hx-get="{% url 'recipes:cuisine_manage_columns' %}"
+        hx-trigger="change"
+        hx-target="#cuisine-columns"
+        hx-swap="outerHTML"
+        hx-include=".cuisine-pick:checked, #cuisine-search"
+      >
+      Unused only
+    </label>
     {% include "./_actions.html" %}
   </div>
   {% include "./_columns.html" %}
