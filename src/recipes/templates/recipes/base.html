@@ -92,14 +92,137 @@
           event.stopImmediatePropagation();
         }
       }
+      // Polite announcements (#61) go through one live region that is always in
+      // the page: a region swapped in with its text already set is often not
+      // read out. Messages queued in the same moment are read together.
+      var _announceQueue = [];
+      function _announce(message) {
+        var region = document.getElementById('a11y-status');
+        message = (message || '').replace(/\s+/g, ' ').trim();
+        if (!region || !message) return;
+        if (!_announceQueue.length) {
+          region.textContent = '';
+          setTimeout(function () {
+            region.textContent = _announceQueue.join(' ');
+            _announceQueue = [];
+          }, 100);
+        }
+        _announceQueue.push(message);
+      }
+      // Sent by the delete views in HX-Trigger, since a deleted row just vanishes.
+      document.addEventListener('announce', function (e) {
+        _announce(e.detail && e.detail.message);
+      });
+      // Focus after a swap (#61). htmx itself refocuses an element whose id
+      // survives the swap (the move buttons) and focuses [autofocus] in new
+      // content (edit forms, panels). Any other swap that removes the focused
+      // element (Save, Cancel, Delete) drops focus to <body>, so the spot is
+      // remembered before the swap and focus goes to whatever took its place,
+      // or failing that to its nearest neighbour.
+      var _FOCUSABLE = 'a[href], button, input:not([type="hidden"]), select, textarea, [tabindex]';
+      var _focusSpot = null;
+      function _focusLost() {
+        var a = document.activeElement;
+        return !a || a === document.body || !a.isConnected;
+      }
+      function _spotOf(el) {
+        var chain = [];
+        for (var p = el.parentElement; p && p !== document.body; p = p.parentElement) chain.push(p);
+        return { el: el, prev: el.previousElementSibling, chain: chain };
+      }
+      function _visible(el) {
+        return el.getClientRects().length > 0 && !el.disabled;
+      }
+      function _first(root, selector) {
+        if (root.matches(selector) && _visible(root)) return root;
+        var found = root.querySelectorAll(selector);
+        for (var i = 0; i < found.length; i++) if (_visible(found[i])) return found[i];
+        return null;
+      }
+      function _focusInto(el) {
+        // An editable display (.editable) is what Save and Cancel bring back.
+        var to = _first(el, '.editable') || _first(el, _FOCUSABLE);
+        if (!to) return false;
+        if (!to.matches(_FOCUSABLE)) to.setAttribute('tabindex', '-1');
+        to.focus();
+        return document.activeElement === to;
+      }
+      function _focusNear(spot) {
+        var parent = spot.chain[0];
+        // What sits where the removed element was: its replacement, or else
+        // the next sibling; then the previous sibling, then the ancestors.
+        var inPlace = spot.prev && spot.prev.isConnected
+          ? spot.prev.nextElementSibling
+          : (parent && parent.isConnected ? parent.firstElementChild : null);
+        var candidates = [spot.el, inPlace, spot.prev].concat(spot.chain);
+        for (var i = 0; i < candidates.length; i++) {
+          var c = candidates[i];
+          if (c && c.isConnected && _focusInto(c)) return;
+        }
+      }
+      document.addEventListener('htmx:beforeSwap', function (e) {
+        var t = e.detail.target;
+        var a = document.activeElement;
+        _focusSpot = t && t !== document.body && a && a !== document.body && t.contains(a)
+          ? _spotOf(t)
+          : null;
+      });
+      // The swap has happened by now; [autofocus] is applied later, on settle,
+      // and still wins.
+      document.addEventListener('htmx:afterRequest', function () {
+        var spot = _focusSpot;
+        _focusSpot = null;
+        if (spot && _focusLost()) _focusNear(spot);
+      });
+      // An unsaved draft row is removed without a request.
+      function _cancelDraft(btn, rowSelector) {
+        var row = btn.closest(rowSelector);
+        var spot = _spotOf(row);
+        row.remove();
+        _focusNear(spot);
+      }
+      // A panel's Cancel hands focus back to the toggle that opened it.
+      function _closePanel(panelId) {
+        var panel = document.getElementById(panelId);
+        if (panel) panel.innerHTML = '';
+        var toggle = document.querySelector('[aria-controls="' + panelId + '"]');
+        if (toggle) toggle.focus();
+      }
+      // A boosted page swap (or the back button) is a new page: focus its
+      // <h1 tabindex="-1">, unless an [autofocus] field already took focus,
+      // and announce the title when no heading was focused.
+      function _pageArrived() {
+        var heading = document.querySelector('h1[tabindex="-1"]');
+        if (heading && _focusLost()) {
+          heading.focus();
+        } else {
+          _announce(document.title);
+        }
+      }
+      document.addEventListener('htmx:historyRestore', _pageArrived);
+      document.addEventListener('htmx:afterSettle', function (e) {
+        var root = e.target;
+        // A form re-rendered with errors (an inline 422, or a boosted full-page
+        // POST) puts the cursor on the first invalid field, which
+        // aria-describedby ties to its error message.
+        var invalid = _first(root, '[aria-invalid="true"]');
+        if (invalid) {
+          invalid.focus();
+        } else if (root === document.body && e.detail.boosted) {
+          _pageArrived();
+        }
+        if (root === document.body) return;
+        // Counts and "Saved" in swapped content are read out.
+        if (root.matches('[data-announce]')) _announce(root.textContent);
+        root.querySelectorAll('[data-announce]').forEach(function (el) {
+          _announce(el.textContent);
+        });
+      });
     </script>
   </head>
 
   <body hx-boost="true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <div id="save-error" class="save-error" role="alert" hidden>
-      <span id="save-error-message">Your change was not saved.</span>
-      <button type="button" id="save-error-dismiss" aria-label="Dismiss">&times;</button>
-    </div>
+    {% include "./partials/_page_regions.html" %}
     {% block content %}{% endblock %}
     <script>
       document.addEventListener('change', function (e) {
@@ -108,7 +231,10 @@
           var panel = document.getElementById('reassign-panel');
           if (panel) panel.hidden = n < 1;
         }
-        if (e.target.matches('.step-select')) _syncStepsPanel();
+        if (e.target.matches('.step-select')) {
+          _syncStepsPanel();
+          _announce(document.getElementById('steps-panel-count').textContent);
+        }
         if (e.target.id === 'reassign-target') {
           var ni = document.getElementById('new-group-name');
           if (ni) ni.hidden = e.target.value !== 'new';

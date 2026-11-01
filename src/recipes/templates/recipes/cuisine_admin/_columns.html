@@ -9,13 +9,14 @@
     hx-swap="outerHTML"
     hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only, #cuisine-sort"
   >
-    <p class="column-count sticky top-0 border-b border-gray-200 bg-white pb-1 mb-2 text-sm font-semibold text-gray-600">{{ rows|length }} cuisine{{ rows|length|pluralize }} / {{ selected_count }} selected</p>
+    <p class="column-count sticky top-0 border-b border-gray-200 bg-white pb-1 mb-2 text-sm font-semibold text-gray-600" data-announce>{{ rows|length }} cuisine{{ rows|length|pluralize }} / {{ selected_count }} selected</p>
     <ul class="cuisine-rows">
       {% for row in rows %}
       <li class="cuisine-row cuisine-depth-{{ row.depth }}">
         <label>
           <input
             type="checkbox"
+            id="cuisine-pick-{{ row.cuisine.pk }}"
             class="cuisine-pick"
             name="cuisine_ids"
             value="{{ row.cuisine.pk }}"
@@ -32,7 +33,7 @@
     id="col-cuisine-recipes"
     class="col-recipes basis-[62ch] min-w-0 max-w-[62ch] h-full min-h-0 overflow-y-auto overflow-x-hidden break-words rounded border border-gray-300 p-2"
   >
-    <p class="column-count sticky top-0 border-b border-gray-200 bg-white pb-1 mb-2 text-sm font-semibold text-gray-600">{{ recipes|length }} of your recipes</p>
+    <p class="column-count sticky top-0 border-b border-gray-200 bg-white pb-1 mb-2 text-sm font-semibold text-gray-600" data-announce>{{ recipes|length }} of your recipes</p>
     <ul class="recipe-rows">
       {% for recipe in recipes %}
       <li class="recipe-row">

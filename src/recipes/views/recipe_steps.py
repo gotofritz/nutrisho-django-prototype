@@ -12,6 +12,7 @@ from recipes.utils.sequencing import (
     remove_many_and_compact,
 )
 from recipes.utils.step_text import join_step_texts, split_step_text
+from recipes.views._announce import announce
 from recipes.views._types import AuthedRequest
 
 _STEPS_BLOCK = "recipes/partials/_steps_block.html"
@@ -74,7 +75,7 @@ def recipe_step_delete(request: AuthedRequest, recipe_id: int, step_id: int) -> 
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     remove_and_compact(siblings=Step.objects.filter(recipe=recipe), instance=step)
-    return HttpResponse("")
+    return announce(HttpResponse(""), "Step deleted.")
 
 
 @require_POST
@@ -162,7 +163,8 @@ def recipe_steps_bulk_delete(request: AuthedRequest, recipe_id: int) -> HttpResp
         return _steps_block(
             request, recipe=recipe, error="Select at least one step to delete.", status=422
         )
-    return _steps_block(request, recipe=recipe)
+    noun = "step" if removed == 1 else "steps"
+    return announce(_steps_block(request, recipe=recipe), f"{removed} {noun} deleted.")
 
 
 @require_POST

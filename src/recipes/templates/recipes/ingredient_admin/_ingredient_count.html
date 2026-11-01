@@ -3,7 +3,7 @@
   class="column-header sticky top-0 mb-2 flex items-center justify-between gap-2 border-b border-gray-200 bg-white pb-1"
   {% if oob %}hx-swap-oob="true"{% endif %}
 >
-  <p class="column-count text-sm font-semibold text-gray-600">
+  <p class="column-count text-sm font-semibold text-gray-600" data-announce>
     {{ found_count }} found / {{ selected_count }} selected
   </p>
   <label class="select-all shrink-0" title="Select all / none">

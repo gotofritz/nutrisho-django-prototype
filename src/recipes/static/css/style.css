@@ -68,6 +68,19 @@ body * {
   box-sizing: border-box;
 }
 
+/* Hidden on screen, still read by assistive tech (the #a11y-status region). */
+.visually-hidden {
+  border: 0;
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 .recipe-contents {
   box-shadow: #a3a0a0 2px 0px 7px;
   display: flex;

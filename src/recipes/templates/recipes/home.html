@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="home-header">
-  <h1>Recipes</h1>
+  <h1 tabindex="-1">Recipes</h1>
   <a href="{% url 'recipes:new' %}" class="btn-new-recipe">New Recipe</a>
   {% if user.is_staff %}
     <a href="{% url 'recipes:ingredient_manage' %}" class="btn-manage-ingredients">Manage ingredients</a>

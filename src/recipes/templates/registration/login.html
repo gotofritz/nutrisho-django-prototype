@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-  <h1>Log in</h1>
+  <h1 tabindex="-1">Log in</h1>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}

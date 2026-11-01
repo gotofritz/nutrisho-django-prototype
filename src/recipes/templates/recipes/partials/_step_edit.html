@@ -14,7 +14,7 @@
     {{ form.step_title.errors }}
     {{ form.step_text }}
     {{ form.step_text.errors }}
-    {% if split_error %}<p class="form-error">{{ split_error }}</p>{% endif %}
+    {% if split_error %}<p class="form-error" role="alert">{{ split_error }}</p>{% endif %}
     <button type="submit">Save</button>
     {% if step %}
     <button
@@ -38,7 +38,7 @@
       hx-swap="outerHTML"
     >Delete</button>
     {% else %}
-    <button type="button" onclick="this.closest('li').remove()">Cancel</button>
+    <button type="button" onclick="_cancelDraft(this, 'li')">Cancel</button>
     {% endif %}
   </form>
 </li>

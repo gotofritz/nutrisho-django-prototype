@@ -1,6 +1,7 @@
 <div class="nav-button">
   <button
     type="button"
+    aria-controls="metadata-panel"
     onclick="panelToggle(this, 'metadata-panel', event)"
     hx-get="{% url 'recipes:metadata_edit' recipe.id %}"
     hx-target="#metadata-panel"
@@ -11,6 +12,7 @@
 <div class="nav-button">
   <button
     type="button"
+    aria-controls="scale-panel"
     onclick="panelToggle(this, 'scale-panel', event)"
     hx-get="{% url 'recipes:scale_panel' recipe.id %}{% if target_servings %}?servings={{ target_servings }}{% endif %}"
     hx-target="#scale-panel"
@@ -21,6 +23,7 @@
 <div class="nav-button">
   <button
     type="button"
+    aria-controls="delete-panel"
     onclick="panelToggle(this, 'delete-panel', event)"
     hx-get="{% url 'recipes:delete_panel' recipe.id %}"
     hx-target="#delete-panel"

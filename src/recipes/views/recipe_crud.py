@@ -10,6 +10,7 @@ from recipes.services.name_resolution import cuisine_paths
 from recipes.services.recipe_duplication import duplicate_recipe
 from recipes.services.recipe_scaling import ScaleError, save_scaled_copy
 from recipes.utils.scaling import MAX_SERVINGS, parse_servings
+from recipes.views._announce import announce
 from recipes.views._types import AuthedRequest
 
 
@@ -130,8 +131,8 @@ def recipe_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
                 response = render(request, "recipes/partials/_recipe_list_empty.html")
                 response["HX-Retarget"] = "#recipe-list"
                 response["HX-Reswap"] = "outerHTML"
-                return response
-            return HttpResponse("")
+                return announce(response, "Recipe deleted.")
+            return announce(HttpResponse(""), "Recipe deleted.")
         # Detail page: compute redirect after deletion so it reflects current state.
         response = HttpResponse("")
         response["HX-Redirect"] = _next_recipe_url(recipe_id, request.user)

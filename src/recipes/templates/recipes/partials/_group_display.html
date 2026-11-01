@@ -10,11 +10,13 @@
   >{{ group.group_name|default:"—" }}</h4>
   <span class="move-btns" onclick="event.stopPropagation()">
     <button
+      id="group-{{ group.id }}-up"
       hx-post="{% url 'recipes:group_move_up' recipe.id group.id %}"
       hx-target="#groups-list"
       hx-swap="innerHTML"
     >↑</button>
     <button
+      id="group-{{ group.id }}-down"
       hx-post="{% url 'recipes:group_move_down' recipe.id group.id %}"
       hx-target="#groups-list"
       hx-swap="innerHTML"
