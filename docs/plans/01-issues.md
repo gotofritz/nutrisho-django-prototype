@@ -747,3 +747,157 @@ lose data without it.
   one account; once there is a second, one user can change everyone's recipes.
 - Fix: restrict the manager views to `is_staff` (or a permission) and test
   that a non-staff user gets 403.
+
+---
+
+## Confidence & correctness assessment (QA, 2026-10-30)
+
+Independent test-engineering pass with the VPS move in mind. Everything below
+was reproduced, not inferred, unless it says otherwise.
+
+**What is already solid.** 764 tests pass in ~10 s with 97% branch coverage.
+The suite is order-independent (reversed and three random orders all green).
+Running with pytest-django's `--fail-on-template-vars` finds zero undefined
+template variables. `makemigrations --check` is clean, `docs/schema.sql` matches
+a freshly migrated database, every `hx-target` / `HX-Retarget` id resolves to an
+element in the templates, and the HTML sanitizer resisted the XSS probes tried.
+A manual Playwright run against `runserver` showed steps (move, merge, split,
+add) and groups/ingredients (add) working and persisting across a reload.
+
+The gaps are in what the suite *cannot* see: real concurrency, case-insensitive
+data, the browser glue, and a couple of behaviours the tests pin as correct.
+
+### QA-1 — Concurrent requests fail with "database is locked" (High)
+
+**Evidence.** 8 threads × 15 step move-up/down POSTs against `runserver` on a
+file-backed SQLite DB: **57 of 120 requests returned 500**, all
+`OperationalError: database is locked`. With the same load and
+`OPTIONS = {"transaction_mode": "IMMEDIATE", "timeout": 20}` plus WAL
+(`init_command: "PRAGMA journal_mode=WAL;"`): 0 errors in 360 requests (8 and
+16 threads).
+
+**Why.** Django opens SQLite transactions as `DEFERRED`. Every mutating view
+reads first (`select_for_update`, which is a no-op on SQLite) and then writes, so
+two concurrent requests deadlock on the read→write lock upgrade and SQLite fails
+one immediately; the busy timeout does not help in that case. On a VPS with
+several gunicorn workers, or one browser firing two HTMX requests, users will
+hit this. The tests use a single in-memory connection, so they cannot catch it.
+The many "row vanished under us" branches in the views (most of the uncovered
+lines in `recipe_ingredients.py`) are defending against races the database
+setup does not actually serialize.
+
+**Fix.** Set `transaction_mode: "IMMEDIATE"`, a `timeout`, and WAL in
+`base.py`'s `DATABASES["default"]["OPTIONS"]` (Django ≥ 5.1). Add a regression
+test against a file-backed DB (`transactional_db` plus a `ThreadPoolExecutor`
+with one connection per thread, or `live_server`) that fires concurrent moves
+and asserts no 500s and a contiguous `index_in_sequence`.
+
+### QA-2 — Typing an existing ingredient in a different case crashes (High)
+
+**Evidence.** With `onion` in the DB, creating an ingredient row named `Onion`
+returns **500** (`IntegrityError` on `ingredient_name_ci_unique`). Phones
+auto-capitalise the first letter, so this will be common.
+
+**Why.** `IngredientInRecipeForm.save`, `resolve_pending_ingredient` and
+`recipe_ingredient_create` all call
+`Ingredient.objects.get_or_create(ingredient_name=name)`, an exact,
+case-sensitive match, while the DB enforces case-insensitive uniqueness. Edit
+and save have the same path. `Cuisine` uses the same pattern without a
+constraint, so `Italian` and `italian` silently become two cuisines (reproduced).
+
+**Fix.** One helper that looks up `ingredient_name__iexact` first and only then
+creates, used by all three call sites, and the same for `Cuisine`. Tests:
+create and save with `Onion` when `onion` exists reuse the existing row; same
+for cuisine.
+
+### QA-3 — Sanitizer truncates text after a stray `<` (Medium)
+
+**Evidence** (`safe_step_html`; title and blurb share the code):
+
+| stored text | rendered |
+|---|---|
+| `Bake (oven<gas 4) for 20 min. Rest.` | `Bake (oven` |
+| `Mix until temp<a few degrees. Then serve hot.` | `Mix until temp` |
+| `a<b` | `a` |
+
+The DB keeps the full text and the edit form shows it, so the page and the
+editor disagree with no hint why.
+
+**Why.** `HTMLParser` treats `<letter…` as the start of a tag. With no closing
+`>` it holds the rest in its buffer, and `close()` throws that buffer away.
+
+**Fix.** In `_InlineHtmlSanitizer.result()`, emit any unparsed remainder as
+escaped text before closing. Add the rows above as tests, plus a property-style
+test: for input with no allowed tags, the visible text (after unescaping) is
+unchanged.
+
+### QA-4 — Scaling desyncs servings from quantities and loses data (Medium)
+
+**Evidence.**
+- servings 4 × 0.1 → servings clamped to **1**, quantities scaled ×0.1
+  (amounts for 0.4 servings). `test_scale_down_sub_half_result_clamps_to_1`
+  asserts this as correct.
+- servings 3 × 0.5 → servings rounds to 2, quantities are for 1.5.
+- Quantities are rounded to 0.01 and **persisted**, so a small multiplier zeroes
+  them for good (1 × 0.001 → `0.00`, shown as "0 pinch"), and ×0.3 followed by
+  ×3.333 does not get the original back.
+
+**Fix.** Scale quantities by the *effective* ratio (`new_serves / old_serves`
+after rounding), so the page always describes the servings it shows. Return a
+422 when a non-zero quantity would round to zero. Update the test that pins the
+current behaviour.
+
+### QA-5 — HTMX failures are silent (Medium)
+
+The `htmx-config` in `base.html` maps every non-2xx/422 response to
+`swap: false, error: true`, and nothing listens for `htmx:responseError`,
+`htmx:sendError` or `htmx:timeout`. A 500, a 404, a dropped connection or a
+restart mid-deploy leaves the UI unchanged, so the user believes the edit
+saved. This happened during the QA-1 stress run: the failed clicks simply did
+nothing. **Fix.** Add a global listener that shows a dismissible "Your change was
+not saved" banner, and cover it in the browser tests (QA-6).
+
+### QA-6 — No browser tests for the HTMX/JS glue (Medium)
+
+About 25 inline handlers carry real logic: the DOM-position calculation for
+inserts (`hx-on::config-request` in the step, ingredient and group edit
+partials), the split-at-cursor offset (code points, LF newlines), bulk-select
+panel state, panel toggles, and the response-handling config. The Django tests
+post hand-written parameters, so drift between the JS and the views' contract
+goes unnoticed. The manual run found no breakage today, but nothing keeps it
+that way. **Fix.** `pytest-playwright` with `live_server`, running 4–5 journeys
+in CI on Chromium: login; add/edit/move/split/merge/bulk-delete steps; add a
+group and ingredients; scale; one ingredient-tool merge. The CI job needs to
+build `output.css` first or ignore its 404.
+
+### QA-7 — CI doesn't enforce the cheap invariants (Low)
+
+Each of these passes today and costs seconds; together they make sure it stays
+that way:
+- `manage.py makemigrations --check --dry-run`, so a model change without a
+  migration fails.
+- A `docs/schema.sql` drift check: migrate a temp DB, run
+  `backup_db --schema-only --schema <tmp>`, diff. AGENTS.md requires this file
+  to be regenerated, but nothing checks it.
+- `--fail-on-template-vars` in pytest `addopts`. There are zero undefined
+  variables today, and a typo'd `{{ var }}` currently renders as empty.
+- `[tool.coverage.run] branch = true` (97% today) behind the existing 95% gate.
+
+### QA-8 — Backup restore is never exercised (Low)
+
+The README calls the dump the only copy of the data, but no test restores one.
+A manual round-trip today worked (dump, then `executescript` into a fresh DB:
+all 19 tables identical, `integrity_check` ok). **Fix.** Add that round-trip as a
+test. For the VPS, note that `iterdump()` reads table by table and, as far as I
+can tell, is not wrapped in a read transaction, so a dump taken while the app
+writes may be inconsistent across tables. sqlite3's online backup API
+(`connection.backup()`) gives a consistent snapshot.
+
+### QA-9 — Anyone logged in can rewrite every user's ingredients (Low now, High multi-user)
+
+The ingredient tool is behind login only, but its rename, merge and delete
+actions change the global `Ingredient` rows, and with them other owners'
+recipes. The tests confirm only that login is needed. The design accepts this,
+which is fine for one user and becomes a data-integrity risk once the VPS has a
+second account. **Fix.** Gate the tool on `is_staff` (or a permission) and add 403
+tests for a non-staff user. This may duplicate a security finding.
