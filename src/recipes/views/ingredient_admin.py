@@ -21,6 +21,7 @@ from recipes.services.ingredient_admin import (
     delete_ingredients,
     merge_ingredients,
     merge_plural_ingredients,
+    promote_ingredients,
     recipes_for_ingredients,
     recipes_referencing_ingredients,
     search_ingredients,
@@ -40,6 +41,7 @@ _SELECTION_BOUNDS: dict[str, tuple[int, int | None]] = {
     "delete": (1, None),
     "merge": (2, None),
     "merge_plural": (2, 2),
+    "promote": (1, None),
 }
 
 
@@ -65,6 +67,7 @@ class _Filters(TypedDict):
     query: str
     unused_only: bool
     plurals_only: bool
+    private_only: bool
 
 
 def _filters(data: QueryDict) -> _Filters:
@@ -78,10 +81,13 @@ def _filters(data: QueryDict) -> _Filters:
         "query": data.get("q", ""),
         "unused_only": bool(data.get("unused")),
         "plurals_only": bool(data.get("plurals")),
+        "private_only": bool(data.get("private")),
     }
 
 
-def _selection(data: QueryDict, *, query: str, unused_only: bool, plurals_only: bool) -> list[int]:
+def _selection(
+    data: QueryDict, *, query: str, unused_only: bool, plurals_only: bool, private_only: bool
+) -> list[int]:
     """The ids this request selects.
 
     `toggle_all` is the header checkbox: it clears the selection when every listed
@@ -96,7 +102,7 @@ def _selection(data: QueryDict, *, query: str, unused_only: bool, plurals_only: 
     listed_ids = [
         ingredient.pk
         for ingredient in search_ingredients(
-            query, unused_only=unused_only, plurals_only=plurals_only
+            query, unused_only=unused_only, plurals_only=plurals_only, private_only=private_only
         )
     ]
     if listed_ids and set(listed_ids).issubset(selected_ids):
@@ -113,7 +119,12 @@ def _optional_id(raw: str | None) -> int | None:
 
 
 def _list_context(
-    *, query: str, unused_only: bool, plurals_only: bool, selected_ids: list[int]
+    *,
+    query: str,
+    unused_only: bool,
+    plurals_only: bool,
+    private_only: bool,
+    selected_ids: list[int],
 ) -> dict[str, object]:
     """Context for column 2: the filtered ingredient list plus header counts.
 
@@ -121,7 +132,9 @@ def _list_context(
     ticked when they are all selected, dashed when some are, clear otherwise.
     """
     ingredients = list(
-        search_ingredients(query, unused_only=unused_only, plurals_only=plurals_only)
+        search_ingredients(
+            query, unused_only=unused_only, plurals_only=plurals_only, private_only=private_only
+        )
     )
     listed_selected = {i.pk for i in ingredients} & set(selected_ids)
     all_selected = bool(ingredients) and len(listed_selected) == len(ingredients)
@@ -129,6 +142,7 @@ def _list_context(
         "query": query,
         "unused_only": unused_only,
         "plurals_only": plurals_only,
+        "private_only": private_only,
         "ingredients": ingredients,
         "found_count": len(ingredients),
         "selected_ids": selected_ids,
@@ -160,6 +174,7 @@ def _columns_context(
     query: str,
     unused_only: bool,
     plurals_only: bool,
+    private_only: bool,
     selected_ids: list[int],
 ) -> dict[str, object]:
     """Context for columns 2-4; column 4 stays empty until a recipe is picked."""
@@ -167,6 +182,7 @@ def _columns_context(
         query=query,
         unused_only=unused_only,
         plurals_only=plurals_only,
+        private_only=private_only,
         selected_ids=selected_ids,
     ) | _matches_context(selected_ids=selected_ids, owner=owner)
 
@@ -238,6 +254,7 @@ def _columns_response(
     query: str,
     unused_only: bool,
     plurals_only: bool,
+    private_only: bool,
     selected_ids: list[int],
 ) -> HttpResponse:
     """Restore columns 2-4 and reset the column-1 buttons."""
@@ -250,6 +267,7 @@ def _columns_response(
                 query=query,
                 unused_only=unused_only,
                 plurals_only=plurals_only,
+                private_only=private_only,
                 selected_ids=selected_ids,
             ),
         )
@@ -472,7 +490,18 @@ def ingredient_manage_merge(request: AuthedRequest) -> HttpResponse:
                 status=422,
             )
         get_object_or_404(Ingredient, pk=survivor_id)
-        merge_ingredients(survivor_id=survivor_id, victim_ids=selected_ids)
+        try:
+            merge_ingredients(survivor_id=survivor_id, victim_ids=selected_ids)
+        except IngredientInUseError as error:
+            return HttpResponse(
+                _fragment(
+                    request,
+                    "_merge_chooser.html",
+                    _merge_context(selected_ids=selected_ids)
+                    | {"selected_ids": selected_ids, "error": str(error)},
+                ),
+                status=422,
+            )
         # The survivor is all that is left of the selection, so it stays ticked.
         return _columns_response(request, **_filters(payload), selected_ids=[survivor_id])
     return _workspace_response(
@@ -526,7 +555,18 @@ def ingredient_manage_merge_plural(request: AuthedRequest) -> HttpResponse:
                 status=422,
             )
         plural_id = next(pk for pk in selected_ids if pk != singular_id)
-        merge_plural_ingredients(singular_id=singular_id, plural_id=plural_id)
+        try:
+            merge_plural_ingredients(singular_id=singular_id, plural_id=plural_id)
+        except IngredientInUseError as error:
+            return HttpResponse(
+                _fragment(
+                    request,
+                    "_merge_plural_chooser.html",
+                    _merge_plural_context(selected_ids=selected_ids)
+                    | {"selected_ids": selected_ids, "error": str(error)},
+                ),
+                status=422,
+            )
         # The singular is all that is left of the pair, so it stays ticked.
         return _columns_response(request, **_filters(payload), selected_ids=[singular_id])
     return _workspace_response(
@@ -534,5 +574,52 @@ def ingredient_manage_merge_plural(request: AuthedRequest) -> HttpResponse:
         "_merge_plural_chooser.html",
         _merge_plural_context(selected_ids=selected_ids),
         action="merge_plural",
+        selected_ids=selected_ids,
+    )
+
+
+def _promote_context(*, selected_ids: list[int]) -> dict[str, object]:
+    """Context for the promote confirmation.
+
+    Lists each selected private row with what promoting it will fold in: other
+    users' rows of the same name, and an existing global row it would merge
+    into. Global rows in the selection are listed as already global.
+    """
+    rows = []
+    for ingredient in selected_ingredients(selected_ids):
+        same_name = Ingredient.objects.filter(
+            ingredient_name__iexact=ingredient.ingredient_name
+        ).exclude(pk=ingredient.pk)
+        rows.append(
+            {
+                "ingredient": ingredient,
+                "existing_global": same_name.filter(owner__isnull=True).first(),
+                "others": list(same_name.filter(owner__isnull=False).select_related("owner")),
+            }
+        )
+    return {"rows": rows}
+
+
+@require_http_methods(["GET", "POST"])
+def ingredient_manage_promote(request: AuthedRequest) -> HttpResponse:
+    """GET shows what Promote will do; POST makes the selection global.
+
+    A private row becomes global, or merges into the global row that already
+    has its name; other users' private rows of that name are folded in, so their
+    recipes share the global row too (plan 011).
+    """
+    payload = _payload(request)
+    selected_ids = _selected_ids(payload)
+    blocked = _guard(action="promote", selected_ids=selected_ids)
+    if blocked is not None:
+        return blocked
+    if request.method == "POST":
+        promoted = promote_ingredients(selected_ids)
+        return _columns_response(request, **_filters(payload), selected_ids=promoted)
+    return _workspace_response(
+        request,
+        "_promote_confirm.html",
+        _promote_context(selected_ids=selected_ids),
+        action="promote",
         selected_ids=selected_ids,
     )

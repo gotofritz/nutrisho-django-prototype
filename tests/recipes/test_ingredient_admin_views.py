@@ -586,7 +586,10 @@ def test_save_panel_carries_the_selection_so_it_knows_how_many_are_open(
     """Save panel carries the selection so it knows how many are open."""
     onion = make_ingredient("onion")
     html = auth_client.get(EDIT_URL, {"ingredient_ids": [onion.pk]}).content.decode()
-    assert 'hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only"' in html
+    assert (
+        'hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"'
+        in html
+    )
 
 
 @pytest.mark.django_db

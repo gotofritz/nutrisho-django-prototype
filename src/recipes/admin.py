@@ -44,7 +44,8 @@ class StepAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ("ingredient_name",)
+    list_display = ("ingredient_name", "owner")
+    list_filter = (("owner", admin.EmptyFieldListFilter),)
 
 
 @admin.register(Source)

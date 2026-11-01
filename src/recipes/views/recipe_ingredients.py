@@ -6,8 +6,8 @@ from django.template.loader import render_to_string
 from django.views.decorators.http import require_GET, require_POST
 
 from recipes.forms.ingredient_forms import IngredientGroupForm, IngredientInRecipeForm
-from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Recipe
-from recipes.services.name_resolution import resolve_ingredient
+from recipes.models import IngredientGroup, IngredientInRecipe, Recipe
+from recipes.services.name_resolution import ingredient_names_for, resolve_ingredient
 from recipes.utils.sequencing import insert_at_index, move_in_sequence, remove_and_compact
 from recipes.views._types import AuthedRequest
 
@@ -49,22 +49,21 @@ def _prune_empty_group(recipe: Recipe, group: IngredientGroup) -> bool:
     return True
 
 
-def _all_ingredient_names() -> list[str]:
-    return list(
-        Ingredient.objects.values_list("ingredient_name", flat=True).order_by("ingredient_name")
-    )
-
-
 @require_GET
 def recipe_ingredient_edit(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
     """Show the ingredient edit form."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
-    form = IngredientInRecipeForm(instance=iir)
+    form = IngredientInRecipeForm(instance=iir, owner=recipe.owner)
     return render(
         request,
         "recipes/partials/_ingredient_edit.html",
-        {"recipe": recipe, "iir": iir, "form": form, "all_ingredients": _all_ingredient_names()},
+        {
+            "recipe": recipe,
+            "iir": iir,
+            "form": form,
+            "all_ingredients": ingredient_names_for(recipe.owner),
+        },
     )
 
 
@@ -73,7 +72,7 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
     """Save a ingredient."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
-    form = IngredientInRecipeForm(data=request.POST, instance=iir)
+    form = IngredientInRecipeForm(data=request.POST, instance=iir, owner=recipe.owner)
     if form.is_valid():
         with transaction.atomic():
             if (
@@ -94,7 +93,12 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
     return render(
         request,
         "recipes/partials/_ingredient_edit.html",
-        {"recipe": recipe, "iir": iir, "form": form, "all_ingredients": _all_ingredient_names()},
+        {
+            "recipe": recipe,
+            "iir": iir,
+            "form": form,
+            "all_ingredients": ingredient_names_for(recipe.owner),
+        },
     )
 
 
@@ -141,8 +145,8 @@ def recipe_ingredient_add(request: AuthedRequest, recipe_id: int, group_id: int)
             "recipe": recipe,
             "group": group,
             "iir": None,
-            "form": IngredientInRecipeForm(),
-            "all_ingredients": _all_ingredient_names(),
+            "form": IngredientInRecipeForm(owner=recipe.owner),
+            "all_ingredients": ingredient_names_for(recipe.owner),
         },
     )
 
@@ -152,7 +156,7 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
     """Create a ingredient."""
     recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
-    form = IngredientInRecipeForm(data=request.POST)
+    form = IngredientInRecipeForm(data=request.POST, owner=recipe.owner)
     if form.is_valid():
         with transaction.atomic():
             fresh_group = (
@@ -163,7 +167,10 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
             if fresh_group is None:
                 return HttpResponse("", status=404)
             iir = form.save(commit=False)
-            iir.ingredient = resolve_ingredient(form.cleaned_data["ingredient_name"])  # ty: ignore[invalid-assignment]  # FK descriptor
+            ingredient = resolve_ingredient(
+                form.cleaned_data["ingredient_name"], owner=recipe.owner
+            )
+            iir.ingredient = ingredient  # ty: ignore[invalid-assignment]  # FK descriptor
             iir.ingredient_group = fresh_group
             insert_at_index(
                 siblings=IngredientInRecipe.objects.filter(ingredient_group=fresh_group),
@@ -184,7 +191,7 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
             "group": group,
             "iir": None,
             "form": form,
-            "all_ingredients": _all_ingredient_names(),
+            "all_ingredients": ingredient_names_for(recipe.owner),
         },
     )
 

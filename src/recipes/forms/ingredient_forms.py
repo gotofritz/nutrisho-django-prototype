@@ -1,12 +1,19 @@
 from decimal import Decimal
 
 from django import forms
+from django.contrib.auth.models import AbstractBaseUser
 
 from recipes.models import IngredientGroup, IngredientInRecipe
 from recipes.services.name_resolution import find_ingredient, resolve_ingredient
 
 
 class IngredientInRecipeForm(forms.ModelForm):
+    """One ingredient row; the typed name resolves within `owner`'s vocabulary.
+
+    `owner` is the recipe's owner: names resolve to the global list or their
+    private rows, and an unknown name becomes private to them (plan 011).
+    """
+
     ingredient_name = forms.CharField(max_length=64, required=True)
 
     class Meta:
@@ -16,8 +23,9 @@ class IngredientInRecipeForm(forms.ModelForm):
             "quantity": forms.NumberInput(attrs={"step": "any"}),
         }
 
-    def __init__(self, *args: object, **kwargs: object) -> None:
+    def __init__(self, *args: object, owner: AbstractBaseUser, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
+        self._owner = owner
         if self.instance and self.instance.pk:
             self.fields["ingredient_name"].initial = self.instance.ingredient.ingredient_name
 
@@ -34,11 +42,11 @@ class IngredientInRecipeForm(forms.ModelForm):
         iir = super().save(commit=False)
         name = self.cleaned_data["ingredient_name"].strip()
         if commit:
-            iir.ingredient = resolve_ingredient(name)
+            iir.ingredient = resolve_ingredient(name, owner=self._owner)
             iir.save()
         else:
             self._pending_ingredient_name = None
-            existing = find_ingredient(name)
+            existing = find_ingredient(name, owner=self._owner)
             if existing:
                 iir.ingredient = existing
             else:
@@ -49,7 +57,7 @@ class IngredientInRecipeForm(forms.ModelForm):
         """Create pending Ingredient row and set FK. Call before iir.save() when commit=False."""
         pending = getattr(self, "_pending_ingredient_name", None)
         if pending:
-            iir.ingredient = resolve_ingredient(pending)  # ty: ignore[invalid-assignment]  # FK descriptor
+            iir.ingredient = resolve_ingredient(pending, owner=self._owner)  # ty: ignore[invalid-assignment]  # FK descriptor
             self._pending_ingredient_name = None
 
 

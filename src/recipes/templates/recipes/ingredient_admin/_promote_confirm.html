@@ -1,0 +1,36 @@
+<div id="columns" class="columns workspace min-w-0 grow h-full min-h-0 overflow-y-auto overflow-x-hidden break-words">
+  {% include "./_workspace_selection.html" %}
+  <form
+    hx-post="{% url 'recipes:ingredient_manage_promote' %}"
+    hx-target="#columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"
+  >
+    {% csrf_token %}
+    <p class="promote-intro">
+      Promoting makes an ingredient global: every user sees it in their editor, and only
+      staff can change it. Other users' private copies of the same name are merged into it,
+      and their recipes follow.
+    </p>
+    <ul class="promote-rows">
+      {% for row in rows %}
+      <li class="promote-row">
+        <span class="ingredient-name">{{ row.ingredient.ingredient_name }}</span>
+        {% include "./_owner_badge.html" with ingredient=row.ingredient %}
+        {% if not row.ingredient.owner_id %}
+        <span class="promote-note">already global</span>
+        {% elif row.existing_global %}
+        <span class="promote-note">merges into the global “{{ row.existing_global.ingredient_name }}”</span>
+        {% endif %}
+        {% if row.others %}
+        <span class="promote-note">
+          also merges the private copies of
+          {% for other in row.others %}{{ other.owner }}{% if not forloop.last %}, {% endif %}{% endfor %}
+        </span>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    <button type="submit" class="panel-promote rounded border border-gray-400 px-3 py-1">Promote</button>
+  </form>
+</div>

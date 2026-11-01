@@ -17,7 +17,7 @@
       hx-trigger="input changed delay:250ms, search"
       hx-target="#col-ingredients"
       hx-swap="outerHTML"
-      hx-include=".ingredient-pick:checked, #unused-only, #plurals-only"
+      hx-include=".ingredient-pick:checked, #unused-only, #plurals-only, #private-only"
     >
     <label class="unused-toggle">
       <input
@@ -30,7 +30,7 @@
         hx-trigger="change"
         hx-target="#col-ingredients"
         hx-swap="outerHTML"
-        hx-include=".ingredient-pick:checked, #ingredient-search, #plurals-only"
+        hx-include=".ingredient-pick:checked, #ingredient-search, #plurals-only, #private-only"
       >
       Unused only
     </label>
@@ -50,9 +50,28 @@
         hx-trigger="change"
         hx-target="#col-ingredients"
         hx-swap="outerHTML"
-        hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only"
+        hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #private-only"
       >
       Plural pairs only
+    </label>
+    {% comment %}
+    Rows private to one user (plan 011): what they typed that the global list
+    lacks. Promote makes one global and folds in every other user's copy.
+    {% endcomment %}
+    <label class="private-toggle">
+      <input
+        type="checkbox"
+        id="private-only"
+        name="private"
+        value="1"
+        {% if private_only %}checked{% endif %}
+        hx-get="{% url 'recipes:ingredient_manage_search' %}"
+        hx-trigger="change"
+        hx-target="#col-ingredients"
+        hx-swap="outerHTML"
+        hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only"
+      >
+      Private only
     </label>
     {% include "./_action_buttons.html" %}
   </div>

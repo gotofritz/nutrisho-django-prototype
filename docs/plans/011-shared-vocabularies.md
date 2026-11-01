@@ -1,6 +1,6 @@
 # Plan 011: Shared Vocabularies
 
-## Status: Draft — PR 1 in progress, open questions below
+## Status: In progress — PR 1 in review, PR 2 in review
 
 Tracks [issue #46](https://github.com/gotofritz/nutrisho-django-prototype/issues/46).
 
@@ -34,22 +34,27 @@ owner.
    resolves global, then the user's own, then creates a private row; the
    datalist shows global plus own. Staff get a Promote action in the clean-up
    tool that makes a private row global and merges any same-named private rows
-   of other users into it (repointing both FKs, as merge does). Open question:
-   whether non-staff get a version of the tool scoped to their own private
-   ingredients. Must land before plan 008 (aliases), whose aliases are then
-   global and staff-defined.
+   of other users into it (repointing both FKs, as merge does). A private row
+   may only replace ingredients in its owner's recipes (`IngredientScopeError`).
+   A version of the tool for non-staff, scoped to their own private
+   ingredients, is backlog (#93). Must land before plan 008 (aliases), whose
+   aliases are then global and staff-defined.
 3. **Global and private tags.** `Tag.owner`, same constraints; a way to add and
    remove tags in the recipe editor (there is none today, only Django admin).
    A recipe can carry global tags and its owner's private tags, never another
    user's.
-4. **Curated cuisine list.** Draft the list for review first. Proposed shape:
-   two levels via `parent = FK("self")` (Italian › Sicilian), so filtering by
-   Italian finds Sicilian too. Loaded by a data migration; existing cuisines
-   mapped onto the list; `resolve_cuisine` stops creating on a miss and the
-   editor validates against the list.
+4. **Curated cuisine list.** Three levels, `area.region.subregion`, via
+   `parent = FK("self")`; a recipe may point at any depth (`middle east`,
+   `med.italy`, `med.italy.sicily`) and filtering by a node finds everything
+   below it. Areas are not all geographic: `fusion`, `modern`, `eu`, `med`,
+   `middle east`, `asia`, `south asia` (working name for "sub continent"),
+   `anglo` (US, UK, Australia, New Zealand…), `latin`. The list is drafted for
+   review first; loaded by a data migration; existing cuisines mapped onto it;
+   `resolve_cuisine` stops creating on a miss and the editor validates against
+   the list.
 
 ## Open questions
 
-- Cuisine list: two levels (recommended) or flat?
-- Should non-staff users get a clean-up tool for their own private ingredients?
+- Cuisine list: final contents, the name for "sub continent", and where
+  sub-Saharan Africa goes (draft under review).
 - Sources: stay global, or become private per user?

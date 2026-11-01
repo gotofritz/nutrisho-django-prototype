@@ -4,7 +4,7 @@
     hx-post="{% url 'recipes:ingredient_manage_merge' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"
   >
     {% csrf_token %}
     <p class="merge-intro">
@@ -22,6 +22,7 @@
             {% if forloop.first %}checked{% endif %}
           >
           <span class="ingredient-name">{{ candidate.ingredient_name }}</span>
+          {% include "./_owner_badge.html" with ingredient=candidate %}
         </label>
       </li>
       {% endfor %}
