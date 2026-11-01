@@ -1,6 +1,6 @@
 from django.urls import path
 
-from recipes.views._auth import htmx_login_required
+from recipes.views._auth import htmx_login_required, htmx_staff_required
 
 from .views import (
     home,
@@ -61,48 +61,55 @@ def _lr(view):
     return htmx_login_required(view)
 
 
+def _staff(view):
+    """Shorthand: signed in and staff; the clean-up tool edits rows every user shares."""
+    return htmx_staff_required(view)
+
+
 app_name = "recipes"
 urlpatterns = [
     path("", _lr(home), name="home"),
     path("new/", _lr(recipe_new), name="new"),
     # Shared-ingredient clean-up tool (Miller columns). The `manage/` prefix keeps
     # these clear of the per-recipe `<recipe_id>/ingredients/...` inline-edit routes.
-    path("ingredients/manage/", _lr(ingredient_manage), name="ingredient_manage"),
+    path("ingredients/manage/", _staff(ingredient_manage), name="ingredient_manage"),
     path(
         "ingredients/manage/search/",
-        _lr(ingredient_manage_search),
+        _staff(ingredient_manage_search),
         name="ingredient_manage_search",
     ),
     path(
         "ingredients/manage/recipes/",
-        _lr(ingredient_manage_recipes),
+        _staff(ingredient_manage_recipes),
         name="ingredient_manage_recipes",
     ),
     path(
         "ingredients/manage/preview/<int:recipe_id>/",
-        _lr(ingredient_manage_preview),
+        _staff(ingredient_manage_preview),
         name="ingredient_manage_preview",
     ),
     path(
         "ingredients/manage/cancel/",
-        _lr(ingredient_manage_cancel),
+        _staff(ingredient_manage_cancel),
         name="ingredient_manage_cancel",
     ),
-    path("ingredients/manage/edit/", _lr(ingredient_manage_edit), name="ingredient_manage_edit"),
+    path("ingredients/manage/edit/", _staff(ingredient_manage_edit), name="ingredient_manage_edit"),
     path(
         "ingredients/manage/delete/",
-        _lr(ingredient_manage_delete),
+        _staff(ingredient_manage_delete),
         name="ingredient_manage_delete",
     ),
-    path("ingredients/manage/merge/", _lr(ingredient_manage_merge), name="ingredient_manage_merge"),
+    path(
+        "ingredients/manage/merge/", _staff(ingredient_manage_merge), name="ingredient_manage_merge"
+    ),
     path(
         "ingredients/manage/merge-plural/",
-        _lr(ingredient_manage_merge_plural),
+        _staff(ingredient_manage_merge_plural),
         name="ingredient_manage_merge_plural",
     ),
     path(
         "ingredients/manage/<int:ingredient_id>/save/",
-        _lr(ingredient_manage_save),
+        _staff(ingredient_manage_save),
         name="ingredient_manage_save",
     ),
     path("<int:recipe_id>/", _lr(recipe), name="recipe"),
