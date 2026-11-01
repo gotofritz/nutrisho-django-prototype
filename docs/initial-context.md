@@ -45,6 +45,8 @@ tests/
 
 Single Django app (`recipes`) under `src/` layout. No API layer. Frontend is server-rendered Django templates with HTMX inline editing. Debug toolbar enabled in dev: it is a `dev` dependency group package, so `urls.py` mounts it only when `debug_toolbar` is in `INSTALLED_APPS` (`settings/dev.py`), and a `uv sync --no-dev` install never imports it.
 
+Every asset is served by the app itself: pages make no third-party requests. The web fonts (Inconsolata, Lobster) are self-hosted as woff2 under `static/fonts/` with their OFL licences, declared with `font-display: swap` in `css/style.css`, and preloaded from `base.html`. A new font goes the same way, never through a font CDN.
+
 ### Inline Editing Pattern
 
 Each editable entity (field, step, ingredient, group) has three endpoints:
