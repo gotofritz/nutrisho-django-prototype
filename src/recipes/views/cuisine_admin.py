@@ -69,8 +69,8 @@ def _unused_only(data: QueryDict) -> bool:
     return data.get("unused") == "1"
 
 
-def _loose_only(data: QueryDict) -> bool:
-    return data.get("loose") == "1"
+def _by_added(data: QueryDict) -> bool:
+    return data.get("sort") == "added"
 
 
 def _columns_context(
@@ -78,14 +78,14 @@ def _columns_context(
     *,
     query: str,
     unused_only: bool,
-    loose_only: bool,
+    by_added: bool,
     selected_ids: list[int],
 ) -> dict:
     return {
         "query": query,
         "unused_only": unused_only,
-        "loose_only": loose_only,
-        "rows": cuisine_rows(query, unused_only=unused_only, loose_only=loose_only),
+        "by_added": by_added,
+        "rows": cuisine_rows(query, unused_only=unused_only, by_added=by_added),
         "selected_ids": selected_ids,
         "selected_count": len(selected_ids),
         "recipes": list(recipes_for_cuisines(cuisine_ids=selected_ids, owner=request.user)),
@@ -98,7 +98,7 @@ def _columns_response(request: AuthedRequest, *, selected_ids: list[int]) -> Htt
         request,
         query=data.get("q", ""),
         unused_only=_unused_only(data),
-        loose_only=_loose_only(data),
+        by_added=_by_added(data),
         selected_ids=selected_ids,
     )
     return HttpResponse(
@@ -143,7 +143,7 @@ def cuisine_manage(request: AuthedRequest) -> HttpResponse:
         request,
         query=request.GET.get("q", ""),
         unused_only=_unused_only(request.GET),
-        loose_only=_loose_only(request.GET),
+        by_added=_by_added(request.GET),
         selected_ids=selected_ids,
     )
     return render(request, _T + "manager.html", context)

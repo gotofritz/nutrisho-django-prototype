@@ -389,10 +389,9 @@ they draw on are split by who may change them:
   and both refuse a node unless everything inside it is selected too (nodes
   then go leaves first, as `parent` is PROTECT). "Unused only" lists nodes with
   no recipe from any user on them or below them, so a dead branch can be
-  selected and deleted whole. "Loose only" lists top-level nodes with nothing
-  inside them: the seeded list all sits under its areas, so these are mostly
-  the old names migration 0021 couldn't place. Together the two filters
-  separate noise from the canonical list without a flag to maintain. The recipe page shows the
+  selected and deleted whole. The list sorts A to Z or in the order
+  nodes were added (by primary key; there is no timestamp), so rows that
+  predate the seeded tree sit above its first area, `eu`. The recipe page shows the
   cuisine path in the description block, marked `no-print`.
 - **Sources**: global, unchanged for now.
 

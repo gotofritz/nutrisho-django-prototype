@@ -17,7 +17,7 @@
       hx-trigger="input changed delay:250ms, search"
       hx-target="#cuisine-columns"
       hx-swap="outerHTML"
-      hx-include=".cuisine-pick:checked, #cuisine-unused-only, #cuisine-loose-only"
+      hx-include=".cuisine-pick:checked, #cuisine-unused-only, #cuisine-sort"
     >
     {% comment %}
     Unused means no recipe from any user on the node or anywhere below it, so
@@ -34,28 +34,29 @@
         hx-trigger="change"
         hx-target="#cuisine-columns"
         hx-swap="outerHTML"
-        hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-loose-only"
+        hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-sort"
       >
       Unused only
     </label>
     {% comment %}
-    Top-level cuisines with nothing inside them. The seeded list all sits under
-    its areas, so these are mostly old names migration 0021 couldn't place.
+    Order added puts the oldest rows first: anything above the seeded tree's
+    first area predates it, which tells old noise from the canonical list.
     {% endcomment %}
-    <label class="loose-toggle">
-      <input
-        type="checkbox"
-        id="cuisine-loose-only"
-        name="loose"
-        value="1"
-        {% if loose_only %}checked{% endif %}
+    <label class="sort-choice">
+      Sort
+      <select
+        id="cuisine-sort"
+        name="sort"
+        class="rounded border border-gray-400 px-2 py-1"
         hx-get="{% url 'recipes:cuisine_manage_columns' %}"
         hx-trigger="change"
         hx-target="#cuisine-columns"
         hx-swap="outerHTML"
         hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only"
       >
-      Loose only
+        <option value="path"{% if not by_added %} selected{% endif %}>A&ndash;Z</option>
+        <option value="added"{% if by_added %} selected{% endif %}>Order added</option>
+      </select>
     </label>
     {% include "./_actions.html" %}
   </div>

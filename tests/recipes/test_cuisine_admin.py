@@ -330,30 +330,36 @@ def test_delete_still_refuses_a_node_whose_children_are_not_all_selected(staff_c
     assert Cuisine.objects.filter(pk__in=[italy.pk, sicily.pk]).count() == 2
 
 
-# --- Loose only ------------------------------------------------------------------
+# --- Sort order ------------------------------------------------------------------
+
+
+def _listed_paths(html: str) -> list[str]:
+    """Paths of the listed rows, in page order."""
+    return re.findall(r'<span class="cuisine-path">([^<]+)</span>', html)
 
 
 @pytest.mark.django_db
-def test_loose_only_lists_top_level_cuisines_with_nothing_inside(staff_client):
-    """Where migration 0021 left unmatched names; the seeded tree never shows."""
-    Cuisine.objects.create(cuisine="Klingon")
-    html = staff_client.get(MANAGE + "columns/", {"loose": "1"}).content.decode()
-    assert _picked_paths(html) == {"Klingon"}
+def test_list_is_alphabetical_by_default(staff_client):
+    """A to Z by path, whenever each node was added."""
+    Cuisine.objects.create(cuisine="Aardvark")
+    paths = _listed_paths(staff_client.get(MANAGE + "columns/").content.decode())
+    assert paths == sorted(paths, key=str.lower)
+    assert paths[0] == "Aardvark"
 
 
 @pytest.mark.django_db
-def test_loose_only_combines_with_unused_only(staff_client, user):
-    """Together they list the loose rows no recipe uses."""
-    used = Cuisine.objects.create(cuisine="Klingon")
-    Cuisine.objects.create(cuisine="Vulcan")
-    Recipe.objects.create(recipe_name="Gagh", owner=user, cuisine=used)
-    html = staff_client.get(MANAGE + "columns/", {"loose": "1", "unused": "1"}).content.decode()
-    assert _picked_paths(html) == {"Vulcan"}
+def test_list_can_be_sorted_in_the_order_nodes_were_added(staff_client):
+    """Oldest first, so rows that predate the seeded tree sit above it."""
+    Cuisine.objects.create(cuisine="Aardvark")
+    html = staff_client.get(MANAGE + "columns/", {"sort": "added"}).content.decode()
+    paths = _listed_paths(html)
+    assert paths[0] == "eu"
+    assert paths[-1] == "Aardvark"
 
 
 @pytest.mark.django_db
-def test_page_has_the_loose_only_checkbox(staff_client):
-    """The toggle sits in column 1 and keeps its state on a full page load."""
-    assert 'id="cuisine-loose-only"' in staff_client.get(MANAGE).content.decode()
-    html = staff_client.get(MANAGE, {"loose": "1"}).content.decode()
-    assert re.search(r'id="cuisine-loose-only"[^>]*\bchecked\b', html, flags=re.DOTALL)
+def test_page_has_the_sort_choice_and_keeps_it(staff_client):
+    """The choice sits in column 1 and survives a full page load."""
+    assert 'id="cuisine-sort"' in staff_client.get(MANAGE).content.decode()
+    html = staff_client.get(MANAGE, {"sort": "added"}).content.decode()
+    assert re.search(r'<option value="added"[^>]*\bselected\b', html)
