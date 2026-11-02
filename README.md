@@ -124,7 +124,7 @@ ignoring case — `Onion` and `onion` can no longer both exist. If your database
 predates that rule, list the clashes **before** migrating:
 
 ```bash
-python manage.py find_ingredient_duplicates
+make manage ARGS="find_ingredient_duplicates"
 ```
 
 Merge whatever it reports with the tool above, then run the migration. The same

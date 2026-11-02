@@ -13,8 +13,8 @@ export DJANGO_SETTINGS_MODULE ?= nutrisho.settings.dev
 PORT ?= 8987
 ARGS ?=
 
-.PHONY: help backup bootstrap coverage css css-watch dev lint lint-fix migrate \
-	node-install qa test test-hooks typecheck
+.PHONY: help backup bootstrap coverage css css-watch dev lint lint-fix manage \
+	migrate node-install qa schema test test-hooks typecheck
 
 help: ## List the available targets
 	@echo "Usage: make <target> [VAR=value]"
@@ -47,6 +47,9 @@ lint-fix: ## Fix linting issues
 	uv run ruff check --fix src/ tests/
 	uv run ruff format src/ tests/
 
+manage: ## Run a manage.py command under dev settings (pass the command as ARGS="...")
+	uv run python manage.py $(ARGS)
+
 migrate: ## Apply database migrations
 	uv run python manage.py migrate
 
@@ -54,6 +57,9 @@ node-install: ## Install Node dependencies via pnpm
 	pnpm install
 
 qa: css lint typecheck test test-hooks ## Run CSS build, linting, type checking, tests, and hook regressions
+
+schema: migrate ## Apply migrations, then regenerate docs/schema.sql
+	uv run python manage.py backup_db --schema-only
 
 test: ## Run tests with coverage (pass extra pytest args as ARGS="...")
 	DJANGO_SETTINGS_MODULE=nutrisho.settings.test uv run pytest -vv -s --cov=src --cov-report=html:htmlcov --cov-fail-under=95 $(ARGS)
