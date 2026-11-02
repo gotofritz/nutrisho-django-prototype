@@ -22,6 +22,7 @@
         list="ingredients-datalist"
         autocomplete="off"
         required
+        {% if form.ingredient_name.errors %}aria-invalid="true" aria-describedby="{{ form.ingredient_name.auto_id }}_error"{% endif %}
       >
       <datalist id="ingredients-datalist">
         {% for name in all_ingredients %}
@@ -50,7 +51,7 @@
       hx-swap="outerHTML"
     >Delete</button>
     {% else %}
-    <button type="button" onclick="this.closest('div').remove()">Cancel</button>
+    <button type="button" onclick="_cancelDraft(this, 'div')">Cancel</button>
     {% endif %}
   </form>
 </div>

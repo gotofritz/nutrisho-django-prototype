@@ -17,11 +17,13 @@
   </span>
   <span class="move-btns" onclick="event.stopPropagation()">
     <button
+      id="iir-{{ iir.id }}-up"
       hx-post="{% url 'recipes:ingredient_move_up' recipe.id iir.id %}"
       hx-target="#iir-list-{{ iir.ingredient_group.id }}"
       hx-swap="innerHTML"
     >↑</button>
     <button
+      id="iir-{{ iir.id }}-down"
       hx-post="{% url 'recipes:ingredient_move_down' recipe.id iir.id %}"
       hx-target="#iir-list-{{ iir.ingredient_group.id }}"
       hx-swap="innerHTML"

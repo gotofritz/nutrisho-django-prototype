@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-  <h1>Not allowed</h1>
+  <h1 tabindex="-1">Not allowed</h1>
   <p>{{ exception|default:"You do not have permission to open this page." }}</p>
   <p><a href="{% url 'recipes:home' %}">Back to your recipes</a></p>
 </body>

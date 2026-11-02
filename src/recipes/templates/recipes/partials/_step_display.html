@@ -12,11 +12,13 @@
     </span>
     <span class="move-btns" onclick="event.stopPropagation()">
       <button
+        id="step-{{ step.id }}-up"
         hx-post="{% url 'recipes:step_move_up' recipe.id step.id %}"
         hx-target="#steps-list"
         hx-swap="innerHTML"
       >↑</button>
       <button
+        id="step-{{ step.id }}-down"
         hx-post="{% url 'recipes:step_move_down' recipe.id step.id %}"
         hx-target="#steps-list"
         hx-swap="innerHTML"

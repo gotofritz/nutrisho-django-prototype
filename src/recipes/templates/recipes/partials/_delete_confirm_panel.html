@@ -2,7 +2,8 @@
 <p>Delete <strong>{{ recipe.recipe_name|safe_title_html }}</strong>? This cannot be undone.</p>
 <button
   type="button"
-  onclick="document.getElementById('delete-panel').innerHTML=''"
+  onclick="_closePanel('delete-panel')"
+  autofocus
 >Cancel</button>
 <button
   hx-post="{% url 'recipes:delete' recipe.id %}"

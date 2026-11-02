@@ -1,4 +1,4 @@
-{% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+{% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
 {% comment %}
 Scaling is display-only (#36): "Show" GETs the recipe page with ?servings=N, which
 is bookmarkable and printable and writes nothing. "Save as scaled copy" is the only
@@ -15,6 +15,7 @@ way to store a scaled version, and it makes a new recipe.
     step="1"
     value="{{ servings }}"
     required
+    autofocus
     style="width: 5em"
   />
   <span>servings</span>
@@ -29,7 +30,7 @@ way to store a scaled version, and it makes a new recipe.
   >Save as scaled copy</button>
   <button
     type="button"
-    onclick="document.getElementById('scale-panel').innerHTML = ''"
+    onclick="_closePanel('scale-panel')"
   >
     Cancel
   </button>

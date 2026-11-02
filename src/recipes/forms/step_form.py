@@ -8,6 +8,8 @@ class StepForm(forms.ModelForm):
         model = Step
         fields = ["step_title", "step_text"]
         widgets = {
-            "step_title": forms.TextInput(attrs={"placeholder": "Title (optional)"}),
+            "step_title": forms.TextInput(
+                attrs={"placeholder": "Title (optional)", "autofocus": True}
+            ),
             "step_text": forms.Textarea(attrs={"rows": 3, "placeholder": "New step"}),
         }
