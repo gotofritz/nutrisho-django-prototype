@@ -87,7 +87,3 @@ class Cuisine(models.Model):
         if depth > MAX_CUISINE_DEPTH:
             msg = f"Cuisines go at most {MAX_CUISINE_DEPTH} levels deep (area.region.subregion)."
             raise ValidationError({"parent": msg})
-
-    def natural_key(self):
-        """Return the natural key used by fixtures."""
-        return self.path

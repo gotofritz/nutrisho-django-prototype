@@ -1,5 +1,3 @@
-from typing import cast
-
 from django.db import models
 
 from .recipe import PROSE_MAX_LENGTH, Recipe
@@ -39,7 +37,3 @@ class Step(models.Model):
     def __str__(self) -> str:
         """Return a readable label."""
         return f"{self.index_in_sequence}. {str(self.step_text)[:32]}"
-
-    def natural_key(self):
-        """Return the natural key used by fixtures."""
-        return (self.index_in_sequence, cast(str, self.step_text)[:32])

@@ -1,5 +1,3 @@
-from typing import cast
-
 from django.db import models
 
 from .ingredient import Ingredient
@@ -42,12 +40,3 @@ class IngredientInRecipe(models.Model):
     def __str__(self) -> str:
         """Return a readable label."""
         return str(self.ingredient)
-
-    def natural_key(self):
-        """Return the natural key used by fixtures."""
-        return (
-            cast(IngredientGroup, self.ingredient_group).natural_key(),
-            str(self.quantity) if self.quantity is not None else None,
-            self.unit,
-            cast(Ingredient, self.ingredient).ingredient_name,
-        )

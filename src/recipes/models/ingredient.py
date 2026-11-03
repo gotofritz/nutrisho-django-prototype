@@ -98,7 +98,3 @@ class Ingredient(models.Model):
         """
         # cast: Django's CharField descriptor types as the field, not its value.
         return cast(str, self.plural_name) or pluralise(cast(str, self.ingredient_name))
-
-    def natural_key(self):
-        """Return the natural key used by fixtures."""
-        return self.ingredient_name
