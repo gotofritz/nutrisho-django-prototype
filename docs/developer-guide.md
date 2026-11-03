@@ -4,7 +4,7 @@
 
 - [uv](https://docs.astral.sh/uv/) — Python dependency manager
 - [GNU Make](https://www.gnu.org/software/make/) — task runner (`make help` lists every target; preinstalled on macOS and most Linux distributions)
-- [pnpm](https://pnpm.io/) — Node dependency manager (for Tailwind CSS)
+- [pnpm](https://pnpm.io/) — Node dependency manager (for Tailwind CSS); the version is pinned in `packageManager` in `package.json`, so `corepack enable` picks it up
 - [jq](https://jqlang.org/) — JSON CLI tool (`brew install jq`)
 
 ## First-time setup
@@ -156,6 +156,27 @@ make audit                   # known vulnerabilities in uv.lock and pnpm-lock.ya
 and fails on any Python advisory or a high or critical Node one. CI runs it in
 the `Audit` workflow on every PR, on pushes to `main`, and every Monday, so a
 new advisory against an unchanged lockfile still shows up.
+
+## CI
+
+The `CI` workflow (`.github/workflows/ci.yml`) installs from the lockfiles
+(`uv sync --locked`, `pnpm install --frozen-lockfile`), so a `uv.lock` that is
+out of date with `pyproject.toml` fails the build, then runs `make qa`. On
+`main` it also runs `make coverage-badge`, which writes the coverage total as
+a shields.io endpoint JSON, and a separate `badge` job publishes that file to
+the `badges` branch for the README badge.
+
+Both workflows follow the same rules, and `tests/test_workflows.py` checks
+them:
+
+- The token is read-only; only the `badge` job gets `contents: write`, and it
+  runs no code of its own.
+- Every action is pinned to a commit SHA with a `# vX.Y.Z` comment, which
+  Dependabot updates together. The uv version is pinned in the `setup-uv`
+  step; pnpm's comes from `packageManager` in `package.json`.
+- Every job has a `timeout-minutes`, and a newer push to a PR cancels the
+  run it replaces.
+- Nothing is installed with `pip` or `apt-get`.
 
 ## Dependency updates
 
