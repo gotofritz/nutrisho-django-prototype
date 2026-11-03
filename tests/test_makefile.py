@@ -11,6 +11,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 MAKEFILE = ROOT / "Makefile"
 TASKS = (
+    "audit",
     "backup",
     "bootstrap",
     "coverage",
@@ -137,6 +138,22 @@ def test_schema_migrates_then_writes_the_schema_only():
     migrate = output.index("manage.py migrate")
     backup = output.index("manage.py backup_db --schema-only")
     assert migrate < backup
+
+
+@needs_make
+def test_audit_checks_both_lockfiles():
+    """`make audit` runs pip-audit over every uv dependency group, then pnpm audit."""
+    output = run_make("--dry-run", "audit")
+
+    assert "uv export --all-groups" in output
+    assert "pip-audit --strict" in output
+    assert "pnpm audit --audit-level=high" in output
+
+
+@needs_make
+def test_qa_does_not_audit():
+    """`make qa` stays offline-friendly: the network-bound audit is a separate target."""
+    assert "audit" not in run_make("--dry-run", "qa")
 
 
 DOCS = (ROOT / "README.md", ROOT / "AGENTS.md", ROOT / "docs" / "developer-guide.md")

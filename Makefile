@@ -13,13 +13,18 @@ export DJANGO_SETTINGS_MODULE ?= nutrisho.settings.dev
 PORT ?= 8987
 ARGS ?=
 
-.PHONY: help backup bootstrap coverage css css-watch dev lint lint-fix manage \
+.PHONY: help audit backup bootstrap coverage css css-watch dev lint lint-fix manage \
 	migrate node-install qa schema test test-hooks typecheck
 
 help: ## List the available targets
 	@echo "Usage: make <target> [VAR=value]"
 	@echo
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z0-9_-]+:.*## / {printf "  %-14s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+audit: ## Check locked Python and Node dependencies for known vulnerabilities
+	uv export --all-groups --no-emit-project --format requirements-txt --quiet \
+		| uvx pip-audit --strict --disable-pip --requirement /dev/stdin
+	pnpm audit --audit-level=high
 
 backup: ## Write the schema to docs/schema.sql and a full SQL dump to docs/dump-<timestamp>.sql
 	uv run python manage.py backup_db

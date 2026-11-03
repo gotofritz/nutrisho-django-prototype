@@ -148,7 +148,23 @@ make lint                    # ruff only
 make typecheck               # ty only
 make test                    # pytest with coverage (≥95% required)
 make test ARGS="-k healthz"  # extra arguments go to pytest
+make audit                   # known vulnerabilities in uv.lock and pnpm-lock.yaml
 ```
+
+`make audit` needs the network, so it is not part of `make qa`. It runs
+`pip-audit` over `uv export --all-groups` and `pnpm audit --audit-level=high`,
+and fails on any Python advisory or a high or critical Node one. CI runs it in
+the `Audit` workflow on every PR, on pushes to `main`, and every Monday, so a
+new advisory against an unchanged lockfile still shows up.
+
+## Dependency updates
+
+Dependabot (`.github/dependabot.yml`) opens update PRs for four ecosystems:
+uv, npm (pnpm) and GitHub Actions weekly, and pre-commit hook revs
+monthly. Minor and patch bumps arrive grouped into one PR per ecosystem; a
+major bump gets its own PR. Review them like any other PR: CI must be green,
+and a `uv.lock` change that touches Django follows the
+[version policy](#django-version-policy) below.
 
 `make` on its own, or `make help`, lists every target with a one-line
 description. A target appears there when its rule line in the `Makefile` ends
