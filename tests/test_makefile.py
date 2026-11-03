@@ -15,6 +15,7 @@ TASKS = (
     "backup",
     "bootstrap",
     "coverage",
+    "coverage-badge",
     "css",
     "css-watch",
     "dev",
@@ -148,6 +149,15 @@ def test_audit_checks_both_lockfiles():
     assert "uv export --all-groups" in output
     assert "pip-audit --strict" in output
     assert "pnpm audit --audit-level=high" in output
+
+
+@needs_make
+def test_coverage_badge_writes_a_shields_endpoint_from_the_coverage_total():
+    """`make coverage-badge` turns the coverage total into a shields.io endpoint JSON."""
+    output = run_make("--dry-run", "coverage-badge")
+
+    assert "coverage report --format=total" in output
+    assert "badge-out/coverage.json" in output
 
 
 @needs_make

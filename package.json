@@ -2,6 +2,7 @@
   "name": "nutrisho-django-prototype",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@10.28.0",
   "scripts": {
     "css": "tailwindcss -i src/recipes/static/css/tailwind.css -o src/recipes/static/css/output.css --minify",
     "css:watch": "tailwindcss -i src/recipes/static/css/tailwind.css -o src/recipes/static/css/output.css --watch"

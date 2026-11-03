@@ -13,7 +13,7 @@ export DJANGO_SETTINGS_MODULE ?= nutrisho.settings.dev
 PORT ?= 8987
 ARGS ?=
 
-.PHONY: help audit backup bootstrap coverage css css-watch dev lint lint-fix manage \
+.PHONY: help audit backup bootstrap coverage coverage-badge css css-watch dev lint lint-fix manage \
 	migrate node-install qa schema test test-hooks typecheck
 
 help: ## List the available targets
@@ -34,6 +34,19 @@ bootstrap: migrate ## Apply migrations and create the owner superuser from DJANG
 
 coverage: ## Open the latest coverage report in a web browser
 	open htmlcov/index.html
+
+# CI publishes the JSON to the `badges` branch; the README badge renders it.
+coverage-badge: ## Write the last test run's coverage total to badge-out/coverage.json (shields.io endpoint)
+	mkdir -p badge-out
+	pct=$$(uv run coverage report --format=total); \
+	if [ "$$pct" -ge 90 ]; then color=brightgreen; \
+	elif [ "$$pct" -ge 80 ]; then color=green; \
+	elif [ "$$pct" -ge 70 ]; then color=yellowgreen; \
+	elif [ "$$pct" -ge 60 ]; then color=yellow; \
+	elif [ "$$pct" -ge 50 ]; then color=orange; \
+	else color=red; fi; \
+	printf '{"schemaVersion": 1, "label": "coverage", "message": "%s%%", "color": "%s"}\n' \
+		"$$pct" "$$color" > badge-out/coverage.json
 
 css: node-install ## Build Tailwind CSS (minified)
 	pnpm run css
