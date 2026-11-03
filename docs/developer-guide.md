@@ -26,7 +26,7 @@ make bootstrap
 that are blank. There are no defaults. The password must pass Django's password
 validators, so a short or guessable one is refused. If the username already
 exists it does nothing, so it is safe to re-run; it never changes an existing
-password. To change one, run `uv run python manage.py changepassword <username>`.
+password. To change one, run `make manage ARGS="changepassword <username>"`.
 
 On a server, prefer the prompt or a one-off environment variable over writing
 the password into `.env`, and pass `--noinput` to the command
@@ -97,22 +97,22 @@ which folds the `-wal` file back into `db.sqlite3` and removes it.
 To delete recipes by ID:
 
 ```bash
-python manage.py delete_recipe --id 42
-python manage.py delete_recipe --id 42 43 44
+make manage ARGS="delete_recipe --id 42"
+make manage ARGS="delete_recipe --id 42 43 44"
 ```
 
 ## Backing up
 
 ```bash
-make backup                                        # schema + full dump
-uv run python manage.py backup_db --schema-only     # schema only
+make backup    # schema + full dump
+make schema    # migrate, then schema only
 ```
 
 `backup_db` writes two files:
 
 - `docs/schema.sql` — `CREATE` statements only, sorted so the file changes only
-  when the schema does. **Committed.** Regenerate it with `--schema-only` in any
-  PR that adds a migration (see [AGENTS.md](../AGENTS.md)).
+  when the schema does. **Committed.** Regenerate it with `make schema` in any PR
+  that adds a migration (see [AGENTS.md](../AGENTS.md)).
 - `docs/dump-<timestamp>.sql` — schema and every row. **Git-ignored**
   (`docs/dump-*`), since it holds the data. Restore into an empty database with
   `sqlite3 db.sqlite3 < docs/dump-<timestamp>.sql`, with the app stopped and
@@ -153,6 +153,20 @@ make test ARGS="-k healthz"  # extra arguments go to pytest
 `make` on its own, or `make help`, lists every target with a one-line
 description. A target appears there when its rule line in the `Makefile` ends
 in a `## description` comment, so add one to every new target.
+
+## Management commands
+
+`manage.py` defaults to the production settings, which need a `SECRET_KEY` and
+turn `DEBUG` off, so on a development machine run management commands through
+make, which uses the dev settings:
+
+```bash
+make manage ARGS="check"
+make manage ARGS="changepassword <username>"
+```
+
+Calling `uv run python manage.py …` directly is for the server, where the
+production settings are the point.
 
 ## CSS
 

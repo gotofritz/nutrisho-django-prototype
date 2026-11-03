@@ -35,9 +35,11 @@ Any PR that adds or changes a migration must regenerate it against a freshly
 migrated database and commit the result:
 
 ```bash
-uv run python manage.py migrate
-uv run python manage.py backup_db --schema-only
+make schema    # migrate, then backup_db --schema-only
 ```
+
+`manage.py` defaults to production settings, so run any other management
+command through `make manage ARGS="<command>"`, which uses the dev settings.
 
 ## Workflow
 

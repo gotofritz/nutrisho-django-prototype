@@ -503,6 +503,11 @@ Postgres enforces the `max_length` caps SQLite ignores.
 ```bash
 source .venv/bin/activate
 make qa                # lint + typecheck + test
+make manage ARGS="…"   # any management command, dev settings
+make schema            # migrate, then regenerate docs/schema.sql
 ```
+
+`manage.py` defaults to `nutrisho.settings.prod`; make exports
+`nutrisho.settings.dev`, so local management commands go through make.
 
 See AGENTS.md for full TDD workflow.

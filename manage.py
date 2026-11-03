@@ -7,6 +7,8 @@ import sys
 
 def main():
     """Run administrative tasks."""
+    # Production by default, so a deploy never runs with DEBUG on. On a dev
+    # machine use `make manage ARGS="<command>"`, which selects the dev settings.
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nutrisho.settings.prod")
     try:
         from django.core.management import execute_from_command_line

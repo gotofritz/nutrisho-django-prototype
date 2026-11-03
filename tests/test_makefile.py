@@ -20,9 +20,11 @@ TASKS = (
     "help",
     "lint",
     "lint-fix",
+    "manage",
     "migrate",
     "node-install",
     "qa",
+    "schema",
     "test",
     "test-hooks",
     "typecheck",
@@ -31,10 +33,11 @@ TASKS = (
 needs_make = pytest.mark.skipif(shutil.which("make") is None, reason="make is not installed")
 
 
-def run_make(*args: str) -> str:
+def run_make(*args: str, drop_env: frozenset[str] = frozenset()) -> str:
     """Run make in the project root and return its standard output."""
     # Drop settings inherited from an outer `make qa`, so the test sees only its own args.
-    env = {k: v for k, v in os.environ.items() if k not in {"MAKEFLAGS", "MFLAGS", "MAKELEVEL"}}
+    dropped = {"MAKEFLAGS", "MFLAGS", "MAKELEVEL"} | drop_env
+    env = {k: v for k, v in os.environ.items() if k not in dropped}
     result = subprocess.run(
         ["make", "--no-print-directory", *args],
         cwd=ROOT,
@@ -104,3 +107,49 @@ def test_dev_port_defaults_to_8987_and_can_be_overridden():
     """`make dev` serves on 8987 unless PORT is given."""
     assert "runserver 8987" in run_make("--dry-run", "dev")
     assert "runserver 9000" in run_make("--dry-run", "dev", "PORT=9000")
+
+
+@needs_make
+def test_manage_passes_args_to_manage_py():
+    """`make manage` forwards ARGS to manage.py."""
+    output = run_make("--dry-run", "manage", "ARGS=delete_recipe --id 42")
+
+    assert "uv run python manage.py delete_recipe --id 42" in output
+
+
+@needs_make
+def test_manage_uses_dev_settings_on_a_fresh_checkout():
+    """With no settings module or SECRET_KEY in the environment, `make manage` uses dev."""
+    output = run_make(
+        "manage",
+        "ARGS=shell -c 'from django.conf import settings; print(settings.SETTINGS_MODULE)'",
+        drop_env=frozenset({"DJANGO_SETTINGS_MODULE", "SECRET_KEY"}),
+    )
+
+    assert output.strip().splitlines()[-1] == "nutrisho.settings.dev"
+
+
+@needs_make
+def test_schema_migrates_then_writes_the_schema_only():
+    """`make schema` applies migrations, then regenerates docs/schema.sql alone."""
+    output = run_make("--dry-run", "schema")
+
+    migrate = output.index("manage.py migrate")
+    backup = output.index("manage.py backup_db --schema-only")
+    assert migrate < backup
+
+
+DOCS = (ROOT / "README.md", ROOT / "AGENTS.md", ROOT / "docs" / "developer-guide.md")
+
+
+@pytest.mark.parametrize("doc", DOCS, ids=lambda path: path.name)
+def test_docs_never_call_a_bare_python(doc: Path):
+    """Documented commands go through `uv run` or make, never a bare `python`."""
+    bare = re.compile(r"(?<!uv run )(?<![\w./-])python3? ")
+
+    assert not bare.findall(doc.read_text())
+
+
+def test_agents_md_regenerates_the_schema_with_make():
+    """AGENTS.md points at `make schema`, which works on a fresh checkout."""
+    assert "make schema" in (ROOT / "AGENTS.md").read_text()
