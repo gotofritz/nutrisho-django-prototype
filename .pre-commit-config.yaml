@@ -16,7 +16,7 @@ repos:
       - id: rst-inline-touching-normal
       - id: text-unicode-replacement-char
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -58,7 +58,7 @@ repos:
         pass_filenames: false
         types: [python]
   - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.2
+    rev: v0.25.0
     hooks:
       - id: toml-sort-fix
         name: toml-sort-fix
