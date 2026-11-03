@@ -244,8 +244,8 @@ def suggest_singular(candidates: Sequence[Ingredient]) -> int | None:
     for candidate in candidates:
         plural = candidate.plural.lower()
         if plural != cast(str, candidate.ingredient_name).lower() and plural in names:
-            return candidate.pk
-    return candidates[0].pk
+            return cast(int, candidate.pk)
+    return cast(int, candidates[0].pk)
 
 
 @transaction.atomic
