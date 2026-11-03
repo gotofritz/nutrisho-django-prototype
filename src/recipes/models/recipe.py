@@ -11,12 +11,6 @@ from .source import Source
 PROSE_MAX_LENGTH = 4000
 
 
-class RecipeManager(models.Manager):
-    def get_by_natural_key(self, username: str, recipe_name: str) -> Recipe:
-        """Look up a recipe by owner username and recipe name."""
-        return self.get(owner__username=username, recipe_name=recipe_name)
-
-
 class Recipe(models.Model):
     """Recipe model.
 
@@ -42,7 +36,7 @@ class Recipe(models.Model):
     cuisine = models.ForeignKey(Cuisine, on_delete=models.SET_NULL, null=True, blank=True)
     servings = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1)])
     created_date = models.DateTimeField("date created", auto_now_add=True)
-    objects = RecipeManager()
+    objects = models.Manager()
 
     class Meta:
         constraints = [
@@ -63,9 +57,3 @@ class Recipe(models.Model):
     def get_absolute_url(self):
         """Return the URL of the recipe page."""
         return reverse("recipes:recipe", kwargs={"recipe_id": self.id})
-
-    def natural_key(self) -> tuple[str, str]:
-        """Return the natural key used by fixtures."""
-        return (str(self.owner.username), str(self.recipe_name))  # ty: ignore[unresolved-attribute]
-
-    natural_key.dependencies = ["auth.user"]  # ty: ignore[unresolved-attribute]

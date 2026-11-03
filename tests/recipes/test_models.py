@@ -5,7 +5,6 @@ import pytest
 from django.db import models
 
 from recipes.models import (
-    Cuisine,
     Ingredient,
     IngredientGroup,
     IngredientInRecipe,
@@ -16,7 +15,6 @@ from recipes.models import (
 )
 from recipes.models.ingredient import INGREDIENT_NAME_MAX_LENGTH
 from recipes.models.recipe import PROSE_MAX_LENGTH
-from recipes.utils.step_title import MAX_TITLE_LENGTH
 
 
 @pytest.mark.django_db
@@ -42,98 +40,10 @@ def test_recipe_servings_zero_rejected(user):
 
 
 @pytest.mark.django_db
-def test_recipe_natural_key(user):
-    """Recipe natural key."""
-    recipe = Recipe.objects.create(recipe_name="Pasta Carbonara", owner=user)
-    assert recipe.natural_key() == (user.username, "Pasta Carbonara")
-
-
-@pytest.mark.django_db
-def test_recipe_get_by_natural_key(user):
-    """Recipe get by natural key."""
-    Recipe.objects.create(recipe_name="Pasta Carbonara", owner=user)
-    fetched = Recipe.objects.get_by_natural_key(user.username, "Pasta Carbonara")
-    assert fetched.recipe_name == "Pasta Carbonara"
-    assert fetched.owner == user
-
-
-@pytest.mark.django_db
-def test_recipe_natural_key_two_owners_same_name(user, db):
-    """Two owners with same recipe name must have distinct natural keys."""
-    from django.contrib.auth.models import User
-
-    bob = User.objects.create_user(username="bob_nk", password="x")
-    Recipe.objects.create(recipe_name="Soup", owner=user)
-    Recipe.objects.create(recipe_name="Soup", owner=bob)
-    key_a = Recipe.objects.get(owner=user, recipe_name="Soup").natural_key()
-    key_b = Recipe.objects.get(owner=bob, recipe_name="Soup").natural_key()
-    assert key_a != key_b
-
-
-@pytest.mark.django_db
 def test_recipe_absolute_url(user):
     """Recipe absolute url."""
     recipe = Recipe.objects.create(recipe_name="Soup", owner=user)
     assert recipe.get_absolute_url() == f"/recipes/{recipe.pk}/"
-
-
-@pytest.mark.django_db
-def test_cuisine_natural_key():
-    """Cuisine natural key."""
-    c = Cuisine.objects.create(cuisine="Italian")
-    assert c.natural_key() == "Italian"
-
-
-@pytest.mark.django_db
-def test_source_natural_key():
-    """Source natural key."""
-    s = Source.objects.create(short_name="Moro", source="ISBN-123")
-    assert s.natural_key() == "Moro"
-
-
-@pytest.mark.django_db
-def test_tag_natural_key(user):
-    """Tag natural key."""
-    recipe = Recipe.objects.create(recipe_name="Tagged", owner=user)
-    t = Tag.objects.create(tag="vegan")
-    t.recipe.add(recipe)
-    assert t.natural_key() == "vegan"
-
-
-@pytest.mark.django_db
-def test_ingredient_natural_key():
-    """Ingredient natural key."""
-    ing = Ingredient.objects.create(ingredient_name="salt")
-    assert ing.natural_key() == "salt"
-
-
-@pytest.mark.django_db
-def test_ingredient_group_natural_key(user):
-    """Ingredient group natural key."""
-    recipe = Recipe.objects.create(recipe_name="R", owner=user)
-    g = IngredientGroup.objects.create(recipe=recipe, group_name="Main", index_in_sequence=0)
-    assert g.natural_key() == "Main"
-
-
-@pytest.mark.django_db
-def test_step_natural_key(user):
-    """Step natural key."""
-    recipe = Recipe.objects.create(recipe_name="R", owner=user)
-    step = Step.objects.create(recipe=recipe, step_text="Chop", index_in_sequence=0)
-    assert step.natural_key() == (0, "Chop")
-
-
-@pytest.mark.django_db
-def test_ingredient_in_recipe_natural_key(user):
-    """Ingredient in recipe natural key."""
-    recipe = Recipe.objects.create(recipe_name="R", owner=user)
-    group = IngredientGroup.objects.create(recipe=recipe, group_name="G", index_in_sequence=0)
-    ing = Ingredient.objects.create(ingredient_name="onion")
-    iir = IngredientInRecipe.objects.create(
-        ingredient=ing, ingredient_group=group, index_in_sequence=0, quantity=2
-    )
-    key = iir.natural_key()
-    assert key[3] == "onion"
 
 
 @pytest.mark.django_db
@@ -188,20 +98,6 @@ def test_ingredient_in_recipe_protects_ingredient(user):
     IngredientInRecipe.objects.create(ingredient=ing, ingredient_group=group, index_in_sequence=0)
     with pytest.raises(ProtectedError):
         ing.delete()
-
-
-@pytest.mark.django_db
-def test_ingredient_in_recipe_natural_key_is_serializable(user):
-    """natural_key must not contain model instances."""
-    from django.db.models import Model
-
-    recipe = Recipe.objects.create(recipe_name="NK Test", owner=user)
-    group = IngredientGroup.objects.create(recipe=recipe, group_name="Main", index_in_sequence=0)
-    ing = Ingredient.objects.create(ingredient_name="nk-onion")
-    iir = IngredientInRecipe.objects.create(
-        ingredient=ing, ingredient_group=group, index_in_sequence=0
-    )
-    assert not any(isinstance(part, Model) for part in iir.natural_key())
 
 
 def test_char_fields_are_not_nullable():
@@ -300,13 +196,6 @@ def test_step_title_persists(user):
     )
     step.refresh_from_db()
     assert step.step_title == "RAGÚ"
-
-
-def test_step_title_max_length_matches_the_splitting_rule():
-    """`split_step_title` rejects longer runs as prose; the two must agree."""
-    # _meta is injected by Django's model metaclass; ty cannot see through it.
-    field = Step._meta.get_field("step_title")  # ty: ignore[unresolved-attribute]
-    assert field.max_length == MAX_TITLE_LENGTH == 128
 
 
 @pytest.mark.django_db

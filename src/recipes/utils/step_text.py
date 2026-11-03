@@ -1,6 +1,6 @@
 """Merge and split rules for step text (issue #18).
 
-Pure functions, no Django imports, like ``step_title.py``.
+Pure functions, no Django imports, so the rules are testable on their own.
 """
 
 

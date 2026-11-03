@@ -22,7 +22,3 @@ class IngredientGroup(models.Model):
     def __str__(self) -> str:
         """Return a readable label."""
         return str(self.group_name or f"Group {self.index_in_sequence}")
-
-    def natural_key(self):
-        """Return the natural key used by fixtures."""
-        return self.group_name
