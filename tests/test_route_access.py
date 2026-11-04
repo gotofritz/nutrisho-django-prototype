@@ -198,3 +198,11 @@ def test_other_user_gets_404_on_recipe_route(route: Route, path_values) -> None:
     assert set(statuses.values()) <= {404, 405}, statuses
     assert 404 in statuses.values(), statuses
     assert _counts() == before
+
+
+@pytest.mark.django_db
+def test_anonymous_admin_visit_goes_to_admin_login() -> None:
+    """Admin views name their own login page, and the middleware honours it."""
+    response = Client().get("/admin/")
+    assert response.status_code == 302
+    assert response["Location"] == "/admin/login/?next=/admin/"

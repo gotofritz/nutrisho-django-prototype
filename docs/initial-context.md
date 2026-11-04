@@ -57,8 +57,8 @@ password-reset views, the admin login, and `/healthz`. Its
 request an empty 200 with `HX-Redirect`, because htmx would otherwise swap the
 login page into the panel. The `next` it adds is always safe to GET: the current
 URL for a page (or a boosted GET), the Referer for a fragment or a POST. Django
-admin is behind the same middleware, so an anonymous visit to `/admin/` goes to
-`/accounts/login/`.
+admin is behind the same middleware; its views carry a `login_url`, so an
+anonymous visit to `/admin/` still goes to `/admin/login/`.
 
 A recipe-scoped view loads its recipe with `owned_recipe(request=..., recipe_id=...)`,
 which 404s on another user's recipe as on a missing one, then loads child rows
