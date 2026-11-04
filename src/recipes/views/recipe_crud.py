@@ -1,6 +1,6 @@
 from django.db import IntegrityError, transaction
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django.views.decorators.vary import vary_on_headers
 
@@ -11,6 +11,7 @@ from recipes.services.recipe_duplication import duplicate_recipe
 from recipes.services.recipe_scaling import ScaleError, save_scaled_copy
 from recipes.utils.scaling import MAX_SERVINGS, parse_servings
 from recipes.views._announce import announce
+from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
 
 
@@ -54,7 +55,7 @@ def _is_panel_request(request: AuthedRequest) -> bool:
 @require_http_methods(["GET", "POST"])
 def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Edit recipe metadata."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     if request.method == "POST":
         form = RecipeMetadataForm(data=request.POST, instance=recipe, owner=recipe.owner)
         if form.is_valid():
@@ -110,7 +111,7 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse
 @require_GET
 def recipe_delete_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Show the delete confirmation panel."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     return render(
         request,
         "recipes/partials/_delete_confirm_panel.html",
@@ -121,7 +122,7 @@ def recipe_delete_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 @require_POST
 def recipe_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Delete a recipe."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     recipe.delete()
     if request.htmx:
         target = request.htmx.target or ""
@@ -154,7 +155,7 @@ def _next_recipe_url(deleted_id: int, user) -> str:
 @require_POST
 def recipe_duplicate(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Duplicate a recipe."""
-    original = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    original = owned_recipe(request=request, recipe_id=recipe_id)
     new = duplicate_recipe(original)
     if request.htmx:
         response = HttpResponse()
@@ -166,7 +167,7 @@ def recipe_duplicate(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 @require_GET
 def recipe_scale_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Show the scale panel, starting from the page's serving count."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     return _scale_panel(request, recipe, servings=parse_servings(request.GET.get("servings")))
 
 
@@ -194,7 +195,7 @@ def _scale_panel(
 @require_POST
 def recipe_scale_copy(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Save the recipe scaled to `servings` as a new recipe; the original is untouched."""
-    original = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    original = owned_recipe(request=request, recipe_id=recipe_id)
     servings = parse_servings(request.POST.get("servings"))
     if servings is None:
         return _scale_panel(

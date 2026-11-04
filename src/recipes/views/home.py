@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -6,7 +5,6 @@ from recipes.models import Recipe
 from recipes.views._types import AuthedRequest
 
 
-@login_required
 def home(request: AuthedRequest) -> HttpResponse:
     """List the signed-in user's recipes."""
     latest_recipe_list = Recipe.objects.filter(owner=request.user).order_by("-created_date")

@@ -26,7 +26,8 @@ class Recipe(models.Model):
     short_description = models.TextField(
         "A short blurb about the recipe", max_length=PROSE_MAX_LENGTH, blank=True, default=""
     )
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    # Annotated because, without Django stubs, ty types the attribute as the field
+    owner: User = models.ForeignKey(User, on_delete=models.CASCADE, null=False)  # ty: ignore[invalid-assignment]
     source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True, blank=True)
     source_instance = models.CharField(
         "For example, the page if source is a book, or URL if source is a website",

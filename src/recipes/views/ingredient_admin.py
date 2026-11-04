@@ -15,7 +15,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from recipes.forms.ingredient_admin_forms import IngredientForm
-from recipes.models import Ingredient, Recipe
+from recipes.models import Ingredient
 from recipes.services.ingredient_admin import (
     IngredientInUseError,
     delete_ingredients,
@@ -28,6 +28,7 @@ from recipes.services.ingredient_admin import (
     selected_ingredients,
     suggest_singular,
 )
+from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
 
 _T = "recipes/ingredient_admin/"
@@ -363,7 +364,7 @@ def ingredient_manage_preview(request: AuthedRequest, recipe_id: int) -> HttpRes
     template pulls in the navbars and the add/edit HTMX triggers, none of which
     belong in a preview pane.
     """
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     return render(request, _T + "_recipe_preview.html", {"recipe": recipe})
 
 
