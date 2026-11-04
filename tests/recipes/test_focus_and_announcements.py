@@ -361,10 +361,20 @@ def test_ingredient_delete_is_announced(auth_client, recipe, iir):
 @pytest.mark.django_db
 def test_group_delete_is_announced(auth_client, recipe, group):
     """And groups."""
+    IngredientGroup.objects.create(recipe=recipe, group_name="Sauce", index_in_sequence=1)
     response = auth_client.post(
         reverse("recipes:group_delete", kwargs={"recipe_id": recipe.pk, "group_id": group.pk})
     )
     assert _announced(response) == "Group deleted."
+
+
+@pytest.mark.django_db
+def test_refused_last_group_delete_is_announced(auth_client, recipe, group):
+    """The kept group swaps back in, so the response says why it stayed."""
+    response = auth_client.post(
+        reverse("recipes:group_delete", kwargs={"recipe_id": recipe.pk, "group_id": group.pk})
+    )
+    assert _announced(response) == "A recipe keeps at least one group, so this one stayed."
 
 
 @pytest.mark.django_db

@@ -274,6 +274,12 @@ recipe with zero groups could only be refilled by adding a group first. The dele
 response carries an `hx-swap-oob="delete"` for the vanished block plus a refreshed
 reassign `<select>`, since the row swap alone would leave both stale.
 
+Deleting a group by hand (`recipe_group_delete`) cascades to its rows, so the
+form's Delete button asks first, naming how many ingredients go and pointing to
+"Move to"; an empty group is deleted without asking. The same last-group rule
+holds: the form hides Delete for a recipe's only group, and the view, under a
+lock on the recipe row, swaps the block back in rather than delete it.
+
 ### Step Titles (`Step.step_title`)
 
 Scraped recipes bury the heading of a step in the step itself — `<u>RAGÚ</u>:

@@ -19,12 +19,17 @@
       hx-target="closest div"
       hx-swap="outerHTML"
     >Cancel</button>
+    {% if recipe.ingredients_group.count > 1 %}
+    {% with doomed=group.ingredient.count %}
     <button
       type="button"
       hx-post="{% url 'recipes:group_delete' recipe.id group.id %}"
       hx-target="closest .group-block"
       hx-swap="outerHTML"
+      {% if doomed %}hx-confirm="Delete {% if group.group_name %}'{{ group.group_name|striptags }}'{% else %}this group{% endif %} and its {{ doomed }} ingredient{{ doomed|pluralize }}? To keep {{ doomed|pluralize:"it,them" }}, move {{ doomed|pluralize:"it,them" }} to another group first."{% endif %}
     >Delete</button>
+    {% endwith %}
+    {% endif %}
     {% else %}
     <button type="button" onclick="_cancelDraft(this, 'div')">Cancel</button>
     {% endif %}
