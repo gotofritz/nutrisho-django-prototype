@@ -1,10 +1,11 @@
 from django.db import IntegrityError, transaction
 from django.http import Http404, HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.views.decorators.http import require_GET, require_POST
 
 from recipes.forms.field_forms import EDITABLE_RECIPE_FIELDS, RecipeFieldForm
 from recipes.models import Recipe
+from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
 
 
@@ -18,7 +19,7 @@ def _require_editable_field(field_name: str) -> None:
 def recipe_field_display(request: AuthedRequest, recipe_id: int, field_name: str) -> HttpResponse:
     """Show a field."""
     _require_editable_field(field_name)
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     return render(
         request,
         "recipes/partials/_field_display.html",
@@ -34,7 +35,7 @@ def recipe_field_display(request: AuthedRequest, recipe_id: int, field_name: str
 def recipe_field_edit(request: AuthedRequest, recipe_id: int, field_name: str) -> HttpResponse:
     """Show the field edit form."""
     _require_editable_field(field_name)
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     form = RecipeFieldForm(field_name, instance=recipe)
     return render(
         request,
@@ -47,7 +48,7 @@ def recipe_field_edit(request: AuthedRequest, recipe_id: int, field_name: str) -
 def recipe_field_save(request: AuthedRequest, recipe_id: int, field_name: str) -> HttpResponse:
     """Save a field."""
     _require_editable_field(field_name)
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     form = RecipeFieldForm(field_name, data=request.POST, instance=recipe)
     if form.is_valid():
         try:

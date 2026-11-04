@@ -10,6 +10,7 @@ from recipes.models import IngredientGroup, IngredientInRecipe, Recipe
 from recipes.services.name_resolution import ingredient_names_for, resolve_ingredient
 from recipes.utils.sequencing import insert_at_index, move_in_sequence, remove_and_compact
 from recipes.views._announce import announce
+from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
 
 
@@ -23,7 +24,7 @@ def _reassign_select_oob(recipe: Recipe, request: AuthedRequest) -> str:
 @require_GET
 def recipe_ingredient_display(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
     """Show a ingredient."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     return render(
         request,
@@ -53,7 +54,7 @@ def _prune_empty_group(recipe: Recipe, group: IngredientGroup) -> bool:
 @require_GET
 def recipe_ingredient_edit(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
     """Show the ingredient edit form."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     form = IngredientInRecipeForm(instance=iir, owner=recipe.owner)
     return render(
@@ -71,7 +72,7 @@ def recipe_ingredient_edit(request: AuthedRequest, recipe_id: int, iir_id: int) 
 @require_POST
 def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
     """Save a ingredient."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     form = IngredientInRecipeForm(data=request.POST, instance=iir, owner=recipe.owner)
     if form.is_valid():
@@ -106,7 +107,7 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
 @require_POST
 def recipe_ingredient_delete(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
     """Delete a ingredient."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     with transaction.atomic():
         fresh = (
@@ -138,7 +139,7 @@ def recipe_ingredient_delete(request: AuthedRequest, recipe_id: int, iir_id: int
 @require_POST
 def recipe_ingredient_add(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
     """Render a blank ingredient form; no row is created until create succeeds."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     return render(
         request,
@@ -156,7 +157,7 @@ def recipe_ingredient_add(request: AuthedRequest, recipe_id: int, group_id: int)
 @require_POST
 def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
     """Create a ingredient."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     form = IngredientInRecipeForm(data=request.POST, owner=recipe.owner)
     if form.is_valid():
@@ -201,7 +202,7 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
 @require_POST
 def recipe_ingredient_move_up(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
     """Move a ingredient up."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     original_group_id = iir.ingredient_group_id
     with transaction.atomic():
@@ -235,7 +236,7 @@ def recipe_ingredient_move_down(
     request: AuthedRequest, recipe_id: int, iir_id: int
 ) -> HttpResponse:
     """Move a ingredient down."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     original_group_id = iir.ingredient_group_id
     with transaction.atomic():
@@ -267,7 +268,7 @@ def recipe_ingredient_move_down(
 @require_GET
 def recipe_group_display(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
     """Show a group."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     return render(
         request,
@@ -279,7 +280,7 @@ def recipe_group_display(request: AuthedRequest, recipe_id: int, group_id: int) 
 @require_GET
 def recipe_group_edit(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
     """Show the group edit form."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     form = IngredientGroupForm(instance=group)
     return render(
@@ -292,7 +293,7 @@ def recipe_group_edit(request: AuthedRequest, recipe_id: int, group_id: int) -> 
 @require_POST
 def recipe_group_save(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
     """Save a group."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     with transaction.atomic():
         list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
@@ -322,7 +323,7 @@ def recipe_group_save(request: AuthedRequest, recipe_id: int, group_id: int) -> 
 @require_POST
 def recipe_group_delete(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
     """Delete a group."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     remove_and_compact(siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group)
     return announce(HttpResponse(_reassign_select_oob(recipe, request)), "Group deleted.")
@@ -331,7 +332,7 @@ def recipe_group_delete(request: AuthedRequest, recipe_id: int, group_id: int) -
 @require_POST
 def recipe_group_move_up(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
     """Move a group up."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     move_in_sequence(
         siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group, direction="up"
@@ -342,7 +343,7 @@ def recipe_group_move_up(request: AuthedRequest, recipe_id: int, group_id: int) 
 @require_POST
 def recipe_group_move_down(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
     """Move a group down."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     move_in_sequence(
         siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group, direction="down"
@@ -353,7 +354,7 @@ def recipe_group_move_down(request: AuthedRequest, recipe_id: int, group_id: int
 @require_POST
 def recipe_group_add(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Render a blank group form; no row is created until create succeeds."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     return render(
         request,
         "recipes/partials/_group_edit.html",
@@ -364,7 +365,7 @@ def recipe_group_add(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 @require_POST
 def recipe_group_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Create a group."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     with transaction.atomic():
         locked = list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
         if not locked:
@@ -396,7 +397,7 @@ def recipe_group_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 @require_POST
 def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Move ingredients into another group."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     raw_ids = request.POST.getlist("ingredient_ids")
 
     if not raw_ids:

@@ -47,6 +47,31 @@ Single Django app (`recipes`) under `src/` layout. No API layer. Frontend is ser
 
 Every asset is served by the app itself: pages make no third-party requests. The web fonts (Inconsolata, Lobster) are self-hosted as woff2 under `static/fonts/` with their OFL licences, declared with `font-display: swap` in `css/style.css`, and preloaded from `base.html`. A new font goes the same way, never through a font CDN.
 
+### Login and ownership (`nutrisho/middleware.py`, `recipes/views/_auth.py`)
+
+Login is the default, not a decorator (#48). `HtmxLoginRequiredMiddleware`
+subclasses Django's `LoginRequiredMiddleware`, so every view needs a signed-in
+user unless it is marked `@login_not_required`: Django's login and
+password-reset views, the admin login, and `/healthz`. Its
+`handle_no_permission` sends a plain request a 302 to the login page and an htmx
+request an empty 200 with `HX-Redirect`, because htmx would otherwise swap the
+login page into the panel. The `next` it adds is always safe to GET: the current
+URL for a page (or a boosted GET), the Referer for a fragment or a POST. Django
+admin is behind the same middleware; its views carry a `login_url`, so an
+anonymous visit to `/admin/` still goes to `/admin/login/`.
+
+A recipe-scoped view loads its recipe with `owned_recipe(request=..., recipe_id=...)`,
+which 404s on another user's recipe as on a missing one, then loads child rows
+through that recipe (`Step` with `recipe=recipe`, and so on). Never look a recipe
+up by id alone.
+
+`tests/test_route_access.py` walks the URLconf, so a new route is covered as soon
+as it exists: an anonymous request (GET or POST, plain or htmx) must be sent to
+the login page unless the route is in its `PUBLIC_ROUTES` allowlist, the set of
+`login_not_required` routes must equal that list, and on every route with a
+`recipe_id` another user, even staff, must get 404 and write nothing. A new path
+parameter needs a value in its `path_values` fixture.
+
 ### Inline Editing Pattern
 
 Each editable entity (field, step, ingredient, group) has three endpoints:
@@ -197,8 +222,8 @@ will fold in; the promoted rows stay ticked. The **Private only** filter
 narrows column 2 to promotion candidates.
 
 **Staff only (#46).** Every route is wrapped in `htmx_staff_required`
-(`recipes/views/_auth.py`): anonymous users go to the login page as before, a
-signed-in user who is not `is_staff` gets 403. An htmx request gets a short
+(`recipes/views/_auth.py`): anonymous users go to the login page through the
+login middleware, a signed-in user who is not `is_staff` gets 403. An htmx request gets a short
 plain-text 403, which the htmx config never swaps, so the global banner reports
 it; a full-page visit raises `PermissionDenied` and Django renders `403.html`.
 The home page shows the "Manage ingredients" link to staff only.
@@ -444,9 +469,9 @@ receiver in `recipes/signals.py`, connected in `RecipesConfig.ready()`.
 Sentry is optional and initialised in `settings/prod.py` only when
 `SENTRY_DSN` is set.
 
-`GET /healthz` (`nutrisho/health.py`) is the one public route: it is marked
-`login_not_required` so it stays open once login is enforced site-wide, never
-cached, and answers 200 or 503 depending on `SELECT 1`.
+`GET /healthz` (`nutrisho/health.py`) is the one public route outside the
+login pages: it is marked `login_not_required` so the login middleware lets it
+through, is never cached, and answers 200 or 503 depending on `SELECT 1`.
 
 ### How far SQLite goes
 

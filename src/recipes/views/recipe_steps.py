@@ -13,6 +13,7 @@ from recipes.utils.sequencing import (
 )
 from recipes.utils.step_text import join_step_texts, split_step_text
 from recipes.views._announce import announce
+from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
 
 _STEPS_BLOCK = "recipes/partials/_steps_block.html"
@@ -22,7 +23,7 @@ _SPLIT_REFUSED = "Put the cursor between two words to split the step."
 @require_GET
 def recipe_step_display(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
     """Show a step."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     return render(
         request,
@@ -34,7 +35,7 @@ def recipe_step_display(request: AuthedRequest, recipe_id: int, step_id: int) ->
 @require_GET
 def recipe_step_edit(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
     """Show the step edit form."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     form = StepForm(instance=step)
     return render(
@@ -47,7 +48,7 @@ def recipe_step_edit(request: AuthedRequest, recipe_id: int, step_id: int) -> Ht
 @require_POST
 def recipe_step_save(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
     """Save a step."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     form = StepForm(data=request.POST, instance=step)
     if form.is_valid():
@@ -72,7 +73,7 @@ def recipe_step_save(request: AuthedRequest, recipe_id: int, step_id: int) -> Ht
 @require_POST
 def recipe_step_delete(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
     """Delete a step."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     remove_and_compact(siblings=Step.objects.filter(recipe=recipe), instance=step)
     return announce(HttpResponse(""), "Step deleted.")
@@ -81,7 +82,7 @@ def recipe_step_delete(request: AuthedRequest, recipe_id: int, step_id: int) -> 
 @require_POST
 def recipe_step_move_up(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
     """Move a step up."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     move_in_sequence(siblings=Step.objects.filter(recipe=recipe), instance=step, direction="up")
     return render(request, "recipes/partials/_steps_list.html", {"recipe": recipe})
@@ -90,7 +91,7 @@ def recipe_step_move_up(request: AuthedRequest, recipe_id: int, step_id: int) ->
 @require_POST
 def recipe_step_move_down(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
     """Move a step down."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     move_in_sequence(siblings=Step.objects.filter(recipe=recipe), instance=step, direction="down")
     return render(request, "recipes/partials/_steps_list.html", {"recipe": recipe})
@@ -99,7 +100,7 @@ def recipe_step_move_down(request: AuthedRequest, recipe_id: int, step_id: int) 
 @require_POST
 def recipe_step_add(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Render a blank step form; no row is created until create succeeds."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     return render(
         request,
         "recipes/partials/_step_edit.html",
@@ -110,7 +111,7 @@ def recipe_step_add(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 @require_POST
 def recipe_step_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Create a step."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     form = StepForm(data=request.POST)
     if form.is_valid():
         with transaction.atomic():
@@ -154,7 +155,7 @@ def _selected_step_ids(request: AuthedRequest) -> list[int] | None:
 @require_POST
 def recipe_steps_bulk_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Delete every checked step."""
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step_ids = _selected_step_ids(request)
     if step_ids is None:
         return _steps_block(request, recipe=recipe, error="Invalid step IDs.", status=422)
@@ -174,7 +175,7 @@ def recipe_steps_merge(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     The highest step wins: it keeps its title and other fields, and the texts of
     the rest are appended to its own in page order, however far apart they are.
     """
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step_ids = _selected_step_ids(request)
     if step_ids is None:
         return _steps_block(request, recipe=recipe, error="Invalid step IDs.", status=422)
@@ -220,7 +221,7 @@ def recipe_step_split(request: AuthedRequest, recipe_id: int, step_id: int) -> H
     Works on the form as typed: the text before the cursor, with the title,
     stays in this step; the text after becomes a new untitled step right below.
     """
-    recipe = get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     form = StepForm(data=request.POST, instance=step)
     # The textarea counts a new line as one character; form posts send CRLF.

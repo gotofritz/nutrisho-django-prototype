@@ -3,9 +3,8 @@
 from unittest.mock import patch
 
 import pytest
-from django.conf import settings
 from django.db import OperationalError
-from django.test import Client, override_settings
+from django.test import Client
 
 
 @pytest.mark.django_db
@@ -53,7 +52,5 @@ def test_healthz_returns_503_and_logs_when_database_fails(caplog: pytest.LogCapt
 @pytest.mark.django_db
 def test_healthz_is_exempt_from_login_required_middleware() -> None:
     """With login enforced site-wide, the health check stays public."""
-    middleware = [*settings.MIDDLEWARE, "django.contrib.auth.middleware.LoginRequiredMiddleware"]
-    with override_settings(MIDDLEWARE=middleware):
-        assert Client().get("/healthz").status_code == 200
-        assert Client().get("/").status_code == 302
+    assert Client().get("/healthz").status_code == 200
+    assert Client().get("/").status_code == 302

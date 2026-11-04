@@ -4,10 +4,8 @@ from django.http import HttpRequest, HttpResponse
 from django.urls import include, path
 
 from nutrisho.health import healthz
-from recipes.views._auth import htmx_login_required
 
 
-@htmx_login_required
 def _root(request: HttpRequest) -> HttpResponse:  # noqa: ARG001 - view signature
     return HttpResponse("""
         <h1>Nutrisho</h1>
