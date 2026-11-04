@@ -1,6 +1,9 @@
 """Tests for recipe ingredient/group inline-edit views (Plan 004, Step 2)."""
 
+from unittest.mock import patch
+
 import pytest
+from django.db.models import QuerySet
 from django.test import Client
 
 from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Recipe
@@ -233,6 +236,7 @@ def test_group_display_shows_placeholder_when_no_name(auth_client, recipe):
 @pytest.mark.django_db
 def test_group_delete_removes_group(auth_client, recipe, group):
     """Group delete removes group."""
+    _add_group(recipe, "Sauce", 1)
     group_id = group.pk
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/{group_id}/delete/")
     assert response.status_code == 200
@@ -1068,6 +1072,7 @@ def test_group_create_response_includes_reassign_dropdown_oob(auth_client, recip
 @pytest.mark.django_db
 def test_group_delete_response_includes_reassign_dropdown_oob(auth_client, recipe, group):
     """Group deletion must include OOB update so deleted group is removed from reassign dropdown."""
+    _add_group(recipe, "Sauce", 1)
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/{group.pk}/delete/")
     content = response.content.decode()
     assert "hx-swap-oob" in content
@@ -1741,3 +1746,109 @@ def test_reassigning_every_ingredient_out_of_a_group_removes_it(auth_client, rec
     )
     assert not IngredientGroup.objects.filter(pk=second.pk).exists()
     assert IngredientInRecipe.objects.filter(pk=moved.pk).exists()
+
+
+def _group_edit_html(client, recipe, group) -> str:
+    return client.get(f"/recipes/{recipe.pk}/groups/{group.pk}/edit/").content.decode()
+
+
+@pytest.mark.django_db
+def test_group_delete_button_confirms_how_many_ingredients_go(auth_client, recipe, group):
+    """Deleting a group cascades to its rows, so the button says how many go."""
+    _add_group(recipe, "Sauce", 1)
+    _add_iir(group, "onion", 0)
+    _add_iir(group, "garlic", 1)
+    html = _group_edit_html(auth_client, recipe, group)
+    assert "hx-confirm=\"Delete 'Main' and its 2 ingredients?" in html
+    assert "To keep them, move them to another group first." in html
+
+
+@pytest.mark.django_db
+def test_group_delete_confirm_uses_singular_for_one_ingredient(auth_client, recipe, group):
+    """One ingredient is not "1 ingredients"."""
+    _add_group(recipe, "Sauce", 1)
+    _add_iir(group, "onion")
+    html = _group_edit_html(auth_client, recipe, group)
+    assert "and its 1 ingredient?" in html
+
+
+@pytest.mark.django_db
+def test_group_delete_confirm_names_an_unnamed_group(auth_client, recipe):
+    """A nameless group is "this group", not empty quotes."""
+    unnamed = _add_group(recipe, "", 0)
+    _add_group(recipe, "Sauce", 1)
+    _add_iir(unnamed, "onion")
+    html = _group_edit_html(auth_client, recipe, unnamed)
+    assert 'hx-confirm="Delete this group and its 1 ingredient?' in html
+
+
+@pytest.mark.django_db
+def test_empty_group_delete_button_does_not_confirm(auth_client, recipe, group):
+    """Nothing is lost deleting an empty group, so there is nothing to confirm."""
+    _add_group(recipe, "Sauce", 1)
+    html = _group_edit_html(auth_client, recipe, group)
+    assert f"/groups/{group.pk}/delete/" in html
+    assert "hx-confirm" not in html
+
+
+@pytest.mark.django_db
+def test_last_group_has_no_delete_button(auth_client, recipe, group):
+    """A recipe's last group is kept, so its form offers no Delete."""
+    html = _group_edit_html(auth_client, recipe, group)
+    assert f"/groups/{group.pk}/delete/" not in html
+
+
+@pytest.mark.django_db
+def test_group_delete_keeps_the_last_group_and_its_ingredients(auth_client, recipe, group):
+    """A stale page that still shows Delete cannot remove the last group."""
+    kept = _add_iir(group, "onion")
+    response = auth_client.post(f"/recipes/{recipe.pk}/groups/{group.pk}/delete/")
+    assert response.status_code == 200
+    assert IngredientGroup.objects.filter(pk=group.pk).exists()
+    assert IngredientInRecipe.objects.filter(pk=kept.pk).exists()
+
+
+@pytest.mark.django_db
+def test_refused_group_delete_puts_the_block_back(auth_client, recipe, group):
+    """The refusal swaps the group block back in instead of an empty response."""
+    _add_iir(group, "onion")
+    html = auth_client.post(f"/recipes/{recipe.pk}/groups/{group.pk}/delete/").content.decode()
+    assert f'id="group-block-{group.pk}"' in html
+    assert "onion" in html
+
+
+def _delete_group_at_recipe_lock(group_pk: int):
+    """Patch that deletes a group just as a view locks the recipe, like another tab would."""
+    original_sfu = QuerySet.select_for_update
+    deleted = []
+
+    def _sfu(qs, *args, **kwargs):
+        if qs.model is Recipe and not deleted:
+            deleted.append(True)
+            IngredientGroup.objects.filter(pk=group_pk).delete()
+        return original_sfu(qs, *args, **kwargs)
+
+    return patch.object(QuerySet, "select_for_update", _sfu)
+
+
+@pytest.mark.django_db
+def test_group_delete_keeps_a_group_its_sibling_was_deleted_under(auth_client, recipe, group):
+    """Two tabs deleting a recipe's last two groups leave one standing."""
+    sibling = _add_group(recipe, "Sauce", 1)
+    with _delete_group_at_recipe_lock(sibling.pk):
+        response = auth_client.post(f"/recipes/{recipe.pk}/groups/{group.pk}/delete/")
+    assert f'id="group-block-{group.pk}"' in response.content.decode()
+    assert IngredientGroup.objects.filter(pk=group.pk).exists()
+
+
+@pytest.mark.django_db
+def test_group_delete_of_a_group_deleted_concurrently(auth_client, recipe, group):
+    """Already gone: the block is removed and the reassign select refreshed."""
+    doomed = _add_group(recipe, "Sauce", 1)
+    with _delete_group_at_recipe_lock(doomed.pk):
+        response = auth_client.post(f"/recipes/{recipe.pk}/groups/{doomed.pk}/delete/")
+    html = response.content.decode()
+    assert response.status_code == 200
+    assert 'id="reassign-target"' in html
+    assert f'<option value="{doomed.pk}"' not in html
+    assert IngredientGroup.objects.filter(pk=group.pk).exists()

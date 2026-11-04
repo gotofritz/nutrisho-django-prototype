@@ -322,10 +322,25 @@ def recipe_group_save(request: AuthedRequest, recipe_id: int, group_id: int) -> 
 
 @require_POST
 def recipe_group_delete(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
-    """Delete a group."""
+    """Delete a group and its ingredients, unless it is the recipe's last group.
+
+    The last group is kept for the reason `_prune_empty_group` gives; the form
+    hides Delete for it, so only a stale page gets here, and gets the block back.
+    """
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
-    group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
-    remove_and_compact(siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group)
+    get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
+    with transaction.atomic():
+        # Lock the recipe so two tabs cannot each delete one of its last two groups.
+        list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
+        group = IngredientGroup.objects.filter(pk=group_id, recipe=recipe).first()
+        if group is None:
+            return HttpResponse(_reassign_select_oob(recipe, request))
+        if IngredientGroup.objects.filter(recipe=recipe).count() < 2:
+            response = render(
+                request, "recipes/partials/_group_block.html", {"recipe": recipe, "group": group}
+            )
+            return announce(response, "A recipe keeps at least one group, so this one stayed.")
+        remove_and_compact(siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group)
     return announce(HttpResponse(_reassign_select_oob(recipe, request)), "Group deleted.")
 
 
