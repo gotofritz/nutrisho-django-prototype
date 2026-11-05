@@ -1,20 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Nutrisho — Log in</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'css/output.css' %}">
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
+{% extends "recipes/base.html" %}
+
+{% block page_title %}Log in{% endblock %}
+
+{% block content %}
+<main class="login-page">
   <h1 tabindex="-1">Log in</h1>
-  <form method="post">
+  {# Not boosted: logging in rotates the CSRF token, which a boosted swap would leave stale in <body hx-headers>. #}
+  <form method="post" class="login-form" hx-boost="false">
     {% csrf_token %}
-    {{ form.as_p }}
+    {% if form.non_field_errors %}
+    <div role="alert" class="login-error">
+      {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+    {% endif %}
+    {% for field in form %}
+    <p class="login-field">
+      {{ field.label_tag }}
+      {{ field }}
+      {{ field.errors }}
+    </p>
+    {% endfor %}
     {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
-    <button type="submit">Log in</button>
+    <button type="submit" class="list-btn">Log in</button>
   </form>
-</body>
-</html>
+</main>
+<script>
+  // Log-out and session expiry land here: drop htmx's page snapshots so the
+  // Back button cannot replay a recipe from localStorage on a shared device.
+  try { localStorage.removeItem('htmx-history-cache'); } catch (e) {}
+</script>
+{% endblock %}
