@@ -523,3 +523,54 @@ ol.recipe-steps {
   line-height: 1;
   padding: 2px 6px;
 }
+
+/* Search (#32). Placement and look are placeholders until the redesign. */
+.site-search {
+  display: flex;
+  gap: 8px;
+  margin: 0 auto 12px;
+  max-width: 1040px;
+  padding: 8px 1rem 0 4rem; /* clear of the fixed navbar on recipe pages */
+}
+
+.site-search input,
+.recipe-search input,
+.recipe-search select {
+  border: 1px solid silver;
+  font: inherit;
+  padding: 4px;
+}
+
+.site-search input {
+  flex: 1;
+}
+
+.recipe-search {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.recipe-search input[type="search"] {
+  flex: 1 1 16rem;
+}
+
+.search-help,
+.recipe-matches {
+  color: #555;
+  font-size: 0.8em;
+}
+
+.search-help {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.pagination {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin: 12px 0;
+}

@@ -223,6 +223,7 @@
 
   <body hx-boost="true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% include "./partials/_page_regions.html" %}
+    {% block site_search %}{% if user.is_authenticated %}{% include "./partials/_site_search.html" %}{% endif %}{% endblock %}
     {% block content %}{% endblock %}
     <script>
       document.addEventListener('change', function (e) {
