@@ -526,7 +526,7 @@ Postgres enforces the `max_length` caps SQLite ignores.
 
 ```bash
 source .venv/bin/activate
-make qa                # lint + typecheck + test
+make qa                # lint + typecheck + migrations/schema check + test
 make audit             # known vulnerabilities in the lockfiles (needs network)
 make manage ARGS="…"   # any management command, dev settings
 make schema            # migrate, then regenerate docs/schema.sql

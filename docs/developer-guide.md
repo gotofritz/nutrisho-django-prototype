@@ -120,6 +120,11 @@ make schema    # migrate, then schema only
 
 `--schema PATH` and `--dump PATH` override either location. SQLite only.
 
+`make check-migrations` (part of `make qa`) keeps both honest: it migrates a
+throwaway SQLite database, fails if `makemigrations --check` finds a model
+change with no migration, then writes that database's schema to a temp file and
+diffs it against `docs/schema.sql`. It never touches `db.sqlite3`.
+
 ## Errors and outages in production
 
 All logging goes to stderr; under systemd, journald collects it
@@ -143,13 +148,19 @@ healthchecks.io ping with the backup job (#44).
 ## Quality checks
 
 ```bash
-make qa                      # lint + typecheck + tests + hook regression tests
+make qa                      # lint + typecheck + migrations + tests + hook regression tests
 make lint                    # ruff only
 make typecheck               # ty only
-make test                    # pytest with coverage (≥95% required)
+make check-migrations        # no missing migration, docs/schema.sql up to date
+make test                    # pytest with line and branch coverage (≥95% required)
 make test ARGS="-k healthz"  # extra arguments go to pytest
 make audit                   # known vulnerabilities in uv.lock and pnpm-lock.yaml
 ```
+
+Tests run with `--fail-on-template-vars`, so a template that uses an undefined
+variable fails the test instead of rendering an empty string. Every directory
+under `src/` is a package (`tests/test_project_config.py` checks it), so
+coverage reports every module, tested or not.
 
 `make audit` needs the network, so it is not part of `make qa`. It runs
 `pip-audit` over `uv export --all-groups` and `pnpm audit --audit-level=high`,

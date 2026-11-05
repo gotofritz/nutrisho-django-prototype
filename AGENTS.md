@@ -38,6 +38,9 @@ migrated database and commit the result:
 make schema    # migrate, then backup_db --schema-only
 ```
 
+`make qa` runs `make check-migrations`, which fails when a model change has no
+migration or `docs/schema.sql` differs from a freshly migrated scratch database.
+
 `manage.py` defaults to production settings, so run any other management
 command through `make manage ARGS="<command>"`, which uses the dev settings.
 
