@@ -11,8 +11,23 @@ A personal recipe manager. Browse, edit, and organise your recipes in one place.
 ## What it does
 
 - Browse your recipe collection
+- Search it from the box at the top of every page
 - View ingredients, steps, and serving sizes
 - Navigate between recipes
+
+---
+
+## Searching
+
+Type a few words in the search box: `aubergine pasta` lists every recipe with
+aubergine **or** pasta in its title, description, ingredients, tags or cuisine,
+the recipes with both first. Words match from their start, so `pea` finds peas
+but not chickpeas, and a plural finds the singular (`aubergines`). Quote a
+phrase (`"olive oil"`) and put a minus before a word to leave it out
+(`-mushroom`). On the recipe list you can also search titles or ingredients
+only ("what can I cook with this aubergine?") and filter by cuisine or tag.
+Opening a result keeps the search, so the recipe page's previous/next arrows
+walk the results.
 
 ---
 

@@ -2,25 +2,35 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.db.models import Prefetch
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views.decorators.vary import vary_on_headers
 
 from recipes.models import IngredientInRecipe, Recipe
+from recipes.services.recipe_search import RecipeSearch, search_recipes
 from recipes.utils.scaling import parse_servings, scale_factor
+from recipes.views._search import search_from, search_querystring
 from recipes.views._types import AuthedRequest
+from recipes.views.home import PAGE_SIZE
 
 
-def _get_recipe_nav(recipe_id: int, user: AbstractBaseUser) -> dict[str, int]:
-    qs = Recipe.objects.filter(owner=user)
-    order_by = "id"
-    try:
-        prev_id = qs.filter(id__lt=recipe_id).order_by(f"-{order_by}")[0].id
-    except IndexError:
-        prev_id = qs.order_by(f"-{order_by}")[0].id
-    try:
-        next_id = qs.filter(id__gt=recipe_id).order_by(order_by)[0].id
-    except IndexError:
-        next_id = qs.order_by(order_by)[0].id
-    return {"prev_id": prev_id, "next_id": next_id}
+def _get_recipe_nav(recipe_id: int, user: AbstractBaseUser, search: RecipeSearch) -> dict:
+    """Prev/next through the list the user came from, wrapping at both ends (#32).
+
+    The list is `search`'s results, in the order the home page shows them; a
+    recipe outside them (edited since, or a hand-typed URL) walks the whole list.
+    """
+    ids = list(search_recipes(owner=user, search=search).values_list("id", flat=True))
+    if recipe_id not in ids:
+        search = RecipeSearch()
+        ids = list(search_recipes(owner=user, search=search).values_list("id", flat=True))
+    i = ids.index(recipe_id)
+    return {
+        "prev_id": ids[i - 1],
+        "next_id": ids[(i + 1) % len(ids)],
+        "query": search_querystring(search),
+        "list_url": reverse("recipes:home") + search_querystring(search, page=i // PAGE_SIZE + 1),
+        "search": search,
+    }
 
 
 @vary_on_headers("HX-Request")
@@ -43,12 +53,14 @@ def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     target = parse_servings(request.GET.get("servings"))
     scale = scale_factor(servings=int(recipe.servings), target=target)
     template = "recipes/partials/_recipe_content.html" if request.htmx else "recipes/recipe.html"
+    nav = _get_recipe_nav(recipe_id, request.user, search_from(request.GET))
     return render(
         request,
         template,
         {
             "recipe": recipe,
-            "nav": _get_recipe_nav(recipe_id, request.user),
+            "nav": nav,
+            "search": nav["search"],
             "scale": scale,
             "target_servings": target if scale else None,
         },

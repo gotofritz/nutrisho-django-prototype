@@ -22,7 +22,7 @@ from recipes.services.recipe_duplication import duplicate_recipe
 
 # Fields a duplicate is expected to change rather than copy.
 _NOT_COPIED: dict[type[Model], set[str]] = {
-    Recipe: {"id", "recipe_name", "created_date"},
+    Recipe: {"id", "recipe_name", "plain_name", "created_date"},
     Step: {"id", "recipe"},
     IngredientGroup: {"id", "recipe"},
     IngredientInRecipe: {"id", "ingredient_group"},

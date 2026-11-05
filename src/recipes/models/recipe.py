@@ -3,12 +3,17 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 
+from recipes.utils.plain_text import plain_text
+
 from .cuisine import Cuisine
 from .source import Source
 
 # Form-only cap on long prose (Recipe.short_description, Step.step_text and
 # .extra_info). They are TextFields, so the database has no limit (#49).
 PROSE_MAX_LENGTH = 4000
+
+# Typed field -> the column holding its tag-free text (#32), kept in step by save().
+_PLAIN_COLUMNS = {"recipe_name": "plain_name", "short_description": "plain_description"}
 
 
 class Recipe(models.Model):
@@ -19,6 +24,11 @@ class Recipe(models.Model):
     Ingredient quantities are stored as-is from the source data and are not
     normalized to per-serving amounts; a data migration is required before
     any per-serving arithmetic is meaningful.
+
+    `recipe_name` and `short_description` are stored as typed, inline tags and
+    all (#17). `plain_name` and `plain_description` hold the same text without
+    tags, written by `save()`; search reads them, and a name is unique per owner
+    by its plain text, so `Foo` and `<u>Foo</u>` clash (#32).
     """
 
     id = models.AutoField(primary_key=True)
@@ -37,6 +47,12 @@ class Recipe(models.Model):
     cuisine = models.ForeignKey(Cuisine, on_delete=models.SET_NULL, null=True, blank=True)
     servings = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1)])
     created_date = models.DateTimeField("date created", auto_now_add=True)
+    plain_name = models.CharField(
+        "recipe_name without inline tags", max_length=200, editable=False, default=""
+    )
+    plain_description = models.TextField(
+        "short_description without inline tags", editable=False, blank=True, default=""
+    )
     objects = models.Manager()
 
     class Meta:
@@ -46,14 +62,25 @@ class Recipe(models.Model):
                 name="recipes_recipe_servings_gte1",
             ),
             models.UniqueConstraint(
-                fields=["owner", "recipe_name"],
-                name="recipes_recipe_unique_name_per_owner",
+                fields=["owner", "plain_name"],
+                name="recipes_recipe_unique_plain_name_per_owner",
             ),
         ]
 
     def __str__(self) -> str:
         """Return a readable label."""
         return str(self.recipe_name)
+
+    def save(self, *args: object, **kwargs: object) -> None:
+        """Save, refreshing the plain-text columns of whichever fields are written."""
+        for typed, plain in _PLAIN_COLUMNS.items():
+            setattr(self, plain, plain_text(str(getattr(self, typed))))
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            fields = set(update_fields)  # ty: ignore[invalid-argument-type]  # an iterable of names
+            fields |= {_PLAIN_COLUMNS[f] for f in fields if f in _PLAIN_COLUMNS}
+            kwargs["update_fields"] = fields
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         """Return the URL of the recipe page."""

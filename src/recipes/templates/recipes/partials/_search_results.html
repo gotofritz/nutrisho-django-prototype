@@ -1,0 +1,45 @@
+{% load recipe_filters %}
+{% comment %}
+The recipe list's results (#32): the whole of what the box's active search
+swaps. Links carry the search (search_qs) so the recipe page's prev/next walk
+these results.
+{% endcomment %}
+<div id="search-results">
+  {% if search.is_active %}
+  {% with n=page_obj.paginator.count %}
+  <p class="search-count" data-announce>{% if n %}{{ n }} recipe{{ n|pluralize }} match{{ n|pluralize:"es," }}.{% else %}No recipes match your search.{% endif %}</p>
+  {% endwith %}
+  {% endif %}
+  {% if rows %}
+  <ul id="recipe-list">
+    {% for recipe, matched in rows %}
+    <li id="recipe-{{ recipe.id }}" class="recipe-list-item">
+      <a href="{% url 'recipes:metadata_edit' recipe.id %}" class="list-btn">Edit metadata</a>
+      <button
+        hx-post="{% url 'recipes:delete' recipe.id %}"
+        hx-target="#recipe-{{ recipe.id }}"
+        hx-swap="outerHTML"
+        hx-confirm="Delete '{{ recipe.recipe_name|striptags }}'?"
+        class="list-btn btn-delete"
+      >Delete</button>
+      <a href="{{ recipe.get_absolute_url }}{{ search_qs }}" class="list-btn">View</a>
+      <form method="post" action="{% url 'recipes:duplicate' recipe.id %}" style="display:inline">
+        {% csrf_token %}
+        <button type="submit" class="list-btn">Duplicate</button>
+      </form>
+      <a href="{{ recipe.get_absolute_url }}{{ search_qs }}" class="recipe-name">{{ recipe.recipe_name|safe_title_html }}</a>
+      {% if matched %}<span class="recipe-matches">with {{ matched|join:", " }}</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% if page_obj.has_other_pages %}
+  <nav class="pagination no-print" aria-label="Pages">
+    {% if prev_page_url %}<a href="{{ prev_page_url }}" rel="prev" class="list-btn">Previous</a>{% endif %}
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if next_page_url %}<a href="{{ next_page_url }}" rel="next" class="list-btn">Next</a>{% endif %}
+  </nav>
+  {% endif %}
+  {% elif not search.is_active %}
+  {% include "./_recipe_list_empty.html" %}
+  {% endif %}
+</div>

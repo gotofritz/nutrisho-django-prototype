@@ -1,12 +1,12 @@
 <div class="navbar">
   <div class="nav-button nav-home">
-    <a href="{% url "recipes:home" %}">{% include "../icons/list.svg" %}</a>
+    <a href="{{ nav.list_url }}">{% include "../icons/list.svg" %}</a>
   </div>
   <div class="nav-button nav-next">
-    <a href="{% url template_name nav.next_id %}">{% include "../icons/arrow-next.svg" %}</a>
+    <a href="{% url template_name nav.next_id %}{{ nav.query }}">{% include "../icons/arrow-next.svg" %}</a>
   </div>
   <div class="nav-button nav-prev">
-    <a href="{% url template_name nav.prev_id %}">{% include "../icons/arrow-prev.svg" %}</a>
+    <a href="{% url template_name nav.prev_id %}{{ nav.query }}">{% include "../icons/arrow-prev.svg" %}</a>
   </div>
   {# Log out (#59): LogoutView only accepts POST. Not boosted, so the login page is a full load. #}
   <form method="post" action="{% url "logout" %}" class="nav-button nav-logout" hx-boost="false">
