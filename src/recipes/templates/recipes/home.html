@@ -11,6 +11,11 @@
     <a href="{% url 'recipes:ingredient_manage' %}" class="btn-manage-ingredients">Manage ingredients</a>
     <a href="{% url 'recipes:cuisine_manage' %}" class="btn-manage-cuisines">Manage cuisines</a>
   {% endif %}
+  {# Log out (#59): LogoutView only accepts POST. Not boosted, so the login page is a full load. #}
+  <form method="post" action="{% url 'logout' %}" class="logout-form" hx-boost="false">
+    {% csrf_token %}
+    <button type="submit" class="list-btn">Log out</button>
+  </form>
 </div>
 {% if latest_recipe_list %}
 <ul id="recipe-list">

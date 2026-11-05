@@ -293,6 +293,55 @@ ol.recipe-steps {
   margin: 4px 4px 0 0;
 }
 
+/* Log out (#59) sits at the foot of the navbar, a bare icon like the links. */
+.navbar .nav-logout {
+  margin-top: auto;
+}
+.nav-logout button {
+  background: none;
+  border: none;
+  height: 100%;
+  padding: 0;
+  width: 100%;
+}
+
+.logout-form {
+  display: inline;
+}
+
+.login-page {
+  margin: 3rem auto;
+  max-width: 24rem;
+  padding: 0 1rem;
+}
+
+.login-page h1 {
+  font-family: "Lobster", "Trebuchet MS";
+  font-size: 44px;
+  margin: 0 0 18px 0;
+}
+
+.login-field {
+  margin: 0 0 12px 0;
+}
+
+.login-field label {
+  display: block;
+}
+
+.login-field input {
+  border: 1px solid silver;
+  font: inherit;
+  padding: 4px;
+  width: 100%;
+}
+
+.login-error {
+  border-left: 4px solid #b00020;
+  color: #b00020;
+  padding-left: 8px;
+}
+
 .sidebar nav {
   background: var(--color-light-main);
   display: flex;

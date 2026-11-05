@@ -8,4 +8,9 @@
   <div class="nav-button nav-prev">
     <a href="{% url template_name nav.prev_id %}">{% include "../icons/arrow-prev.svg" %}</a>
   </div>
+  {# Log out (#59): LogoutView only accepts POST. Not boosted, so the login page is a full load. #}
+  <form method="post" action="{% url "logout" %}" class="nav-button nav-logout" hx-boost="false">
+    {% csrf_token %}
+    <button type="submit" aria-label="Log out" title="Log out">{% include "../icons/logout.svg" %}</button>
+  </form>
 </div>
