@@ -12,8 +12,9 @@ export DJANGO_SETTINGS_MODULE ?= nutrisho.settings.dev
 
 PORT ?= 8987
 ARGS ?=
+SCHEMA ?= docs/schema.sql
 
-.PHONY: help audit backup bootstrap coverage coverage-badge css css-watch dev lint lint-fix manage \
+.PHONY: help audit backup bootstrap check-migrations coverage coverage-badge css css-watch dev lint lint-fix manage \
 	migrate node-install qa schema test test-hooks typecheck
 
 help: ## List the available targets
@@ -31,6 +32,18 @@ backup: ## Write the schema to docs/schema.sql and a full SQL dump to docs/dump-
 
 bootstrap: migrate ## Apply migrations and create the owner superuser from DJANGO_SUPERUSER_* (prompts if unset)
 	uv run python manage.py bootstrap_owner
+
+# Works on a throwaway SQLite file, never db.sqlite3. The dev settings are pinned
+# because the test settings ignore DATABASE_URL. SCHEMA is the file to compare.
+check-migrations: ## Fail if a model change lacks a migration or docs/schema.sql is stale
+	tmp=$$(mktemp -d); \
+	trap 'rm -f "$$tmp"/db.sqlite3* "$$tmp"/schema.sql; rmdir "$$tmp"' EXIT; \
+	export DJANGO_SETTINGS_MODULE=nutrisho.settings.dev DATABASE_URL="sqlite:///$$tmp/db.sqlite3"; \
+	uv run python manage.py migrate --verbosity 0; \
+	uv run python manage.py makemigrations --check --dry-run; \
+	uv run python manage.py backup_db --schema-only --schema "$$tmp/schema.sql" > /dev/null; \
+	diff -u $(SCHEMA) "$$tmp/schema.sql" \
+		|| { echo "$(SCHEMA) is stale: run make schema and commit the result" >&2; exit 1; }
 
 coverage: ## Open the latest coverage report in a web browser
 	open htmlcov/index.html
@@ -74,7 +87,7 @@ migrate: ## Apply database migrations
 node-install: ## Install Node dependencies via pnpm
 	pnpm install
 
-qa: css lint typecheck test test-hooks ## Run CSS build, linting, type checking, tests, and hook regressions
+qa: css lint typecheck check-migrations test test-hooks ## Run CSS build, linting, type checking, migration and schema checks, tests, and hook regressions
 
 schema: migrate ## Apply migrations, then regenerate docs/schema.sql
 	uv run python manage.py backup_db --schema-only

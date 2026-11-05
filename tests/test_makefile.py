@@ -14,6 +14,7 @@ TASKS = (
     "audit",
     "backup",
     "bootstrap",
+    "check-migrations",
     "coverage",
     "coverage-badge",
     "css",
@@ -35,20 +36,26 @@ TASKS = (
 needs_make = pytest.mark.skipif(shutil.which("make") is None, reason="make is not installed")
 
 
-def run_make(*args: str, drop_env: frozenset[str] = frozenset()) -> str:
-    """Run make in the project root and return its standard output."""
+def make(
+    *args: str, drop_env: frozenset[str] = frozenset(), check: bool = True
+) -> subprocess.CompletedProcess[str]:
+    """Run make in the project root and return the finished process."""
     # Drop settings inherited from an outer `make qa`, so the test sees only its own args.
     dropped = {"MAKEFLAGS", "MFLAGS", "MAKELEVEL"} | drop_env
     env = {k: v for k, v in os.environ.items() if k not in dropped}
-    result = subprocess.run(
+    return subprocess.run(
         ["make", "--no-print-directory", *args],
         cwd=ROOT,
         env=env,
         capture_output=True,
         text=True,
-        check=True,
+        check=check,
     )
-    return result.stdout
+
+
+def run_make(*args: str, drop_env: frozenset[str] = frozenset()) -> str:
+    """Run make in the project root and return its standard output."""
+    return make(*args, drop_env=drop_env).stdout
 
 
 def documented_targets() -> dict[str, str]:
@@ -87,9 +94,16 @@ def test_help_is_the_default_goal():
 
 @needs_make
 def test_qa_runs_every_check_in_order():
-    """`make qa` builds CSS, then lints, type-checks, tests and runs hook tests."""
+    """`make qa` builds CSS, lints, type-checks, checks migrations, tests and runs hook tests."""
     output = run_make("--dry-run", "qa")
-    steps = ["pnpm run css", "ruff check", "ty check", "pytest", "test-caveman-patterns.sh"]
+    steps = [
+        "pnpm run css",
+        "ruff check",
+        "ty check",
+        "makemigrations --check --dry-run",
+        "pytest",
+        "test-caveman-patterns.sh",
+    ]
 
     positions = [output.index(step) for step in steps]
     assert positions == sorted(positions)
@@ -139,6 +153,40 @@ def test_schema_migrates_then_writes_the_schema_only():
     migrate = output.index("manage.py migrate")
     backup = output.index("manage.py backup_db --schema-only")
     assert migrate < backup
+
+
+@needs_make
+def test_check_migrations_rebuilds_the_schema_in_a_scratch_database():
+    """`make check-migrations` migrates a temp DB, writes its schema there, and diffs it."""
+    output = run_make("--dry-run", "check-migrations")
+
+    assert "mktemp -d" in output
+    assert "DATABASE_URL=" in output
+    migrate = output.index("manage.py migrate")
+    check = output.index("manage.py makemigrations --check --dry-run")
+    backup = output.index("manage.py backup_db --schema-only --schema")
+    diff = output.index("diff -u docs/schema.sql")
+    assert migrate < check < backup < diff
+
+
+@needs_make
+def test_check_migrations_passes_on_this_checkout():
+    """The committed migrations and docs/schema.sql agree with the models."""
+    result = make("check-migrations", check=False)
+
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+@needs_make
+def test_check_migrations_fails_on_a_stale_schema(tmp_path: Path):
+    """A schema file that does not match the migrations fails the check."""
+    stale = tmp_path / "schema.sql"
+    stale.write_text("CREATE TABLE stale (id integer);\n")
+
+    result = make("check-migrations", f"SCHEMA={stale}", check=False)
+
+    assert result.returncode != 0
+    assert "make schema" in result.stderr
 
 
 @needs_make

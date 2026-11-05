@@ -31,6 +31,7 @@ dependencies = [
 ]
 
 [tool.coverage.run]
+branch = true
 omit = [
   "*/migrations/*",
   "*/settings*.py",
@@ -47,5 +48,6 @@ packages = ["src/nutrisho", "src/recipes"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "nutrisho.settings.test"
+addopts = ["--fail-on-template-vars"]
 pythonpath = ["src"]
 testpaths = ["tests"]
