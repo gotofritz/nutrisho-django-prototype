@@ -137,9 +137,14 @@ def test_badge_job_runs_no_code_of_its_own():
     assert all("run" not in step for step in badge["steps"])
 
 
+def release_workflow() -> dict[str, Any]:
+    """`ci.yml` cut down to its release job, for the step helpers above."""
+    return {"jobs": {"release": load(ROOT / ".github/workflows/ci.yml")["jobs"]["release"]}}
+
+
 def test_release_job_runs_only_after_qa_passes_on_main():
     """A version is released only from a green push to main (#72)."""
-    release = load(ROOT / ".github/workflows/ci.yml")["jobs"]["release"]
+    release = release_workflow()["jobs"]["release"]
 
     assert release["needs"] == "qa"
     assert "needs.qa.result == 'success'" in release["if"]
@@ -149,19 +154,19 @@ def test_release_job_runs_only_after_qa_passes_on_main():
 
 def test_release_job_runs_no_project_code():
     """The write-scoped release job checks out without saved credentials and runs only gh."""
-    release = load(ROOT / ".github/workflows/ci.yml")["jobs"]["release"]
-    (checkout,) = steps_using({"jobs": {"release": release}}, "actions/checkout")
-    scripts = run_lines({"jobs": {"release": release}})
+    workflow = release_workflow()
+    (checkout,) = steps_using(workflow, "actions/checkout")
+    scripts = run_lines(workflow)
 
     assert checkout["with"]["persist-credentials"] is False
-    assert len(release["steps"]) == 2
+    assert len(steps(workflow)) == 2
     for command in ("uv ", "make ", "pnpm ", "python"):
         assert command not in scripts
 
 
 def test_release_job_publishes_the_changelog_section_for_a_new_tag():
     """The release job tags `v<version>` once and uses its CHANGELOG.md section as notes."""
-    scripts = run_lines({"jobs": {"release": load(ROOT / ".github/workflows/ci.yml")["jobs"]["release"]}})
+    scripts = run_lines(release_workflow())
 
     assert 'tag="v$version"' in scripts
     assert 'gh release view "$tag"' in scripts
