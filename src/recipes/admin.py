@@ -10,6 +10,8 @@ from .models import (
     Source,
     Step,
     Tag,
+    Unit,
+    UnitAlias,
 )
 
 
@@ -67,3 +69,27 @@ class IngredientAliasAdmin(admin.ModelAdmin):
 @admin.register(Source)
 class SourceAdmin(admin.ModelAdmin):
     list_display = ("short_name",)
+
+
+class UnitAliasInline(admin.TabularInline):
+    model = UnitAlias
+    extra = 1
+
+
+@admin.register(Unit)
+class UnitAdmin(admin.ModelAdmin):
+    """The canonical unit vocabulary (#67): what recipe rows point at."""
+
+    list_display = ("name", "plural", "dimension")
+    list_filter = ("dimension",)
+    search_fields = ("name", "aliases__alias_name")
+    inlines = (UnitAliasInline,)
+
+
+@admin.register(UnitAlias)
+class UnitAliasAdmin(admin.ModelAdmin):
+    """Input-only spellings of a unit (`tablespoon` → `tbsp`)."""
+
+    list_display = ("alias_name", "unit")
+    list_select_related = ("unit",)
+    search_fields = ("alias_name", "unit__name")

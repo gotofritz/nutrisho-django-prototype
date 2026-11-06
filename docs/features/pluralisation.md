@@ -16,7 +16,9 @@ override is what covers the irregulars the rule deliberately does not chase, and
 it is editable in the clean-up tool's Edit panel.
 
 Two conditions gate the swap, both in `display_ingredient_name`: the quantity is
-recorded and is not 1, **and** `unit` is empty. The unit check is what keeps mass
-nouns safe — `200 g onion` must never become `200 g onions`. A page scaled with
+recorded and is not 1, **and** there is no unit, canonical or legacy. The unit
+check is what keeps mass nouns safe — `200 g onion` must never become `200 g
+onions`. Units pluralise by the same quantity rule (`1 clove`, `2 cloves`), with
+abbreviations kept invariant by their override; see `units.md`. A page scaled with
 `?servings=N` decides on the displayed quantity instead (`ingredient_name_at`), so
 doubling 1 onion reads "2 onions".

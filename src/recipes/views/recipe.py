@@ -42,7 +42,7 @@ def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
             Prefetch(
                 "ingredients_group__ingredient",
                 queryset=IngredientInRecipe.objects.select_related(
-                    "ingredient", "ingredient_group"
+                    "ingredient", "ingredient_group", "unit"
                 ),
             ),
         ),

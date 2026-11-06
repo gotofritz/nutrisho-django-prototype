@@ -157,8 +157,10 @@ def test_field_edit_short_description_is_textarea(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_detail_query_count_constant(auth_client, user, django_assert_max_num_queries):
-    """Detail page prefetches steps/groups/ingredients — no N+1 per row."""
-    from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Step
+    """Detail page prefetches steps/groups/ingredients and units — no N+1 per row."""
+    from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Step, Unit
+
+    gram = Unit.objects.get(name="g")
 
     r = Recipe.objects.create(recipe_name="Prefetch Soup", owner=user)
     for i in range(4):
@@ -168,7 +170,7 @@ def test_recipe_detail_query_count_constant(auth_client, user, django_assert_max
         for j in range(3):
             ing = Ingredient.objects.create(ingredient_name=f"ing-{g}-{j}")
             IngredientInRecipe.objects.create(
-                ingredient=ing, ingredient_group=grp, index_in_sequence=j
+                ingredient=ing, ingredient_group=grp, index_in_sequence=j, unit=gram
             )
     with django_assert_max_num_queries(10):
         response = auth_client.get(f"/recipes/{r.pk}/")

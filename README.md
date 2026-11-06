@@ -187,6 +187,31 @@ links `onion` rather than creating an `onions` ingredient.
 
 ---
 
+## Units
+
+Units come from a fixed list, so `Tbsp`, `tbsp.`, `tbs` and `tablespoons` are
+all stored as `tbsp`. Type any of them in a recipe and the right unit is picked;
+the field suggests the rest. Units read in the plural like ingredients do (**1
+clove**, **2 cloves**), while abbreviations stay as they are (**200 g**).
+
+Sizes and amounts are not units: put `small` or `large` under preparation, and
+`to taste` in the note, with no quantity. The editor tells you if you type one
+in the unit field, and refuses a unit it does not know. Staff add units, and
+other spellings for them, in the admin under **Units**.
+
+Units typed before the list existed are still shown as typed. To move them onto
+the list, review what would change, then apply it:
+
+```bash
+make manage ARGS="normalise_units"          # dry run: each value and what it becomes
+make manage ARGS="normalise_units --apply"
+```
+
+Anything it does not recognise is left alone: add it as another spelling of a
+unit in the admin, or fix the recipe, and run it again.
+
+---
+
 ## License
 
 [0BSD](LICENSE.md) — do whatever you like with it.

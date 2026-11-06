@@ -17,6 +17,7 @@ from recipes.models import (
     Source,
     Step,
     Tag,
+    Unit,
 )
 from recipes.services.recipe_duplication import duplicate_recipe
 
@@ -72,7 +73,8 @@ def populated_recipe(user):
     IngredientInRecipe.objects.create(
         ingredient=Ingredient.objects.create(ingredient_name="chilli"),
         substitute=Ingredient.objects.create(ingredient_name="paprika"),
-        unit="g",
+        unit=Unit.objects.get(name="g"),
+        legacy_unit="Tbsp",
         preparation="chopped",
         quantity=Decimal("12.50"),
         ingredient_group=group,

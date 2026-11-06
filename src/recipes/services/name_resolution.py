@@ -1,10 +1,10 @@
-"""Resolve names typed into the recipe editor to `Ingredient`, `Tag` and `Cuisine` rows.
+"""Resolve names typed into the recipe editor to `Ingredient`, `Tag`, `Cuisine` and `Unit` rows.
 
 Names are unique ignoring case, so `Onion` typed on a phone that
 auto-capitalises is the stored `onion`, not a second row; and a plural is a
 display form, so `onions` is the stored `onion` too (#66). Lookups are
 case-insensitive and keep the stored spelling; a miss creates an ingredient or
-tag as typed, but never a cuisine, which only staff add.
+tag as typed, but never a cuisine or a unit, which only staff add.
 Ingredients and tags are scoped to the recipe's owner: the global list plus
 their own private rows (plan 011).
 Every editor path goes through here rather than calling `get_or_create` on the
@@ -14,7 +14,7 @@ raw name, which matched case-sensitively and then hit the unique index (#34).
 from django.contrib.auth.models import AbstractBaseUser
 from django.db.models import F, Q, QuerySet
 
-from recipes.models import Cuisine, Ingredient, IngredientAlias, Tag
+from recipes.models import Cuisine, Ingredient, IngredientAlias, Tag, Unit, UnitAlias
 from recipes.models.cuisine import MAX_CUISINE_DEPTH, PATH_SEPARATOR
 from recipes.utils.pluralise import pluralise
 
@@ -145,3 +145,31 @@ def cuisine_paths() -> list[str]:
             parent_id = nodes[parent_id].parent_id
         paths.append(PATH_SEPARATOR.join(names))
     return sorted(paths, key=str.lower)
+
+
+def find_unit(text: str) -> Unit | None:
+    """The unit `text` spells, ignoring case, space and a trailing full stop; never creates one.
+
+    `Tbsp`, `tbsp.`, `tablespoons` and `tbs` are all `tbsp` (#67): the unit's
+    name, its plural, an alias, or an alias's plural, in that order. The
+    vocabulary is a few dozen rows, so plurals are matched in Python.
+    """
+    name = " ".join(text.split()).removesuffix(".").strip()
+    if not name:
+        return None
+    lowered = name.lower()
+    exact = Unit.objects.filter(name__iexact=name).first()
+    if exact is not None:
+        return exact
+    plural = next((u for u in Unit.objects.all() if u.plural.lower() == lowered), None)
+    if plural is not None:
+        return plural
+    for alias in UnitAlias.objects.select_related("unit").order_by("pk"):
+        if lowered in {str(alias.alias_name).lower(), pluralise(str(alias.alias_name)).lower()}:
+            return alias.unit
+    return None
+
+
+def unit_names() -> list[str]:
+    """Canonical unit names to suggest in the recipe editor, sorted ignoring case."""
+    return sorted(Unit.objects.values_list("name", flat=True), key=lambda n: (n.lower(), n))

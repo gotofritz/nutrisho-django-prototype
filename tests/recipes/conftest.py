@@ -3,6 +3,7 @@
 import pytest
 
 from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Recipe, Step
+from recipes.services.name_resolution import find_unit
 
 
 @pytest.fixture
@@ -35,7 +36,10 @@ def make_recipe(db):
 
 @pytest.fixture
 def add_ingredient(db):
-    """Attach an ingredient to a recipe, creating a default group on demand."""
+    """Attach an ingredient to a recipe, creating a default group on demand.
+
+    `unit` is typed text, resolved to the vocabulary as the editor would (#67).
+    """
 
     def _add(*, recipe, ingredient, substitute=None, quantity=None, unit="") -> IngredientInRecipe:
         group, _ = IngredientGroup.objects.get_or_create(
@@ -45,7 +49,7 @@ def add_ingredient(db):
             ingredient=ingredient,
             substitute=substitute,
             quantity=quantity,
-            unit=unit,
+            unit=find_unit(unit),
             ingredient_group=group,
             index_in_sequence=IngredientInRecipe.objects.filter(ingredient_group=group).count(),
         )
