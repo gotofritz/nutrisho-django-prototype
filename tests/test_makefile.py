@@ -28,6 +28,7 @@ TASKS = (
     "node-install",
     "qa",
     "schema",
+    "seed",
     "test",
     "test-hooks",
     "typecheck",
@@ -153,6 +154,16 @@ def test_schema_migrates_then_writes_the_schema_only():
     migrate = output.index("manage.py migrate")
     backup = output.index("manage.py backup_db --schema-only")
     assert migrate < backup
+
+
+@needs_make
+def test_seed_migrates_then_runs_seed_demo_and_passes_args():
+    """`make seed` applies migrations, then runs seed_demo with ARGS (#71)."""
+    output = run_make("--dry-run", "seed", "ARGS=--reset")
+
+    migrate = output.index("manage.py migrate")
+    seed = output.index("manage.py seed_demo --reset")
+    assert migrate < seed
 
 
 @needs_make

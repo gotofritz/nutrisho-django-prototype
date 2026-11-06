@@ -47,6 +47,36 @@ Opens at <http://127.0.0.1:8987/recipes/>.
 `db.sqlite3` is the only copy of the data. A fresh checkout starts empty:
 `make bootstrap` (see *First-time setup*) creates the tables and the owner.
 
+### Demo data
+
+To try the ingredient clean-up tool or review a UI change without typing
+recipes in by hand:
+
+```bash
+make seed                            # four sample recipes for the user 'demo'
+make seed ARGS="--username <name>"   # the same recipes in an existing account
+make seed ARGS="--reset"             # delete the demo recipes and seed them again
+```
+
+`make seed` applies migrations, then runs the `seed_demo` command. If the user
+does not exist it is created as staff (so the ingredient and cuisine tools
+open) with a random password, printed once; change it with
+`make manage ARGS="changepassword demo"`. An existing account is used as it
+is: its password and staff flag are not touched.
+
+The recipes cover the cases that are tedious to build: singular/plural
+duplicates (`onion`/`onions`, `chilli`/`chillies`), a private `Onion` beside
+the global `onion`, a spelling variant (`aubergine`/`eggplant`), private
+ingredients to promote, an unused ingredient (`saffron`), plural overrides,
+one unnamed and several named ingredient groups, substitutes, titled and
+untitled steps, inline tags in titles and blurbs, global and private tags,
+and cuisines at every depth.
+
+Running it again adds only the recipes that are missing. Once the clean-up
+tool has merged the duplicates away, `--reset` brings them back. The command
+refuses to run under `nutrisho.settings.prod`, which is what a bare
+`uv run python manage.py` uses.
+
 ### Concurrent writes
 
 `base.py` sets three SQLite options (issue #38), because Django's defaults let

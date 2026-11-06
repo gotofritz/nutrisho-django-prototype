@@ -15,7 +15,7 @@ ARGS ?=
 SCHEMA ?= docs/schema.sql
 
 .PHONY: help audit backup bootstrap check-migrations coverage coverage-badge css css-watch dev lint lint-fix manage \
-	migrate node-install qa schema test test-hooks typecheck
+	migrate node-install qa schema seed test test-hooks typecheck
 
 help: ## List the available targets
 	@echo "Usage: make <target> [VAR=value]"
@@ -91,6 +91,9 @@ qa: css lint typecheck check-migrations test test-hooks ## Run CSS build, lintin
 
 schema: migrate ## Apply migrations, then regenerate docs/schema.sql
 	uv run python manage.py backup_db --schema-only
+
+seed: migrate ## Seed sample recipes for a dev user, 'demo' unless ARGS says otherwise (refused in prod)
+	uv run python manage.py seed_demo $(ARGS)
 
 test: ## Run tests with coverage (pass extra pytest args as ARGS="...")
 	DJANGO_SETTINGS_MODULE=nutrisho.settings.test uv run pytest -vv -s --cov=src --cov-report=html:htmlcov --cov-fail-under=95 $(ARGS)
