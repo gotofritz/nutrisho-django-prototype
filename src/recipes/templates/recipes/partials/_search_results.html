@@ -23,7 +23,7 @@ these results.
         class="list-btn btn-delete"
       >Delete</button>
       <a href="{{ recipe.get_absolute_url }}{{ search_qs }}" class="list-btn">View</a>
-      <form method="post" action="{% url 'recipes:duplicate' recipe.id %}" style="display:inline">
+      <form method="post" action="{% url 'recipes:duplicate' recipe.id %}" class="inline">
         {% csrf_token %}
         <button type="submit" class="list-btn">Duplicate</button>
       </form>

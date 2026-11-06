@@ -47,6 +47,36 @@ Single Django app (`recipes`) under `src/` layout. No API layer. Frontend is ser
 
 Every asset is served by the app itself: pages make no third-party requests. The web fonts (Inconsolata, Lobster) are self-hosted as woff2 under `static/fonts/` with their OFL licences, declared with `font-display: swap` in `css/style.css`, and preloaded from `base.html`. A new font goes the same way, never through a font CDN.
 
+### Browser code and the Content-Security-Policy (#62)
+
+All of the app's JavaScript is one file, `static/js/app.js`, which `base.html`
+loads on every page, deferred and after htmx. It is one file rather than one per
+page because `hx-boost` swaps `<body>` without touching `<head>`: a script only
+some pages load would be missing after a boosted visit. Every listener is
+delegated to `document` and does nothing on a page without its markup.
+Templates opt in with data attributes, never with inline code:
+`data-cancel-draft`, `data-close-panel`, `data-panel-toggle`,
+`data-position-in`/`-of`/`-row`, `data-split-at`, `data-indeterminate` and
+`data-clear-history` (the header of `app.js` lists what each does).
+
+Django's `ContentSecurityPolicyMiddleware` enforces `SECURE_CSP` (in
+`settings/base.py`): everything from `'self'`, no `'unsafe-inline'`, no
+`'unsafe-eval'`, no plugins, no `<base>`, forms post only to the app and no page
+may be framed. The app renders user-entered HTML on purpose (sanitised to a few
+inline tags), so this is defence in depth: injected markup could neither run a
+script nor apply a style. In practice that means no template may contain
+inline `<script>`, `on*=` handlers, `style=` attributes or `<style>`, and no
+`hx-on` or `hx-trigger="event[filter]"`: htmx evals those, and `htmx-config`
+sets `allowEval: false` (use the `target:<selector>` trigger modifier instead
+of a filter). `htmx-config` also sets `includeIndicatorStyles: false`, since
+htmx would otherwise inject a `<style>`. `tests/test_content_security_policy.py`
+checks every template and inline SVG icon for all of these. Django's admin tags
+its few inline blocks with a per-request nonce (`CSP.NONCE`, via the `csp`
+context processor); the nonce only appears in the header on pages that use one.
+With `DEBUG=True`, django-htmx's error page for a failed htmx request shows
+unstyled, because its inline CSS and scripts are blocked; a full-page error is
+exempt (Django turns the CSP off for its own debug pages).
+
 ### Login and ownership (`nutrisho/middleware.py`, `recipes/views/_auth.py`)
 
 Login is the default, not a decorator (#48). `HtmxLoginRequiredMiddleware`
@@ -87,11 +117,11 @@ Each editable entity (field, step, ingredient, group) has three endpoints:
 - `GET /<entity>/edit/` — edit widget partial (`_*_edit.html`)
 - `POST /<entity>/save/` — validates and saves; returns display partial on success, edit partial with errors on failure
 
-HTMX swaps partials in place (`hx-swap="outerHTML"`). The `+ Add` buttons (`hx-post`, `hx-swap="beforeend"`) only render a blank edit form — no row is created until its Save posts to the entity's `POST /<entity>/create/` endpoint and validation passes. The draft form submits its DOM `position` (computed at submit via `hx-on::config-request`) and the server inserts at that position (resolved against the ordered sibling list — legacy imported sequences may be 1-based or gapped), shifting later rows, so saving multiple drafts out of order cannot diverge from the on-screen order; Cancel on an unsaved form just removes it from the DOM, so canceled adds leave no orphan rows. `Delete` buttons use `hx-post` with `hx-swap="outerHTML"`. CSRF token is injected globally via `hx-headers` on `<body>`. HTMX library is served from `django_htmx` static files (`htmx.min.js`).
+HTMX swaps partials in place (`hx-swap="outerHTML"`). The `+ Add` buttons (`hx-post`, `hx-swap="beforeend"`) only render a blank edit form — no row is created until its Save posts to the entity's `POST /<entity>/create/` endpoint and validation passes. The draft form submits its DOM `position` (computed at submit by `app.js` from the form's `data-position-*` attributes) and the server inserts at that position (resolved against the ordered sibling list — legacy imported sequences may be 1-based or gapped), shifting later rows, so saving multiple drafts out of order cannot diverge from the on-screen order; Cancel on an unsaved form just removes it from the DOM, so canceled adds leave no orphan rows. `Delete` buttons use `hx-post` with `hx-swap="outerHTML"`. CSRF token is injected globally via `hx-headers` on `<body>`. HTMX library is served from `django_htmx` static files (`htmx.min.js`).
 
-Failed requests are not swapped: the `htmx-config` meta in `base.html` swaps 2xx/3xx and 422 (validation errors re-render the edit form) and marks everything else as an error with `swap: false`, so an open edit form keeps the typed text. One global listener in `base.html` catches `htmx:responseError`, `htmx:sendError` and `htmx:timeout` and shows the fixed `#save-error` banner ("Your change was not saved." for writes, "That did not load." for GETs), with a reload hint on 403/404 (stale CSRF token, row deleted in another tab) and a connection hint on network errors. It is dismissible and hides itself when a later write succeeds. With `DEBUG=True`, django-htmx's debug script replaces the page with Django's error page on a 4xx/5xx before the banner can show, so check the banner with `DEBUG=False`.
+Failed requests are not swapped: the `htmx-config` meta in `base.html` swaps 2xx/3xx and 422 (validation errors re-render the edit form) and marks everything else as an error with `swap: false`, so an open edit form keeps the typed text. One global listener in `app.js` catches `htmx:responseError`, `htmx:sendError` and `htmx:timeout` and shows the fixed `#save-error` banner ("Your change was not saved." for writes, "That did not load." for GETs), with a reload hint on 403/404 (stale CSRF token, row deleted in another tab) and a connection hint on network errors. It is dismissible and hides itself when a later write succeeds. With `DEBUG=True`, django-htmx's debug script replaces the page with Django's error page on a 4xx/5xx before the banner can show, so check the banner with `DEBUG=False`.
 
-Focus and announcements after swaps (#61) also live in `base.html`. htmx itself refocuses an element whose id survives a swap, which is why the ↑/↓ buttons carry stable ids (`step-<id>-up`, `iir-<id>-down`, …) and the cuisine tool's checkboxes `cuisine-pick-<id>`, and it focuses `[autofocus]` in new content: the first field of every inline form gets `autofocus` from its form class (the Cancel button, in the delete panel). Anything else that removes the focused element (Save, Cancel, Delete) would drop focus to `<body>`, so a `htmx:beforeSwap` listener remembers the spot and `htmx:afterRequest` focuses what replaced it (its `.editable`, made focusable with `tabindex="-1"`) or the nearest surviving neighbour; unsaved drafts (`_cancelDraft`) and panels (`_closePanel`, back to the toggle named by `aria-controls`) do the same without a request. A form re-rendered with errors focuses its first `aria-invalid` field; the hand-rendered `ingredient_name` and `cuisine_name` inputs set `aria-invalid`/`aria-describedby` themselves, matching Django's own widgets. A boosted page swap focuses the page's `<h1 tabindex="-1">`, or announces the page title when there is none or an `[autofocus]` field took focus.
+Focus and announcements after swaps (#61) also live in `app.js`. htmx itself refocuses an element whose id survives a swap, which is why the ↑/↓ buttons carry stable ids (`step-<id>-up`, `iir-<id>-down`, …) and the cuisine tool's checkboxes `cuisine-pick-<id>`, and it focuses `[autofocus]` in new content: the first field of every inline form gets `autofocus` from its form class (the Cancel button, in the delete panel). Anything else that removes the focused element (Save, Cancel, Delete) would drop focus to `<body>`, so a `htmx:beforeSwap` listener remembers the spot and `htmx:afterRequest` focuses what replaced it (its `.editable`, made focusable with `tabindex="-1"`) or the nearest surviving neighbour; unsaved drafts (`data-cancel-draft`) and panels (`data-close-panel`, back to the toggle named by `aria-controls`) do the same without a request. A form re-rendered with errors focuses its first `aria-invalid` field; the hand-rendered `ingredient_name` and `cuisine_name` inputs set `aria-invalid`/`aria-describedby` themselves, matching Django's own widgets. A boosted page swap focuses the page's `<h1 tabindex="-1">`, or announces the page title when there is none or an `[autofocus]` field took focus.
 
 Announcements go through one polite live region, `#a11y-status`, that is always in the page, since a region swapped in with its text already set is often not read out. It and the `#save-error` banner live in `partials/_page_regions.html`, which `_recipe_content.html` renders again for a boosted visit because that partial replaces the whole `<body>`. The text of any `[data-announce]` element in swapped content (the clean-up tools' counts, "Saved") is read out after settle; views announce what a swap cannot show, such as a deletion, with `announce()` (`recipes/views/_announce.py`), which sets an `announce` event in `HX-Trigger`. Every `.form-error` is `role="alert"`.
 
@@ -233,12 +263,14 @@ from the same two sources, so no user ever sees another's private names. Plan
 re-rendered partial echoes them back. There is no client-side store: a change or a
 search refreshes its own column and swaps the other affected fragments out of
 band, so header counts, the tri-state select-all box and the enabled/disabled
-state of Edit/Delete/Merge are all server-rendered. The column-2 header carries
-the subsystem's only JavaScript, four lines of it, because `indeterminate` is a
-DOM property with no HTML attribute and the dashed state cannot be rendered any
-other way. The handler binds to the header wrapper rather than the checkbox:
-htmx fires `htmx:load` on the root of swapped content and events bubble up, so a
-listener on the nested input never sees it. The workspace carries the selection as
+state of Edit/Delete/Merge are all server-rendered. The column-2 header's
+select-all box is the subsystem's only JavaScript: `indeterminate` is a DOM
+property with no HTML attribute, so the dashed state cannot be rendered. The box
+carries `data-indeterminate`, and an `htmx.onLoad` handler in `app.js` sets the
+property from it on page load and after every swap, out-of-band ones included.
+The row checkboxes trigger their column with `hx-trigger="change
+target:.ingredient-pick"`, so a tick of the select-all box inside the same
+column fires only its own request. The workspace carries the selection as
 hidden inputs, since it replaces the column holding the checkboxes. `hx-include`
 must name the inputs themselves (`.ingredient-pick:checked`, `.workspace-pick`) —
 pointing it at a container element sends nothing.
@@ -375,7 +407,7 @@ re-renders whole; move up/down still swap only `#steps-list`.
   and writes nothing rather than truncating.
 - **Split at cursor** is a button in the edit form of a saved step. It posts
   the form as typed plus `split_at`, the cursor offset in code points (computed
-  in `hx-on::config-request`; the server folds CRLF to LF so offsets match the
+  by `app.js` from the button's `data-split-at`; the server folds CRLF to LF so offsets match the
   textarea). `split_step_text` moves a cursor inside a word back to that word's
   start and refuses — 422, the form re-rendered with a message — when either
   half would be blank, i.e. the cursor is not after the first word and before
