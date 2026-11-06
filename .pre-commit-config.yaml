@@ -41,18 +41,20 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
         types: [python]
+  # Hooks run uv frozen: a re-resolved uv.lock (for example under a global
+  # UV_EXCLUDE_NEWER that differs from the lock's) would abort the commit or rebase.
   - repo: local
     hooks:
       - id: commitizen
         name: commitizen
-        entry: uv run cz check
+        entry: uv run --frozen cz check
         args: [--commit-msg-file]
         require_serial: true
         language: system
         stages: [commit-msg]
       - id: qa
         name: qa
-        entry: make qa
+        entry: env UV_FROZEN=1 make qa
         require_serial: true
         language: system
         pass_filenames: false
