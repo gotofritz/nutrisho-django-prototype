@@ -27,6 +27,7 @@ TASKS = (
     "migrate",
     "node-install",
     "qa",
+    "release",
     "schema",
     "seed",
     "test",
@@ -217,6 +218,20 @@ def test_coverage_badge_writes_a_shields_endpoint_from_the_coverage_total():
 
     assert "coverage report --format=total" in output
     assert "badge-out/coverage.json" in output
+
+
+@needs_make
+def test_release_bumps_on_a_fresh_branch_from_main_and_commits():
+    """`make release` branches off origin/main, runs `cz bump` on the files only, and commits (#72)."""
+    output = run_make("--dry-run", "release")
+
+    fetch = output.index("git fetch origin main --tags")
+    branch = output.index("git switch -c chore-release-v")
+    bump = output.index("cz bump --version-files-only --yes")
+    commit = output.index('git commit -m "chore(release): v')
+    assert fetch < branch < bump < commit
+    assert "git push" not in output
+    assert "git tag" not in output
 
 
 @needs_make

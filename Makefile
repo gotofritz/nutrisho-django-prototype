@@ -15,7 +15,7 @@ ARGS ?=
 SCHEMA ?= docs/schema.sql
 
 .PHONY: help audit backup bootstrap check-migrations coverage coverage-badge css css-watch dev lint lint-fix manage \
-	migrate node-install qa schema seed test test-hooks typecheck
+	migrate node-install qa release schema seed test test-hooks typecheck
 
 help: ## List the available targets
 	@echo "Usage: make <target> [VAR=value]"
@@ -88,6 +88,20 @@ node-install: ## Install Node dependencies via pnpm
 	pnpm install
 
 qa: css lint typecheck check-migrations test test-hooks ## Run CSS build, linting, type checking, migration and schema checks, tests, and hook regressions
+
+# Run from a clean checkout. Leaves you on the new branch (or on a detached
+# origin/main if nothing is releasable); push it and open a PR. When the PR
+# merges, the CI release job tags the version and publishes the GitHub release.
+release: ## Start a release branch: bump the version and CHANGELOG.md from the commits since the last tag
+	git diff --quiet HEAD || { echo "Commit or stash your changes first" >&2; exit 1; }
+	git fetch origin main --tags
+	git switch --detach origin/main
+	next=$$(uv run cz bump --get-next --yes); \
+	git switch -c chore-release-v$$next; \
+	uv run cz bump --version-files-only --yes; \
+	git add pyproject.toml uv.lock CHANGELOG.md; \
+	git commit -m "chore(release): v$$next"; \
+	echo "Push chore-release-v$$next and open a PR; CI tags v$$next when it merges."
 
 schema: migrate ## Apply migrations, then regenerate docs/schema.sql
 	uv run python manage.py backup_db --schema-only
