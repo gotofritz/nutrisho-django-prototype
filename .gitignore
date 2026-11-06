@@ -186,3 +186,6 @@ node_modules/
 # Compiled Tailwind CSS (build artifact)
 src/recipes/static/css/output.css
 
+
+# Claude Code personal settings (copy .claude/settings.local.example.json to opt in to caveman mode)
+.claude/settings.local.json

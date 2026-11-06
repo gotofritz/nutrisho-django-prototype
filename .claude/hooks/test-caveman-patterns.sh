@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
-# Regression tests for portable grep patterns in caveman-mode-tracker.sh.
+# Regression tests for the portable grep patterns caveman-mode-tracker.sh uses.
+# Sources them from caveman-config.sh, so it checks the real ones.
 # Run on macOS (BSD grep) and Linux (GNU grep) to verify no \b dependency.
 
 set -u
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=./caveman-config.sh
+. "$SCRIPT_DIR/caveman-config.sh"
+
 PASS=0
 FAIL=0
 
-ACT='(^|[[:space:]])(activate|enable|turn on|start|talk like)[[:space:]].*caveman'
-NEG='(^|[[:space:]])(stop|disable|turn off|deactivate)([[:space:]]|$)'
-DEACT='(^|[[:space:]])(stop|disable|deactivate|turn off)[[:space:]].*caveman|caveman[[:space:]].*(stop|disable|deactivate|turn off)|(^|[[:space:]])normal mode([[:space:]]|$)'
+ACT=$CAVEMAN_ACTIVATE_RE
+NEG=$CAVEMAN_NEGATE_RE
+DEACT=$CAVEMAN_DEACTIVATE_RE
 
 match() {
     local desc="$1" pattern="$2" input="$3" want="$4"

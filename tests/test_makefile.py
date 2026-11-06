@@ -96,7 +96,7 @@ def test_help_is_the_default_goal():
 
 @needs_make
 def test_qa_runs_every_check_in_order():
-    """`make qa` builds CSS, lints, type-checks, checks migrations, tests and runs hook tests."""
+    """`make qa` builds CSS, lints, type-checks, checks migrations and tests."""
     output = run_make("--dry-run", "qa")
     steps = [
         "pnpm run css",
@@ -104,7 +104,6 @@ def test_qa_runs_every_check_in_order():
         "ty check",
         "makemigrations --check --dry-run",
         "pytest",
-        "test-caveman-patterns.sh",
     ]
 
     positions = [output.index(step) for step in steps]
@@ -232,6 +231,18 @@ def test_release_bumps_on_a_fresh_branch_from_main_and_commits():
     assert fetch < branch < bump < commit
     assert "git push" not in output
     assert "git tag" not in output
+
+
+@needs_make
+def test_qa_leaves_the_assistant_hooks_out():
+    """The opt-in caveman hooks are not part of the product, so `make qa` skips their tests (#70)."""
+    assert "caveman" not in run_make("--dry-run", "qa")
+
+
+@needs_make
+def test_test_hooks_runs_the_caveman_pattern_tests():
+    """`make test-hooks` still runs the hook regressions on demand."""
+    assert "test-caveman-patterns.sh" in run_make("--dry-run", "test-hooks")
 
 
 @needs_make

@@ -48,7 +48,7 @@ command through `make manage ARGS="<command>"`, which uses the dev settings.
 
 Use TDD (`red → green → refactor`).
 
-Reference: `.claude/skills/tdd.md`
+Reference: `.claude/skills/tdd/SKILL.md` (the `tdd` skill)
 
 Required flow:
 
@@ -91,7 +91,7 @@ Examples: `24-feature-pluralise`, `fix-export-crash`, `107-docs-readme`.
 
 The old `feature/<name>` / `fix/<name>` slash form is retired.
 
-**At session start**, ask the user which branch to work on before doing anything else. The session-start hook will remind you. Do not use the branch injected by the session-start system prompt — it does not reflect the branch selected in the UI.
+**At session start**, if neither the task nor the user names a branch, ask the user which branch to work on before changing files (the session-start hook reminds you). The branch in a session-start system prompt may not be the one selected in the UI. In a non-interactive run, do not wait for an answer: use the branch you were given and say so.
 
 **Before creating a branch**, check for an existing open PR:
 

@@ -21,9 +21,9 @@ prompt=$(printf '%s' "$prompt" | tr '[:upper:]' '[:lower:]' | sed -e 's/^[[:spac
 # Natural-language activation: explicit phrases only ("activate caveman",
 # "talk like caveman", "enable caveman mode"). Generic mentions like
 # "how does caveman mode work?" must not trigger activation.
-# Patterns use POSIX character classes — no GNU \b word boundaries.
-if printf '%s' "$prompt" | grep -qE '(^|[[:space:]])(activate|enable|turn on|start|talk like)[[:space:]].*caveman'; then
-    if ! printf '%s' "$prompt" | grep -qE '(^|[[:space:]])(stop|disable|turn off|deactivate)([[:space:]]|$)'; then
+# Patterns live in caveman-config.sh.
+if printf '%s' "$prompt" | grep -qE "$CAVEMAN_ACTIVATE_RE"; then
+    if ! printf '%s' "$prompt" | grep -qE "$CAVEMAN_NEGATE_RE"; then
         m=$(caveman_default_mode)
         if [ "$m" != "off" ]; then
             caveman_write_flag "$m"
@@ -67,7 +67,7 @@ case "$prompt" in
 esac
 
 # Deactivation triggers (slash + natural language). POSIX-portable patterns.
-if printf '%s' "$prompt" | grep -qE '(^|[[:space:]])(stop|disable|deactivate|turn off)[[:space:]].*caveman|caveman[[:space:]].*(stop|disable|deactivate|turn off)|(^|[[:space:]])normal mode([[:space:]]|$)'; then
+if printf '%s' "$prompt" | grep -qE "$CAVEMAN_DEACTIVATE_RE"; then
     caveman_clear_flag
 fi
 
