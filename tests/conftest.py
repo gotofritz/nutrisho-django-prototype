@@ -22,3 +22,15 @@ def auth_client(user):
     c = Client()
     c.force_login(user)
     return c
+
+
+@pytest.fixture
+def app_js() -> str:
+    """The app's own JavaScript, which ``base.html`` loads on every page (#62)."""
+    from pathlib import Path
+
+    from django.contrib.staticfiles import finders
+
+    path = finders.find("js/app.js")
+    assert path is not None, "js/app.js is not on the static path"
+    return Path(str(path)).read_text()

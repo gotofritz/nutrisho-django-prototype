@@ -12,10 +12,10 @@
     <span class="ingredient-preparation">{{ iir.preparation|default:"" }}</span>
     {% if iir.note %}<span class="ingredient-note">({{ iir.note }})</span>{% endif %}
   </div>
-  <span class="ingredient-check" onclick="event.stopPropagation()">
+  <span class="ingredient-check">
     <input type="checkbox" class="ingredient-select" name="ingredient_ids" value="{{ iir.id }}">
   </span>
-  <span class="move-btns" onclick="event.stopPropagation()">
+  <span class="move-btns">
     <button
       id="iir-{{ iir.id }}-up"
       hx-post="{% url 'recipes:ingredient_move_up' recipe.id iir.id %}"

@@ -4,7 +4,9 @@
     hx-post="{% url 'recipes:step_save' recipe.id step.id %}"
     {% else %}
     hx-post="{% url 'recipes:step_create' recipe.id %}"
-    hx-on::config-request="event.detail.parameters.position = Array.prototype.indexOf.call(this.closest('ol').querySelectorAll(':scope > li'), this.closest('li'))"
+    data-position-in="ol"
+    data-position-of=":scope > li"
+    data-position-row="li"
     {% endif %}
     hx-swap="outerHTML"
     hx-target="closest li"
@@ -20,7 +22,7 @@
     <button
       type="button"
       hx-post="{% url 'recipes:step_split' recipe.id step.id %}"
-      hx-on::config-request="var t = this.form.elements.step_text; event.detail.parameters.split_at = Array.from(t.value.slice(0, t.selectionStart)).length"
+      data-split-at="step_text"
       hx-target="closest li"
       hx-swap="outerHTML"
       title="Split this step in two where the cursor is"
@@ -38,7 +40,7 @@
       hx-swap="outerHTML"
     >Delete</button>
     {% else %}
-    <button type="button" onclick="_cancelDraft(this, 'li')">Cancel</button>
+    <button type="button" data-cancel-draft="li">Cancel</button>
     {% endif %}
   </form>
 </li>

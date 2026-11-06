@@ -16,7 +16,7 @@ way to store a scaled version, and it makes a new recipe.
     value="{{ servings }}"
     required
     autofocus
-    style="width: 5em"
+    class="w-[5em]"
   />
   <span>servings</span>
   <button type="submit">Show</button>
@@ -30,7 +30,7 @@ way to store a scaled version, and it makes a new recipe.
   >Save as scaled copy</button>
   <button
     type="button"
-    onclick="_closePanel('scale-panel')"
+    data-close-panel="scale-panel"
   >
     Cancel
   </button>

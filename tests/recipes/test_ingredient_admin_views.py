@@ -375,7 +375,7 @@ def test_ingredient_column_refreshes_matches_on_selection_change(auth_client):
     """
     column = tag(squash(auth_client.get(SEARCH_URL).content.decode()), "col-ingredients")
     assert f'hx-get="{RECIPES_URL}"' in column
-    assert "hx-trigger=\"change[target.classList.contains('ingredient-pick')]\"" in column
+    assert 'hx-trigger="change target:.ingredient-pick"' in column
     assert 'hx-target="#col-recipes"' in column
 
 

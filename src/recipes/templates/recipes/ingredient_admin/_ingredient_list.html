@@ -7,7 +7,7 @@
   is in here too, and its own request would race this one — both swap overlapping
   fragments, and whichever lands second finds its out-of-band targets gone.
   {% endcomment %}
-  hx-trigger="change[target.classList.contains('ingredient-pick')]"
+  hx-trigger="change target:.ingredient-pick"
   hx-target="#col-recipes"
   hx-swap="outerHTML"
   hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only"

@@ -2,7 +2,7 @@
 
 The focus and announcement code runs in the browser; these tests pin the markup
 it relies on (autofocus, stable ids, error attributes, the live region) and the
-wiring in ``base.html``, the same way ``test_save_error_banner.py`` does for #37.
+wiring in ``static/js/app.js``, the same way ``test_save_error_banner.py`` does for #37.
 """
 
 import json
@@ -75,7 +75,7 @@ def _announced(response) -> str:
     return json.loads(response["HX-Trigger"])["announce"]["message"]
 
 
-# --- the live region and the wiring in base.html ---------------------------
+# --- the live region and the wiring in app.js ------------------------------
 
 
 @pytest.mark.django_db
@@ -101,9 +101,9 @@ def test_status_region_is_a_persistent_polite_live_region(home_html):
         '[aria-invalid="true"]',  # a 422 focuses the first invalid field
     ],
 )
-def test_base_wires_focus_and_announcements(home_html, wiring):
+def test_app_js_wires_focus_and_announcements(app_js, wiring):
     """The global listeners for focus restore and announcements are on every page."""
-    assert wiring in home_html
+    assert wiring in app_js
 
 
 @pytest.mark.django_db
@@ -219,21 +219,22 @@ def test_panel_toggles_name_their_panel(auth_client, recipe, panel):
         ("delete_panel", "delete-panel"),
     ],
 )
-def test_panel_cancel_returns_focus(auth_client, recipe, name, panel):
+def test_panel_cancel_returns_focus(auth_client, app_js, recipe, name, panel):
     """Cancel closes the panel through the helper that refocuses the toggle."""
     html = _get(auth_client, name, recipe_id=recipe.pk)
-    assert f"_closePanel('{panel}')" in html
-    assert "innerHTML=''" not in html.replace(" ", "")
+    assert f'data-close-panel="{panel}"' in _tag(html, "data-close-panel")
+    assert "[data-close-panel]" in app_js
+    assert '[aria-controls="' in app_js
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("name", ["step_add", "group_add"])
-def test_draft_cancel_moves_focus_to_a_neighbour(auth_client, recipe, name):
+def test_draft_cancel_moves_focus_to_a_neighbour(auth_client, app_js, recipe, name):
     """Cancelling an unsaved draft does not drop focus to <body>."""
     response = auth_client.post(reverse(f"recipes:{name}", kwargs={"recipe_id": recipe.pk}))
-    html = response.content.decode()
-    assert "_cancelDraft(this" in html
-    assert ".remove()" not in html
+    assert "data-cancel-draft=" in _tag(response.content.decode(), "data-cancel-draft")
+    assert "[data-cancel-draft]" in app_js
+    assert "focusNear(spot)" in app_js
 
 
 @pytest.mark.django_db
@@ -245,9 +246,7 @@ def test_ingredient_draft_cancel_moves_focus_to_a_neighbour(auth_client, recipe,
             kwargs={"recipe_id": recipe.pk, "group_id": group.pk},
         )
     )
-    html = response.content.decode()
-    assert "_cancelDraft(this" in html
-    assert ".remove()" not in html
+    assert 'data-cancel-draft="div"' in _tag(response.content.decode(), "data-cancel-draft")
 
 
 # --- boosted navigation lands on the page heading --------------------------

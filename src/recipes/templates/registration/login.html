@@ -3,7 +3,8 @@
 {% block page_title %}Log in{% endblock %}
 
 {% block content %}
-<main class="login-page">
+{# Log-out and session expiry land here; data-clear-history has app.js drop htmx's localStorage snapshots. #}
+<main class="login-page" data-clear-history>
   <h1 tabindex="-1">Log in</h1>
   {# Not boosted: logging in rotates the CSRF token, which a boosted swap would leave stale in <body hx-headers>. #}
   <form method="post" class="login-form" hx-boost="false">
@@ -24,9 +25,4 @@
     <button type="submit" class="list-btn">Log in</button>
   </form>
 </main>
-<script>
-  // Log-out and session expiry land here: drop htmx's page snapshots so the
-  // Back button cannot replay a recipe from localStorage on a shared device.
-  try { localStorage.removeItem('htmx-history-cache'); } catch (e) {}
-</script>
 {% endblock %}

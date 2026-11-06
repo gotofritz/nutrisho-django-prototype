@@ -1,7 +1,7 @@
 """Tests for the global HTMX save-error banner (#37).
 
 The listener itself runs in the browser; these tests pin the markup and the
-wiring in ``base.html`` so every page that extends it carries both.
+wiring in ``static/js/app.js``, which every page that extends ``base.html`` loads.
 """
 
 import re
@@ -57,17 +57,17 @@ def test_banner_is_rendered_once_in_body(home_html):
     "event_name",
     ["htmx:responseError", "htmx:sendError", "htmx:timeout"],
 )
-def test_listener_handles_every_failure_event(home_html, event_name):
+def test_listener_handles_every_failure_event(app_js, event_name):
     """One global listener covers server errors, dropped connections and timeouts."""
-    assert f"'{event_name}'" in home_html
+    assert f"'{event_name}'" in app_js
 
 
 @pytest.mark.django_db
-def test_listener_messages(home_html):
+def test_listener_messages(app_js):
     """The messages say the change was not saved, with a reload hint on 403."""
-    assert "Your change was not saved." in home_html
-    assert "Reload the page and try again." in home_html
-    assert "Check your connection and try again." in home_html
+    assert "Your change was not saved." in app_js
+    assert "Reload the page and try again." in app_js
+    assert "Check your connection and try again." in app_js
 
 
 @pytest.mark.django_db

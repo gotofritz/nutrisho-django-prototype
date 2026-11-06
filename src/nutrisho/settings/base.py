@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import environ
+from django.utils.csp import CSP
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -51,6 +53,7 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                "django.template.context_processors.csp",
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
@@ -92,6 +95,25 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+
+# Content-Security-Policy (#62). The app renders user-entered HTML on purpose
+# (sanitised to a few inline tags), so as defence in depth the browser runs no
+# script and applies no style that the app did not serve as a file: no inline
+# <script>, on*= handler, hx-on, hx-trigger filter or style= attribute (htmx's
+# eval is off in base.html's htmx-config, and tests/test_content_security_policy.py
+# checks every template). JavaScript lives in static/js/app.js. The nonce is
+# only for Django's admin, which tags its few inline blocks with it; it is
+# left out of the header on pages that never ask for one.
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+    "script-src": [CSP.SELF, CSP.NONCE],
+    "style-src": [CSP.SELF, CSP.NONCE],
+    "object-src": [CSP.NONE],
+    "base-uri": [CSP.NONE],
+    "form-action": [CSP.SELF],
+    "frame-ancestors": [CSP.NONE],
+}
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 INTERNAL_IPS = ["127.0.0.1"]
 

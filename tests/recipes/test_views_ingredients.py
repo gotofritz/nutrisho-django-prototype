@@ -295,11 +295,12 @@ def test_group_create_inserts_at_posted_position(auth_client, recipe, group):
 
 @pytest.mark.django_db
 def test_group_add_form_sends_position(auth_client, recipe):
-    """Draft form carries the hx-on hook that posts its DOM position on save."""
+    """Draft form names its list, so app.js posts its DOM position on save."""
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/add/")
     content = response.content.decode()
-    assert "hx-on::config-request" in content
-    assert "position" in content
+    assert "data-position-in=" in content
+    assert "data-position-of=" in content
+    assert "data-position-row=" in content
 
 
 @pytest.mark.django_db
@@ -517,11 +518,12 @@ def test_ingredient_create_inserts_at_posted_position(auth_client, recipe, group
 
 @pytest.mark.django_db
 def test_ingredient_add_form_sends_position(auth_client, recipe, group):
-    """Draft form carries the hx-on hook that posts its DOM position on save."""
+    """Draft form names its list, so app.js posts its DOM position on save."""
     response = auth_client.post(f"/recipes/{recipe.pk}/groups/{group.pk}/ingredients/add/")
     content = response.content.decode()
-    assert "hx-on::config-request" in content
-    assert "position" in content
+    assert "data-position-in=" in content
+    assert "data-position-of=" in content
+    assert "data-position-row=" in content
 
 
 @pytest.mark.django_db
