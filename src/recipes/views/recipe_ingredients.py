@@ -85,7 +85,16 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
                 return HttpResponse("", status=404)
             form.save(commit=False)
             form.resolve_pending_ingredient(iir)
-            iir.save(update_fields=["quantity", "unit", "preparation", "note", "ingredient"])
+            iir.save(
+                update_fields=[
+                    "quantity",
+                    "unit",
+                    "legacy_unit",
+                    "preparation",
+                    "note",
+                    "ingredient",
+                ]
+            )
         iir.refresh_from_db()
         return render(
             request,

@@ -4,6 +4,7 @@ import pytest
 from django.test import Client
 
 from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Recipe, Step, Tag
+from recipes.services.name_resolution import find_unit
 
 
 @pytest.fixture
@@ -33,7 +34,11 @@ def recipe_with_content(recipe):
     group = IngredientGroup.objects.create(recipe=recipe, group_name="Main", index_in_sequence=0)
     ing = Ingredient.objects.create(ingredient_name="flour")
     IngredientInRecipe.objects.create(
-        ingredient=ing, ingredient_group=group, index_in_sequence=0, quantity=2, unit="cups"
+        ingredient=ing,
+        ingredient_group=group,
+        index_in_sequence=0,
+        quantity=2,
+        unit=find_unit("cups"),
     )
     return recipe
 

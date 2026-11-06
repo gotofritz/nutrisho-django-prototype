@@ -7,6 +7,7 @@ from django.db.models import QuerySet
 from django.test import Client
 
 from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Recipe
+from recipes.services.name_resolution import find_unit
 
 
 @pytest.fixture
@@ -38,7 +39,7 @@ def iir(group):
         ingredient_group=group,
         index_in_sequence=0,
         quantity=2,
-        unit="pcs",
+        unit=find_unit("pcs"),
         preparation="diced",
         note="",
     )
@@ -103,7 +104,7 @@ def test_ingredient_save_post_valid_saves_and_returns_display(auth_client, recip
     )
     assert response.status_code == 200
     iir.refresh_from_db()
-    assert iir.unit == "kg"
+    assert iir.unit.name == "kg"
     assert "<form" not in response.content.decode()
 
 

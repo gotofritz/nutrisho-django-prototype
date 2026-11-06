@@ -13,7 +13,15 @@
   >
     {% csrf_token %}
     <p>{{ form.quantity.label_tag }} {{ form.quantity }}{{ form.quantity.errors }}</p>
-    <p>{{ form.unit.label_tag }} {{ form.unit }}{{ form.unit.errors }}</p>
+    <p>
+      {{ form.unit.label_tag }} {{ form.unit }}
+      <datalist id="units-datalist">
+        {% for name in form.unit_names %}
+        <option value="{{ name }}">
+        {% endfor %}
+      </datalist>
+      {{ form.unit.errors }}
+    </p>
     <p>
       <label for="id_ingredient_name">Ingredient:</label>
       <input

@@ -28,7 +28,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Recipe, Step, Tag
-from recipes.services.name_resolution import find_cuisine, resolve_tag
+from recipes.services.name_resolution import find_cuisine, find_unit, resolve_tag
 from recipes.utils.plain_text import plain_text
 
 PRODUCTION_SETTINGS = "nutrisho.settings.prod"
@@ -267,7 +267,7 @@ class Command(BaseCommand):
                     if item.substitute
                     else None,
                     quantity=Decimal(item.quantity) if item.quantity else None,
-                    unit=item.unit,
+                    unit=find_unit(item.unit),
                     preparation=item.preparation,
                 )
         for step_index, (title, text) in enumerate(recipe.steps):

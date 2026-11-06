@@ -103,8 +103,9 @@ def display_ingredient_name(iir: object) -> str:
 
     Takes the whole `IngredientInRecipe` because the decision needs three of its
     fields at once. Plural when the quantity is recorded and is not 1 (`0.5
-    onions`, `2 onions`), **and** only when `unit` is empty: `200 g onion` must
-    stay singular, and that check is what keeps mass nouns safe.
+    onions`, `2 onions`), **and** only when there is no unit, canonical or
+    legacy: `200 g onion` must stay singular, and that check is what keeps mass
+    nouns safe.
     """
     return ingredient_name_at(iir, getattr(iir, "quantity", None))
 
@@ -119,9 +120,34 @@ def ingredient_name_at(iir: object, quantity: object) -> str:
     ingredient = getattr(iir, "ingredient", None)
     if ingredient is None:
         return ""
-    if quantity is None or quantity == 1 or getattr(iir, "unit", ""):
+    if quantity is None or quantity == 1 or _has_unit(iir):
         return ingredient.ingredient_name
     return ingredient.plural
+
+
+def _has_unit(iir: object) -> bool:
+    return getattr(iir, "unit", None) is not None or bool(getattr(iir, "legacy_unit", ""))
+
+
+@register.filter
+def display_unit(iir: object) -> str:
+    """`iir`'s unit at its stored quantity: `1 clove`, `2 cloves`, `200 g` (#67)."""
+    return unit_at(iir, getattr(iir, "quantity", None))
+
+
+@register.filter
+def unit_at(iir: object, quantity: object) -> str:
+    """`display_unit` for the quantity actually shown, e.g. a scaled one.
+
+    Plural by the same rule as ingredient names: a quantity recorded and not 1.
+    A legacy free-text unit not yet moved onto the vocabulary shows as stored.
+    """
+    unit = getattr(iir, "unit", None)
+    if unit is None:
+        return getattr(iir, "legacy_unit", "")
+    if quantity is None or quantity == 1:
+        return str(unit.name)
+    return unit.plural
 
 
 @register.filter
