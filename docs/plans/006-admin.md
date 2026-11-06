@@ -1,6 +1,12 @@
 # Plan 006: Admin Interface
 
-## Status: Draft
+## Status: Superseded (2026-11-06, #69)
+
+Never started as written; archived unfinished. Every model is registered in
+`src/recipes/admin.py`, and the curation work this plan meant for Django admin
+moved into purpose-built staff tools instead: the ingredient clean-up tool
+(plans 007 and 008) and the cuisine tool (plan 011). Any further admin polish
+can be an issue of its own.
 
 ## Goal
 

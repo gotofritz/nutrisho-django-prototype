@@ -1,6 +1,14 @@
 # Plan 005: Data Model Improvements
 
-## Status: Draft
+## Status: Superseded (2026-11-06, #69)
+
+Never started; archived unfinished. Its tasks were settled or moved to issues:
+
+- `IngredientInRecipe.quantity` is already a `DecimalField`.
+- `pydantic` was never adopted: data crossing layers goes through Django forms
+  and model fields, and AGENTS.md now says so.
+- The model audit became the 2026-10-30 assessment (plan 01): hidden or unused
+  fields are #65, reverse accessor names #79, units #67.
 
 ## Goal
 
