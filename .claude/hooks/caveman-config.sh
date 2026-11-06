@@ -5,6 +5,15 @@ CAVEMAN_VALID_MODES="off lite full ultra wenyan-lite wenyan wenyan-full wenyan-u
 CAVEMAN_INDEPENDENT_MODES="commit review compress"
 CAVEMAN_MAX_FLAG_BYTES=64
 
+# Prompt patterns used by caveman-mode-tracker.sh and checked by
+# test-caveman-patterns.sh. POSIX classes only: no GNU \b word boundaries.
+# Explicit activation phrases ("activate caveman", "talk like caveman").
+CAVEMAN_ACTIVATE_RE='(^|[[:space:]])(activate|enable|turn on|start|talk like)[[:space:]].*caveman'
+# A deactivation word anywhere in the prompt cancels an activation.
+CAVEMAN_NEGATE_RE='(^|[[:space:]])(stop|disable|turn off|deactivate)([[:space:]]|$)'
+# Deactivation phrases ("stop caveman", "caveman off", "normal mode").
+CAVEMAN_DEACTIVATE_RE='(^|[[:space:]])(stop|disable|deactivate|turn off)[[:space:]].*caveman|caveman[[:space:]].*(stop|disable|deactivate|turn off)|(^|[[:space:]])normal mode([[:space:]]|$)'
+
 caveman_dir() {
     printf '%s' "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 }

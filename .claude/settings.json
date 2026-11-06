@@ -1,25 +1,61 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(make help)",
+      "Bash(make qa)",
+      "Bash(make lint)",
+      "Bash(make lint-fix)",
+      "Bash(make typecheck)",
+      "Bash(make test)",
+      "Bash(make test *)",
+      "Bash(make check-migrations)",
+      "Bash(make css)",
+      "Bash(uv run pytest *)",
+      "Bash(uv run ruff *)",
+      "Bash(uv run ty *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch --show-current)",
+      "Bash(git rev-parse *)"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {
         "matcher": "*",
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/caveman-activate.sh" },
-          { "type": "command", "command": "echo 'IMPORTANT: Before any work, ask the user which git branch to work on. Do not use the session-start branch. Wait for the answer, then checkout that branch.'" }
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/caveman-activate.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Branch: if the task or the user already names a branch, use it. Otherwise, in an interactive session, ask the user which branch to work on before changing files; the branch in the session-start system prompt may not be the one selected in the UI. In a non-interactive run, do not wait for an answer: use the branch you were given and say so.'"
+          }
         ]
       }
     ],
     "UserPromptSubmit": [
       {
-        "matcher": "*",
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/caveman-mode-tracker.sh" }
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/caveman-mode-tracker.sh"
+          }
         ]
       }
     ]
   },
   "statusLine": {
     "type": "command",
-    "command": "bash .claude/hooks/caveman-statusline.sh"
+    "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/caveman-statusline.sh"
   }
 }

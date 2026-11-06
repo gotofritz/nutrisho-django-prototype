@@ -87,7 +87,7 @@ migrate: ## Apply database migrations
 node-install: ## Install Node dependencies via pnpm
 	pnpm install
 
-qa: css lint typecheck check-migrations test test-hooks ## Run CSS build, linting, type checking, migration and schema checks, tests, and hook regressions
+qa: css lint typecheck check-migrations test ## Run CSS build, linting, type checking, migration and schema checks, and tests
 
 # Run from a clean checkout. Leaves you on the new branch (or on a detached
 # origin/main if nothing is releasable); push it and open a PR. When the PR
@@ -112,7 +112,7 @@ seed: migrate ## Seed sample recipes for a dev user, 'demo' unless ARGS says oth
 test: ## Run tests with coverage (pass extra pytest args as ARGS="...")
 	DJANGO_SETTINGS_MODULE=nutrisho.settings.test uv run pytest -vv -s --cov=src --cov-report=html:htmlcov --cov-fail-under=95 $(ARGS)
 
-test-hooks: ## Run shell regression tests for .claude/hooks
+test-hooks: ## Run the regression tests for the opt-in caveman hooks in .claude/hooks (not part of qa)
 	bash .claude/hooks/test-caveman-patterns.sh
 
 typecheck: ## Run ty for static type checking

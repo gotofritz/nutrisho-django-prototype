@@ -186,3 +186,6 @@ node_modules/
 # Compiled Tailwind CSS (build artifact)
 src/recipes/static/css/output.css
 
+
+# Claude Code personal overrides of .claude/settings.json
+.claude/settings.local.json
