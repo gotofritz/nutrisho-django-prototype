@@ -12,6 +12,7 @@ SETTINGS = json.loads((CLAUDE / "settings.json").read_text())
 LOCAL_EXAMPLE = CLAUDE / "settings.local.example.json"
 HOOKS = CLAUDE / "hooks"
 AGENTS = (ROOT / "AGENTS.md").read_text()
+FEATURES = ROOT / "docs" / "features"
 
 
 def hook_commands(settings: dict) -> list[str]:
@@ -69,8 +70,9 @@ def test_local_example_wires_caveman_through_the_project_dir():
 
     assert commands
     for command in commands:
-        assert '"$CLAUDE_PROJECT_DIR"/.claude/hooks/' in command
-        assert (ROOT / re.search(r"\.claude/hooks/\S+\.sh", command).group()).exists()
+        script = re.search(r'"\$CLAUDE_PROJECT_DIR"/(\.claude/hooks/\S+\.sh)', command)
+        assert script is not None, command
+        assert (ROOT / script.group(1)).exists()
 
 
 def test_local_settings_are_git_ignored():
@@ -117,3 +119,18 @@ def test_caveman_mode_leaves_docs_in_full_prose():
     ):
         assert "Code/commits/PRs/docs (`*.md`): write normal." in text
 
+
+def test_initial_context_is_gone():
+    """AGENTS.md carries the architecture summary; nothing points at the old file."""
+    assert not (ROOT / "docs" / "initial-context.md").exists()
+    for doc in (ROOT / "AGENTS.md", ROOT / "README.md", ROOT / "docs" / "developer-guide.md"):
+        assert "initial-context" not in doc.read_text(), doc.name
+
+
+def test_agents_md_indexes_every_feature_note():
+    """Each note in `docs/features/` is listed in AGENTS.md, and each listed note exists."""
+    listed = set(re.findall(r"docs/features/([\w-]+\.md)", AGENTS))
+    present = {path.name for path in FEATURES.glob("*.md")}
+
+    assert listed
+    assert listed == present

@@ -3,7 +3,8 @@
 ## Read First
 
 - `README.md` — project overview
-- `docs/initial-context.md` — architecture and constraints
+- The Architecture section below; the `docs/features/` note for the area you
+  are changing
 - `docs/plans/*.md` — active plans
 
 ## Project Rules
@@ -23,10 +24,80 @@
 
 ## Architecture
 
-Update `docs/initial-context.md` before merging changes affecting:
-- architecture
-- boundaries
-- core patterns
+Multi-user Django recipe manager, prototype quality. One app, `recipes`, under
+`src/`; server-rendered templates with HTMX partial swaps (django-htmx), no
+REST API; Tailwind built with pnpm; SQLite in WAL mode with IMMEDIATE
+transactions, and no other database. Auth is Django's `User`; the owner
+superuser comes from `make bootstrap`, never from credentials in the repo. The
+debug toolbar is a dev-group package, mounted only when installed.
+
+### Boundaries
+
+- `src/nutrisho/` — project config only (settings `base`/`dev`/`prod`/`test`,
+  middleware, `/healthz`); no business logic
+- `src/recipes/` — all domain logic
+  - `services/` — pure query and mutation functions; no HTTP, no templates
+  - `utils/` — framework-free helpers
+  - `views/` — thin: request parsing, guards, choosing the partial
+  - `management/commands/` — management commands
+- `tests/` mirrors `src/`
+
+### Invariants
+
+Easy to break, and not obvious from any one file:
+
+- Login is required by default (`HtmxLoginRequiredMiddleware`). A public view
+  needs `@login_not_required` and an entry in `PUBLIC_ROUTES` in
+  `tests/test_route_access.py`; a new path parameter needs a value in that
+  test's `path_values` fixture.
+- Load a recipe with `owned_recipe(request=..., recipe_id=...)` and its child
+  rows through it. Never look a recipe up by id alone.
+- A route that changes a global row (ingredient, tag, cuisine) is staff-only
+  (`htmx_staff_required`); its tests use the `other_user` fixture to show a
+  non-staff user is refused and nothing is written.
+- Typed ingredient, tag and cuisine names become rows only through
+  `services/name_resolution.py`. Names are unique ignoring case, so a raw
+  `get_or_create(name=...)` fails.
+- `index_in_sequence` changes only through `utils/sequencing.py`.
+- Recipe names and descriptions are written through `Recipe.save()`, which keeps
+  `plain_name`/`plain_description` current; a queryset `update()` or
+  `bulk_create` leaves them stale.
+- Plurals, scaled quantities and HTML sanitising happen at render time. The
+  database holds the canonical singular, the stored quantity and markup as typed.
+- `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`: repoint
+  both before deleting an ingredient.
+- Empty text fields are stored as `""`, never `NULL`.
+- No inline JavaScript or CSS (the CSP forbids it, and
+  `tests/test_content_security_policy.py` checks every template): behaviour goes
+  in `static/js/app.js` behind `data-*` attributes, and there is no `hx-on` and
+  no `hx-trigger` filter. Every asset, fonts included, is self-hosted.
+- Write paths read and write inside `atomic()`; SQLite's IMMEDIATE mode is what
+  serialises them (`select_for_update()` is a no-op there).
+- Loggers propagate to the one stderr handler on the root logger; never give a
+  logger its own handler or `propagate: False`.
+- A new column on `Recipe`, `Step`, `IngredientGroup` or `IngredientInRecipe`
+  needs a non-default value in the fixture of
+  `tests/recipes/test_recipe_duplication.py`.
+
+### Feature notes
+
+Read the note for the area you are changing; skip the rest.
+
+- `docs/features/auth-and-ownership.md` — login middleware, log-out, owner scoping, route-access test
+- `docs/features/browser-code-and-csp.md` — `app.js`, data attributes, CSP rules, self-hosted assets
+- `docs/features/inline-editing.md` — display/edit/save endpoints, drafts, error banner, focus and announcements, groups, template filters
+- `docs/features/steps.md` — step titles, merge/split/bulk delete, sequencing helpers
+- `docs/features/recipe-duplication.md` — generic row cloning
+- `docs/features/scaling.md` — `?servings=N`, rounding, scaled copies
+- `docs/features/search.md` — query parsing, matching, filters, plain-text columns, prev/next
+- `docs/features/pluralisation.md` — the rule, `plural_name` overrides, when it applies
+- `docs/features/shared-vocabularies.md` — global and private ingredients and tags, the cuisine tree and its tool
+- `docs/features/ingredient-cleanup-tool.md` — the staff ingredient tool: merge, plurals, aliases, promote
+- `docs/features/data-and-operations.md` — key models, backups, seed data, concurrent writes, logging, SQLite limits
+
+Before merging a change to the architecture, boundaries or core patterns,
+update this section; update the feature note for any area whose behaviour
+changed.
 
 ## Database Schema
 
