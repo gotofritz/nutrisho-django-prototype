@@ -82,7 +82,7 @@ def test_manager_has_search_input(auth_client):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("action", ["edit", "delete", "merge"])
+@pytest.mark.parametrize("action", ["edit", "delete", "merge", "alias"])
 def test_manager_action_buttons_start_disabled(auth_client, action):
     """Manager action buttons start disabled."""
     html = auth_client.get(MANAGE_URL).content.decode()

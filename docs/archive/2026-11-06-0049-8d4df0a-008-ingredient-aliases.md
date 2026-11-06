@@ -1,12 +1,40 @@
 # Plan 008: Ingredient Aliases
 
-## Status: Approved — ready to implement
+## Status: Done — phases 1-6 and 8 shipped; phase 7 deferred
 
-Carried forward from [plan 007](../archive/2026-09-13-1551-eae5e1a-007-normalise-ingredients.md),
+Carried forward from [plan 007](2026-09-13-1551-eae5e1a-007-normalise-ingredients.md),
 which shipped its Phases 1-7 as the clean-up tool. Phase 8 was always scoped to a
 separate PR; this is that phase, unchanged apart from the renumbering.
 
-Tracks [issue #14](https://github.com/gotofritz/nutrisho-django-prototype/issues/14).
+Tracks [issue #66](https://github.com/gotofritz/nutrisho-django-prototype/issues/66)
+(originally #14, closed before this was built).
+
+## As shipped
+
+Plan 011 (shared vocabularies) landed first, so the phases below were adapted:
+
+- **Plurals resolve too.** `find_ingredient` (and so `resolve_ingredient`) tries,
+  after the case-insensitive name miss: a visible row whose plural (rule or
+  override) is the typed name, then an alias or an alias's rule plural. This is
+  the issue's order rather than phase 2's alias-first one; since a name can never
+  be both an ingredient and an alias, the two orders only differ in cost.
+- **Aliases are global and staff-defined.** The canonical must be a global row;
+  `IngredientAlias.clean` refuses a private one, and the Alias action asks for a
+  promotion first. The name may not clash with *any* ingredient row, private ones
+  included, and the clean-up tool's Edit refuses a rename onto an alias.
+- **Convergence folds everyone's rows.** `add_alias` merges every row of the
+  alias's name, whoever owns it, into the canonical (which is global, so a
+  private victim can always move). Merge records aliases through `add_alias`, so
+  it does the same, and only for a global survivor; names that already resolve
+  to the survivor (case variants, its plural) get no alias.
+- **Aliases follow a replacement.** `delete_ingredients` hands a global
+  replacement the victims' aliases, which covers Merge, Merge plural, Promote and
+  Delete-with-replacement in one place. Without one they cascade.
+- **Phase 3 was already done** by #34: every editor path goes through
+  `resolve_ingredient`.
+- **Phase 7 is deferred.** No input flow yet asks the owner to pick a canonical
+  for an unknown name (an unknown name simply becomes a private row), so there is
+  nothing to capture. Build it with whichever importer first prompts.
 
 ## Goal
 

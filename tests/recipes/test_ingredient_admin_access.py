@@ -57,6 +57,7 @@ def _read_routes(recipe_id: int) -> list[str]:
         MANAGE + "merge/",
         MANAGE + "merge-plural/",
         MANAGE + "promote/",
+        MANAGE + "alias/",
     ]
 
 

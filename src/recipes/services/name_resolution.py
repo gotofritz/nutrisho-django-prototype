@@ -1,7 +1,8 @@
 """Resolve names typed into the recipe editor to `Ingredient`, `Tag` and `Cuisine` rows.
 
 Names are unique ignoring case, so `Onion` typed on a phone that
-auto-capitalises is the stored `onion`, not a second row. Lookups are
+auto-capitalises is the stored `onion`, not a second row; and a plural is a
+display form, so `onions` is the stored `onion` too (#66). Lookups are
 case-insensitive and keep the stored spelling; a miss creates an ingredient or
 tag as typed, but never a cuisine, which only staff add.
 Ingredients and tags are scoped to the recipe's owner: the global list plus
@@ -13,8 +14,9 @@ raw name, which matched case-sensitively and then hit the unique index (#34).
 from django.contrib.auth.models import AbstractBaseUser
 from django.db.models import F, Q, QuerySet
 
-from recipes.models import Cuisine, Ingredient, Tag
+from recipes.models import Cuisine, Ingredient, IngredientAlias, Tag
 from recipes.models.cuisine import MAX_CUISINE_DEPTH, PATH_SEPARATOR
+from recipes.utils.pluralise import pluralise
 
 
 def _visible_ingredients(owner: AbstractBaseUser) -> QuerySet:
@@ -26,14 +28,52 @@ def find_ingredient(name: str, *, owner: AbstractBaseUser) -> Ingredient | None:
     """The ingredient `owner` sees as `name`, ignoring case and surrounding space.
 
     A global row wins over the owner's private row of the same name: once staff
-    have made a name global, that is the ingredient everyone means.
+    have made a name global, that is the ingredient everyone means. On a miss,
+    `name` may be the plural of a visible row (`onions` for `onion`, #66): a
+    plural is a display form, never a row of its own (plan 009). Failing that,
+    it may be an alias, or an alias's plural (`eggplants` for `aubergine`, plan
+    008), which resolves to the alias's canonical row.
     """
+    name = name.strip()
+    visible = _visible_ingredients(owner).order_by(F("owner").asc(nulls_first=True), "pk")
     return (
-        _visible_ingredients(owner)
-        .filter(ingredient_name__iexact=name.strip())
-        .order_by(F("owner").asc(nulls_first=True))
-        .first()
+        visible.filter(ingredient_name__iexact=name).first()
+        or _by_plural(visible, name=name)
+        or _by_alias(visible, name=name)
     )
+
+
+def _by_plural(visible: QuerySet, *, name: str) -> Ingredient | None:
+    """The first of `visible` whose plural, override or rule, is `name`.
+
+    The rule lives in Python, so the database only narrows the candidates: an
+    override that matches, or a rule-inflected row whose name shares `name`'s
+    stem. Every rule ending adds at most three characters, so the singular
+    always starts with `name` minus its last three.
+    """
+    lowered = name.lower()
+    candidates = visible.filter(
+        Q(plural_name__iexact=name)
+        | Q(plural_name="", ingredient_name__istartswith=name[: max(len(name) - 3, 1)])
+    )
+    return next((row for row in candidates if row.plural.lower() == lowered), None)
+
+
+def _by_alias(visible: QuerySet, *, name: str) -> Ingredient | None:
+    """The canonical row of the alias spelling `name`, or of its plural.
+
+    Narrowed by stem as `_by_plural` is. Only canonicals in `visible` count,
+    though an alias's canonical is always global.
+    """
+    lowered = name.lower()
+    candidates = IngredientAlias.objects.select_related("canonical").filter(
+        canonical__in=visible,
+        alias_name__istartswith=name[: max(len(name) - 3, 1)],
+    )
+    for alias in candidates.order_by("pk"):
+        if lowered in {str(alias.alias_name).lower(), pluralise(str(alias.alias_name)).lower()}:
+            return alias.canonical
+    return None
 
 
 def resolve_ingredient(name: str, *, owner: AbstractBaseUser) -> Ingredient:

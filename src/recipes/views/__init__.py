@@ -10,6 +10,7 @@ from .cuisine_admin import (
 from .home import home
 from .ingredient_admin import (
     ingredient_manage,
+    ingredient_manage_alias,
     ingredient_manage_cancel,
     ingredient_manage_delete,
     ingredient_manage_edit,
@@ -75,6 +76,7 @@ __all__ = [
     "cuisine_manage_save",
     "home",
     "ingredient_manage",
+    "ingredient_manage_alias",
     "ingredient_manage_cancel",
     "ingredient_manage_delete",
     "ingredient_manage_edit",

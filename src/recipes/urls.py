@@ -12,6 +12,7 @@ from .views import (
     cuisine_manage_save,
     home,
     ingredient_manage,
+    ingredient_manage_alias,
     ingredient_manage_cancel,
     ingredient_manage_delete,
     ingredient_manage_edit,
@@ -114,6 +115,9 @@ urlpatterns = [
         "ingredients/manage/promote/",
         _staff(ingredient_manage_promote),
         name="ingredient_manage_promote",
+    ),
+    path(
+        "ingredients/manage/alias/", _staff(ingredient_manage_alias), name="ingredient_manage_alias"
     ),
     path(
         "ingredients/manage/<int:ingredient_id>/save/",

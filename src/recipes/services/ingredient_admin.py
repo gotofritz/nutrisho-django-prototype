@@ -13,7 +13,7 @@ from django.db import transaction
 from django.db.models import Count, Q, QuerySet
 from django.db.models.functions import Lower
 
-from recipes.models import Ingredient, IngredientInRecipe, Recipe
+from recipes.models import Ingredient, IngredientAlias, IngredientInRecipe, Recipe
 
 
 class IngredientInUseError(Exception):
@@ -28,6 +28,10 @@ class IngredientScopeError(IngredientInUseError):
     `IngredientInUseError` so the views answer it the same way: 422, nothing
     written.
     """
+
+
+class AliasError(ValueError):
+    """Raised when an alias cannot be added; nothing is written (plan 008)."""
 
 
 def search_ingredients(
@@ -135,7 +139,9 @@ def delete_ingredients(*, ingredient_ids: Iterable[int], replacement_id: int | N
     survives untouched.
 
     The replacement is never itself deleted, even when it was part of the
-    selection. Raises `IngredientInUseError` when recipes still reference a
+    selection. A global replacement inherits the victims' aliases too (plan
+    008); otherwise they go with the victims, since an alias only ever points
+    at a global row. Raises `IngredientInUseError` when recipes still reference a
     victim and no usable replacement was given; nothing is written in that case.
 
     Returns the number of `Ingredient` rows deleted.
@@ -169,6 +175,11 @@ def delete_ingredients(*, ingredient_ids: Iterable[int], replacement_id: int | N
         list(references.select_for_update().values("pk"))
         IngredientInRecipe.objects.filter(ingredient__in=victim_ids).update(ingredient=replacement)
         IngredientInRecipe.objects.filter(substitute__in=victim_ids).update(substitute=replacement)
+    if (
+        replacement_id is not None
+        and Ingredient.objects.filter(pk=replacement_id, owner__isnull=True).exists()
+    ):
+        IngredientAlias.objects.filter(canonical__in=victim_ids).update(canonical=replacement_id)
     _, per_model = Ingredient.objects.filter(pk__in=victim_ids).delete()
     return per_model.get("recipes.Ingredient", 0)
 
@@ -182,6 +193,11 @@ def merge_ingredients(*, survivor_id: int, victim_ids: Iterable[int]) -> int:
     left exactly as it is — renaming it is a separate Edit action (Decision 6),
     and the survivor is never deleted even if it appears in `victim_ids`.
 
+    A global survivor keeps each victim's name as an alias (plan 008), so the
+    merged-away spelling still resolves to it on input; see `add_alias`, which
+    also folds in other users' private rows of that name. A name that already
+    resolves to the survivor, as a case variant or its plural, needs no alias.
+
     A recipe that already used the survivor *and* a victim keeps both rows: no
     constraint forbids listing one ingredient twice in a group, and
     de-duplicating is out of scope (Plan 007, 6.3).
@@ -191,10 +207,80 @@ def merge_ingredients(*, survivor_id: int, victim_ids: Iterable[int]) -> int:
 
     Returns the number of `Ingredient` rows merged away.
     """
-    if not Ingredient.objects.filter(pk=survivor_id).exists():
+    survivor = Ingredient.objects.filter(pk=survivor_id).first()
+    if survivor is None:
         msg = f"No Ingredient with id {survivor_id}"
         raise ObjectDoesNotExist(msg)
-    return delete_ingredients(ingredient_ids=victim_ids, replacement_id=survivor_id)
+    victim_ids = list(victim_ids)
+    victim_names = list(
+        Ingredient.objects.filter(pk__in=victim_ids)
+        .exclude(pk=survivor_id)
+        .values_list("ingredient_name", flat=True)
+    )
+    merged = delete_ingredients(ingredient_ids=victim_ids, replacement_id=survivor_id)
+    if survivor.owner_id is None:
+        for name in victim_names:
+            if not _resolves_to(survivor, name=name):
+                add_alias(canonical_id=survivor_id, alias_name=name)
+    return merged
+
+
+def _resolves_to(ingredient: Ingredient, *, name: str) -> bool:
+    """True if `name` is already `ingredient` without an alias: its name or plural."""
+    lowered = name.strip().lower()
+    return lowered in {cast(str, ingredient.ingredient_name).lower(), ingredient.plural.lower()}
+
+
+@transaction.atomic
+def add_alias(*, canonical_id: int, alias_name: str) -> int:
+    """Make `alias_name` resolve to the global `canonical_id` on input (plan 008).
+
+    If the name already exists as ingredient rows (anyone's, ignoring case),
+    defining the alias is a merge, not a bare insert: those rows are folded
+    into the canonical, recipes and aliases included, so no data is stranded.
+    Re-adding an alias the canonical already has is a no-op.
+
+    Raises `ObjectDoesNotExist` for an unknown canonical, and `AliasError` for a
+    blank name, a private canonical, a name that already resolves to the
+    canonical, or one that aliases another ingredient. Nothing is written then.
+
+    Returns the number of `Ingredient` rows merged in.
+    """
+    canonical = Ingredient.objects.filter(pk=canonical_id).first()
+    if canonical is None:
+        msg = f"No Ingredient with id {canonical_id}"
+        raise ObjectDoesNotExist(msg)
+    name = alias_name.strip()
+    if not name:
+        msg = "Type the name the alias should catch."
+        raise AliasError(msg)
+    if canonical.owner_id is not None:
+        msg = (
+            f"“{canonical}” is private to {canonical.owner} — promote it first: aliases are global."
+        )
+        raise AliasError(msg)
+    if _resolves_to(canonical, name=name):
+        msg = f"“{name}” already resolves to “{canonical}”, as its name or its plural."
+        raise AliasError(msg)
+    existing = IngredientAlias.objects.filter(alias_name__iexact=name).first()
+    if existing is not None:
+        if existing.canonical_id == canonical.pk:
+            return 0
+        msg = f"“{name}” is already an alias of “{existing.canonical}”."
+        raise AliasError(msg)
+    same_name = Ingredient.objects.filter(ingredient_name__iexact=name).exclude(pk=canonical.pk)
+    merged = delete_ingredients(
+        ingredient_ids=list(same_name.values_list("pk", flat=True)), replacement_id=canonical.pk
+    )
+    alias = IngredientAlias(alias_name=name, canonical=canonical)
+    alias.full_clean()
+    alias.save()
+    return merged
+
+
+def remove_alias(*, alias_id: int) -> None:
+    """Forget one alias; the name becomes unknown again. Missing ids are ignored."""
+    IngredientAlias.objects.filter(pk=alias_id).delete()
 
 
 @transaction.atomic
