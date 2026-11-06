@@ -544,6 +544,14 @@ while the app writes (WAL lets those writes carry on).
 
 `delete_recipe --id <N>` removes recipes by primary key.
 
+`seed_demo` (`make seed`, #71) is development-only sample data: four recipes
+for one user (`demo`, created as staff with a random password, unless
+`--username` names an existing account) that cover duplicates of every class,
+plurals, groups, substitutes, step titles, markup, tags and cuisines. It
+refuses to run under `nutrisho.settings.prod`, adds only missing recipes on a
+re-run, and `--reset` rebuilds them. The recipe list lives in the command
+itself; when a feature adds a case worth reviewing, add it there.
+
 ### Concurrent writes
 
 `settings/base.py` gives SQLite `transaction_mode: IMMEDIATE`, a 20 s busy
