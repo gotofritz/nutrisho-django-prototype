@@ -10,10 +10,18 @@ A personal recipe manager. Browse, edit, and organise your recipes in one place.
 
 ## What it does
 
-- Browse your recipe collection
-- Search it from the box at the top of every page
-- View ingredients, steps, and serving sizes
-- Navigate between recipes
+- Keeps each person's recipes in their own account, behind a login
+- Write, edit, duplicate and delete recipes; every field, step and ingredient
+  is edited in place on the recipe page
+- Group ingredients, give steps optional titles, and merge or split steps
+- Search from the box at the top of every page, and filter by cuisine or tag
+- Show a recipe for a different number of servings without changing it
+- Write each ingredient once and read **1 onion**, **2 onions** as the quantity
+  needs
+- Draw on shared ingredient, tag and cuisine lists plus your own private
+  ingredients and tags; staff keep the shared ones tidy with the ingredient
+  clean-up tool
+- Print a recipe, and back up the whole database with one command
 
 ---
 
@@ -90,7 +98,8 @@ with none would have nowhere to add to.
 Ingredients are shared by every recipe, so the same thing can end up stored more
 than once — `aubergine` and `eggplant`, `onion` and `onions`, `Onion` and `onion`.
 
-**Manage ingredients** on the recipe list opens the tool — or **Clean up
+The tool is for staff, since a change reaches every recipe that uses the
+ingredient. **Manage ingredients** on the recipe list opens it — or **Clean up
 duplicates** on the Ingredients page in Django admin, if that is where you
 started. Four columns, left to right: the actions, every ingredient, the recipes
 that use whichever ones you tick, and a read-only preview of whichever recipe you

@@ -343,6 +343,7 @@ docs/
   developer-guide.md   # this file
   plans/               # active work plans
   archive/             # completed plans
+  reviews/             # raw review and assessment reports
 tests/
   conftest.py
   recipes/
@@ -374,7 +375,7 @@ TDD: red → green → refactor. See [AGENTS.md](../AGENTS.md) for the full requ
 
 ## Branches and commits
 
-- `feature/<name>` / `fix/<name>`
-- Imperative present tense, subject ≤ 72 chars
-- Small atomic commits
-- Run `make qa` before opening a PR
+Branch names, commit messages and PR titles follow
+[AGENTS.md](../AGENTS.md#branches): branches are `[<issue>-]<type>-<slug>`
+(`24-feature-pluralise`), commits and PR titles are Conventional Commits.
+Run `make qa` before opening a PR.

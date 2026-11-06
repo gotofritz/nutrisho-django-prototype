@@ -6,8 +6,6 @@ build-backend = "hatchling.build"
 dev = [
   "commitizen>=4.16.2",
   "django-debug-toolbar>=8.0.0",
-  "faker>=37.0.0",
-  "polyfactory>=2.21.0",
   "pre-commit>=4.6.0",
   "pytest>=8.3.0",
   "pytest-cov>=6.0.0",
@@ -19,8 +17,8 @@ dev = [
 [project]
 name = "nutrisho"
 version = "0.3.0"
-description = "Quick and dirty django prototype"
-authors = [{ name = "Your Name", email = "you@example.com" }]
+description = "A multi-user recipe manager: server-rendered Django with HTMX"
+authors = [{ name = "fritz", email = "gotofritz@users.noreply.github.com" }]
 license = "0BSD"
 requires-python = ">=3.14,<3.15"
 dependencies = [
