@@ -4,7 +4,7 @@
 
 {% block content %}
 {# Log-out and session expiry land here; data-clear-history has app.js drop htmx's localStorage snapshots. #}
-<main class="login-page" data-clear-history>
+<div class="login-page" data-clear-history>
   <h1 tabindex="-1">Log in</h1>
   {# Not boosted: logging in rotates the CSRF token, which a boosted swap would leave stale in <body hx-headers>. #}
   <form method="post" class="login-form" hx-boost="false">
@@ -24,5 +24,5 @@
     {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
     <button type="submit" class="list-btn">Log in</button>
   </form>
-</main>
+</div>
 {% endblock %}

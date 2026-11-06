@@ -55,6 +55,8 @@
   --color-light-secondary: hsl(174, 100%, 40%);
   --color-dark-main: hsl(219, 100%, 25%);
   --color-dark-secondary: hsl(174, 100%, 40%);
+  /* A field's edge needs 3:1 against white (WCAG 1.4.11, #74); this is 4.5:1. */
+  --color-field-border: #767676;
 }
 
 body {
@@ -95,7 +97,7 @@ body * {
 textarea,
 input[type="text"] {
   background: inherit;
-  border: 1px dotted silver;
+  border: 1px solid var(--color-field-border);
   font-family: inherit;
   font-size: inherit;
   padding: 0;
@@ -126,6 +128,7 @@ textarea {
 .recipe-title {
   font-size: 44px;
   font-family: "Lobster", "Trebuchet MS";
+  font-weight: normal;
   line-height: 37px;
   margin: 0 0 18px 0;
   width: 100%;
@@ -330,7 +333,7 @@ ol.recipe-steps {
 }
 
 .login-field input {
-  border: 1px solid silver;
+  border: 1px solid var(--color-field-border);
   font: inherit;
   padding: 4px;
   width: 100%;
@@ -342,7 +345,7 @@ ol.recipe-steps {
   padding-left: 8px;
 }
 
-.sidebar nav {
+.recipe-tools {
   background: var(--color-light-main);
   display: flex;
   justify-content: end;
@@ -352,7 +355,7 @@ ol.recipe-steps {
   width: 100%;
 }
 
-.sidebar nav button {
+.recipe-tools button {
   height: 35px;
   width: 35px;
 }
@@ -400,7 +403,11 @@ ol.recipe-steps {
   background: #e00030;
 }
 
-.recipe-name {
+/* After the name (#74): DOM order is reading order. Placeholder until the redesign. */
+.recipe-actions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
   margin-left: 8px;
 }
 
@@ -427,7 +434,7 @@ ol.recipe-steps {
 
 .move-btns button {
   background: none;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-field-border);
   border-radius: 2px;
   cursor: pointer;
   font-size: 11px;
@@ -536,7 +543,7 @@ ol.recipe-steps {
 .site-search input,
 .recipe-search input,
 .recipe-search select {
-  border: 1px solid silver;
+  border: 1px solid var(--color-field-border);
   font: inherit;
   padding: 4px;
 }

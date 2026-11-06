@@ -1,4 +1,4 @@
-<div class="navbar">
+<nav class="navbar" aria-label="Recipes">
   <div class="nav-button nav-home">
     <a href="{{ nav.list_url }}">{% include "../icons/list.svg" %}</a>
   </div>
@@ -13,4 +13,4 @@
     {% csrf_token %}
     <button type="submit" aria-label="Log out" title="Log out">{% include "../icons/logout.svg" %}</button>
   </form>
-</div>
+</nav>

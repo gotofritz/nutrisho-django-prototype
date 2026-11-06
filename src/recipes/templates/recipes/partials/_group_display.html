@@ -2,12 +2,12 @@
   id="group-{{ group.id }}"
   class="ingredient-group editable-row"
 >
-  <h4
+  <h3
     class="editable group-name"
     hx-get="{% url 'recipes:group_edit' recipe.id group.id %}"
     hx-target="closest div.ingredient-group"
     hx-swap="outerHTML"
-  >{{ group.group_name|default:"—" }}</h4>
+  >{{ group.group_name|default:"—" }}</h3>
   <span class="move-btns">
     <button
       id="group-{{ group.id }}-up"

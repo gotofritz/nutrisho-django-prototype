@@ -6,7 +6,7 @@ Reset returns to the editable page.
 {% endcomment %}
 {% for group in recipe.ingredients_group.all %}
 <div class="group-block">
-  <div class="ingredient-group"><h4 class="group-name">{{ group.group_name|default:"—" }}</h4></div>
+  <div class="ingredient-group"><h3 class="group-name">{{ group.group_name|default:"—" }}</h3></div>
   <div class="ingredients-list">
     {% for iir in group.ingredient.all %}
     {% with quantity=iir|scaled_quantity:scale %}

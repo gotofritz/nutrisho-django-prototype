@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="no-js" lang="">
+<html class="no-js" lang="en">
   <head>
     <meta charset="utf-8" />
     {% load static %}
@@ -38,6 +38,7 @@
   <body hx-boost="true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% include "./partials/_page_regions.html" %}
     {% block site_search %}{% if user.is_authenticated %}{% include "./partials/_site_search.html" %}{% endif %}{% endblock %}
-    {% block content %}{% endblock %}
+    {# One <main> per page (#74); the recipe page brings its own, since a boosted visit swaps the whole body. #}
+    {% block main %}<main>{% block content %}{% endblock %}</main>{% endblock %}
   </body>
 </html>
