@@ -108,7 +108,8 @@ Tick one or more ingredients, then:
   replacement, and every mention moves across, including "or use this instead"
   substitutes.
 - **Merge** — choose the name to keep; the others fold into it and their recipes
-  follow. Renaming the survivor afterwards is a separate Edit.
+  follow, and their names become its aliases (see **Alias**), so typing one still
+  finds it. Renaming the survivor afterwards is a separate Edit.
 - **Merge plural** — for exactly two rows that are the same ingredient written
   singular and plural, `apple` and `apples`. Say which one is the singular (the
   likely one is already picked) and it survives, the other one's recipes follow,
@@ -116,6 +117,11 @@ Tick one or more ingredients, then:
   that leaves column 2 is the one the recipe page writes above a quantity of 1.
   Plain Merge would drop it and leave the plural to be guessed from the name,
   which is wrong for anything the rule does not cover.
+- **Alias** — for exactly one ingredient: list, add or remove the other names it
+  goes by, `eggplant` for `aubergine`. Typing an alias, or its plural, in a recipe
+  stores the ingredient itself, so recipes always read `aubergine`. Add an alias
+  that already exists as an ingredient and that ingredient is merged in, recipes
+  and all. Aliases belong to global ingredients: promote a private one first.
 
 Typing in the search box filters the list; the counts above each column tell you
 how many ingredients matched and how many you have selected.
@@ -166,6 +172,9 @@ same field in for you, from the row it merges away.
 
 Nothing about this is stored on the recipe: the database always holds the
 singular.
+
+Typing a plural in a recipe finds the singular: with `onion` stored, `2 onions`
+links `onion` rather than creating an `onions` ingredient.
 
 ---
 

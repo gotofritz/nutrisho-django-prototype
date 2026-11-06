@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models import (
     Cuisine,
     Ingredient,
+    IngredientAlias,
     IngredientGroup,
     IngredientInRecipe,
     Recipe,
@@ -52,6 +53,15 @@ class StepAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ("ingredient_name", "owner")
     list_filter = (("owner", admin.EmptyFieldListFilter),)
+
+
+@admin.register(IngredientAlias)
+class IngredientAliasAdmin(admin.ModelAdmin):
+    """Input-only names for a global ingredient (plan 008); the clean-up tool's Alias action."""
+
+    list_display = ("alias_name", "canonical")
+    list_select_related = ("canonical",)
+    search_fields = ("alias_name", "canonical__ingredient_name")
 
 
 @admin.register(Source)

@@ -129,3 +129,65 @@ def test_migration_merge_breaks_ties_on_oldest_row(without_cuisine_ci_constraint
     _merge()()
     assert list(Cuisine.objects.values_list("pk", flat=True)) == [first.pk]
     assert set(Recipe.objects.values_list("cuisine_id", flat=True)) == {first.pk}
+
+
+@pytest.mark.django_db
+def test_resolve_ingredient_maps_a_rule_plural_to_its_singular(make_ingredient, user):
+    """`2 onions` is the stored `onion`, not a new `onions` row (#66)."""
+    onion = make_ingredient("onion")
+    assert resolve_ingredient("Onions", owner=user) == onion
+    assert Ingredient.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_resolve_ingredient_maps_an_override_plural_to_its_singular(make_ingredient, user):
+    """A `plural_name` override is matched too, ignoring case."""
+    chili = make_ingredient("chili", plural_name="chilis")
+    assert resolve_ingredient("CHILIS", owner=user) == chili
+    assert Ingredient.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_resolve_ingredient_inflects_the_last_word_of_a_plural(make_ingredient, user):
+    """`spring onions` is `spring onion`, as the plural rule spells it."""
+    spring_onion = make_ingredient("spring onion")
+    assert resolve_ingredient("spring onions", owner=user) == spring_onion
+
+
+@pytest.mark.django_db
+def test_resolve_ingredient_prefers_an_exact_name_over_a_plural(make_ingredient, user):
+    """A stored `onions` row (legacy data) still wins over `onion`'s plural."""
+    make_ingredient("onion")
+    onions = make_ingredient("onions")
+    assert resolve_ingredient("onions", owner=user) == onions
+
+
+@pytest.mark.django_db
+def test_resolve_ingredient_prefers_a_global_plural_match(make_ingredient, user):
+    """The global row wins a plural match, as it wins a name match (plan 011)."""
+    onion = make_ingredient("onion")
+    Ingredient.objects.create(ingredient_name="Onion", owner=user)
+    assert resolve_ingredient("onions", owner=user) == onion
+
+
+@pytest.mark.django_db
+def test_resolve_ingredient_maps_a_plural_onto_the_users_private_row(user):
+    """A plural of the user's own private row resolves to it."""
+    shallot = Ingredient.objects.create(ingredient_name="banana shallot", owner=user)
+    assert resolve_ingredient("banana shallots", owner=user) == shallot
+
+
+@pytest.mark.django_db
+def test_resolve_ingredient_ignores_plurals_of_other_users_rows(user, other_user):
+    """Another user's private row is invisible, plural or not."""
+    theirs = Ingredient.objects.create(ingredient_name="banana shallot", owner=other_user)
+    mine = resolve_ingredient("banana shallots", owner=user)
+    assert mine != theirs
+    assert mine.owner == user
+
+
+@pytest.mark.django_db
+def test_find_ingredient_matches_plurals(make_ingredient, user):
+    """`find_ingredient`, the editor's no-create lookup, knows plurals too."""
+    tomato = make_ingredient("tomato")
+    assert find_ingredient("tomatoes", owner=user) == tomato

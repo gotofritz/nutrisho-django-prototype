@@ -9,7 +9,8 @@
     {% csrf_token %}
     <p class="merge-intro">
       Which name should survive? The others are merged into it and their recipes follow, as
-      ingredients and as substitutes. Renaming the survivor is a separate Edit.
+      ingredients and as substitutes. A global survivor keeps their names as aliases, so typing
+      one still finds it. Renaming the survivor is a separate Edit.
     </p>
     <ul class="merge-candidates">
       {% for candidate in candidates %}

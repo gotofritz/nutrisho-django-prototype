@@ -256,8 +256,19 @@ nothing creates a cuisine (see **Shared vocabularies**). The names carry a
 owner) and see only the global list plus that owner's private rows, a global row
 winning over a private one of the same name; a miss creates a row **private** to
 the owner (plan 011). `ingredient_names_for(owner)` feeds the editor's datalist
-from the same two sources, so no user ever sees another's private names. Plan
-008's aliases extend `resolve_ingredient`.
+from the same two sources, so no user ever sees another's private names.
+
+**Resolve on input, store and display canonical (#66, plan 008).** After the
+name misses, `find_ingredient` tries, in order: a visible row whose **plural**
+(rule or `plural_name` override, ignoring case) is the typed name, so `2 onions`
+links the stored `onion`; then an **alias** in `IngredientAlias`, or an alias's
+rule plural, which resolves to the alias's canonical row (`eggplant`/`eggplants`
+→ `aubergine`). Global rows win over private ones at every step. Aliases are
+input-only: no recipe references one, so storage, display and export always
+show the canonical name. They are global and staff-defined (plan 011): an
+alias's canonical is always a global row, and a name is either an ingredient or
+an alias, never both — `IngredientAlias.clean` and `IngredientForm` refuse a
+clash, and the services below fold any same-named rows in before adding one.
 
 **Selection lives in the request.** Checkboxes post `ingredient_ids`; every
 re-rendered partial echoes them back. There is no client-side store: a change or a
@@ -350,10 +361,22 @@ and more deliberate statement. `suggest_singular` preselects whichever half
 pluralises into the other, falling back to the first. Capped at **exactly two**
 selected: with two plural rows there is no way to tell which spelling wins.
 `_SELECTION_BOUNDS` carries each action's `(minimum, maximum)`; every other
-action is still minimum-only. **Alias** — variants differing by more than case (`eggplant` →
-`aubergine`) — is future work resolving on *input*: an `IngredientAlias` lookup
-table applied at write time, so storage and display stay canonical. See
-`docs/plans/008-ingredient-aliases.md`.
+action is still minimum-only.
+
+**Aliases** (`eggplant` → `aubergine`) cover variants differing by more than case
+or number. They are created two ways. (1) **Explicitly**, by the **Alias**
+action: exactly one ingredient selected, a workspace panel listing its aliases
+with Remove buttons and an add field (`add_alias` / `remove_alias`). A private
+ingredient takes no aliases until promoted. (2) **By merge**: `merge_ingredients`
+into a global survivor records each victim's name as an alias, skipping names
+that already resolve to the survivor (case variants, its plural). Either way,
+`add_alias` treats a name that already exists as ingredient rows — anyone's —
+as a merge: those rows fold into the canonical through `delete_ingredients`, so
+no recipe is stranded. `delete_ingredients` hands a global replacement the
+victims' aliases (so Merge, Merge plural, Promote and Delete-with-replacement
+never orphan one); without one, aliases cascade with their ingredient. Capturing
+an alias when a user picks a canonical for an unknown name during input (plan
+008 phase 7) waits for an input flow that asks.
 
 **Column-2 filters.** The views carry them as one typed mapping (`_Filters`:
 `query`, `unused_only`, `plurals_only`, `private_only`), forwarded as `**filters` into the
@@ -525,7 +548,7 @@ is written.
 ### Key Models
 
 - `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`); `plain_name` / `plain_description` are the tag-free name and description `save()` keeps current, for search and the per-owner name rule
-- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient.owner` is NULL for the global list or the user a row is private to, and `ingredient_name` is unique case-insensitively among global rows and within each owner's private rows; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
+- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient.owner` is NULL for the global list or the user a row is private to, and `ingredient_name` is unique case-insensitively among global rows and within each owner's private rows; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientAlias` maps a case-insensitively unique `alias_name` to a global `canonical` ingredient (`CASCADE`), input-only; `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
 - `Step` — ordered recipe steps; `step_title` is an optional heading, stored as `""` when absent and rendered underlined in front of the step text, followed by a colon
 - Long prose (`Recipe.short_description`, `Step.step_text`, `Step.extra_info`) is a `TextField`, unlimited in the database; forms cap it at `PROSE_MAX_LENGTH` (4000), which step merge obeys too. `Ingredient.ingredient_name` and `.plural_name` share `INGREDIENT_NAME_MAX_LENGTH` (128)
 - `Cuisine`, `Source`, `Tag` — lookup/classification models; `Cuisine` is a node of the cuisine tree (`parent`, at most three levels), its name unique case-insensitively among its siblings; `Tag.owner` is NULL for a global tag or the user it is private to

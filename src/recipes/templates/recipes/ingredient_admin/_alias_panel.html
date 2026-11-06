@@ -1,0 +1,59 @@
+<div id="columns" class="columns workspace min-w-0 grow h-full min-h-0 overflow-y-auto overflow-x-hidden break-words">
+  {% include "./_workspace_selection.html" %}
+  <p class="alias-intro">
+    Aliases are other names for <span class="ingredient-name">{{ ingredient.ingredient_name }}</span>.
+    Typing or importing one, or its plural, stores “{{ ingredient.ingredient_name }}” instead. An alias
+    that already exists as an ingredient is merged into this one, recipes and all, for every user.
+  </p>
+  {% if ingredient.owner_id %}
+  <p class="form-error" role="alert">
+    “{{ ingredient.ingredient_name }}” is private to {{ ingredient.owner }} — promote it first: aliases are global.
+  </p>
+  {% else %}
+  <ul class="alias-list">
+    {% for alias in aliases %}
+    <li class="alias-row flex items-center gap-2">
+      <span class="alias-name">{{ alias.alias_name }}</span>
+      <form
+        hx-post="{% url 'recipes:ingredient_manage_alias' %}"
+        hx-target="#columns"
+        hx-swap="outerHTML"
+        hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="remove_alias_id" value="{{ alias.pk }}">
+        <button
+          type="submit"
+          class="alias-remove rounded border border-gray-400 px-2 text-sm"
+          aria-label="Remove alias {{ alias.alias_name }}"
+        >Remove</button>
+      </form>
+    </li>
+    {% empty %}
+    <li class="alias-none text-gray-600">No aliases yet.</li>
+    {% endfor %}
+  </ul>
+  <form
+    class="alias-add"
+    hx-post="{% url 'recipes:ingredient_manage_alias' %}"
+    hx-target="#columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"
+  >
+    {% csrf_token %}
+    <label for="alias-name">New alias</label>
+    <input
+      id="alias-name"
+      name="alias_name"
+      value="{{ alias_name }}"
+      maxlength="128"
+      required
+      autofocus
+      class="rounded border border-gray-400 px-2"
+    >
+    <button type="submit" class="panel-alias rounded border border-gray-400 px-3 py-1">Add alias</button>
+  </form>
+  {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+  {% if notice %}<p class="alias-notice text-sm text-gray-600" data-announce>{{ notice }}</p>{% endif %}
+  {% endif %}
+</div>

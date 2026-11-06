@@ -9,21 +9,26 @@ re-rendered partial, so there is no client-side store.
 from typing import TypedDict
 
 from django.contrib.auth.models import AbstractBaseUser
+from django.core.exceptions import ValidationError
+from django.db.models.functions import Lower
 from django.http import HttpResponse, QueryDict
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from recipes.forms.ingredient_admin_forms import IngredientForm
-from recipes.models import Ingredient
+from recipes.models import Ingredient, IngredientAlias
 from recipes.services.ingredient_admin import (
+    AliasError,
     IngredientInUseError,
+    add_alias,
     delete_ingredients,
     merge_ingredients,
     merge_plural_ingredients,
     promote_ingredients,
     recipes_for_ingredients,
     recipes_referencing_ingredients,
+    remove_alias,
     search_ingredients,
     selected_ingredients,
     suggest_singular,
@@ -43,6 +48,7 @@ _SELECTION_BOUNDS: dict[str, tuple[int, int | None]] = {
     "merge": (2, None),
     "merge_plural": (2, 2),
     "promote": (1, None),
+    "alias": (1, 1),
 }
 
 
@@ -623,4 +629,71 @@ def ingredient_manage_promote(request: AuthedRequest) -> HttpResponse:
         _promote_context(selected_ids=selected_ids),
         action="promote",
         selected_ids=selected_ids,
+    )
+
+
+def _alias_context(*, ingredient: Ingredient) -> dict[str, object]:
+    """Context for the alias panel: the ingredient and its aliases, A-Z."""
+    return {
+        "ingredient": ingredient,
+        "alias_name": "",
+        "aliases": list(
+            IngredientAlias.objects.filter(canonical=ingredient).order_by(
+                Lower("alias_name"), "alias_name"
+            )
+        ),
+    }
+
+
+def _alias_notice(*, name: str, merged: int) -> str:
+    """What the panel says after adding `name`, convergence included."""
+    if not merged:
+        return f"Added “{name}”."
+    noun = "ingredient" if merged == 1 else "ingredients"
+    return f"Added “{name}” and merged {merged} existing {noun} of that name into it."
+
+
+@require_http_methods(["GET", "POST"])
+def ingredient_manage_alias(request: AuthedRequest) -> HttpResponse:
+    """GET lists the selected ingredient's aliases; POST adds or removes one.
+
+    The explicit mapping path of plan 008: declare `eggplant → aubergine`
+    before anything is scraped. A name that already exists as ingredient rows
+    is merged into the selected one rather than shadowed (`add_alias`). The
+    panel stays open after each change, so several aliases can go in at once;
+    Done closes it.
+    """
+    payload = _payload(request)
+    selected_ids = _selected_ids(payload)
+    blocked = _guard(action="alias", selected_ids=selected_ids)
+    if blocked is not None:
+        return blocked
+    ingredient = get_object_or_404(Ingredient, pk=selected_ids[0])
+    if request.method == "GET":
+        return _workspace_response(
+            request,
+            "_alias_panel.html",
+            _alias_context(ingredient=ingredient),
+            action="alias",
+            selected_ids=selected_ids,
+        )
+    extra: dict[str, object] = {"selected_ids": selected_ids}
+    status = 200
+    remove_id = _optional_id(payload.get("remove_alias_id"))
+    if remove_id is not None:
+        if IngredientAlias.objects.filter(pk=remove_id, canonical=ingredient).exists():
+            remove_alias(alias_id=remove_id)
+    else:
+        name = payload.get("alias_name", "").strip()
+        try:
+            merged = add_alias(canonical_id=ingredient.pk, alias_name=name)
+        except (AliasError, ValidationError) as error:
+            message = error.messages[0] if isinstance(error, ValidationError) else str(error)
+            extra |= {"error": message, "alias_name": name}
+            status = 422
+        else:
+            extra["notice"] = _alias_notice(name=name, merged=merged)
+    return HttpResponse(
+        _fragment(request, "_alias_panel.html", _alias_context(ingredient=ingredient) | extra),
+        status=status,
     )

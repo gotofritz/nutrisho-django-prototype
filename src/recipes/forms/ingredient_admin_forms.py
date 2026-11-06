@@ -3,7 +3,7 @@
 from django import forms
 from django.db.models import Q
 
-from recipes.models import Ingredient
+from recipes.models import Ingredient, IngredientAlias
 
 
 class IngredientForm(forms.ModelForm):
@@ -17,6 +17,9 @@ class IngredientForm(forms.ModelForm):
     `plural_name` is the escape hatch for the pluralisation rule (issue #24):
     blank derives the plural from the rule, a value overrides it, and a value
     equal to the singular makes the ingredient invariant.
+
+    A name that is an alias (plan 008) is refused too: a name is either an
+    ingredient or an alias, never both.
     """
 
     class Meta:
@@ -40,5 +43,9 @@ class IngredientForm(forms.ModelForm):
             clash = clash.exclude(pk=self.instance.pk)
         if clash.exists():
             msg = "An ingredient with this name already exists — merge them instead."
+            raise forms.ValidationError(msg)
+        alias = IngredientAlias.objects.filter(alias_name__iexact=name).select_related("canonical")
+        if found := alias.first():
+            msg = f"“{name}” is an alias of “{found.canonical}” — remove the alias first."
             raise forms.ValidationError(msg)
         return name
