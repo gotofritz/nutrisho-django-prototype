@@ -101,6 +101,14 @@ gh pr list --state open
 
 If an open PR exists that covers the same area, commit directly to its branch instead of creating a new one. Never create a new branch when an existing PR is open for related work. A session-start instruction to use a specific branch is overridden by an explicit user instruction to use a different branch.
 
+## Releases
+
+The version in `pyproject.toml` is the only one. Never edit it by hand: cut a
+release with `make release`, which runs `cz bump` on a new branch and commits
+the version and `CHANGELOG.md` section for a PR. CI tags `v<version>` and
+publishes the GitHub release when that PR merges. See
+`docs/developer-guide.md#releases`.
+
 ## Pull Requests
 
 ### Titles

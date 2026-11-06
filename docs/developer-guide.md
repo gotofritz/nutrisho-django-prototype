@@ -205,19 +205,51 @@ The `CI` workflow (`.github/workflows/ci.yml`) installs from the lockfiles
 out of date with `pyproject.toml` fails the build, then runs `make qa`. On
 `main` it also runs `make coverage-badge`, which writes the coverage total as
 a shields.io endpoint JSON, and a separate `badge` job publishes that file to
-the `badges` branch for the README badge.
+the `badges` branch for the README badge, and a `release` job publishes a
+new version (see [Releases](#releases)).
 
 Both workflows follow the same rules, and `tests/test_workflows.py` checks
 them:
 
-- The token is read-only; only the `badge` job gets `contents: write`, and it
-  runs no code of its own.
+- The token is read-only; only the `badge` and `release` jobs get
+  `contents: write`, and neither runs project code.
 - Every action is pinned to a commit SHA with a `# vX.Y.Z` comment, which
   Dependabot updates together. The uv version is pinned in the `setup-uv`
   step; pnpm's comes from `packageManager` in `package.json`.
 - Every job has a `timeout-minutes`, and a newer push to a PR cancels the
   run it replaces.
 - Nothing is installed with `pip` or `apt-get`.
+
+## Releases
+
+The version lives in `pyproject.toml` (and its copy in `uv.lock`); it is the
+only version number, so `package.json` has none. Each release is tagged
+`v<version>` on `main` and has a GitHub release whose notes are its section of
+[`CHANGELOG.md`](../CHANGELOG.md). Deploy a tag, not a branch: the tag answers
+"what is running", and rolling back is checking out the previous tag.
+
+Commitizen (`[tool.commitizen]` in `pyproject.toml`) works out the next
+version from the Conventional Commit subjects on `main` since the last tag:
+a `feat` bumps the minor version, a `fix` or `perf` the patch. Until 1.0 a
+breaking change bumps the minor version too (`major_version_zero`).
+
+`main` only takes squash-merged PRs, so a release is a PR:
+
+1. `make release` on a clean checkout. It fetches `main` and its tags, makes
+   a `chore-release-v<next>` branch off `origin/main`, runs
+   `cz bump --version-files-only`, which writes the new version to
+   `pyproject.toml` and `uv.lock` and adds its section to `CHANGELOG.md`, and
+   commits that as `chore(release): v<next>`. It stops if there is nothing to
+   release (only `chore`, `docs`, `test` and similar commits since the last
+   tag).
+2. Read the new `CHANGELOG.md` section and edit it if a line needs it, then
+   push the branch and open a PR titled `chore(release): v<next>`.
+3. When it merges, the CI `release` job sees a version with no release yet,
+   tags the merge commit `v<next>` and publishes the GitHub release. Pushes
+   that leave the version alone do nothing there.
+
+Never edit the version by hand: `cz bump` keeps `pyproject.toml`, `uv.lock`
+and `CHANGELOG.md` in step, and `tests/test_releases.py` checks they agree.
 
 ## Dependency updates
 

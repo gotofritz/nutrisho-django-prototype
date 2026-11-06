@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: ["**"]
 
-# Read-only token by default; only the badge job widens it.
+# Read-only token by default; only the badge and release jobs widen it.
 permissions:
   contents: read
 
@@ -85,3 +85,37 @@ jobs:
           keep_files: true
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
+
+  # Runs no project code: when a push to main carries a version that has no
+  # release yet, it tags that commit v<version> and publishes the version's
+  # CHANGELOG.md section as the release notes. `make release` starts the PR.
+  release:
+    needs: qa
+    if: needs.qa.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Publish a new version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(sed -n '/^\[project\]/,/^\[/ s/^version = "\(.*\)"$/\1/p' pyproject.toml)
+          tag="v$version"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "$tag is already released"
+            exit 0
+          fi
+          awk -v tag="$tag" '$1 == "##" && $2 == tag { found = 1; next } found && /^## / { exit } found' \
+            CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          if [ ! -s "$RUNNER_TEMP/notes.md" ]; then
+            echo "CHANGELOG.md has no section for $tag" >&2
+            exit 1
+          fi
+          gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "$tag" --notes-file "$RUNNER_TEMP/notes.md"

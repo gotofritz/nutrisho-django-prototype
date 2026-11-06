@@ -20,7 +20,7 @@ dev = [
 name = "nutrisho"
 version = "0.2.0"
 description = "Quick and dirty django prototype"
-authors = [{name = "Your Name", email = "you@example.com"}]
+authors = [{ name = "Your Name", email = "you@example.com" }]
 license = "0BSD"
 requires-python = ">=3.14,<3.15"
 dependencies = [
@@ -29,6 +29,16 @@ dependencies = [
   "django-htmx>=1.27.0",
   "sentry-sdk>=2.0"
 ]
+
+# Releases: `make release` runs `cz bump`; see docs/developer-guide.md.
+[tool.commitizen]
+changelog_incremental = true
+major_version_zero = true
+name = "cz_conventional_commits"
+tag_format = "v$version"
+update_changelog_on_bump = true
+version_provider = "uv"
+version_scheme = "semver2"
 
 [tool.coverage.run]
 branch = true
