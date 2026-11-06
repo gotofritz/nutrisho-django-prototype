@@ -1,12 +1,13 @@
 {% load static recipe_filters %}
 {% if request.htmx %}<title hx-swap-oob="true">{{ recipe.recipe_name|striptags }}</title>{% include "./_page_regions.html" %}{% include "./_site_search.html" %}{% endif %}
 {% include "../navbar.html" with template_name="recipes:recipe" %}
-<div class="recipe-contents">
+<main class="recipe-contents">
   <div class="recipe-directions">
     <div id="metadata-panel"></div>
-    <div class="recipe-title">
+    <h1 class="recipe-title" tabindex="-1">
       {% include "./_field_display.html" with field_name="recipe_name" value=recipe.recipe_name %}
-    </div>
+    </h1>
+    <h2 class="visually-hidden">Method</h2>
     {% include "./_steps_block.html" %}
     <button
       hx-post="{% url 'recipes:step_add' recipe.id %}"
@@ -17,19 +18,20 @@
   </div>
 
   <div class="sidebar">
-    <nav class="no-print">
+    <div class="recipe-tools no-print" role="group" aria-label="Recipe tools">
       {% include "../nav_recipe.html" %}
-    </nav>
+    </div>
     <div id="scale-panel"></div>
     <div id="delete-panel"></div>
+    <h2 class="visually-hidden">Ingredients</h2>
     {% if scale %}
-    <h3 class="serves">Serves {{ target_servings }}</h3>
+    <p class="serves">Serves {{ target_servings }}</p>
     <p class="scaled-note">scaled from {{ recipe.servings }}<span class="no-print">, not saved &middot; <a href="{{ recipe.get_absolute_url }}">Reset</a></span></p>
     <div class="recipe-ingredients">
       {% include "./_scaled_ingredients.html" %}
     </div>
     {% else %}
-    <h3 class="serves">Serves {% include "./_field_display.html" with field_name="servings" value=recipe.servings %}</h3>
+    <p class="serves">Serves {% include "./_field_display.html" with field_name="servings" value=recipe.servings %}</p>
     <div class="recipe-ingredients">
       <div id="groups-list">
         {% include "./_groups_list.html" %}
@@ -47,4 +49,4 @@
       {% include "./_field_display.html" with field_name="short_description" value=recipe.short_description|default:"" %}
     </div>
   </div>
-</div>
+</main>

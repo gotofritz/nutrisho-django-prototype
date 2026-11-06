@@ -13,23 +13,31 @@ these results.
   {% if rows %}
   <ul id="recipe-list">
     {% for recipe, matched in rows %}
+    {% comment %}
+    The name comes first and every action names its recipe (#74), so a screen
+    reader's list of links reads "Delete Leek Soup", not a column of "Delete".
+    {% endcomment %}
+    {% with title=recipe.recipe_name|striptags %}
     <li id="recipe-{{ recipe.id }}" class="recipe-list-item">
-      <a href="{% url 'recipes:metadata_edit' recipe.id %}" class="list-btn">Edit metadata</a>
-      <button
-        hx-post="{% url 'recipes:delete' recipe.id %}"
-        hx-target="#recipe-{{ recipe.id }}"
-        hx-swap="outerHTML"
-        hx-confirm="Delete '{{ recipe.recipe_name|striptags }}'?"
-        class="list-btn btn-delete"
-      >Delete</button>
-      <a href="{{ recipe.get_absolute_url }}{{ search_qs }}" class="list-btn">View</a>
-      <form method="post" action="{% url 'recipes:duplicate' recipe.id %}" class="inline">
-        {% csrf_token %}
-        <button type="submit" class="list-btn">Duplicate</button>
-      </form>
       <a href="{{ recipe.get_absolute_url }}{{ search_qs }}" class="recipe-name">{{ recipe.recipe_name|safe_title_html }}</a>
       {% if matched %}<span class="recipe-matches">with {{ matched|join:", " }}</span>{% endif %}
+      <span class="recipe-actions">
+        <a href="{% url 'recipes:metadata_edit' recipe.id %}" class="list-btn">Edit metadata<span class="visually-hidden"> of {{ title }}</span></a>
+        <button
+          hx-post="{% url 'recipes:delete' recipe.id %}"
+          hx-target="#recipe-{{ recipe.id }}"
+          hx-swap="outerHTML"
+          hx-confirm="Delete '{{ title }}'?"
+          class="list-btn btn-delete"
+        >Delete<span class="visually-hidden"> {{ title }}</span></button>
+        <a href="{{ recipe.get_absolute_url }}{{ search_qs }}" class="list-btn">View<span class="visually-hidden"> {{ title }}</span></a>
+        <form method="post" action="{% url 'recipes:duplicate' recipe.id %}" class="inline">
+          {% csrf_token %}
+          <button type="submit" class="list-btn">Duplicate<span class="visually-hidden"> {{ title }}</span></button>
+        </form>
+      </span>
     </li>
+    {% endwith %}
     {% endfor %}
   </ul>
   {% if page_obj.has_other_pages %}
