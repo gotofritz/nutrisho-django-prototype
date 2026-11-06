@@ -59,3 +59,6 @@ DJANGO_SETTINGS_MODULE = "nutrisho.settings.test"
 addopts = ["--fail-on-template-vars"]
 pythonpath = ["src"]
 testpaths = ["tests"]
+
+[tool.uv]
+exclude-newer = "7 days"

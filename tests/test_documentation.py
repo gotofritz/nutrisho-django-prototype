@@ -47,3 +47,21 @@ def test_package_metadata_has_no_placeholders():
     for author in project["authors"]:
         assert author["name"] != "Your Name"
         assert not author.get("email", "").endswith("@example.com")
+
+
+def test_first_time_setup_installs_the_git_hooks():
+    """Setup installs pre-commit, so commit messages are checked before they reach CI (#68)."""
+    # Not `section()`: the setup code block holds a `# ...` shell comment.
+    setup = DEVELOPER_GUIDE.split("## First-time setup\n")[1].split("\n## ")[0]
+
+    assert "uv run pre-commit install" in setup
+    assert "pnpm install\n" not in setup
+
+
+def test_quality_checks_document_both_test_targets():
+    """The guide says which test target is the fast loop and which is the coverage gate."""
+    checks = section(DEVELOPER_GUIDE, "## Quality checks")
+
+    assert "make test " in checks
+    assert "make test-cov" in checks
+    assert "CSS build" not in checks

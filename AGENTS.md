@@ -129,6 +129,10 @@ Required flow:
 4. Refactor with tests green
 5. Run `make qa` before PR
 
+`make test ARGS="<path or -k expr>"` is the fast loop: plain pytest, no
+coverage. `make qa` runs the whole suite through `make test-cov`, which fails
+under 95% coverage, so never use it on a subset.
+
 ## Decision Order
 
 Prioritize:
@@ -198,8 +202,9 @@ Conventional Commits, same as commit subjects:
 Examples: `feat: pluralise ingredient names at display time (#24)`,
 `fix(export): keep the canonical singular in YAML`, `docs: add plan 009 (#24)`.
 
-PRs are squash-merged, so the title becomes the subject line on `main`. `cz check`
-only sees commit messages, never the title — getting it right is manual.
+PRs are squash-merged, so the title becomes the subject line on `main`. The
+`PR title` workflow runs `cz check` on it, which checks the format only: the
+lower case and the issue number are still up to you.
 
 ### Content
 
