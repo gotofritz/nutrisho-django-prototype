@@ -4,7 +4,9 @@
     hx-post="{% url 'recipes:group_save' recipe.id group.id %}"
     {% else %}
     hx-post="{% url 'recipes:group_create' recipe.id %}"
-    hx-on::config-request="event.detail.parameters.position = Array.prototype.indexOf.call(this.closest('#groups-list').querySelectorAll(':scope > div:not(.reassign-panel)'), this.closest('div'))"
+    data-position-in="#groups-list"
+    data-position-of=":scope > div:not(.reassign-panel)"
+    data-position-row="div"
     {% endif %}
     hx-swap="outerHTML"
     hx-target="closest div"
@@ -31,7 +33,7 @@
     {% endwith %}
     {% endif %}
     {% else %}
-    <button type="button" onclick="_cancelDraft(this, 'div')">Cancel</button>
+    <button type="button" data-cancel-draft="div">Cancel</button>
     {% endif %}
   </form>
 </div>

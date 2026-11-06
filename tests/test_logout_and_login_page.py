@@ -138,9 +138,11 @@ def test_login_page_has_no_logout_form(login_html):
     assert LOGOUT_URL not in login_html
 
 
-def test_login_page_clears_htmx_history(login_html):
+def test_login_page_clears_htmx_history(login_html, app_js):
     """The back button must not replay the page snapshots htmx keeps in localStorage."""
-    assert "localStorage.removeItem('htmx-history-cache')" in login_html
+    assert "data-clear-history" in login_html
+    assert "[data-clear-history]" in app_js
+    assert "localStorage.removeItem('htmx-history-cache')" in app_js
 
 
 @pytest.mark.django_db

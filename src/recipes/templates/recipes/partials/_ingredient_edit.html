@@ -4,7 +4,9 @@
     hx-post="{% url 'recipes:ingredient_save' recipe.id iir.id %}"
     {% else %}
     hx-post="{% url 'recipes:ingredient_create' recipe.id group.id %}"
-    hx-on::config-request="event.detail.parameters.position = Array.prototype.indexOf.call(this.closest('.ingredients-list').querySelectorAll(':scope > div'), this.closest('div'))"
+    data-position-in=".ingredients-list"
+    data-position-of=":scope > div"
+    data-position-row="div"
     {% endif %}
     hx-swap="outerHTML"
     hx-target="closest div"
@@ -51,7 +53,7 @@
       hx-swap="outerHTML"
     >Delete</button>
     {% else %}
-    <button type="button" onclick="_cancelDraft(this, 'div')">Cancel</button>
+    <button type="button" data-cancel-draft="div">Cancel</button>
     {% endif %}
   </form>
 </div>

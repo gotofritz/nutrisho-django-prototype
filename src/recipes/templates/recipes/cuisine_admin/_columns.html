@@ -4,7 +4,7 @@
     id="col-cuisines"
     class="col-cuisines basis-[38ch] min-w-0 max-w-[38ch] h-full min-h-0 overflow-y-auto overflow-x-hidden break-words rounded border border-gray-300 p-2"
     hx-get="{% url 'recipes:cuisine_manage_columns' %}"
-    hx-trigger="change[target.classList.contains('cuisine-pick')]"
+    hx-trigger="change target:.cuisine-pick"
     hx-target="#cuisine-columns"
     hx-swap="outerHTML"
     hx-include=".cuisine-pick:checked, #cuisine-search, #cuisine-unused-only, #cuisine-sort"

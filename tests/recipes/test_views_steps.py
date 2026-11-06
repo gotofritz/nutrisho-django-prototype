@@ -232,11 +232,12 @@ def test_step_create_position_beyond_end_clamps_to_append(auth_client, recipe, t
 
 @pytest.mark.django_db
 def test_step_add_form_sends_position(auth_client, recipe):
-    """Draft form carries the hx-on hook that posts its DOM position on save."""
+    """Draft form names its list, so app.js posts its DOM position on save."""
     response = auth_client.post(f"/recipes/{recipe.pk}/steps/add/")
     content = response.content.decode()
-    assert "hx-on::config-request" in content
-    assert "position" in content
+    assert "data-position-in=" in content
+    assert "data-position-of=" in content
+    assert "data-position-row=" in content
 
 
 @pytest.mark.django_db

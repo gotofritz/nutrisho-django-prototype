@@ -11,6 +11,7 @@
       type="checkbox"
       id="select-all"
       {% if all_selected %}checked{% endif %}
+      {# indeterminate has no HTML attribute; app.js sets the property from this on every swap. #}
       data-indeterminate="{{ some_selected|yesno:"true,false" }}"
       hx-get="{% url 'recipes:ingredient_manage_search' %}"
       hx-vals='{"toggle_all": "1"}'
@@ -19,20 +20,4 @@
       hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only"
     >
   </label>
-  {% comment %}
-  indeterminate is a DOM property with no HTML attribute, so the dashed state
-  cannot be rendered server-side. The handler sits on this wrapper, not on the
-  input: htmx fires htmx:load on the root of swapped content and events bubble
-  up, so a listener on the nested input would never see it.
-  {% endcomment %}
-  <script>
-    (function (root) {
-      function paint() {
-        var box = root.querySelector('#select-all');
-        if (box) box.indeterminate = box.dataset.indeterminate === 'true';
-      }
-      root.addEventListener('htmx:load', paint);
-      paint();
-    })(document.currentScript.parentElement);
-  </script>
 </div>
