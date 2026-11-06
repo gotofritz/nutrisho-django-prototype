@@ -78,6 +78,8 @@ def test_hook_scripts_run_through_the_project_dir():
     [
         "Bash(make qa)",
         "Bash(make test *)",
+        "Bash(make test-cov)",
+        "Bash(make test-cov *)",
         "Bash(uv run pytest *)",
         "Bash(uv run ruff *)",
         "Bash(uv run ty *)",

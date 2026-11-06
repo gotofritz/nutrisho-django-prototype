@@ -14,10 +14,14 @@ cp .env.example .env
 # Set SECRET_KEY to a long random string in .env
 
 uv sync
-pnpm install
-pnpm css          # compile Tailwind CSS
+uv run pre-commit install   # git hooks: commit message format, and make qa on Python changes
+make css                    # install Node dependencies from the lockfile, compile Tailwind CSS
 make bootstrap
 ```
+
+The hooks are what check each commit message against Conventional Commits
+before it reaches CI; CI checks the PR title, which becomes the squash-merge
+subject on `main`.
 
 `make bootstrap` applies migrations and creates the owner: one superuser
 (the only account that can log in, including at `/admin/`). It reads
@@ -178,14 +182,22 @@ healthchecks.io ping with the backup job (#44).
 ## Quality checks
 
 ```bash
-make qa                      # CSS build + lint + typecheck + migrations + tests
+make qa                      # lint + typecheck + migrations + tests with coverage
 make lint                    # ruff only
 make typecheck               # ty only
 make check-migrations        # no missing migration, docs/schema.sql up to date
-make test                    # pytest with line and branch coverage (≥95% required)
-make test ARGS="-k healthz"  # extra arguments go to pytest
+make test                    # pytest, no coverage: the fast TDD loop
+make test ARGS="tests/test_healthz.py -k healthz"  # a path or other arguments go to pytest
+make test-cov                # pytest with line and branch coverage (≥95% required)
+make coverage                # open the HTML report from the last make test-cov
 make audit                   # known vulnerabilities in uv.lock and pnpm-lock.yaml
 ```
+
+`make test` prints one line of dots and the short tracebacks of any failures,
+so it suits a single file or test; add `ARGS="-v"` for test names. The 95% gate
+lives in `make test-cov`, because a subset of the suite never reaches it.
+`make qa` is Python-only: it needs neither Node nor the network, and never
+rewrites `pnpm-lock.yaml`. The Tailwind build runs in CI and in `make dev`.
 
 Tests run with `--fail-on-template-vars`, so a template that uses an undefined
 variable fails the test instead of rendering an empty string. Every directory
@@ -202,13 +214,17 @@ new advisory against an unchanged lockfile still shows up.
 
 The `CI` workflow (`.github/workflows/ci.yml`) installs from the lockfiles
 (`uv sync --locked`, `pnpm install --frozen-lockfile`), so a `uv.lock` that is
-out of date with `pyproject.toml` fails the build, then runs `make qa`. On
-`main` it also runs `make coverage-badge`, which writes the coverage total as
-a shields.io endpoint JSON, and a separate `badge` job publishes that file to
-the `badges` branch for the README badge, and a `release` job publishes a
-new version (see [Releases](#releases)).
+out of date with `pyproject.toml` fails the build, then builds the CSS with
+`make css` and runs `make qa`. On `main` it also runs `make coverage-badge`,
+which writes the coverage total as a shields.io endpoint JSON, and a separate
+`badge` job publishes that file to the `badges` branch for the README badge,
+and a `release` job publishes a new version (see [Releases](#releases)).
 
-Both workflows follow the same rules, and `tests/test_workflows.py` checks
+The `PR title` workflow (`.github/workflows/pr-title.yml`) runs `cz check` on
+the PR title whenever a PR is opened, pushed to or retitled, because the title
+becomes the squash-merge subject on `main` and no commit hook sees it.
+
+Every workflow follows the same rules, and `tests/test_workflows.py` checks
 them:
 
 - The token is read-only; only the `badge` and `release` jobs get
@@ -287,7 +303,8 @@ pnpm css         # build once (minified)
 pnpm css:watch   # rebuild on change
 ```
 
-Or via make, which runs `pnpm install` first:
+Or via make, which first installs the Node dependencies from `pnpm-lock.yaml`
+(`pnpm install --frozen-lockfile`):
 
 ```bash
 make css

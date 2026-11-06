@@ -46,6 +46,10 @@ jobs:
       - name: Install Node dependencies
         run: pnpm install --frozen-lockfile
 
+      # `make qa` is Python-only, so the Tailwind build is checked here.
+      - name: Build CSS
+        run: make css
+
       - name: Run QA
         run: make qa
 

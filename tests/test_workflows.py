@@ -173,3 +173,36 @@ def test_release_job_publishes_the_changelog_section_for_a_new_tag():
     assert "CHANGELOG.md" in scripts
     assert 'gh release create "$tag"' in scripts
     assert '--target "$GITHUB_SHA"' in scripts
+
+
+def qa_job_steps() -> list[dict[str, Any]]:
+    """The steps of the CI `qa` job, in order."""
+    return load(ROOT / ".github/workflows/ci.yml")["jobs"]["qa"]["steps"]
+
+
+def test_ci_builds_the_css_that_qa_skips():
+    """`make qa` is Python-only, so CI builds the Tailwind CSS itself, before QA (#68)."""
+    runs = [step.get("run", "") for step in qa_job_steps()]
+
+    assert runs.index("make css") < runs.index("make qa")
+
+
+PR_TITLE = ROOT / ".github/workflows/pr-title.yml"
+
+
+def test_pr_titles_are_linted_when_opened_or_edited():
+    """The PR title becomes the squash-merge subject, so CI checks it on every change (#68)."""
+    triggers = yaml.safe_load(PR_TITLE.read_text())[True]  # PyYAML reads `on:` as True
+
+    assert set(triggers) == {"pull_request"}
+    assert {"opened", "edited", "reopened", "synchronize"} <= set(triggers["pull_request"]["types"])
+
+
+def test_pr_title_is_checked_with_commitizen_from_the_environment():
+    """`cz check` lints the title, passed through `env` so it is never spliced into the script."""
+    workflow = load(PR_TITLE)
+    (step,) = [step for step in steps(workflow) if "cz check" in step.get("run", "")]
+
+    assert step["env"]["PR_TITLE"] == "${{ github.event.pull_request.title }}"
+    assert 'cz check --message "$PR_TITLE"' in step["run"]
+    assert "github.event" not in step["run"]
