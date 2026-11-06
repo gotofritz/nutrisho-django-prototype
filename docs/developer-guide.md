@@ -5,7 +5,7 @@
 - [uv](https://docs.astral.sh/uv/) — Python dependency manager
 - [GNU Make](https://www.gnu.org/software/make/) — task runner (`make help` lists every target; preinstalled on macOS and most Linux distributions)
 - [pnpm](https://pnpm.io/) — Node dependency manager (for Tailwind CSS); the version is pinned in `packageManager` in `package.json`, so `corepack enable` picks it up
-- [jq](https://jqlang.org/) — optional, only for the opt-in caveman hooks (see [Claude Code](#claude-code))
+- [jq](https://jqlang.org/) — JSON CLI tool, used by the caveman hooks (see [Claude Code](#claude-code))
 
 ## First-time setup
 
@@ -350,22 +350,17 @@ tests/
 
 ## Claude Code
 
-`.claude/settings.json` is shared by everyone who opens the repo, so it holds
-only what every contributor needs: a permission allowlist for the `make`, `uv
-run` and read-only `git` commands AGENTS.md asks for, and a `startup` hook that
+`.claude/settings.json` holds a permission allowlist for the `make`, `uv run`
+and read-only `git` commands AGENTS.md asks for, and a `startup` hook that
 reminds the assistant to confirm the branch. Project skills live in
 `.claude/skills/<name>/SKILL.md`; `tdd` is the one AGENTS.md mandates.
 
-Caveman mode (terse replies, a status-line badge) is opt-in. Its hooks and
-skills are in the repo, but nothing runs them until you wire them up in your
-own git-ignored `.claude/settings.local.json`:
-
-```bash
-cp .claude/settings.local.example.json .claude/settings.local.json
-```
-
-The hooks need `jq`, and keep their state in `~/.claude/.caveman-active`.
-`make test-hooks` runs their regression tests; it is not part of `make qa`.
+It also turns on caveman mode (terse replies, a status-line badge) for every
+session, re-injecting its rules after each compaction. The hooks need `jq`
+and keep their state in `~/.claude/.caveman-active`; "stop caveman" or
+`/caveman off` turns it off for a session. `make test-hooks` runs their
+regression tests; it is not part of `make qa`. Put personal overrides in the
+git-ignored `.claude/settings.local.json`.
 
 ## Architecture notes
 

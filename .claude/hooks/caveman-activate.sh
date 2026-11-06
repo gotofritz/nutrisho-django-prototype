@@ -11,9 +11,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 claude_dir=$(caveman_dir)
 flag_path=$(caveman_flag_path)
-# The opt-in wiring lives in the git-ignored settings.local.json next to the
-# shared settings (see settings.local.example.json); fall back to global.
-repo_settings="$SCRIPT_DIR/../settings.local.json"
+# Prefer repo-local config (where this hook is installed); fall back to global.
+repo_settings="$SCRIPT_DIR/../settings.json"
 if [ -f "$repo_settings" ]; then
     settings_path="$repo_settings"
 else

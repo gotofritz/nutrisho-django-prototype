@@ -9,7 +9,6 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 CLAUDE = ROOT / ".claude"
 SETTINGS = json.loads((CLAUDE / "settings.json").read_text())
-LOCAL_EXAMPLE = CLAUDE / "settings.local.example.json"
 HOOKS = CLAUDE / "hooks"
 AGENTS = (ROOT / "AGENTS.md").read_text()
 FEATURES = ROOT / "docs" / "features"
@@ -25,24 +24,53 @@ def hook_commands(settings: dict) -> list[str]:
     ]
 
 
-def test_shared_settings_leave_output_style_and_status_line_alone():
-    """Caveman mode and its status line are opt-in, never forced on every contributor."""
-    assert "statusLine" not in SETTINGS
-    assert not [command for command in hook_commands(SETTINGS) if "caveman" in command]
+def session_start_groups(command_part: str) -> list[dict]:
+    """The SessionStart groups whose hooks run a command containing `command_part`."""
+    return [
+        group
+        for group in SETTINGS["hooks"]["SessionStart"]
+        if any(command_part in hook["command"] for hook in group["hooks"])
+    ]
 
 
-def test_session_start_hooks_fire_on_startup_only():
-    """A `*` matcher would re-fire after every compaction and stall headless runs."""
-    matchers = [group.get("matcher") for group in SETTINGS["hooks"]["SessionStart"]]
+def test_caveman_mode_is_on_for_every_session():
+    """Caveman mode, its per-prompt tracker and its status line are wired in the shared settings."""
+    commands = hook_commands(SETTINGS)
 
-    assert matchers == ["startup"]
+    assert any("caveman-activate.sh" in command for command in commands)
+    assert any("caveman-mode-tracker.sh" in command for command in commands)
+    assert "caveman-statusline.sh" in SETTINGS["statusLine"]["command"]
+
+
+def test_caveman_is_reinjected_after_compaction():
+    """The caveman rules come back after a compaction, so the mode does not drift."""
+    (group,) = session_start_groups("caveman-activate.sh")
+
+    assert group.get("matcher", "*") == "*"
+
+
+def test_branch_hook_fires_on_startup_only():
+    """A `*` matcher would re-ask for the branch after every compaction and stall headless runs."""
+    (group,) = session_start_groups("branch")
+
+    assert group["matcher"] == "startup"
 
 
 def test_branch_hook_does_not_block_non_interactive_runs():
     """The branch reminder tells a headless run to carry on rather than wait for an answer."""
-    (command,) = hook_commands(SETTINGS)
+    (group,) = session_start_groups("branch")
 
-    assert "non-interactive" in command
+    assert "non-interactive" in group["hooks"][0]["command"]
+
+
+def test_hook_scripts_run_through_the_project_dir():
+    """Hooks run by absolute path, so they work when the shell is in `src/` or `tests/`."""
+    commands = [*hook_commands(SETTINGS), SETTINGS["statusLine"]["command"]]
+
+    for command in [c for c in commands if ".claude/hooks/" in c]:
+        script = re.search(r'"\$CLAUDE_PROJECT_DIR"/(\.claude/hooks/\S+\.sh)', command)
+        assert script is not None, command
+        assert (ROOT / script.group(1)).exists()
 
 
 @pytest.mark.parametrize(
@@ -63,20 +91,8 @@ def test_mandated_commands_are_allowed_without_a_prompt(rule: str):
     assert rule in SETTINGS["permissions"]["allow"]
 
 
-def test_local_example_wires_caveman_through_the_project_dir():
-    """The opt-in example runs hooks by absolute path, so they work from any directory."""
-    example = json.loads(LOCAL_EXAMPLE.read_text())
-    commands = [*hook_commands(example), example["statusLine"]["command"]]
-
-    assert commands
-    for command in commands:
-        script = re.search(r'"\$CLAUDE_PROJECT_DIR"/(\.claude/hooks/\S+\.sh)', command)
-        assert script is not None, command
-        assert (ROOT / script.group(1)).exists()
-
-
 def test_local_settings_are_git_ignored():
-    """Personal settings, such as the caveman hooks, never get committed."""
+    """Personal overrides of the shared settings never get committed."""
     ignored = (ROOT / ".gitignore").read_text().splitlines()
 
     assert ".claude/settings.local.json" in ignored

@@ -25,6 +25,15 @@
   "hooks": {
     "SessionStart": [
       {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/caveman-activate.sh"
+          }
+        ]
+      },
+      {
         "matcher": "startup",
         "hooks": [
           {
@@ -33,6 +42,20 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/caveman-mode-tracker.sh"
+          }
+        ]
+      }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/caveman-statusline.sh"
   }
 }
