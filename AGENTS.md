@@ -247,8 +247,12 @@ interpreter was used, not broken code. Do not add parens back.
 
 ### Libraries
 
-- CLI: `click`
-- Models: `pydantic`
+Use what Django already provides before adding a dependency:
+
+- CLI: Django management commands (`BaseCommand`, under
+  `src/recipes/management/commands/`)
+- Validation: Django forms (`src/recipes/forms/`) and model fields and
+  constraints
 
 ### Rules
 
@@ -258,8 +262,9 @@ interpreter was used, not broken code. Do not add parens back.
 
 ### Testing
 
-- Use `pytest`
-- Allowed: `faker`, `polyfactory`, `pytest-data`
+- Use `pytest` with `pytest-django`
+- Build test data with plain fixtures: the `make_*` and `add_*` factory
+  fixtures in `tests/recipes/conftest.py`, not a factory library
 - Use either function-based or class-based tests, never both
 - Shared fixtures/mocks in `conftest.py`
 
