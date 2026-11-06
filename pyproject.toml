@@ -18,7 +18,7 @@ dev = [
 
 [project]
 name = "nutrisho"
-version = "0.2.0"
+version = "0.3.0"
 description = "Quick and dirty django prototype"
 authors = [{ name = "Your Name", email = "you@example.com" }]
 license = "0BSD"

@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PYPROJECT = tomllib.loads((ROOT / "pyproject.toml").read_text())
 COMMITIZEN = PYPROJECT["tool"]["commitizen"]
+CHANGELOG = ROOT / "CHANGELOG.md"
 
 
 def test_commitizen_keeps_the_version_in_pyproject_and_uv_lock():
@@ -43,3 +44,10 @@ def test_package_json_has_no_version_of_its_own():
 
     assert package["private"] is True
     assert "version" not in package
+
+
+def test_changelog_has_a_section_for_the_current_version():
+    """The version in pyproject.toml was cut with `cz bump`, which wrote its CHANGELOG.md section."""
+    heading = f"## v{PYPROJECT['project']['version']} ("
+
+    assert any(line.startswith(heading) for line in CHANGELOG.read_text().splitlines())
