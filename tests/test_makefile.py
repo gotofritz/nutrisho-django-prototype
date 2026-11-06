@@ -31,6 +31,7 @@ TASKS = (
     "schema",
     "seed",
     "test",
+    "test-cov",
     "test-hooks",
     "typecheck",
 )
@@ -96,14 +97,13 @@ def test_help_is_the_default_goal():
 
 @needs_make
 def test_qa_runs_every_check_in_order():
-    """`make qa` builds CSS, lints, type-checks, checks migrations and tests."""
+    """`make qa` lints, type-checks, checks migrations and runs the coverage-gated tests."""
     output = run_make("--dry-run", "qa")
     steps = [
-        "pnpm run css",
         "ruff check",
         "ty check",
         "makemigrations --check --dry-run",
-        "pytest",
+        "--cov-fail-under=95",
     ]
 
     positions = [output.index(step) for step in steps]
@@ -111,12 +111,60 @@ def test_qa_runs_every_check_in_order():
 
 
 @needs_make
-def test_test_target_uses_test_settings_and_passes_args():
-    """`make test` runs under the test settings and forwards ARGS to pytest."""
-    output = run_make("--dry-run", "test", "ARGS=-k healthz")
+def test_qa_needs_no_node():
+    """`make qa` is a Python-only gate: no pnpm install or Tailwind build (#68)."""
+    output = run_make("--dry-run", "qa")
+
+    assert "pnpm" not in output
+    assert "tailwind" not in output
+
+
+@needs_make
+def test_test_target_is_plain_pytest_and_passes_args():
+    """`make test` runs pytest quietly under the test settings, with no coverage gate (#68)."""
+    output = run_make("--dry-run", "test", "ARGS=tests/test_healthz.py -k healthz")
 
     assert "DJANGO_SETTINGS_MODULE=nutrisho.settings.test" in output
+    assert "pytest --tb=short tests/test_healthz.py -k healthz" in output
+    assert "--cov" not in output
+    for noisy in (" -vv", " -s "):
+        assert noisy not in output
+
+
+@needs_make
+def test_test_cov_target_gates_coverage_and_passes_args():
+    """`make test-cov` runs the suite under the test settings with the 95% gate."""
+    output = run_make("--dry-run", "test-cov", "ARGS=-k healthz")
+
+    assert "DJANGO_SETTINGS_MODULE=nutrisho.settings.test" in output
+    assert "--cov=src" in output
     assert "--cov-fail-under=95 -k healthz" in output
+    for noisy in (" -vv", " -s "):
+        assert noisy not in output
+
+
+@needs_make
+def test_node_install_keeps_the_lockfile():
+    """`make node-install` installs from pnpm-lock.yaml and never rewrites it (#68)."""
+    assert "pnpm install --frozen-lockfile" in run_make("--dry-run", "node-install")
+
+
+@needs_make
+def test_dev_builds_css_first():
+    """`make dev` still builds the Tailwind CSS that qa no longer does."""
+    output = run_make("--dry-run", "dev")
+
+    assert output.index("pnpm run css") < output.index("runserver")
+
+
+@needs_make
+def test_coverage_opens_the_report_on_any_platform():
+    """`make coverage` uses Python's webbrowser, not the macOS-only `open` (#68)."""
+    output = run_make("--dry-run", "coverage")
+
+    assert "uv run python -m webbrowser" in output
+    assert "htmlcov/index.html" in output
+    assert not output.startswith("open ")
 
 
 @needs_make

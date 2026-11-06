@@ -9,6 +9,8 @@
       "Bash(make typecheck)",
       "Bash(make test)",
       "Bash(make test *)",
+      "Bash(make test-cov)",
+      "Bash(make test-cov *)",
       "Bash(make check-migrations)",
       "Bash(make css)",
       "Bash(uv run pytest *)",
