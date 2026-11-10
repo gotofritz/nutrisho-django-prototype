@@ -6,7 +6,7 @@ from fractions import Fraction
 import pytest
 from django.test import Client
 
-from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Recipe, Step
+from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Recipe, Step, Unit
 
 
 def test_format_quantity_strips_trailing_zeros():
@@ -42,7 +42,7 @@ def test_recipe_detail_renders_raw_quantities(client: Client, user):
         ingredient_group=group,
         index_in_sequence=1,
         quantity=Decimal("2.50"),
-        unit="cups",
+        unit=Unit.objects.get(name="cup"),
         preparation="",
     )
 
@@ -91,7 +91,9 @@ def test_ingredient_name_at_follows_the_given_quantity():
 def _iir(quantity: Decimal | None, unit: str = "") -> IngredientInRecipe:
     """An unsaved IIR carrying just what the display filter reads."""
     return IngredientInRecipe(
-        ingredient=Ingredient(ingredient_name="onion"), quantity=quantity, unit=unit
+        ingredient=Ingredient(ingredient_name="onion"),
+        quantity=quantity,
+        unit=Unit(name=unit, dimension=Unit.MASS) if unit else None,
     )
 
 
@@ -139,7 +141,6 @@ def test_display_ingredient_name_honours_the_plural_name_override():
     iir = IngredientInRecipe(
         ingredient=Ingredient(ingredient_name="broccoli", plural_name="broccoli"),
         quantity=Decimal("3"),
-        unit="",
     )
     assert display_ingredient_name(iir) == "broccoli"
 
@@ -174,7 +175,7 @@ def test_recipe_detail_keeps_the_singular_at_one_and_with_a_unit(client: Client,
         ingredient_group=group,
         index_in_sequence=2,
         quantity=Decimal("200"),
-        unit="g",
+        unit=Unit.objects.get(name="g"),
     )
 
     client.force_login(user)

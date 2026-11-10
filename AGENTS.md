@@ -58,6 +58,9 @@ Easy to break, and not obvious from any one file:
 - Typed ingredient, tag and cuisine names become rows only through
   `services/name_resolution.py`. Names are unique ignoring case, so a raw
   `get_or_create(name=...)` fails.
+- A typed unit becomes `IngredientInRecipe.unit` only through `find_unit`,
+  which never creates one; units and their aliases are staff-curated in admin.
+  Free text from before #67 waits in `legacy_unit` for `normalise_units`.
 - `index_in_sequence` changes only through `utils/sequencing.py`.
 - Recipe names and descriptions are written through `Recipe.save()`, which keeps
   `plain_name`/`plain_description` current; a queryset `update()` or
@@ -91,6 +94,7 @@ Read the note for the area you are changing; skip the rest.
 - `docs/features/scaling.md` — `?servings=N`, rounding, scaled copies
 - `docs/features/search.md` — query parsing, matching, filters, plain-text columns, prev/next
 - `docs/features/pluralisation.md` — the rule, `plural_name` overrides, when it applies
+- `docs/features/units.md` — the unit vocabulary, aliases, unit plurals, the `normalise_units` clean-up
 - `docs/features/shared-vocabularies.md` — global and private ingredients and tags, the cuisine tree and its tool
 - `docs/features/ingredient-cleanup-tool.md` — the staff ingredient tool: merge, plurals, aliases, promote
 - `docs/features/data-and-operations.md` — key models, backups, seed data, concurrent writes, logging, SQLite limits

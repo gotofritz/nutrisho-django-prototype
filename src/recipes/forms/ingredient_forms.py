@@ -3,23 +3,38 @@ from decimal import Decimal
 from django import forms
 from django.contrib.auth.models import AbstractBaseUser
 
-from recipes.models import IngredientGroup, IngredientInRecipe
+from recipes.models import IngredientGroup, IngredientInRecipe, Unit
 from recipes.models.ingredient import INGREDIENT_NAME_MAX_LENGTH
-from recipes.services.name_resolution import find_ingredient, resolve_ingredient
+from recipes.models.unit import UNIT_NAME_MAX_LENGTH
+from recipes.services.name_resolution import (
+    find_ingredient,
+    find_unit,
+    resolve_ingredient,
+    unit_names,
+)
+from recipes.utils.unit_words import not_a_unit
 
 
 class IngredientInRecipeForm(forms.ModelForm):
     """One ingredient row; the typed name resolves within `owner`'s vocabulary.
 
     `owner` is the recipe's owner: names resolve to the global list or their
-    private rows, and an unknown name becomes private to them (plan 011).
+    private rows, and an unknown name becomes private to them (plan 011). The
+    typed unit resolves to the shared vocabulary and is never created (#67).
     """
 
     ingredient_name = forms.CharField(max_length=INGREDIENT_NAME_MAX_LENGTH, required=True)
+    unit = forms.CharField(
+        max_length=UNIT_NAME_MAX_LENGTH,
+        required=False,
+        label="Unit",
+        widget=forms.TextInput(attrs={"list": "units-datalist", "autocomplete": "off"}),
+    )
 
     class Meta:
         model = IngredientInRecipe
-        fields = ["quantity", "unit", "preparation", "note"]
+        # `unit` is the typed text above, resolved to the FK in `clean_unit`.
+        fields = ["quantity", "preparation", "note"]
         widgets = {
             "quantity": forms.NumberInput(attrs={"step": "any", "autofocus": True}),
         }
@@ -29,6 +44,13 @@ class IngredientInRecipeForm(forms.ModelForm):
         self._owner = owner
         if self.instance and self.instance.pk:
             self.fields["ingredient_name"].initial = self.instance.ingredient.ingredient_name
+            unit = self.instance.unit
+            self.fields["unit"].initial = unit.name if unit else self.instance.legacy_unit
+
+    @property
+    def unit_names(self) -> list[str]:
+        """The vocabulary, for the unit field's datalist."""
+        return unit_names()
 
     def clean_quantity(self) -> Decimal | None:
         """Reject negative quantities."""
@@ -38,9 +60,26 @@ class IngredientInRecipeForm(forms.ModelForm):
             raise forms.ValidationError(msg)
         return qty
 
+    def clean_unit(self) -> Unit | None:
+        """The unit the text names; blank is none, and anything else is an error."""
+        text = self.cleaned_data.get("unit") or ""
+        if not text.strip():
+            return None
+        unit = find_unit(text)
+        if unit is not None:
+            return unit
+        field = not_a_unit(text)
+        if field is not None:
+            msg = f"“{text.strip()}” is not a unit: put it under {field}."
+        else:
+            msg = f"“{text.strip()}” is not a unit we know: pick one from the list."
+        raise forms.ValidationError(msg)
+
     def save(self, commit: bool = True) -> IngredientInRecipe:
         """Save the ingredient row, resolving or creating the ingredient by name."""
         iir = super().save(commit=False)
+        iir.unit = self.cleaned_data["unit"]
+        iir.legacy_unit = ""
         name = self.cleaned_data["ingredient_name"].strip()
         if commit:
             iir.ingredient = resolve_ingredient(name, owner=self._owner)
