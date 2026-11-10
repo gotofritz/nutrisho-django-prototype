@@ -3,12 +3,12 @@
 ## Key Models
 
 - `Recipe` — core entity, owns name, description, cuisine, source, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`); `plain_name` / `plain_description` are the tag-free name and description `save()` keeps current, for search and the per-owner name rule
-- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient.owner` is NULL for the global list or the user a row is private to, and `ingredient_name` is unique case-insensitively among global rows and within each owner's private rows; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientAlias` maps a case-insensitively unique `alias_name` to a global `canonical` ingredient (`CASCADE`), input-only; `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`
+- `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient.owner` is NULL for the global list or the user a row is private to, and `ingredient_name` is unique case-insensitively among global rows and within each owner's private rows; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientAlias` maps a case-insensitively unique `alias_name` to a global `canonical` ingredient (`CASCADE`), input-only; `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`; `IngredientInRecipe.unit` is a `PROTECT` foreign key to `Unit` (canonical name, optional `plural_name`, `dimension` mass/volume/count), with `UnitAlias` for input-only spellings and `legacy_unit` holding free text from before #67 (see `units.md`)
 - `Step` — ordered recipe steps; `step_title` is an optional heading, stored as `""` when absent and rendered underlined in front of the step text, followed by a colon
 - Long prose (`Recipe.short_description`, `Step.step_text`, `Step.extra_info`) is a `TextField`, unlimited in the database; forms cap it at `PROSE_MAX_LENGTH` (4000), which step merge obeys too. `Ingredient.ingredient_name` and `.plural_name` share `INGREDIENT_NAME_MAX_LENGTH` (128)
 - `Cuisine`, `Source`, `Tag` — lookup/classification models; `Cuisine` is a node of the cuisine tree (`parent`, at most three levels), its name unique case-insensitively among its siblings; `Tag.owner` is NULL for a global tag or the user it is private to
 
-Empty text fields (`short_description`, `group_name`, `unit`,
+Empty text fields (`short_description`, `group_name`, `legacy_unit`,
 `preparation`) are stored as `""`, never `NULL`.
 
 ## Data Flow
@@ -24,6 +24,9 @@ dump is read inside one read transaction, so it is a consistent snapshot even
 while the app writes (WAL lets those writes carry on).
 
 `delete_recipe --id <N>` removes recipes by primary key.
+
+`normalise_units` lists the legacy free-text units and what each becomes;
+`--apply` moves them onto the unit vocabulary (see `units.md`).
 
 `seed_demo` (`make seed`, #71) is development-only sample data: four recipes
 for one user (`demo`, created as staff with a random password, unless
