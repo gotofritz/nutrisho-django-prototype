@@ -7,6 +7,7 @@ from .recipe import Recipe
 from .source import Source
 from .step import Step
 from .tag import Tag
+from .unit import Unit, UnitAlias
 
 __all__ = [
     "Cuisine",
@@ -18,4 +19,6 @@ __all__ = [
     "Source",
     "Step",
     "Tag",
+    "Unit",
+    "UnitAlias",
 ]

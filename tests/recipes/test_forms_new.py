@@ -100,6 +100,7 @@ def test_step_form_accepts_valid_step():
     assert form.is_valid()
 
 
+@pytest.mark.django_db
 def test_ingredient_form_accepts_valid_decimal_quantity():
     """Ingredient form accepts valid decimal quantity."""
     form = IngredientInRecipeForm(
@@ -115,6 +116,7 @@ def test_ingredient_form_accepts_valid_decimal_quantity():
     assert form.is_valid()
 
 
+@pytest.mark.django_db
 def test_ingredient_form_rejects_negative_quantity():
     """Ingredient form rejects negative quantity."""
     form = IngredientInRecipeForm(

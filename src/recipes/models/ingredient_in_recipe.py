@@ -2,6 +2,7 @@ from django.db import models
 
 from .ingredient import Ingredient
 from .ingredient_group import IngredientGroup
+from .unit import UNIT_NAME_MAX_LENGTH, Unit
 
 
 class IngredientInRecipe(models.Model):
@@ -10,7 +11,14 @@ class IngredientInRecipe(models.Model):
     substitute = models.ForeignKey(
         Ingredient, on_delete=models.PROTECT, related_name="+", blank=True, null=True
     )
-    unit = models.CharField("the unit", max_length=32, blank=True, default="")
+    unit = models.ForeignKey(
+        Unit, on_delete=models.PROTECT, related_name="+", blank=True, null=True
+    )
+    # Free text typed before the unit vocabulary (#67), shown as stored until
+    # `normalise_units` (or an edit) moves it onto `unit`; "" once it has.
+    legacy_unit = models.CharField(
+        "unit as typed before #67", max_length=UNIT_NAME_MAX_LENGTH, blank=True, default=""
+    )
     preparation = models.CharField("chopped, blanched...", max_length=128, blank=True, default="")
     quantity = models.DecimalField(
         "quantity as recorded in source", decimal_places=2, max_digits=7, blank=True, null=True

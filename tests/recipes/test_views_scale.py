@@ -6,6 +6,7 @@ import pytest
 from django.test import Client
 
 from recipes.models import Ingredient, IngredientGroup, IngredientInRecipe, Recipe
+from recipes.services.name_resolution import find_unit
 
 
 @pytest.fixture
@@ -38,7 +39,7 @@ def make_iir(group):
             ingredient_group=group,
             index_in_sequence=IngredientInRecipe.objects.filter(ingredient_group=group).count(),
             quantity=quantity,
-            unit=unit,
+            unit=find_unit(unit),
         )
 
     return _make
