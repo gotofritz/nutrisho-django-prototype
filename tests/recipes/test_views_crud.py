@@ -3,7 +3,7 @@
 import pytest
 from django.test import Client
 
-from recipes.models import Cuisine, Recipe, Source
+from recipes.models import Cuisine, Recipe
 
 
 @pytest.fixture
@@ -24,12 +24,6 @@ def recipe(user, db):
 def cuisine(db):
     """Cuisine."""
     return Cuisine.objects.create(cuisine="Italian")
-
-
-@pytest.fixture
-def source(db):
-    """Source."""
-    return Source.objects.create(short_name="Moro", source="ISBN 9781856267991")
 
 
 # --- Create ---
@@ -62,13 +56,6 @@ def test_recipe_new_form_has_text_fields(auth_client):
         "source_instance",
     ):
         assert field in form.fields, f"missing field: {field}"
-
-
-@pytest.mark.django_db
-def test_recipe_new_form_has_no_source_fk(auth_client):
-    """Recipe new form has no source fk."""
-    response = auth_client.get("/recipes/new/")
-    assert "source" not in response.context["form"].fields
 
 
 @pytest.mark.django_db
@@ -655,25 +642,24 @@ def test_metadata_save_recipe_deleted_concurrently_returns_404(auth_client, reci
 
 
 @pytest.mark.django_db
-def test_metadata_save_preserves_field_not_in_form(auth_client, recipe, source):
-    """recipe_metadata_edit must not overwrite fields outside the form (e.g. source FK)."""
+def test_metadata_save_preserves_field_not_in_form(auth_client, recipe):
+    """recipe_metadata_edit must not overwrite fields outside the form (e.g. created_date)."""
+    from datetime import UTC, datetime
     from unittest.mock import patch
 
     from django.db.models import QuerySet
 
-    recipe.source = source
-    recipe.save(update_fields=["source"])
-
+    concurrent = datetime(2020, 1, 1, tzinfo=UTC)
     original_sfu = QuerySet.select_for_update
     edited = []
 
-    def clear_source_at_lock(qs, *args, **kwargs):
+    def change_date_at_lock(qs, *args, **kwargs):
         if qs.model is Recipe and not edited:
             edited.append(True)
-            Recipe.objects.filter(pk=recipe.pk).update(source=None)
+            Recipe.objects.filter(pk=recipe.pk).update(created_date=concurrent)
         return original_sfu(qs, *args, **kwargs)
 
-    with patch.object(QuerySet, "select_for_update", clear_source_at_lock):
+    with patch.object(QuerySet, "select_for_update", change_date_at_lock):
         response = auth_client.post(
             f"/recipes/{recipe.pk}/metadata/",
             {"recipe_name": recipe.recipe_name, "short_description": "Updated", "servings": "2"},
@@ -683,7 +669,7 @@ def test_metadata_save_preserves_field_not_in_form(auth_client, recipe, source):
     assert response.status_code == 200  # HX-Redirect
     recipe.refresh_from_db()
     assert recipe.short_description == "Updated"
-    assert recipe.source is None  # concurrent edit not overwritten
+    assert recipe.created_date == concurrent  # concurrent edit not overwritten
 
 
 @pytest.mark.django_db
