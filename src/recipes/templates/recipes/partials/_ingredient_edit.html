@@ -41,8 +41,9 @@
       </datalist>
       {{ form.ingredient_name.errors }}
     </p>
+    <p>{{ form.substitute_name.label_tag }} {{ form.substitute_name }}{{ form.substitute_name.errors }}</p>
     {% for field in form %}
-      {% if field.name != "ingredient_name" and field.name != "quantity" and field.name != "unit" %}
+      {% if field.name != "ingredient_name" and field.name != "substitute_name" and field.name != "quantity" and field.name != "unit" %}
       <p>{{ field.label_tag }} {{ field }}{{ field.errors }}</p>
       {% endif %}
     {% endfor %}

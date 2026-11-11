@@ -6,6 +6,8 @@ from html import unescape
 from html.parser import HTMLParser
 
 from django import template
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 

@@ -227,8 +227,8 @@ def test_recipe_metadata_form_commit_false_sets_existing_cuisine(user):
 
 
 @pytest.mark.django_db
-def test_ingredient_form_commit_false_sets_existing_ingredient(user):
-    """save(commit=False) with existing ingredient must set iir.ingredient in-memory."""
+def test_ingredient_form_resolve_names_reuses_existing_ingredient(user):
+    """resolve_names() after save(commit=False) points at the existing ingredient."""
     from recipes.models import Ingredient
 
     ing = Ingredient.objects.create(ingredient_name="basil")
@@ -244,12 +244,14 @@ def test_ingredient_form_commit_false_sets_existing_ingredient(user):
     )
     assert form.is_valid()
     iir = form.save(commit=False)
+    form.resolve_names(iir)
     assert iir.ingredient == ing
+    assert iir.substitute is None
 
 
 @pytest.mark.django_db
 def test_ingredient_form_commit_false_new_ingredient_resolved_via_helper(user):
-    """resolve_pending_ingredient() must create Ingredient row and assign FK before save()."""
+    """resolve_names() must create the Ingredient row and assign the FK before save()."""
     from recipes.models import Ingredient
 
     form = IngredientInRecipeForm(
@@ -265,7 +267,7 @@ def test_ingredient_form_commit_false_new_ingredient_resolved_via_helper(user):
     assert form.is_valid()
     iir = form.save(commit=False)
     assert not Ingredient.objects.filter(ingredient_name="brand-new-spice").exists()
-    form.resolve_pending_ingredient(iir)
+    form.resolve_names(iir)
     assert iir.ingredient is not None
     assert iir.ingredient.ingredient_name == "brand-new-spice"  # ty: ignore[unresolved-attribute]
     assert Ingredient.objects.filter(ingredient_name="brand-new-spice").exists()
