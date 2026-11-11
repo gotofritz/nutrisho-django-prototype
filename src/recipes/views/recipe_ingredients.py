@@ -7,7 +7,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from recipes.forms.ingredient_forms import IngredientGroupForm, IngredientInRecipeForm
 from recipes.models import IngredientGroup, IngredientInRecipe, Recipe
-from recipes.services.name_resolution import ingredient_names_for, resolve_ingredient
+from recipes.services.name_resolution import ingredient_names_for
 from recipes.utils.sequencing import insert_at_index, move_in_sequence, remove_and_compact
 from recipes.views._announce import announce
 from recipes.views._auth import owned_recipe
@@ -84,7 +84,7 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
             ):
                 return HttpResponse("", status=404)
             form.save(commit=False)
-            form.resolve_pending_ingredient(iir)
+            form.resolve_names(iir)
             iir.save(
                 update_fields=[
                     "quantity",
@@ -93,6 +93,7 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
                     "preparation",
                     "note",
                     "ingredient",
+                    "substitute",
                 ]
             )
         iir.refresh_from_db()
@@ -179,10 +180,7 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
             if fresh_group is None:
                 return HttpResponse("", status=404)
             iir = form.save(commit=False)
-            ingredient = resolve_ingredient(
-                form.cleaned_data["ingredient_name"], owner=recipe.owner
-            )
-            iir.ingredient = ingredient  # ty: ignore[invalid-assignment]  # FK descriptor
+            form.resolve_names(iir)
             iir.ingredient_group = fresh_group
             insert_at_index(
                 siblings=IngredientInRecipe.objects.filter(ingredient_group=fresh_group),

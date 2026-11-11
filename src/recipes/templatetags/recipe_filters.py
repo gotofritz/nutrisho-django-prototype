@@ -6,6 +6,8 @@ from html import unescape
 from html.parser import HTMLParser
 
 from django import template
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
@@ -117,12 +119,27 @@ def ingredient_name_at(iir: object, quantity: object) -> str:
     A recipe scaled at display time shows 1 onion as "2 onions" at double the
     servings, so the plural follows the displayed quantity, not the stored one.
     """
-    ingredient = getattr(iir, "ingredient", None)
+    return _name_at(iir, getattr(iir, "ingredient", None), quantity)
+
+
+@register.filter
+def display_substitute_name(iir: object) -> str:
+    """`iir`'s substitute, inflected like its ingredient: `2 onions or shallots` (#65)."""
+    return substitute_name_at(iir, getattr(iir, "quantity", None))
+
+
+@register.filter
+def substitute_name_at(iir: object, quantity: object) -> str:
+    """`display_substitute_name` for the quantity actually shown, e.g. a scaled one."""
+    return _name_at(iir, getattr(iir, "substitute", None), quantity)
+
+
+def _name_at(iir: object, ingredient: object, quantity: object) -> str:
     if ingredient is None:
         return ""
     if quantity is None or quantity == 1 or _has_unit(iir):
-        return ingredient.ingredient_name
-    return ingredient.plural
+        return str(getattr(ingredient, "ingredient_name", ""))
+    return str(getattr(ingredient, "plural", ""))
 
 
 def _has_unit(iir: object) -> bool:
@@ -148,6 +165,24 @@ def unit_at(iir: object, quantity: object) -> str:
     if quantity is None or quantity == 1:
         return str(unit.name)
     return unit.plural
+
+
+_WEB_URL = URLValidator(schemes=["http", "https"])
+
+
+@register.filter
+def web_url(value: object) -> str:
+    """`value` when it is a whole http(s) URL, else "": only those become links (#65).
+
+    A recipe's source is free text (`Moro, p. 112` or a web address), and the
+    href must never carry another scheme such as `javascript:`.
+    """
+    text = str(value or "").strip()
+    try:
+        _WEB_URL(text)
+    except ValidationError:
+        return ""
+    return text
 
 
 @register.filter

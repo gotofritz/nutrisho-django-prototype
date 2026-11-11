@@ -19,6 +19,8 @@ Page structure (#74): `base.html` sets `<html lang="en">` and wraps `{% block co
 
 Ingredient name edit uses an HTML5 `<datalist>` for autosuggest (all existing ingredient names). On save, `ingredient_name` is resolved via get-or-create so renaming creates a new `Ingredient` rather than mutating a shared one.
 
+The row's optional substitute is typed in `substitute_name` (labelled "Or", sharing the same datalist) and shown as `or X` after the name, pluralised at the same quantity (`2 onions or shallots`). Both names resolve through `IngredientInRecipeForm.resolve_names()`, which the save and create views call inside their transaction: `resolve_ingredient` for each, so aliases, plurals and private rows work alike, and a blank substitute clears it. A substitute that resolves to the ingredient itself (`aubergine or eggplant`) is a form error.
+
 ## Ingredient groups
 
 Deleting the last `IngredientInRecipe` in a group, or moving every row out of it
@@ -47,6 +49,11 @@ lock on the recipe row, swaps the block back in rather than delete it.
   calls for it. Takes the whole `IngredientInRecipe`, since the decision needs
   name, quantity and unit together. Applied in `_ingredient_display.html` and
   `ingredient_admin/_recipe_preview.html`. See [pluralisation](pluralisation.md).
+- `display_substitute_name` / `substitute_name_at` — the same for the row's
+  substitute, at the same quantity.
+- `web_url` — a recipe's free-text source when it is a whole http(s) URL, else
+  `""`; `_recipe_content.html` links only then, so no other scheme reaches an
+  `href`.
 - `scaled_quantity` / `ingredient_name_at` — the display-time scaling pair used by
   `_scaled_ingredients.html`: the quantity scaled by the page's `Fraction` and
   rounded for display, and the name pluralised for that displayed quantity. See

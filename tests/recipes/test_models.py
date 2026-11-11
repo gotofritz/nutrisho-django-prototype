@@ -9,7 +9,6 @@ from recipes.models import (
     IngredientGroup,
     IngredientInRecipe,
     Recipe,
-    Source,
     Step,
     Tag,
 )
@@ -156,7 +155,7 @@ def test_ingredient_plural_name_defaults_to_blank():
 
 @pytest.mark.parametrize(
     ("model", "name"),
-    [(Step, "step_text"), (Step, "extra_info"), (Recipe, "short_description")],
+    [(Step, "step_text"), (Recipe, "short_description")],
 )
 def test_long_prose_fields_are_text_fields(model, name):
     """Prose has no database length limit (#49); forms cap it generously."""
@@ -220,5 +219,4 @@ def test_model_str_labels(user):
     assert str(unnamed_group) == "Group 1"
     assert str(iir) == "leek"
     assert str(step) == "2. Boil"
-    assert str(Source.objects.create(short_name="Moro", source="book")) == "Moro"
     assert str(Tag.objects.create(tag="quick")) == "quick"

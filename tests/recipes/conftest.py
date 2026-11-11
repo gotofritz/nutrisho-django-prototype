@@ -84,3 +84,26 @@ def without_ci_name_constraint(db):
 
     with connection.cursor() as cursor:
         cursor.execute("DROP INDEX ingredient_name_ci_unique")
+
+
+@pytest.fixture
+def migrate_to(transactional_db):
+    """Migrate the test database to a past state; afterwards, back to the latest.
+
+    Returns a function taking a list of `(app, migration)` targets and giving
+    the historical apps registry at that state. Without the final step, the
+    tests after this one would run against an old schema.
+    """
+    from django.db import connection
+    from django.db.migrations.executor import MigrationExecutor
+
+    def _migrate(target: list[tuple[str, str]]):
+        executor = MigrationExecutor(connection)
+        executor.loader.build_graph()
+        executor.migrate(target)
+        return executor.loader.project_state(target).apps
+
+    yield _migrate
+    executor = MigrationExecutor(connection)
+    executor.loader.build_graph()
+    executor.migrate(executor.loader.graph.leaf_nodes())

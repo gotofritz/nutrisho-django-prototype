@@ -13,7 +13,9 @@ A personal recipe manager. Browse, edit, and organise your recipes in one place.
 - Keeps each person's recipes in their own account, behind a login
 - Write, edit, duplicate and delete recipes; every field, step and ingredient
   is edited in place on the recipe page
-- Group ingredients, give steps optional titles, and merge or split steps
+- Group ingredients, note a substitute (**2 onions or shallots**), give steps
+  optional titles, and merge or split steps
+- Tag recipes, give each a cuisine and a source; a web address links to the page
 - Search from the box at the top of every page, and filter by cuisine or tag
 - Show a recipe for a different number of servings without changing it
 - Write each ingredient once and read **1 onion**, **2 onions** as the quantity

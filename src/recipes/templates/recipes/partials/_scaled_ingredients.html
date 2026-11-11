@@ -13,7 +13,7 @@ Reset returns to the editable page.
     <div class="ingredient-in-group-show">
       <span class="ingredient-quantity">{{ quantity|format_quantity }}</span>
       <span class="ingredient-unit">{{ iir|unit_at:quantity }}</span>
-      <span class="ingredient-name">{{ iir|ingredient_name_at:quantity }}</span>{% if iir.ingredient.ingredient_name and iir.preparation %},{% endif %}
+      <span class="ingredient-name">{{ iir|ingredient_name_at:quantity }}</span>{% if iir.substitute %} <span class="ingredient-substitute">or {{ iir|substitute_name_at:quantity }}</span>{% endif %}{% if iir.ingredient.ingredient_name and iir.preparation %},{% endif %}
       <span class="ingredient-preparation">{{ iir.preparation|default:"" }}</span>
       {% if iir.note %}<span class="ingredient-note">({{ iir.note }})</span>{% endif %}
     </div>

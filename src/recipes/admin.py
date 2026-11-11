@@ -7,7 +7,6 @@ from .models import (
     IngredientGroup,
     IngredientInRecipe,
     Recipe,
-    Source,
     Step,
     Tag,
     Unit,
@@ -64,11 +63,6 @@ class IngredientAliasAdmin(admin.ModelAdmin):
     list_display = ("alias_name", "canonical")
     list_select_related = ("canonical",)
     search_fields = ("alias_name", "canonical__ingredient_name")
-
-
-@admin.register(Source)
-class SourceAdmin(admin.ModelAdmin):
-    list_display = ("short_name",)
 
 
 class UnitAliasInline(admin.TabularInline):

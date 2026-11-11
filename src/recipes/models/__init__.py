@@ -4,7 +4,6 @@ from .ingredient_alias import IngredientAlias
 from .ingredient_group import IngredientGroup
 from .ingredient_in_recipe import IngredientInRecipe
 from .recipe import Recipe
-from .source import Source
 from .step import Step
 from .tag import Tag
 from .unit import Unit, UnitAlias
@@ -16,7 +15,6 @@ __all__ = [
     "IngredientGroup",
     "IngredientInRecipe",
     "Recipe",
-    "Source",
     "Step",
     "Tag",
     "Unit",

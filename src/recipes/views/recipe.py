@@ -1,11 +1,12 @@
 from django.contrib.auth.models import AbstractBaseUser
 from django.db.models import Prefetch
+from django.db.models.functions import Lower
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.decorators.vary import vary_on_headers
 
-from recipes.models import IngredientInRecipe, Recipe
+from recipes.models import IngredientInRecipe, Recipe, Tag
 from recipes.services.recipe_search import RecipeSearch, search_recipes
 from recipes.utils.scaling import parse_servings, scale_factor
 from recipes.views._search import search_from, search_querystring
@@ -37,12 +38,13 @@ def _get_recipe_nav(recipe_id: int, user: AbstractBaseUser, search: RecipeSearch
 def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Show a recipe."""
     recipe = get_object_or_404(
-        Recipe.objects.prefetch_related(
+        Recipe.objects.select_related("cuisine__parent__parent").prefetch_related(
             "step",
+            Prefetch("tag", queryset=Tag.objects.order_by(Lower("tag"), "tag")),
             Prefetch(
                 "ingredients_group__ingredient",
                 queryset=IngredientInRecipe.objects.select_related(
-                    "ingredient", "ingredient_group", "unit"
+                    "ingredient", "substitute", "ingredient_group", "unit"
                 ),
             ),
         ),

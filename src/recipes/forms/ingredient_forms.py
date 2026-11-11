@@ -16,14 +16,25 @@ from recipes.utils.unit_words import not_a_unit
 
 
 class IngredientInRecipeForm(forms.ModelForm):
-    """One ingredient row; the typed name resolves within `owner`'s vocabulary.
+    """One ingredient row; the typed names resolve within `owner`'s vocabulary.
 
     `owner` is the recipe's owner: names resolve to the global list or their
     private rows, and an unknown name becomes private to them (plan 011). The
+    optional substitute (`2 onions or shallots`, #65) resolves the same way. The
     typed unit resolves to the shared vocabulary and is never created (#67).
+
+    Neither name is written by `save()`: the view calls `resolve_names()` inside
+    its transaction, since resolving may create an ingredient row.
     """
 
     ingredient_name = forms.CharField(max_length=INGREDIENT_NAME_MAX_LENGTH, required=True)
+    substitute_name = forms.CharField(
+        max_length=INGREDIENT_NAME_MAX_LENGTH,
+        required=False,
+        label="Or",
+        help_text="An ingredient that can stand in for it.",
+        widget=forms.TextInput(attrs={"list": "ingredients-datalist", "autocomplete": "off"}),
+    )
     unit = forms.CharField(
         max_length=UNIT_NAME_MAX_LENGTH,
         required=False,
@@ -44,6 +55,10 @@ class IngredientInRecipeForm(forms.ModelForm):
         self._owner = owner
         if self.instance and self.instance.pk:
             self.fields["ingredient_name"].initial = self.instance.ingredient.ingredient_name
+            substitute = self.instance.substitute
+            self.fields["substitute_name"].initial = (
+                substitute.ingredient_name if substitute else ""
+            )
             unit = self.instance.unit
             self.fields["unit"].initial = unit.name if unit else self.instance.legacy_unit
 
@@ -75,30 +90,45 @@ class IngredientInRecipeForm(forms.ModelForm):
             msg = f"“{text.strip()}” is not a unit we know: pick one from the list."
         raise forms.ValidationError(msg)
 
+    def clean(self) -> dict:
+        """Refuse a substitute that names the ingredient itself, by any spelling."""
+        cleaned = super().clean()
+        name = (cleaned.get("ingredient_name") or "").strip()
+        substitute = (cleaned.get("substitute_name") or "").strip()
+        cleaned["substitute_name"] = substitute
+        if name and substitute and self._same_ingredient(name, substitute):
+            self.add_error("substitute_name", "A substitute must be a different ingredient.")
+        return cleaned
+
+    def _same_ingredient(self, name: str, other: str) -> bool:
+        """Whether both names resolve to one ingredient, existing or yet to be made."""
+        if name.lower() == other.lower():
+            return True
+        found = find_ingredient(name, owner=self._owner)
+        return found is not None and found == find_ingredient(other, owner=self._owner)
+
     def save(self, commit: bool = True) -> IngredientInRecipe:
-        """Save the ingredient row, resolving or creating the ingredient by name."""
+        """Save the row's own fields; with `commit`, resolve both names first."""
         iir = super().save(commit=False)
         iir.unit = self.cleaned_data["unit"]
         iir.legacy_unit = ""
-        name = self.cleaned_data["ingredient_name"].strip()
         if commit:
-            iir.ingredient = resolve_ingredient(name, owner=self._owner)
+            self.resolve_names(iir)
             iir.save()
-        else:
-            self._pending_ingredient_name = None
-            existing = find_ingredient(name, owner=self._owner)
-            if existing:
-                iir.ingredient = existing
-            else:
-                self._pending_ingredient_name = name
         return iir
 
-    def resolve_pending_ingredient(self, iir: IngredientInRecipe) -> None:
-        """Create pending Ingredient row and set FK. Call before iir.save() when commit=False."""
-        pending = getattr(self, "_pending_ingredient_name", None)
-        if pending:
-            iir.ingredient = resolve_ingredient(pending, owner=self._owner)  # ty: ignore[invalid-assignment]  # FK descriptor
-            self._pending_ingredient_name = None
+    def resolve_names(self, iir: IngredientInRecipe) -> None:
+        """Point `iir` at the typed ingredient and substitute, creating either if new.
+
+        Call inside the write's transaction, before `iir.save()`.
+        """
+        iir.ingredient = resolve_ingredient(  # ty: ignore[invalid-assignment]  # FK descriptor
+            self.cleaned_data["ingredient_name"].strip(), owner=self._owner
+        )
+        substitute = self.cleaned_data["substitute_name"]
+        iir.substitute = (  # ty: ignore[invalid-assignment]  # FK descriptor
+            resolve_ingredient(substitute, owner=self._owner) if substitute else None
+        )
 
 
 class IngredientGroupForm(forms.ModelForm):

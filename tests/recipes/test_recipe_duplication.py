@@ -1,6 +1,5 @@
 """Tests for the recipe duplication service (#35)."""
 
-from datetime import timedelta
 from decimal import Decimal
 
 import pytest
@@ -14,7 +13,6 @@ from recipes.models import (
     IngredientGroup,
     IngredientInRecipe,
     Recipe,
-    Source,
     Step,
     Tag,
     Unit,
@@ -56,7 +54,6 @@ def populated_recipe(user):
         recipe_name="Original",
         owner=user,
         short_description="A blurb",
-        source=Source.objects.create(short_name="Big Book", source="isbn:123"),
         source_instance="p. 42",
         cuisine=Cuisine.objects.create(cuisine="Thai"),
         servings=6,
@@ -66,8 +63,6 @@ def populated_recipe(user):
         step_title="Prep",
         step_text="Chop everything",
         index_in_sequence=1,
-        duration=timedelta(minutes=10),
-        extra_info="Use a sharp knife",
     )
     group = IngredientGroup.objects.create(recipe=recipe, group_name="Paste", index_in_sequence=1)
     IngredientInRecipe.objects.create(

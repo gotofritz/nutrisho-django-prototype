@@ -6,10 +6,9 @@ from django.urls import reverse
 from recipes.utils.plain_text import plain_text
 
 from .cuisine import Cuisine
-from .source import Source
 
-# Form-only cap on long prose (Recipe.short_description, Step.step_text and
-# .extra_info). They are TextFields, so the database has no limit (#49).
+# Form-only cap on long prose (Recipe.short_description, Step.step_text). They
+# are TextFields, so the database has no limit (#49).
 PROSE_MAX_LENGTH = 4000
 
 # Typed field -> the column holding its tag-free text (#32), kept in step by save().
@@ -38,11 +37,12 @@ class Recipe(models.Model):
     )
     # Annotated because, without Django stubs, ty types the attribute as the field
     owner: User = models.ForeignKey(User, on_delete=models.CASCADE, null=False)  # ty: ignore[invalid-assignment]
-    source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True, blank=True)
+    # Free text: a book and page, or a web address, which the page links (#65).
     source_instance = models.CharField(
-        "For example, the page if source is a book, or URL if source is a website",
+        "source",
         max_length=200,
         blank=True,
+        help_text="A book and page, or a web address.",
     )
     cuisine = models.ForeignKey(Cuisine, on_delete=models.SET_NULL, null=True, blank=True)
     servings = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1)])
