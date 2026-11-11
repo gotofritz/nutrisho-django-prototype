@@ -42,8 +42,9 @@ they draw on are split by who may change them:
   selected and deleted whole. The list sorts A to Z or in the order
   nodes were added (by primary key; there is no timestamp), so rows that
   predate the seeded tree sit above its first area, `eu`. The recipe page shows the
-  cuisine path in the description block, marked `no-print`.
-- **Sources**: global, unchanged for now.
+  cuisine path in the description block, marked `no-print`, linked to the
+  recipe list filtered by it; its tags follow, A to Z, each linked to the list
+  filtered by that tag.
 
 Every route that changes a global row checks `is_staff`, and its tests use the
 `other_user` fixture to show a signed-in non-staff user is refused and nothing
