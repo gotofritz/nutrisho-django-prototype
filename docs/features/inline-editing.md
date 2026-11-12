@@ -19,7 +19,7 @@ Page structure (#74): `base.html` sets `<html lang="en">` and wraps `{% block co
 
 Ingredient name edit uses an HTML5 `<datalist>` for autosuggest (all existing ingredient names). On save, `ingredient_name` is resolved via get-or-create so renaming creates a new `Ingredient` rather than mutating a shared one.
 
-The row's optional substitute is typed in `substitute_name` (labelled "Or", sharing the same datalist) and shown as `or X` after the name, pluralised at the same quantity (`2 onions or shallots`). Both names resolve through `IngredientInRecipeForm.resolve_names()`, which the save and create views call inside their transaction: `resolve_ingredient` for each, so aliases, plurals and private rows work alike, and a blank substitute clears it. A substitute that resolves to the ingredient itself (`aubergine or eggplant`) is a form error.
+The row's optional substitute is typed in `substitute_name` (labelled "Or", sharing the same datalist) and shown as `or X` after the name, pluralised at the same quantity (`2 onions or shallots`). Both names resolve through `resolve_row_names` (`services/ingredient_groups.py`), which `create_row` and `save_row` call inside their transaction: `resolve_ingredient` for each, so aliases, plurals and private rows work alike, and a blank substitute clears it. A substitute that resolves to the ingredient itself (`aubergine or eggplant`) is a form error.
 
 ## Ingredient groups
 
@@ -32,6 +32,11 @@ empty or not: the "+ Add ingredient" button is rendered inside a group block, so
 recipe with zero groups could only be refilled by adding a group first. The delete
 response carries an `hx-swap-oob="delete"` for the vanished block plus a refreshed
 reassign `<select>`, since the row swap alone would leave both stale.
+
+A recipe's one group may be unnamed; once it has two, each needs a name.
+`create_group` and `rename_group` check that with the recipe row locked, so two
+tabs cannot both add a blank group, and raise `GroupNameError`, which the view
+shows on the form. `IngredientGroupForm` only trims the name.
 
 Deleting a group by hand (`recipe_group_delete`) cascades to its rows, so the
 form's Delete button asks first, naming how many ingredients go and pointing to

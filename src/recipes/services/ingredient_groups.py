@@ -1,9 +1,13 @@
-"""Write a recipe's ingredient groups and rows: delete, move, reassign, prune (#77).
+"""Write a recipe's ingredient groups and rows: create, save, delete, move, reassign (#77).
 
-The rule they share: a group left with no rows goes, except a recipe's last
-group, which stays empty or not. The "+ Add ingredient" button lives inside a
-group block, so a recipe with no groups could only be refilled by adding a
-group first.
+Two rules hold across them. A group left with no rows goes, except a recipe's
+last group, which stays empty or not: the "+ Add ingredient" button lives
+inside a group block, so a recipe with no groups could only be refilled by
+adding a group first. And once a recipe has more than one group, each needs a
+name, checked with the recipe locked so two tabs cannot both add a blank one.
+
+A refusal is raised once the transaction has closed, never inside it: nothing
+has been written by then, so there is nothing to roll back.
 
 Each function takes a recipe its caller has already checked the user owns, and
 touches only that recipe's groups and rows.
@@ -13,13 +17,28 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Literal
 
+from django.contrib.auth.models import AbstractBaseUser
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import Max
 
 from recipes.models import IngredientGroup, IngredientInRecipe, Recipe
-from recipes.utils.sequencing import move_in_sequence, remove_and_compact
+from recipes.services.name_resolution import resolve_ingredient
+from recipes.utils.sequencing import insert_at_index, move_in_sequence, remove_and_compact
 
 _GROUP_NAME_MAX_LENGTH = IngredientGroup._meta.get_field("group_name").max_length  # ty: ignore[unresolved-attribute]  # no Django stubs
+
+
+# Every row field the inline editor writes; never its group or position.
+_ROW_FIELDS = ["quantity", "unit", "legacy_unit", "preparation", "note", "ingredient", "substitute"]
+
+
+class GroupNameError(ValueError):
+    """A group needs a name once its recipe has more than one."""
+
+    def __init__(self) -> None:
+        """Carry the message the group form shows."""
+        super().__init__("Group name required when multiple groups exist.")
 
 
 class ReassignError(ValueError):
@@ -45,6 +64,149 @@ class GroupDeletion(Enum):
 def _lock_recipe(recipe: Recipe) -> bool:
     """Lock the recipe row; False when it has gone."""
     return bool(list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk")))
+
+
+def _check_group_name(name: str, *, group_count: int) -> str | None:
+    """`name` trimmed, or None when it may not be blank: only a recipe's one group may."""
+    name = name.strip()
+    if group_count > 1 and not name:
+        return None
+    return name
+
+
+def _gone(what: str) -> ObjectDoesNotExist:
+    return ObjectDoesNotExist(f"The {what} has been deleted.")
+
+
+def create_group(*, recipe: Recipe, name: str, position: str | None = None) -> IngredientGroup:
+    """Add a group at `position` (a page position, as `insert_at_index` takes it).
+
+    Raises `GroupNameError`, or `ObjectDoesNotExist` when the recipe has gone.
+    """
+    group: IngredientGroup | None = None
+    with transaction.atomic():
+        if not _lock_recipe(recipe):
+            raise _gone("recipe")
+        count = IngredientGroup.objects.filter(recipe=recipe).count()
+        checked = _check_group_name(name, group_count=count + 1)
+        if checked is not None:
+            group = IngredientGroup(recipe=recipe, group_name=checked)
+            insert_at_index(
+                siblings=IngredientGroup.objects.filter(recipe=recipe),
+                instance=group,
+                requested_index=position,
+            )
+    if group is None:
+        raise GroupNameError
+    return group
+
+
+def rename_group(*, recipe: Recipe, group_id: int, name: str) -> IngredientGroup:
+    """Rename a group.
+
+    Raises `GroupNameError`, or `ObjectDoesNotExist` when the group has gone.
+    """
+    checked: str | None = None
+    with transaction.atomic():
+        _lock_recipe(recipe)
+        group = (
+            IngredientGroup.objects.select_for_update().filter(pk=group_id, recipe=recipe).first()
+        )
+        if group is not None:
+            count = IngredientGroup.objects.filter(recipe=recipe).count()
+            checked = _check_group_name(name, group_count=count)
+            if checked is not None:
+                group.group_name = checked
+                group.save(update_fields=["group_name"])
+    if group is None:
+        raise _gone("group")
+    if checked is None:
+        raise GroupNameError
+    return group
+
+
+def resolve_row_names(
+    row: IngredientInRecipe,
+    *,
+    owner: AbstractBaseUser,
+    ingredient_name: str,
+    substitute_name: str = "",
+) -> None:
+    """Point `row` at the named ingredient and substitute, creating either if new.
+
+    Names resolve within `owner`'s vocabulary, and a blank substitute clears it.
+    Call inside the write's transaction, before saving the row.
+    """
+    row.ingredient = resolve_ingredient(ingredient_name.strip(), owner=owner)  # ty: ignore[invalid-assignment]  # FK descriptor
+    substitute_name = substitute_name.strip()
+    row.substitute = (  # ty: ignore[invalid-assignment]  # FK descriptor
+        resolve_ingredient(substitute_name, owner=owner) if substitute_name else None
+    )
+
+
+def create_row(
+    *,
+    recipe: Recipe,
+    group_id: int,
+    row: IngredientInRecipe,
+    ingredient_name: str,
+    substitute_name: str = "",
+    position: str | None = None,
+) -> IngredientInRecipe:
+    """Add `row`, its own fields already set, to a group at `position`.
+
+    `ObjectDoesNotExist` when the group has gone; no ingredient is made for it.
+    """
+    with transaction.atomic():
+        group = (
+            IngredientGroup.objects.select_for_update().filter(pk=group_id, recipe=recipe).first()
+        )
+        if group is not None:
+            resolve_row_names(
+                row,
+                owner=recipe.owner,
+                ingredient_name=ingredient_name,
+                substitute_name=substitute_name,
+            )
+            row.ingredient_group = group
+            insert_at_index(
+                siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
+                instance=row,
+                requested_index=position,
+            )
+    if group is None:
+        raise _gone("group")
+    return row
+
+
+def save_row(
+    *,
+    recipe: Recipe,
+    row: IngredientInRecipe,
+    ingredient_name: str,
+    substitute_name: str = "",
+) -> None:
+    """Save `row`'s own fields and names, never its group or position.
+
+    A reassign or move since the form opened is kept. `ObjectDoesNotExist` when
+    the row has gone.
+    """
+    with transaction.atomic():
+        found = (
+            IngredientInRecipe.objects.select_for_update()
+            .filter(pk=row.pk, ingredient_group__recipe=recipe)
+            .exists()
+        )
+        if found:
+            resolve_row_names(
+                row,
+                owner=recipe.owner,
+                ingredient_name=ingredient_name,
+                substitute_name=substitute_name,
+            )
+            row.save(update_fields=_ROW_FIELDS)
+    if not found:
+        raise _gone("ingredient")
 
 
 def prune_empty_group(*, recipe: Recipe, group: IngredientGroup) -> bool:

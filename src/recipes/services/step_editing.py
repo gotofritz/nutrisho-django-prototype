@@ -1,10 +1,10 @@
-"""Merge and split a recipe's steps (#18, moved out of the views in #77).
+"""Create, save, merge and split a recipe's steps (#18, moved out of the views in #77).
 
 The text rules live in `recipes/utils/step_text.py`; these functions apply them
 to the rows, keeping the sequence gap-free through `utils/sequencing.py`.
 """
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import MaxLengthValidator
 from django.db import transaction
 
@@ -21,6 +21,40 @@ _MAX_TEXT = MaxLengthValidator(PROSE_MAX_LENGTH)
 
 class StepEditError(ValueError):
     """The merge or split cannot be done; the message says why."""
+
+
+def create_step(*, recipe: Recipe, step: Step, position: str | None = None) -> Step:
+    """Add `step`, its fields already set, at `position` (a page position).
+
+    `ObjectDoesNotExist`, raised once the transaction has closed, when the
+    recipe has gone.
+    """
+    with transaction.atomic():
+        found = bool(list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk")))
+        if found:
+            step.recipe = recipe  # ty: ignore[invalid-assignment]  # FK descriptor
+            insert_at_index(
+                siblings=Step.objects.filter(recipe=recipe), instance=step, requested_index=position
+            )
+    if not found:
+        msg = "The recipe has been deleted."
+        raise ObjectDoesNotExist(msg)
+    return step
+
+
+def save_step(*, recipe: Recipe, step: Step) -> None:
+    """Save `step`'s title and text.
+
+    `ObjectDoesNotExist`, raised once the transaction has closed, when the step
+    has gone.
+    """
+    with transaction.atomic():
+        found = Step.objects.select_for_update().filter(pk=step.pk, recipe=recipe).exists()
+        if found:
+            step.save(update_fields=["step_title", "step_text"])
+    if not found:
+        msg = "The step has been deleted."
+        raise ObjectDoesNotExist(msg)
 
 
 def merge_steps(*, recipe: Recipe, step_ids: list[int]) -> Step:

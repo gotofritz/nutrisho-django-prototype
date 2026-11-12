@@ -6,10 +6,10 @@ from django.contrib.auth.models import AbstractBaseUser
 from recipes.models import IngredientGroup, IngredientInRecipe, Unit
 from recipes.models.ingredient import INGREDIENT_NAME_MAX_LENGTH
 from recipes.models.unit import UNIT_NAME_MAX_LENGTH
+from recipes.services.ingredient_groups import resolve_row_names
 from recipes.services.name_resolution import (
     find_ingredient,
     find_unit,
-    resolve_ingredient,
     unit_names,
 )
 from recipes.utils.unit_words import not_a_unit
@@ -23,8 +23,9 @@ class IngredientInRecipeForm(forms.ModelForm):
     optional substitute (`2 onions or shallots`, #65) resolves the same way. The
     typed unit resolves to the shared vocabulary and is never created (#67).
 
-    Neither name is written by `save()`: the view calls `resolve_names()` inside
-    its transaction, since resolving may create an ingredient row.
+    Neither name is written by `save(commit=False)`: resolving may create an
+    ingredient row, so `create_row` and `save_row` do it inside their
+    transaction, from the cleaned names.
     """
 
     ingredient_name = forms.CharField(max_length=INGREDIENT_NAME_MAX_LENGTH, required=True)
@@ -122,12 +123,11 @@ class IngredientInRecipeForm(forms.ModelForm):
 
         Call inside the write's transaction, before `iir.save()`.
         """
-        iir.ingredient = resolve_ingredient(  # ty: ignore[invalid-assignment]  # FK descriptor
-            self.cleaned_data["ingredient_name"].strip(), owner=self._owner
-        )
-        substitute = self.cleaned_data["substitute_name"]
-        iir.substitute = (  # ty: ignore[invalid-assignment]  # FK descriptor
-            resolve_ingredient(substitute, owner=self._owner) if substitute else None
+        resolve_row_names(
+            iir,
+            owner=self._owner,
+            ingredient_name=self.cleaned_data["ingredient_name"],
+            substitute_name=self.cleaned_data["substitute_name"],
         )
 
 
@@ -143,14 +143,10 @@ class IngredientGroupForm(forms.ModelForm):
         model = IngredientGroup
         fields = ["group_name"]
 
-    def __init__(self, *args: object, group_count: int = 1, **kwargs: object) -> None:
-        super().__init__(*args, **kwargs)
-        self._group_count = group_count
-
     def clean_group_name(self) -> str:
-        """Strip the group name; require one when several groups exist."""
-        name = (self.cleaned_data.get("group_name") or "").strip()
-        if self._group_count > 1 and not name:
-            msg = "Group name required when multiple groups exist."
-            raise forms.ValidationError(msg)
-        return name
+        """Strip the group name.
+
+        Whether it may be blank depends on how many groups the recipe has, which
+        `create_group` and `rename_group` check with the recipe locked.
+        """
+        return (self.cleaned_data.get("group_name") or "").strip()
