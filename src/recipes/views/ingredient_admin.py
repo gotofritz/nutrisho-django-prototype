@@ -6,10 +6,11 @@ Selection lives in the request (`ingredient_ids`) and is echoed back into every
 re-rendered partial, so there is no client-side store.
 """
 
-from typing import TypedDict
+from typing import NamedTuple, TypedDict, Unpack, cast
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.core.exceptions import ValidationError
+from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.http import HttpResponse, QueryDict
 from django.shortcuts import get_object_or_404, render
@@ -38,6 +39,10 @@ from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
 
 _T = "recipes/ingredient_admin/"
+
+# Column 2 shows this many rows at first, and "Show more" adds as many again
+# (#80): at 2,000 ingredients the whole list was 597 KB on every keystroke.
+PAGE_SIZE = 100
 
 # Selected-ingredient count each action needs before it makes sense, as
 # (minimum, maximum); a maximum of None means "no upper bound". Merging a plural
@@ -70,12 +75,18 @@ def _selected_ids(data: QueryDict) -> list[int]:
 
 
 class _Filters(TypedDict):
-    """The column-2 filters, as every context helper takes them."""
+    """The column-2 filters and length, as every context helper takes them.
+
+    `limit` is how many rows the page shows. Search and the filter boxes leave
+    it out, so they start the list afresh at one page; every other request
+    carries it (`#ingredient-limit`), so the column comes back as long as it was.
+    """
 
     query: str
     unused_only: bool
     plurals_only: bool
     private_only: bool
+    limit: int
 
 
 def _filters(data: QueryDict) -> _Filters:
@@ -90,29 +101,63 @@ def _filters(data: QueryDict) -> _Filters:
         "unused_only": bool(data.get("unused")),
         "plurals_only": bool(data.get("plurals")),
         "private_only": bool(data.get("private")),
+        "limit": _limit(data.get("limit")),
     }
 
 
-def _selection(
-    data: QueryDict, *, query: str, unused_only: bool, plurals_only: bool, private_only: bool
-) -> list[int]:
+def _limit(raw: str | None) -> int:
+    """The rows on show, never fewer than a page; junk is a page."""
+    try:
+        return max(int(raw), PAGE_SIZE)  # ty: ignore[invalid-argument-type]  # TypeError handled
+    except TypeError, ValueError:
+        return PAGE_SIZE
+
+
+class _Window(NamedTuple):
+    """Column 2's rows: every match's id in order, and how many of them show."""
+
+    matches: QuerySet
+    ids: list[int]
+    shown: int
+
+
+def _window(
+    *,
+    query: str,
+    unused_only: bool,
+    plurals_only: bool,
+    private_only: bool,
+    limit: int,
+    selected_ids: list[int],
+) -> _Window:
+    """The rows column 2 lists: the first `limit`, stretched to every selected row.
+
+    A rename can sort a selected row past the page; it still shows, so the
+    selection never holds a row the user cannot see or untick.
+    """
+    matches = search_ingredients(
+        query, unused_only=unused_only, plurals_only=plurals_only, private_only=private_only
+    )
+    ids = list(matches.values_list("pk", flat=True))
+    selected = set(selected_ids)
+    last_selected = max((i for i, pk in enumerate(ids) if pk in selected), default=-1)
+    return _Window(matches=matches, ids=ids, shown=max(limit, last_selected + 1))
+
+
+def _selection(data: QueryDict, **filters: Unpack[_Filters]) -> list[int]:
     """The ids this request selects.
 
     `toggle_all` is the header checkbox: it clears the selection when every listed
     row is already selected, and otherwise takes the lot. It only ever reaches for
-    what column 2 currently lists — what the search text and the unused filter
-    leave, not the whole table — matching how filtering already narrows the
-    selection to whatever stays visible.
+    what column 2 currently shows — what the search text and the filters leave,
+    and only the pages loaded so far, not the whole table — matching how
+    filtering already narrows the selection to whatever stays visible.
     """
     selected_ids = _selected_ids(data)
     if not data.get("toggle_all"):
         return selected_ids
-    listed_ids = [
-        ingredient.pk
-        for ingredient in search_ingredients(
-            query, unused_only=unused_only, plurals_only=plurals_only, private_only=private_only
-        )
-    ]
+    window = _window(**filters, selected_ids=selected_ids)
+    listed_ids = window.ids[: window.shown]
     if listed_ids and set(listed_ids).issubset(selected_ids):
         return []
     return listed_ids
@@ -132,27 +177,36 @@ def _list_context(
     unused_only: bool,
     plurals_only: bool,
     private_only: bool,
+    limit: int,
     selected_ids: list[int],
 ) -> dict[str, object]:
-    """Context for column 2: the filtered ingredient list plus header counts.
+    """Context for column 2: the rows on show plus header counts.
 
     The header checkbox is tri-state, and only listed rows decide which state:
     ticked when they are all selected, dashed when some are, clear otherwise.
+    "Found" counts every match, shown or not.
     """
-    ingredients = list(
-        search_ingredients(
-            query, unused_only=unused_only, plurals_only=plurals_only, private_only=private_only
-        )
+    window = _window(
+        query=query,
+        unused_only=unused_only,
+        plurals_only=plurals_only,
+        private_only=private_only,
+        limit=limit,
+        selected_ids=selected_ids,
     )
+    ingredients = list(window.matches[: window.shown])
     listed_selected = {i.pk for i in ingredients} & set(selected_ids)
     all_selected = bool(ingredients) and len(listed_selected) == len(ingredients)
+    found_count = len(window.ids)
     return {
         "query": query,
         "unused_only": unused_only,
         "plurals_only": plurals_only,
         "private_only": private_only,
         "ingredients": ingredients,
-        "found_count": len(ingredients),
+        "limit": len(ingredients),
+        "more_count": min(PAGE_SIZE, found_count - len(ingredients)),
+        "found_count": found_count,
         "selected_ids": selected_ids,
         "selected_count": len(selected_ids),
         "all_selected": all_selected,
@@ -177,22 +231,12 @@ def _matches_context(*, selected_ids: list[int], owner: AbstractBaseUser) -> dic
 
 
 def _columns_context(
-    *,
-    owner: AbstractBaseUser,
-    query: str,
-    unused_only: bool,
-    plurals_only: bool,
-    private_only: bool,
-    selected_ids: list[int],
+    *, owner: AbstractBaseUser, selected_ids: list[int], **filters: Unpack[_Filters]
 ) -> dict[str, object]:
     """Context for columns 2-4; column 4 stays empty until a recipe is picked."""
-    return _list_context(
-        query=query,
-        unused_only=unused_only,
-        plurals_only=plurals_only,
-        private_only=private_only,
-        selected_ids=selected_ids,
-    ) | _matches_context(selected_ids=selected_ids, owner=owner)
+    return _list_context(**filters, selected_ids=selected_ids) | _matches_context(
+        selected_ids=selected_ids, owner=owner
+    )
 
 
 def _delete_context(*, selected_ids: list[int]) -> dict[str, object]:
@@ -214,8 +258,12 @@ def _merge_context(*, selected_ids: list[int]) -> dict[str, object]:
 def _fragment(
     request: AuthedRequest, template: str, context: dict[str, object], *, oob: bool = False
 ) -> str:
-    """Render one partial, optionally flagged for an out-of-band swap."""
-    return render_to_string(_T + template, context | {"oob": oob}, request=request)
+    """Render one partial, optionally flagged for an out-of-band swap.
+
+    `limit` defaults to the request's, so a workspace panel carries it on.
+    """
+    defaults = {"limit": _limit(_payload(request).get("limit"))}
+    return render_to_string(_T + template, defaults | context | {"oob": oob}, request=request)
 
 
 def _actions_context(*, selected_count: int, active_action: str | None = None) -> dict[str, object]:
@@ -257,27 +305,14 @@ def _guard(*, action: str, selected_ids: list[int]) -> HttpResponse | None:
 
 
 def _columns_response(
-    request: AuthedRequest,
-    *,
-    query: str,
-    unused_only: bool,
-    plurals_only: bool,
-    private_only: bool,
-    selected_ids: list[int],
+    request: AuthedRequest, *, selected_ids: list[int], **filters: Unpack[_Filters]
 ) -> HttpResponse:
     """Restore columns 2-4 and reset the column-1 buttons."""
     return HttpResponse(
         _fragment(
             request,
             "_columns.html",
-            _columns_context(
-                owner=request.user,
-                query=query,
-                unused_only=unused_only,
-                plurals_only=plurals_only,
-                private_only=private_only,
-                selected_ids=selected_ids,
-            ),
+            _columns_context(owner=request.user, selected_ids=selected_ids, **filters),
         )
         + _actions_oob(request, selected_ids=selected_ids, action=None)
     )
@@ -337,6 +372,25 @@ def ingredient_manage_search(request: AuthedRequest) -> HttpResponse:
         + _fragment(request, "_recipe_matches.html", matches, oob=True)
         + _fragment(request, "_recipe_preview.html", matches, oob=True)
         + _actions_oob(request, selected_ids=selected_ids, action=None)
+    )
+
+
+@require_GET
+def ingredient_manage_more(request: AuthedRequest) -> HttpResponse:
+    """Column 2's next page, swapped in for the Show-more row under the last one.
+
+    `limit` is how many rows the page shows now; the header comes back out of
+    band with the longer limit, and with its counts and select-all box in step.
+    """
+    filters = _filters(request.GET)
+    context = _list_context(
+        **(filters | {"limit": filters["limit"] + PAGE_SIZE}),
+        selected_ids=_selected_ids(request.GET),
+    )
+    rows = cast("list[Ingredient]", context["ingredients"])[filters["limit"] :]
+    return HttpResponse(
+        _fragment(request, "_ingredient_page.html", context | {"ingredients": rows})
+        + _fragment(request, "_ingredient_count.html", context, oob=True)
     )
 
 

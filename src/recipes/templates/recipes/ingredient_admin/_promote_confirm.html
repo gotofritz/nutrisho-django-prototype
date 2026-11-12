@@ -4,7 +4,7 @@
     hx-post="{% url 'recipes:ingredient_manage_promote' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
   >
     {% csrf_token %}
     <p class="promote-intro">

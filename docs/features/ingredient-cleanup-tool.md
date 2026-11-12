@@ -63,6 +63,18 @@ hidden inputs, since it replaces the column holding the checkboxes. `hx-include`
 must name the inputs themselves (`.ingredient-pick:checked`, `.workspace-pick`) —
 pointing it at a container element sends nothing.
 
+**Column 2 shows a page at a time (#80).** It lists the first `PAGE_SIZE` (100)
+matches; the header still counts every match, and a "Show N more" row under the
+last one swaps itself for the next page's rows (`ingredient_manage_more`) and
+refreshes the header out of band. How many rows are on show travels as `limit`
+in the hidden `#ingredient-limit` input, which the header carries and the
+workspace copies (`_workspace_selection.html`). Every `hx-include` in the tool
+names it except search and the three filter boxes, which start the list afresh
+at one page; a test checks the templates for this. The column is never shorter
+than its last selected row, so a rename that sorts the selection past the page
+still shows it ticked. Select-all reaches only the rows on show, never rows the
+user has not loaded.
+
 **Repointing rule (important).** `IngredientInRecipe.ingredient` *and* `.substitute`
 are both `on_delete=PROTECT`. No ingredient can be deleted while either FK
 references it, so `delete_ingredients` and `merge_ingredients` repoint **both** onto

@@ -16,7 +16,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
   >Done</button>
   {% else %}
   <button
@@ -26,7 +26,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_edit' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
     {% if selected_count < 1 %}disabled{% endif %}
   >Edit</button>
   {% endif %}
@@ -39,7 +39,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
   >Cancel</button>
   {% else %}
   <button
@@ -49,7 +49,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_delete' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
     {% if selected_count < 1 %}disabled{% endif %}
   >Delete</button>
   {% endif %}
@@ -62,7 +62,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
   >Cancel</button>
   {% else %}
   <button
@@ -72,7 +72,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_merge' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
     {% if selected_count < 2 %}disabled{% endif %}
   >Merge</button>
   {% endif %}
@@ -85,7 +85,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
   >Cancel</button>
   {% else %}
   {% comment %}
@@ -98,7 +98,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_merge_plural' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
     {% if selected_count != 2 %}disabled{% endif %}
   >Merge plural</button>
   {% endif %}
@@ -111,7 +111,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
   >Cancel</button>
   {% else %}
   <button
@@ -121,7 +121,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_promote' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
     {% if selected_count < 1 %}disabled{% endif %}
   >Promote</button>
   {% endif %}
@@ -134,7 +134,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".workspace-pick, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
   >Done</button>
   {% else %}
   {% comment %}
@@ -147,7 +147,7 @@ into Cancel without any client-side bookkeeping.
     hx-get="{% url 'recipes:ingredient_manage_alias' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
-    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only"
+    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
     {% if selected_count != 1 %}disabled{% endif %}
   >Alias</button>
   {% endif %}

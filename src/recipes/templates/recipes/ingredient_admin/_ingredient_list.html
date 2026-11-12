@@ -10,24 +10,10 @@
   hx-trigger="change target:.ingredient-pick"
   hx-target="#col-recipes"
   hx-swap="outerHTML"
-  hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only"
+  hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
 >
   {% include "./_ingredient_count.html" %}
   <ul class="ingredient-rows">
-    {% for ingredient in ingredients %}
-    <li class="ingredient-row">
-      <label>
-        <input
-          type="checkbox"
-          class="ingredient-pick"
-          name="ingredient_ids"
-          value="{{ ingredient.pk }}"
-          {% if ingredient.pk in selected_ids %}checked{% endif %}
-        >
-        <span class="ingredient-name">{{ ingredient.ingredient_name }}</span>
-        {% include "./_owner_badge.html" %}
-      </label>
-    </li>
-    {% endfor %}
+    {% include "./_ingredient_page.html" %}
   </ul>
 </div>
