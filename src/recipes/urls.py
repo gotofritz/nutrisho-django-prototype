@@ -90,6 +90,12 @@ urlpatterns = [
         _staff(ingredient_admin.ingredient_manage_save),
         name="ingredient_manage_save",
     ),
+    # The recipe editor's ingredient autocomplete (#80).
+    path(
+        "ingredients/suggest/",
+        recipe_ingredients.ingredient_suggest,
+        name="ingredient_suggest",
+    ),
     # Staff cuisine tool: the shared cuisine tree (plan 011).
     path("cuisines/manage/", _staff(cuisine_admin.cuisine_manage), name="cuisine_manage"),
     path(

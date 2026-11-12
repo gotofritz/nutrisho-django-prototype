@@ -73,3 +73,26 @@ def test_ticked_ingredients_move_to_a_group_made_on_the_page(
     expect(panel).to_be_hidden()
     group = IngredientGroup.objects.get(recipe=recipe, group_name="Sauce")
     assert [iir.ingredient.ingredient_name for iir in group.ingredient.all()] == ["tomato"]
+
+
+def test_typing_a_name_fills_the_suggestions(
+    signed_in: Page, recipe, add_ingredient, make_ingredient
+):
+    """Each name input refills the shared datalist with matches for its own text (#80)."""
+    add_ingredient(recipe=recipe, ingredient=make_ingredient("beef"), quantity=500)
+    for name in ("onion", "spring onion", "shallot", "garlic"):
+        make_ingredient(name)
+    signed_in.goto(f"/recipes/{recipe.pk}/")
+
+    signed_in.get_by_role("button", name="+ Add ingredient").click()
+    expect(signed_in.get_by_label("Quantity")).to_be_focused()
+    options = signed_in.locator("#ingredients-datalist option")
+    expect(options).to_have_count(0)
+
+    signed_in.get_by_label("Ingredient").press_sequentially("oni")
+    expect(options).to_have_count(2)
+    assert [o.get_attribute("value") for o in options.all()] == ["onion", "spring onion"]
+
+    signed_in.get_by_label("Or:", exact=True).press_sequentially("sha")
+    expect(options).to_have_count(1)
+    expect(options).to_have_attribute("value", "shallot")

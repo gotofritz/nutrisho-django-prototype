@@ -13,6 +13,7 @@ raw name, which matched case-sensitively and then hit the unique index (#34).
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.db.models import F, Q, QuerySet
+from django.db.models.functions import Lower
 
 from recipes.models import Cuisine, Ingredient, IngredientAlias, Tag, Unit, UnitAlias
 from recipes.models.cuisine import MAX_CUISINE_DEPTH, PATH_SEPARATOR
@@ -88,10 +89,37 @@ def resolve_ingredient(name: str, *, owner: AbstractBaseUser) -> Ingredient:
     return Ingredient.objects.create(ingredient_name=name.strip(), owner=owner)
 
 
-def ingredient_names_for(owner: AbstractBaseUser) -> list[str]:
-    """Names to suggest in `owner`'s recipe editor: global plus their own, sorted."""
-    names = _visible_ingredients(owner).values_list("ingredient_name", flat=True)
-    return sorted(set(names), key=lambda n: (n.lower(), n))
+SUGGESTION_LIMIT = 20
+
+
+def suggest_ingredient_names(
+    text: str, *, owner: AbstractBaseUser, limit: int = SUGGESTION_LIMIT
+) -> list[str]:
+    """Up to `limit` names `owner` sees that match `text`, for the editor's autocomplete (#80).
+
+    Names starting with `text` come first, then names containing it, each sorted
+    ignoring case. A name `owner` has both globally and privately is offered
+    once, in the global spelling, which is the row it would resolve to.
+    """
+    text = text.strip()
+    if not text:
+        return []
+    visible = _visible_ingredients(owner).order_by(
+        Lower("ingredient_name"), F("owner").asc(nulls_first=True), "ingredient_name"
+    )
+    starts = visible.filter(ingredient_name__istartswith=text)
+    contains = visible.filter(ingredient_name__icontains=text).exclude(
+        ingredient_name__istartswith=text
+    )
+    found: dict[str, str] = {}
+    for matches in (starts, contains):
+        # A name appears at most twice (global and private), so twice the limit
+        # always leaves `limit` distinct names.
+        for name in matches.values_list("ingredient_name", flat=True)[: limit * 2]:
+            found.setdefault(name.lower(), name)
+            if len(found) == limit:
+                return list(found.values())
+    return list(found.values())
 
 
 def find_tag(name: str, *, owner: AbstractBaseUser) -> Tag | None:

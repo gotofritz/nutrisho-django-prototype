@@ -32,8 +32,8 @@ nothing creates a cuisine (see [shared vocabularies](shared-vocabularies.md)). T
 `Onion` when `onion` exists (#34). Ingredient lookups take `owner` (the recipe's
 owner) and see only the global list plus that owner's private rows, a global row
 winning over a private one of the same name; a miss creates a row **private** to
-the owner (plan 011). `ingredient_names_for(owner)` feeds the editor's datalist
-from the same two sources, so no user ever sees another's private names.
+the owner (plan 011). `suggest_ingredient_names(text, owner=...)` feeds the editor's
+autocomplete from the same two sources, so no user ever sees another's private names.
 
 **Resolve on input, store and display canonical (#66, plan 008).** After the
 name misses, `find_ingredient` tries, in order: a visible row whose **plural**

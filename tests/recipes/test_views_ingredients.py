@@ -350,17 +350,6 @@ def test_ingredient_edit_shows_ingredient_name(auth_client, recipe, iir):
 
 
 @pytest.mark.django_db
-def test_ingredient_edit_shows_datalist_with_suggestions(auth_client, recipe, iir):
-    """Ingredient edit shows datalist with suggestions."""
-    Ingredient.objects.create(ingredient_name="garlic")
-    response = auth_client.get(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/edit/")
-    content = response.content.decode()
-    assert "<datalist" in content
-    assert "garlic" in content
-    assert "onion" in content
-
-
-@pytest.mark.django_db
 def test_ingredient_edit_field_order_quantity_unit_name(auth_client, recipe, iir):
     """Ingredient edit field order quantity unit name."""
     response = auth_client.get(f"/recipes/{recipe.pk}/ingredients/{iir.pk}/edit/")

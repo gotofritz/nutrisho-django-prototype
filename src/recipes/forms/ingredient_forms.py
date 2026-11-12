@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django import forms
 from django.contrib.auth.models import AbstractBaseUser
+from django.urls import reverse_lazy
 
 from recipes.models import IngredientGroup, IngredientInRecipe, Unit
 from recipes.models.ingredient import INGREDIENT_NAME_MAX_LENGTH
@@ -13,6 +14,18 @@ from recipes.services.name_resolution import (
     unit_names,
 )
 from recipes.utils.unit_words import not_a_unit
+
+# Both name inputs share one datalist and refill it from the top matches as the
+# user types (#80), rather than every edit form shipping the whole table.
+_SUGGESTED_NAME_ATTRS = {
+    "list": "ingredients-datalist",
+    "autocomplete": "off",
+    "hx-get": reverse_lazy("recipes:ingredient_suggest"),
+    "hx-trigger": "input changed delay:200ms",
+    "hx-target": "#ingredients-datalist",
+    "hx-swap": "innerHTML",
+    "hx-sync": "this:replace",
+}
 
 
 class IngredientInRecipeForm(forms.ModelForm):
@@ -28,13 +41,18 @@ class IngredientInRecipeForm(forms.ModelForm):
     transaction, from the cleaned names.
     """
 
-    ingredient_name = forms.CharField(max_length=INGREDIENT_NAME_MAX_LENGTH, required=True)
+    ingredient_name = forms.CharField(
+        max_length=INGREDIENT_NAME_MAX_LENGTH,
+        required=True,
+        label="Ingredient",
+        widget=forms.TextInput(attrs=_SUGGESTED_NAME_ATTRS),
+    )
     substitute_name = forms.CharField(
         max_length=INGREDIENT_NAME_MAX_LENGTH,
         required=False,
         label="Or",
         help_text="An ingredient that can stand in for it.",
-        widget=forms.TextInput(attrs={"list": "ingredients-datalist", "autocomplete": "off"}),
+        widget=forms.TextInput(attrs=_SUGGESTED_NAME_ATTRS),
     )
     unit = forms.CharField(
         max_length=UNIT_NAME_MAX_LENGTH,
