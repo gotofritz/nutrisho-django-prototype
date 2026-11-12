@@ -20,6 +20,7 @@ TASKS = (
     "css",
     "css-watch",
     "dev",
+    "e2e",
     "help",
     "lint",
     "lint-fix",
@@ -155,6 +156,23 @@ def test_dev_builds_css_first():
     output = run_make("--dry-run", "dev")
 
     assert output.index("pnpm run css") < output.index("runserver")
+
+
+@needs_make
+def test_e2e_builds_css_then_runs_only_the_browser_tests_and_passes_args():
+    """`make e2e` runs the `e2e`-marked tests under the test settings, after the CSS (#63)."""
+    output = run_make("--dry-run", "e2e", "ARGS=-k login")
+
+    assert "DJANGO_SETTINGS_MODULE=nutrisho.settings.test" in output
+    assert output.index("pnpm run css") < output.index("pytest")
+    assert "pytest --tb=short -m e2e -k login" in output
+    assert "--cov" not in output
+
+
+@needs_make
+def test_qa_leaves_the_browser_tests_out():
+    """`make qa` stays Python-only: it never selects the browser tests (#63)."""
+    assert "e2e" not in run_make("--dry-run", "qa")
 
 
 @needs_make

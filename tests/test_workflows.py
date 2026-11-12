@@ -206,3 +206,28 @@ def test_pr_title_is_checked_with_commitizen_from_the_environment():
     assert step["env"]["PR_TITLE"] == "${{ github.event.pull_request.title }}"
     assert 'cz check --message "$PR_TITLE"' in step["run"]
     assert "github.event" not in step["run"]
+
+
+def e2e_job() -> dict[str, Any]:
+    """`ci.yml` cut down to its browser-test job."""
+    return {"jobs": {"e2e": load(ROOT / ".github/workflows/ci.yml")["jobs"]["e2e"]}}
+
+
+def test_ci_runs_the_browser_tests_in_chromium():
+    """A separate job installs the locked Playwright's Chromium, then runs `make e2e` (#63)."""
+    runs = [step.get("run", "") for step in steps(e2e_job())]
+
+    install = runs.index("uv sync --locked --all-groups")
+    chromium = runs.index("uv run playwright install --only-shell chromium")
+    e2e = next(i for i, run in enumerate(runs) if run.startswith("make e2e"))
+    assert install < chromium < e2e
+
+
+def test_ci_keeps_screenshots_of_failed_browser_tests():
+    """A failed browser test leaves a screenshot in an uploaded artifact."""
+    job = e2e_job()
+    (upload,) = steps_using(job, "actions/upload-artifact")
+
+    assert "--screenshot only-on-failure" in run_lines(job)
+    assert upload["if"] == "failure()"
+    assert upload["with"]["path"] == "test-results/"

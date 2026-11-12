@@ -189,3 +189,6 @@ src/recipes/static/css/output.css
 
 # Claude Code personal overrides of .claude/settings.json
 .claude/settings.local.json
+
+# pytest-playwright failure screenshots and traces (make e2e)
+test-results/

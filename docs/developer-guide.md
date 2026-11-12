@@ -191,6 +191,7 @@ make test ARGS="tests/test_healthz.py -k healthz"  # a path or other arguments g
 make test-cov                # pytest with line and branch coverage (≥95% required)
 make coverage                # open the HTML report from the last make test-cov
 make audit                   # known vulnerabilities in uv.lock and pnpm-lock.yaml
+make e2e                     # browser smoke tests in Chromium (builds the CSS first)
 ```
 
 `make test` prints one line of dots and the short tracebacks of any failures,
@@ -203,6 +204,12 @@ Tests run with `--fail-on-template-vars`, so a template that uses an undefined
 variable fails the test instead of rendering an empty string. Every directory
 under `src/` is a package (`tests/test_project_config.py` checks it), so
 coverage reports every module, tested or not.
+
+`make e2e` runs the browser smoke tests in `tests/recipes/e2e/`, which drive
+the app in Chromium (see [Browser tests](features/browser-code-and-csp.md#browser-tests-63)).
+They need a browser, installed once with `uv run playwright install chromium`,
+so plain pytest, `make test` and `make qa` skip them. Add `ARGS="--headed"` to
+watch them, or `ARGS="--tracing retain-on-failure"` for a trace of a failure.
 
 `make audit` needs the network, so it is not part of `make qa`. It runs
 `pip-audit` over `uv export --all-groups` and `pnpm audit --audit-level=high`,
@@ -219,6 +226,8 @@ out of date with `pyproject.toml` fails the build, then builds the CSS with
 which writes the coverage total as a shields.io endpoint JSON, and a separate
 `badge` job publishes that file to the `badges` branch for the README badge,
 and a `release` job publishes a new version (see [Releases](#releases)).
+An `e2e` job installs Chromium and runs `make e2e` beside `qa`, uploading a
+screenshot of any failed browser test.
 
 The `PR title` workflow (`.github/workflows/pr-title.yml`) runs `cz check` on
 the PR title whenever a PR is opened, pushed to or retitled, because the title
