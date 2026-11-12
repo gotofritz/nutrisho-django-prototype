@@ -1,20 +1,21 @@
 from typing import Literal
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET, require_POST
 
 from recipes.forms.step_form import StepForm
 from recipes.models import Recipe, Step
-from recipes.services.step_editing import SPLIT_REFUSED, StepEditError, merge_steps, split_step
-from recipes.utils.sequencing import (
-    insert_at_index,
-    move_in_sequence,
-    remove_and_compact,
-    remove_many_and_compact,
+from recipes.services.step_editing import (
+    SPLIT_REFUSED,
+    StepEditError,
+    create_step,
+    merge_steps,
+    save_step,
+    split_step,
 )
+from recipes.utils.sequencing import move_in_sequence, remove_and_compact, remove_many_and_compact
 from recipes.views._announce import announce
 from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
@@ -54,11 +55,10 @@ def recipe_step_save(request: AuthedRequest, recipe_id: int, step_id: int) -> Ht
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
     form = StepForm(data=request.POST, instance=step)
     if form.is_valid():
-        with transaction.atomic():
-            if not Step.objects.select_for_update().filter(pk=step.pk, recipe=recipe).exists():
-                return HttpResponse("", status=404)
-            form.save(commit=False)
-            step.save(update_fields=["step_title", "step_text"])
+        try:
+            save_step(recipe=recipe, step=form.save(commit=False))
+        except ObjectDoesNotExist:
+            return HttpResponse("", status=404)
         step.refresh_from_db()
         return render(
             request,
@@ -111,18 +111,12 @@ def recipe_step_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     form = StepForm(data=request.POST)
     if form.is_valid():
-        with transaction.atomic():
-            locked = list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
-            if not locked:
-                return HttpResponse("", status=404)
-            step = form.save(commit=False)
-            step.recipe = recipe
-            insert_at_index(
-                siblings=Step.objects.filter(recipe=recipe),
-                instance=step,
-                requested_index=request.POST.get("position"),
-                lock_parent=None,
+        try:
+            step = create_step(
+                recipe=recipe, step=form.save(commit=False), position=request.POST.get("position")
             )
+        except ObjectDoesNotExist:
+            return HttpResponse("", status=404)
         return render(
             request,
             "recipes/partials/_step_display.html",

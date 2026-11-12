@@ -1161,7 +1161,7 @@ def test_ingredient_create_no_orphan_ingredient_on_insert_failure(auth_client, r
 
     with (
         patch(
-            "recipes.views.recipe_ingredients.insert_at_index", side_effect=IntegrityError("seq")
+            "recipes.services.ingredient_groups.insert_at_index", side_effect=IntegrityError("seq")
         ),
         pytest.raises(IntegrityError),
     ):

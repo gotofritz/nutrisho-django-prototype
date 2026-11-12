@@ -1,6 +1,6 @@
 from typing import Literal
 
-from django.db import transaction
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
@@ -10,15 +10,20 @@ from recipes.forms.ingredient_forms import IngredientGroupForm, IngredientInReci
 from recipes.models import IngredientGroup, IngredientInRecipe, Recipe
 from recipes.services.ingredient_groups import (
     GroupDeletion,
+    GroupNameError,
     ReassignError,
+    create_group,
+    create_row,
     delete_group,
     delete_row,
     move_row,
     reassign_rows,
+    rename_group,
+    save_row,
 )
 from recipes.services.name_resolution import ingredient_names_for
 from recipes.services.recipe_contents import with_ingredients, with_rows
-from recipes.utils.sequencing import insert_at_index, move_in_sequence
+from recipes.utils.sequencing import move_in_sequence
 from recipes.views._announce import announce
 from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
@@ -79,6 +84,13 @@ def recipe_ingredient_edit(request: AuthedRequest, recipe_id: int, iir_id: int) 
     )
 
 
+def _typed_names(form: IngredientInRecipeForm) -> dict[str, str]:
+    return {
+        "ingredient_name": form.cleaned_data["ingredient_name"],
+        "substitute_name": form.cleaned_data["substitute_name"],
+    }
+
+
 @require_POST
 def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
     """Save a ingredient."""
@@ -86,26 +98,10 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
     form = IngredientInRecipeForm(data=request.POST, instance=iir, owner=recipe.owner)
     if form.is_valid():
-        with transaction.atomic():
-            if (
-                not IngredientInRecipe.objects.select_for_update()
-                .filter(pk=iir.pk, ingredient_group__recipe=recipe)
-                .exists()
-            ):
-                return HttpResponse("", status=404)
-            form.save(commit=False)
-            form.resolve_names(iir)
-            iir.save(
-                update_fields=[
-                    "quantity",
-                    "unit",
-                    "legacy_unit",
-                    "preparation",
-                    "note",
-                    "ingredient",
-                    "substitute",
-                ]
-            )
+        try:
+            save_row(recipe=recipe, row=form.save(commit=False), **_typed_names(form))
+        except ObjectDoesNotExist:
+            return HttpResponse("", status=404)
         iir.refresh_from_db()
         return render(
             request,
@@ -168,23 +164,16 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     form = IngredientInRecipeForm(data=request.POST, owner=recipe.owner)
     if form.is_valid():
-        with transaction.atomic():
-            fresh_group = (
-                IngredientGroup.objects.select_for_update()
-                .filter(pk=group_id, recipe=recipe)
-                .first()
+        try:
+            iir = create_row(
+                recipe=recipe,
+                group_id=group_id,
+                row=form.save(commit=False),
+                position=request.POST.get("position"),
+                **_typed_names(form),
             )
-            if fresh_group is None:
-                return HttpResponse("", status=404)
-            iir = form.save(commit=False)
-            form.resolve_names(iir)
-            iir.ingredient_group = fresh_group
-            insert_at_index(
-                siblings=IngredientInRecipe.objects.filter(ingredient_group=fresh_group),
-                instance=iir,
-                requested_index=request.POST.get("position"),
-                lock_parent=None,
-            )
+        except ObjectDoesNotExist:
+            return HttpResponse("", status=404)
         return render(
             request,
             "recipes/partials/_ingredient_display.html",
@@ -249,18 +238,17 @@ def recipe_group_save(request: AuthedRequest, recipe_id: int, group_id: int) -> 
     """Save a group."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
-    with transaction.atomic():
-        list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
-        group = (
-            IngredientGroup.objects.select_for_update().filter(pk=group_id, recipe=recipe).first()
-        )
-        if group is None:
+    form = IngredientGroupForm(data=request.POST, instance=group)
+    if form.is_valid():
+        try:
+            group = rename_group(
+                recipe=recipe, group_id=group_id, name=form.cleaned_data["group_name"]
+            )
+        except ObjectDoesNotExist:
             return HttpResponse("", status=404)
-        group_count = IngredientGroup.objects.filter(recipe=recipe).count()
-        form = IngredientGroupForm(data=request.POST, instance=group, group_count=group_count)
-        if form.is_valid():
-            form.save()
-            group.refresh_from_db()
+        except GroupNameError as exc:
+            form.add_error("group_name", str(exc))
+        else:
             content = render_to_string(
                 "recipes/partials/_group_display.html",
                 {"recipe": recipe, "group": group},
@@ -325,21 +313,19 @@ def recipe_group_add(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 def recipe_group_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Create a group."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
-    with transaction.atomic():
-        locked = list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
-        if not locked:
-            return HttpResponse("", status=404)
-        existing_count = IngredientGroup.objects.filter(recipe=recipe).count()
-        form = IngredientGroupForm(data=request.POST, group_count=existing_count + 1)
-        if form.is_valid():
-            group = form.save(commit=False)
-            group.recipe = recipe
-            insert_at_index(
-                siblings=IngredientGroup.objects.filter(recipe=recipe),
-                instance=group,
-                requested_index=request.POST.get("position"),
-                lock_parent=None,
+    form = IngredientGroupForm(data=request.POST)
+    if form.is_valid():
+        try:
+            group = create_group(
+                recipe=recipe,
+                name=form.cleaned_data["group_name"],
+                position=request.POST.get("position"),
             )
+        except ObjectDoesNotExist:
+            return HttpResponse("", status=404)
+        except GroupNameError as exc:
+            form.add_error("group_name", str(exc))
+        else:
             content = render_to_string(
                 "recipes/partials/_group_block.html",
                 {"recipe": recipe, "group": group},

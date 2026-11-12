@@ -18,7 +18,7 @@ that a colon introduces a heading is a judgement about legacy data, not a rule.
 
 ## Merging, Splitting and Bulk-Deleting Steps (`recipes/services/step_editing.py`)
 
-`merge_steps` and `split_step` write the rows; the text rules they apply are
+`create_step`, `save_step`, `merge_steps` and `split_step` write the rows; the text rules they apply are
 the pure functions in `recipes/utils/step_text.py`.
 
 Every displayed step carries a checkbox (`.step-select`, posting `step_ids`).
