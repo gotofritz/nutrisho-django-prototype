@@ -20,7 +20,6 @@ from recipes.services.ingredient_admin import (
 )
 from recipes.services.name_resolution import (
     find_ingredient,
-    ingredient_names_for,
     resolve_ingredient,
 )
 
@@ -121,15 +120,6 @@ def test_find_sees_global_and_own_rows_only(make_ingredient, private, user, othe
     assert find_ingredient("yuzu", owner=user) == yuzu
     assert find_ingredient("sumac", owner=user) is None
     assert Ingredient.objects.count() == 3
-
-
-@pytest.mark.django_db
-def test_suggestions_are_global_plus_own(make_ingredient, private, user, other_user):
-    """The editor's datalist never leaks another user's private names."""
-    make_ingredient("onion")
-    private("yuzu", owner=user)
-    private("sumac", owner=other_user)
-    assert ingredient_names_for(user) == ["onion", "yuzu"]
 
 
 # --- Recipe editor -----------------------------------------------------------

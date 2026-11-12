@@ -21,7 +21,7 @@ from recipes.services.ingredient_groups import (
     rename_group,
     save_row,
 )
-from recipes.services.name_resolution import ingredient_names_for
+from recipes.services.name_resolution import suggest_ingredient_names
 from recipes.services.recipe_contents import with_ingredients, with_rows
 from recipes.utils.sequencing import move_in_sequence
 from recipes.views._announce import announce
@@ -55,6 +55,22 @@ def _whole_groups_list(request: AuthedRequest, recipe: Recipe) -> HttpResponse:
 
 
 @require_GET
+def ingredient_suggest(request: AuthedRequest) -> HttpResponse:
+    """`<option>`s for the editor's ingredient datalist: the top matches for the typed text.
+
+    Both name inputs share the datalist and send their own value, under their
+    own name. Suggestions are the signed-in user's vocabulary, and the editor
+    only ever edits their own recipes.
+    """
+    text = request.GET.get("ingredient_name") or request.GET.get("substitute_name", "")
+    return render(
+        request,
+        "recipes/partials/_ingredient_suggestions.html",
+        {"names": suggest_ingredient_names(text, owner=request.user)},
+    )
+
+
+@require_GET
 def recipe_ingredient_display(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
     """Show a ingredient."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
@@ -79,7 +95,6 @@ def recipe_ingredient_edit(request: AuthedRequest, recipe_id: int, iir_id: int) 
             "recipe": recipe,
             "iir": iir,
             "form": form,
-            "all_ingredients": ingredient_names_for(recipe.owner),
         },
     )
 
@@ -115,7 +130,6 @@ def recipe_ingredient_save(request: AuthedRequest, recipe_id: int, iir_id: int) 
             "recipe": recipe,
             "iir": iir,
             "form": form,
-            "all_ingredients": ingredient_names_for(recipe.owner),
         },
     )
 
@@ -152,7 +166,6 @@ def recipe_ingredient_add(request: AuthedRequest, recipe_id: int, group_id: int)
             "group": group,
             "iir": None,
             "form": IngredientInRecipeForm(owner=recipe.owner),
-            "all_ingredients": ingredient_names_for(recipe.owner),
         },
     )
 
@@ -187,7 +200,6 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
             "group": group,
             "iir": None,
             "form": form,
-            "all_ingredients": ingredient_names_for(recipe.owner),
         },
     )
 

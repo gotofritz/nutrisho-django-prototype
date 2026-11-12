@@ -23,22 +23,9 @@
       {{ form.unit.errors }}
     </p>
     <p>
-      <label for="id_ingredient_name">Ingredient:</label>
-      <input
-        type="text"
-        id="id_ingredient_name"
-        name="ingredient_name"
-        value="{{ form.ingredient_name.value|default:'' }}"
-        list="ingredients-datalist"
-        autocomplete="off"
-        required
-        {% if form.ingredient_name.errors %}aria-invalid="true" aria-describedby="{{ form.ingredient_name.auto_id }}_error"{% endif %}
-      >
-      <datalist id="ingredients-datalist">
-        {% for name in all_ingredients %}
-        <option value="{{ name }}">
-        {% endfor %}
-      </datalist>
+      {{ form.ingredient_name.label_tag }} {{ form.ingredient_name }}
+      {# Starts empty: typing in either name input fills it with the top matches (#80). #}
+      <datalist id="ingredients-datalist"></datalist>
       {{ form.ingredient_name.errors }}
     </p>
     <p>{{ form.substitute_name.label_tag }} {{ form.substitute_name }}{{ form.substitute_name.errors }}</p>
