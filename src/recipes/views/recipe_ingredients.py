@@ -1,5 +1,6 @@
+from typing import Literal
+
 from django.db import transaction
-from django.db.models import Max
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
@@ -7,9 +8,17 @@ from django.views.decorators.http import require_GET, require_POST
 
 from recipes.forms.ingredient_forms import IngredientGroupForm, IngredientInRecipeForm
 from recipes.models import IngredientGroup, IngredientInRecipe, Recipe
+from recipes.services.ingredient_groups import (
+    GroupDeletion,
+    ReassignError,
+    delete_group,
+    delete_row,
+    move_row,
+    reassign_rows,
+)
 from recipes.services.name_resolution import ingredient_names_for
 from recipes.services.recipe_contents import with_ingredients, with_rows
-from recipes.utils.sequencing import insert_at_index, move_in_sequence, remove_and_compact
+from recipes.utils.sequencing import insert_at_index, move_in_sequence
 from recipes.views._announce import announce
 from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
@@ -50,24 +59,6 @@ def recipe_ingredient_display(request: AuthedRequest, recipe_id: int, iir_id: in
         "recipes/partials/_ingredient_display.html",
         {"recipe": recipe, "iir": iir},
     )
-
-
-def _prune_empty_group(recipe: Recipe, group: IngredientGroup) -> bool:
-    """Drop `group` if nothing is left in it; return whether it went.
-
-    A recipe's last group always survives, empty or not: the "+ Add ingredient"
-    button lives inside a group block, so a recipe with no groups can only be
-    refilled by adding a group first.
-
-    Call inside the caller's transaction — it reads the group's row count and
-    then deletes, and remove_and_compact closes the index gap it leaves.
-    """
-    if IngredientInRecipe.objects.filter(ingredient_group=group).exists():
-        return False
-    if IngredientGroup.objects.filter(recipe=recipe).count() < 2:
-        return False
-    remove_and_compact(siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group)
-    return True
 
 
 @require_GET
@@ -138,28 +129,15 @@ def recipe_ingredient_delete(request: AuthedRequest, recipe_id: int, iir_id: int
     """Delete a ingredient."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
-    with transaction.atomic():
-        fresh = (
-            IngredientInRecipe.objects.select_for_update()
-            .select_related("ingredient_group")
-            .filter(pk=iir_id, ingredient_group__recipe=recipe)
-            .first()
-        )
-        if fresh is None:
-            return HttpResponse("")
-        group = fresh.ingredient_group
-        group_pk = group.pk  # deleting the row clears pk on the instance
-        remove_and_compact(
-            siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
-            instance=fresh,
-        )
-        pruned = _prune_empty_group(recipe, group)
-    if not pruned:
+    deletion = delete_row(recipe=recipe, row_id=iir_id)
+    if deletion is None:
+        return HttpResponse("")
+    if not deletion.group_pruned:
         return announce(HttpResponse(""), "Ingredient deleted.")
     # The row swap alone would leave an empty group block on the page, and the
     # reassign <select> would still offer the group that just went.
     response = HttpResponse(
-        f'<div id="group-block-{group_pk}" hx-swap-oob="delete"></div>'
+        f'<div id="group-block-{deletion.group_id}" hx-swap-oob="delete"></div>'
         + _reassign_select_oob(recipe, request)
     )
     return announce(response, "Ingredient deleted.")
@@ -226,57 +204,15 @@ def recipe_ingredient_create(request: AuthedRequest, recipe_id: int, group_id: i
 
 
 @require_POST
-def recipe_ingredient_move_up(request: AuthedRequest, recipe_id: int, iir_id: int) -> HttpResponse:
-    """Move a ingredient up."""
-    recipe = owned_recipe(request=request, recipe_id=recipe_id)
-    iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
-    original_group_id = iir.ingredient_group_id
-    with transaction.atomic():
-        fresh = (
-            IngredientInRecipe.objects.select_for_update()
-            .select_related("ingredient_group")
-            .filter(pk=iir_id, ingredient_group__recipe=recipe)
-            .first()
-        )
-        if fresh is None:
-            return _whole_groups_list(request, recipe)
-        group = fresh.ingredient_group
-        move_in_sequence(
-            siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
-            instance=fresh,
-            direction="up",
-        )
-    if group.pk != original_group_id:
-        return _whole_groups_list(request, recipe)
-    return render(
-        request, "recipes/partials/_iir_list.html", {"recipe": recipe, "group": with_rows(group)}
-    )
-
-
-@require_POST
-def recipe_ingredient_move_down(
-    request: AuthedRequest, recipe_id: int, iir_id: int
+def recipe_ingredient_move(
+    request: AuthedRequest, recipe_id: int, iir_id: int, direction: Literal["up", "down"]
 ) -> HttpResponse:
-    """Move a ingredient down."""
+    """Move a ingredient up or down within its group."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     iir = get_object_or_404(IngredientInRecipe, id=iir_id, ingredient_group__recipe=recipe)
-    original_group_id = iir.ingredient_group_id
-    with transaction.atomic():
-        fresh = (
-            IngredientInRecipe.objects.select_for_update()
-            .select_related("ingredient_group")
-            .filter(pk=iir_id, ingredient_group__recipe=recipe)
-            .first()
-        )
-        if fresh is None:
-            return _whole_groups_list(request, recipe)
-        group = fresh.ingredient_group
-        move_in_sequence(
-            siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
-            instance=fresh,
-            direction="down",
-        )
-    if group.pk != original_group_id:
+    group = move_row(recipe=recipe, row_id=iir_id, direction=direction)
+    if group is None or group.pk != iir.ingredient_group_id:
+        # Gone or reassigned meanwhile: the page's copy of its group is stale.
         return _whole_groups_list(request, recipe)
     return render(
         request, "recipes/partials/_iir_list.html", {"recipe": recipe, "group": with_rows(group)}
@@ -342,46 +278,34 @@ def recipe_group_save(request: AuthedRequest, recipe_id: int, group_id: int) -> 
 def recipe_group_delete(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
     """Delete a group and its ingredients, unless it is the recipe's last group.
 
-    The last group is kept for the reason `_prune_empty_group` gives; the form
-    hides Delete for it, so only a stale page gets here, and gets the block back.
+    The form hides Delete for the last group, so only a stale page asks for
+    that, and gets the block back.
     """
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
-    get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
-    with transaction.atomic():
-        # Lock the recipe so two tabs cannot each delete one of its last two groups.
-        list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
-        group = IngredientGroup.objects.filter(pk=group_id, recipe=recipe).first()
-        if group is None:
-            return HttpResponse(_reassign_select_oob(recipe, request))
-        if IngredientGroup.objects.filter(recipe=recipe).count() < 2:
-            response = render(
-                request,
-                "recipes/partials/_group_block.html",
-                {"recipe": recipe, "group": with_rows(group)},
-            )
-            return announce(response, "A recipe keeps at least one group, so this one stayed.")
-        remove_and_compact(siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group)
-    return announce(HttpResponse(_reassign_select_oob(recipe, request)), "Group deleted.")
+    group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
+    outcome = delete_group(recipe=recipe, group_id=group_id)
+    if outcome is GroupDeletion.KEPT_LAST:
+        response = render(
+            request,
+            "recipes/partials/_group_block.html",
+            {"recipe": recipe, "group": with_rows(group)},
+        )
+        return announce(response, "A recipe keeps at least one group, so this one stayed.")
+    response = HttpResponse(_reassign_select_oob(recipe, request))
+    if outcome is GroupDeletion.MISSING:
+        return response
+    return announce(response, "Group deleted.")
 
 
 @require_POST
-def recipe_group_move_up(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
-    """Move a group up."""
+def recipe_group_move(
+    request: AuthedRequest, recipe_id: int, group_id: int, direction: Literal["up", "down"]
+) -> HttpResponse:
+    """Move a group up or down."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
     move_in_sequence(
-        siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group, direction="up"
-    )
-    return _groups_list(request, recipe)
-
-
-@require_POST
-def recipe_group_move_down(request: AuthedRequest, recipe_id: int, group_id: int) -> HttpResponse:
-    """Move a group down."""
-    recipe = owned_recipe(request=request, recipe_id=recipe_id)
-    group = get_object_or_404(IngredientGroup, id=group_id, recipe=recipe)
-    move_in_sequence(
-        siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group, direction="down"
+        siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group, direction=direction
     )
     return _groups_list(request, recipe)
 
@@ -434,153 +358,28 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
     """Move ingredients into another group."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     raw_ids = request.POST.getlist("ingredient_ids")
-
     if not raw_ids:
         return _groups_list(request, recipe)
-
     try:
-        ingredient_ids = [int(i) for i in raw_ids]
+        row_ids = [int(i) for i in raw_ids]
     except ValueError, TypeError:
         return _groups_list(request, recipe, error="Invalid ingredient IDs.")
 
-    target_group_id = request.POST.get("target_group", "")
-    is_new_group = target_group_id == "new"
-    if not is_new_group:
+    raw_target = request.POST.get("target_group", "")
+    target_group_id: int | None = None
+    if raw_target != "new":
         try:
-            group_pk = int(target_group_id)
+            target_group_id = int(raw_target)
         except ValueError, TypeError:
             return _groups_list(request, recipe, error="Invalid group.")
-        target_group = IngredientGroup.objects.filter(id=group_pk, recipe=recipe).first()
-        if target_group is None:
-            return _groups_list(request, recipe, error="Invalid group.")
 
-    # Visual page order: group order first, then row order within the group
-    iirs = list(
-        IngredientInRecipe.objects.filter(id__in=ingredient_ids, ingredient_group__recipe=recipe)
-        .select_related("ingredient_group")
-        .order_by("ingredient_group__index_in_sequence", "index_in_sequence")
-    )
-
-    if not iirs:
-        return _groups_list(request, recipe)
-
-    if not is_new_group and all(iir.ingredient_group_id == target_group.id for iir in iirs):
-        # Everything already lives in the target group — moving would only
-        # reorder rows to the end, so do nothing.
-        return _groups_list(request, recipe)
-
-    with transaction.atomic():
-        if is_new_group:
-            # Lock the recipe row before reading count so concurrent blank-group
-            # creates serialize rather than both validating against a stale count.
-            list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
-            existing_count = IngredientGroup.objects.filter(recipe=recipe).count()
-            form = IngredientGroupForm(
-                data={"group_name": request.POST.get("new_group_name", "")},
-                group_count=existing_count + 1,
-            )
-            if not form.is_valid():
-                return _groups_list(request, recipe, error="Group name is required.")
-            agg = IngredientGroup.objects.filter(recipe=recipe).aggregate(Max("index_in_sequence"))
-            last = agg["index_in_sequence__max"]
-            target_group = form.save(commit=False)
-            target_group.recipe = recipe
-            target_group.index_in_sequence = (last + 1) if last is not None else 0
-            target_group.save()
-        else:
-            # Lock recipe and re-fetch target group so concurrent deletes/reorders are visible.
-            list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
-            target_group = (
-                IngredientGroup.objects.select_for_update()
-                .filter(id=group_pk, recipe=recipe)
-                .first()
-            )
-            if target_group is None:
-                return _groups_list(request, recipe, error="Invalid group.")
-
-        iir_ids = [iir.id for iir in iirs]
-
-        # Lock ALL IIRs in the recipe before reading or writing so concurrent
-        # reassign/move requests serialize rather than racing on unique constraints.
-        list(
-            IngredientInRecipe.objects.filter(ingredient_group__recipe=recipe)
-            .select_for_update()
-            .values("pk")
-            .order_by("ingredient_group_id", "index_in_sequence")
+    try:
+        reassign_rows(
+            recipe=recipe,
+            row_ids=row_ids,
+            target_group_id=target_group_id,
+            new_group_name=request.POST.get("new_group_name", ""),
         )
-
-        # Re-fetch fresh DB values after locking; caller's iirs may be stale.
-        fresh_iirs = list(
-            IngredientInRecipe.objects.filter(id__in=iir_ids)
-            .select_related("ingredient_group")
-            .order_by("ingredient_group__index_in_sequence", "index_in_sequence")
-        )
-
-        if not fresh_iirs:
-            # All selected rows were deleted concurrently; roll back any just-created group.
-            if is_new_group:
-                target_group.delete()
-            return _groups_list(request, recipe)
-
-        affected_old_group_ids = {
-            iir.ingredient_group_id
-            for iir in fresh_iirs
-            if iir.ingredient_group_id != target_group.id
-        }
-
-        # Existing items in the target group that are NOT being moved
-        existing_target = list(
-            IngredientInRecipe.objects.filter(ingredient_group=target_group)
-            .exclude(id__in=iir_ids)
-            .order_by("index_in_sequence")
-        )
-
-        # Merge moved + existing target by original page order so visual position is preserved:
-        # sort key = (group.index_in_sequence, item.index_in_sequence) before this operation.
-        target_group_index = target_group.index_in_sequence
-        combined: list[tuple[int, int, IngredientInRecipe]] = [
-            (item.ingredient_group.index_in_sequence, item.index_in_sequence, item)
-            for item in fresh_iirs
-        ]
-        combined.extend(
-            (target_group_index, item.index_in_sequence, item) for item in existing_target
-        )
-        combined.sort(key=lambda x: (x[0], x[1]))
-        final_order = [x[2] for x in combined]
-
-        # Park ALL items destined for target_group at temp indexes to free their
-        # current positions before writing the merged final order.
-        all_target_items = fresh_iirs + existing_target
-        for i, item in enumerate(all_target_items):
-            item.ingredient_group = target_group
-            item.index_in_sequence = -(i + 1)
-            item.save(update_fields=["ingredient_group", "index_in_sequence"])
-
-        # Compact non-moved items in source groups (target is rewritten fully below)
-        emptied: list[IngredientGroup] = []
-        for group_id in affected_old_group_ids:
-            remaining = list(
-                IngredientInRecipe.objects.filter(ingredient_group_id=group_id).order_by(
-                    "index_in_sequence"
-                )
-            )
-            if not remaining:
-                source = IngredientGroup.objects.filter(pk=group_id).first()
-                if source is not None:
-                    emptied.append(source)
-                continue
-            for i, r in enumerate(remaining):
-                if r.index_in_sequence != i:
-                    r.index_in_sequence = i
-                    r.save(update_fields=["index_in_sequence"])
-
-        # Write final merged order into the target group
-        for i, item in enumerate(final_order):
-            item.index_in_sequence = i  # ty: ignore[invalid-assignment]
-            item.save(update_fields=["ingredient_group", "index_in_sequence"])
-
-        # Moving every row out leaves the source group behind with nothing in it.
-        for source in emptied:
-            _prune_empty_group(recipe, source)
-
+    except ReassignError as exc:
+        return _groups_list(request, recipe, error=str(exc))
     return _groups_list(request, recipe)

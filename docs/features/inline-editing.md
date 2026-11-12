@@ -24,7 +24,9 @@ The row's optional substitute is typed in `substitute_name` (labelled "Or", shar
 ## Ingredient groups
 
 Deleting the last `IngredientInRecipe` in a group, or moving every row out of it
-via reassign, deletes the now-empty `IngredientGroup` too (`_prune_empty_group`),
+via reassign, deletes the now-empty `IngredientGroup` too (`prune_empty_group` in
+`services/ingredient_groups.py`, beside `delete_row`, `delete_group`, `move_row`
+and `reassign_rows`),
 compacting the remaining group indexes. A recipe's **last** group is always kept,
 empty or not: the "+ Add ingredient" button is rendered inside a group block, so a
 recipe with zero groups could only be refilled by adding a group first. The delete

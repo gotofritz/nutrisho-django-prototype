@@ -36,9 +36,13 @@ debug toolbar is a dev-group package, mounted only when installed.
 - `src/nutrisho/` — project config only (settings `base`/`dev`/`prod`/`test`,
   middleware, `/healthz`); no business logic
 - `src/recipes/` — all domain logic
-  - `services/` — pure query and mutation functions; no HTTP, no templates
+  - `services/` — pure query and mutation functions; no HTTP, no templates,
+    no forms. Move domain logic here as you touch it, so a command or importer
+    can reuse it
   - `utils/` — framework-free helpers
-  - `views/` — thin: request parsing, guards, choosing the partial
+  - `views/` — thin: parse the request, guard, call a service, choose the
+    partial. `urls.py` imports each view module directly; there is no
+    re-export list in `views/__init__.py`
   - `management/commands/` — management commands
 - `tests/` mirrors `src/`
 
