@@ -99,6 +99,20 @@ def test_htmx_does_not_eval_or_inject_styles(auth_client):
     assert config["includeIndicatorStyles"] is False
 
 
+@pytest.mark.django_db
+def test_htmx_does_not_settle_style_attributes(auth_client):
+    """The settle step of htmx never writes a `style` attribute, which the CSP blocks (#63).
+
+    A swapped-in element whose id is already on the page briefly takes the old
+    element's settled attributes; `app.js` sizes textareas through their
+    `style`, so re-rendering an open form would copy it as an inline style.
+    """
+    html = auth_client.get(reverse("recipes:home")).content.decode()
+    meta = re.search(r'name="htmx-config" content=\'([^\']*)\'', html)
+    assert meta
+    assert "style" not in json.loads(meta.group(1))["attributesToSettle"]
+
+
 # --- the app script ----------------------------------------------------------
 
 
