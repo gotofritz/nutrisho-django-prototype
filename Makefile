@@ -14,7 +14,7 @@ PORT ?= 8987
 ARGS ?=
 SCHEMA ?= docs/schema.sql
 
-.PHONY: help audit backup bootstrap check-migrations coverage coverage-badge css css-watch dev lint lint-fix manage \
+.PHONY: help audit backup bootstrap check-migrations coverage coverage-badge css css-watch dev e2e lint lint-fix manage \
 	migrate node-install qa release schema seed test test-cov test-hooks typecheck
 
 help: ## List the available targets
@@ -69,6 +69,11 @@ css-watch: node-install ## Watch and rebuild Tailwind CSS on changes
 
 dev: css ## Run the dev server on PORT (default 8987); builds CSS first
 	uv run python manage.py runserver $(PORT)
+
+# The browser smoke tests (#63), which the default pytest run and `make qa` skip.
+# They need the CSS, built first, and Chromium: `uv run playwright install chromium`.
+e2e: css ## Run the browser smoke tests in Chromium (pass extra pytest args as ARGS="...")
+	DJANGO_SETTINGS_MODULE=nutrisho.settings.test uv run pytest --tb=short -m e2e $(ARGS)
 
 lint: ## Run ruff (non-mutating)
 	uv run ruff check src/ tests/

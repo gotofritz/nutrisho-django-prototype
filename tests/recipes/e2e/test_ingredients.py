@@ -1,0 +1,75 @@
+"""Browser journeys: ingredient groups and ingredient rows on a recipe (#63)."""
+
+import pytest
+from playwright.sync_api import Page, expect
+
+from recipes.models import IngredientGroup, Recipe
+
+pytestmark = pytest.mark.e2e
+
+
+@pytest.fixture
+def recipe(make_recipe, user) -> Recipe:
+    """A recipe owned by the signed-in user."""
+    return make_recipe(owner=user, name="Ragù")
+
+
+def test_adding_an_ingredient_to_a_new_group(
+    signed_in: Page, recipe, add_ingredient, make_ingredient
+):
+    """A new group saves in place and takes an ingredient, shown in its plural."""
+    add_ingredient(recipe=recipe, ingredient=make_ingredient("beef"), quantity=500)
+    signed_in.goto(f"/recipes/{recipe.pk}/")
+
+    signed_in.get_by_role("button", name="+ Add group").click()
+    name = signed_in.get_by_label("Group name")
+    expect(name).to_be_focused()
+    name.fill("Sauce")
+    signed_in.locator("#groups-list .is-editing").get_by_role("button", name="Save").click()
+    sauce = signed_in.locator(".group-block").filter(
+        has=signed_in.get_by_role("heading", name="Sauce")
+    )
+    expect(sauce).to_be_visible()
+
+    sauce.get_by_role("button", name="+ Add ingredient").click()
+    quantity = signed_in.get_by_label("Quantity")
+    expect(quantity).to_be_focused()
+    quantity.fill("2")
+    signed_in.get_by_label("Ingredient").fill("onion")
+    signed_in.get_by_label("Chopped, blanched").fill("chopped")
+    sauce.get_by_role("button", name="Save").click()
+
+    expect(sauce.locator(".ingredient-content")).to_have_text("2 onions, chopped")
+    group = IngredientGroup.objects.get(recipe=recipe, group_name="Sauce")
+    assert [iir.ingredient.ingredient_name for iir in group.ingredient.all()] == ["onion"]
+
+
+def test_ticked_ingredients_move_to_a_group_made_on_the_page(
+    signed_in: Page, recipe, add_ingredient, make_ingredient
+):
+    """The move panel's group list is refreshed out of band when a group is added."""
+    add_ingredient(recipe=recipe, ingredient=make_ingredient("beef"), quantity=500)
+    add_ingredient(recipe=recipe, ingredient=make_ingredient("tomato"), quantity=4)
+    signed_in.goto(f"/recipes/{recipe.pk}/")
+    panel = signed_in.locator("#reassign-panel")
+
+    signed_in.get_by_role("button", name="+ Add group").click()
+    signed_in.get_by_label("Group name").fill("Sauce")
+    signed_in.locator("#groups-list .is-editing").get_by_role("button", name="Save").click()
+    expect(signed_in.get_by_role("heading", name="Sauce")).to_be_visible()
+
+    expect(panel).to_be_hidden()
+    signed_in.locator(".ingredient-in-group-show", has_text="tomato").locator(
+        ".ingredient-select"
+    ).check()
+    expect(panel).to_be_visible()
+    panel.get_by_label("Move to:").select_option(label="Sauce")
+    panel.get_by_role("button", name="Move").click()
+
+    sauce = signed_in.locator(".group-block").filter(
+        has=signed_in.get_by_role("heading", name="Sauce")
+    )
+    expect(sauce.locator(".ingredient-name")).to_have_text(["tomatoes"])
+    expect(panel).to_be_hidden()
+    group = IngredientGroup.objects.get(recipe=recipe, group_name="Sauce")
+    assert [iir.ingredient.ingredient_name for iir in group.ingredient.all()] == ["tomato"]

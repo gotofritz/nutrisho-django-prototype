@@ -280,6 +280,9 @@ Use what Django already provides before adding a dependency:
   fixtures in `tests/recipes/conftest.py`, not a factory library
 - Use either function-based or class-based tests, never both
 - Shared fixtures/mocks in `conftest.py`
+- Browser smoke tests live in `tests/recipes/e2e/` (`pytest-playwright`),
+  marked so that plain pytest and `make qa` skip them; run them with
+  `make e2e` when changing `app.js`, htmx attributes or a template's flow
 
 ## Environment
 

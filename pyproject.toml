@@ -10,6 +10,7 @@ dev = [
   "pytest>=8.3.0",
   "pytest-cov>=6.0.0",
   "pytest-django>=4.10.0",
+  "pytest-playwright>=0.10.0",
   "ruff>=0.14.10",
   "ty>=0.0.9"
 ]
@@ -56,7 +57,10 @@ packages = ["src/nutrisho", "src/recipes"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "nutrisho.settings.test"
-addopts = ["--fail-on-template-vars"]
+# Browser tests (`e2e`) need Chromium and the built CSS, so the default run skips
+# them; `make e2e` runs them alone.
+addopts = ["--fail-on-template-vars", "-m", "not e2e"]
+markers = ["e2e: drives the app in Chromium through pytest-playwright (`make e2e`)"]
 pythonpath = ["src"]
 testpaths = ["tests"]
 

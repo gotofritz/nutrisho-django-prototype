@@ -28,3 +28,12 @@ def test_coverage_measures_branches():
 def test_pytest_fails_on_undefined_template_variables():
     """An undefined template variable fails the test instead of rendering empty."""
     assert "--fail-on-template-vars" in PYPROJECT["tool"]["pytest"]["ini_options"]["addopts"]
+
+
+def test_the_default_run_skips_the_browser_tests():
+    """Browser tests need Chromium and the built CSS, so plain pytest and `make qa` skip them (#63)."""
+    pytest_options = PYPROJECT["tool"]["pytest"]["ini_options"]
+    addopts = pytest_options["addopts"]
+
+    assert addopts[addopts.index("-m") + 1] == "not e2e"
+    assert any(marker.startswith("e2e:") for marker in pytest_options["markers"])
