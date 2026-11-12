@@ -41,6 +41,11 @@ urlpatterns = [
         name="ingredient_manage_search",
     ),
     path(
+        "ingredients/manage/more/",
+        _staff(ingredient_admin.ingredient_manage_more),
+        name="ingredient_manage_more",
+    ),
+    path(
         "ingredients/manage/recipes/",
         _staff(ingredient_admin.ingredient_manage_recipes),
         name="ingredient_manage_recipes",

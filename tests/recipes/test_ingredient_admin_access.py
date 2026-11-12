@@ -49,6 +49,7 @@ def _read_routes(recipe_id: int) -> list[str]:
     return [
         MANAGE,
         MANAGE + "search/",
+        MANAGE + "more/",
         MANAGE + "recipes/",
         MANAGE + f"preview/{recipe_id}/",
         MANAGE + "cancel/",

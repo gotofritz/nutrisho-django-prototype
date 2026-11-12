@@ -1,0 +1,31 @@
+{% comment %}
+Rows of column 2, then the Show-more row while more match than show (#80).
+Show more swaps its own row for the next page's rows and a new Show-more row.
+{% endcomment %}
+{% for ingredient in ingredients %}
+<li class="ingredient-row">
+  <label>
+    <input
+      type="checkbox"
+      class="ingredient-pick"
+      name="ingredient_ids"
+      value="{{ ingredient.pk }}"
+      {% if ingredient.pk in selected_ids %}checked{% endif %}
+    >
+    <span class="ingredient-name">{{ ingredient.ingredient_name }}</span>
+    {% include "./_owner_badge.html" %}
+  </label>
+</li>
+{% endfor %}
+{% if more_count > 0 %}
+<li class="show-more-row mt-2">
+  <button
+    type="button"
+    class="show-more rounded border border-gray-500 px-2 py-1 text-sm"
+    hx-get="{% url 'recipes:ingredient_manage_more' %}"
+    hx-target="closest li"
+    hx-swap="outerHTML"
+    hx-include=".ingredient-pick:checked, #ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
+  >Show {{ more_count }} more ({{ limit }} of {{ found_count }} shown)</button>
+</li>
+{% endif %}

@@ -35,3 +35,34 @@ def test_merging_two_ingredients_repoints_their_recipes(
     expect(rows.filter(has_text="courgette")).to_have_count(1)
     assert list(Ingredient.objects.values_list("ingredient_name", flat=True)) == ["courgette"]
     assert IngredientInRecipe.objects.get().ingredient == courgette
+
+
+def test_show_more_appends_rows_and_closing_an_action_keeps_them(
+    signed_in: Page, user, make_ingredient, monkeypatch
+):
+    """Show more adds the next page under the last row; closing an action keeps it (#80)."""
+    from recipes.views import ingredient_admin
+
+    monkeypatch.setattr(ingredient_admin, "PAGE_SIZE", 2)
+    user.is_staff = True
+    user.save()
+    for name in ("apple", "banana", "cherry", "date", "elderberry"):
+        make_ingredient(name)
+    signed_in.goto("/recipes/ingredients/manage/")
+    rows = signed_in.locator("#col-ingredients .ingredient-row")
+    count = signed_in.locator("#ingredient-count .column-count")
+
+    expect(rows).to_have_text(["apple", "banana"])
+    signed_in.get_by_role("button", name="Show 2 more (2 of 5 shown)").click()
+    expect(rows).to_have_text(["apple", "banana", "cherry", "date"])
+    expect(rows.filter(has_text="cherry").get_by_role("checkbox")).to_be_focused()
+
+    signed_in.locator("#select-all").check()
+    expect(count).to_have_text("5 found / 4 selected")
+    signed_in.locator("#action-edit").click()
+    expect(signed_in.locator("#columns.workspace")).to_be_visible()
+    signed_in.get_by_role("button", name="Done").click()
+    expect(rows).to_have_text(["apple", "banana", "cherry", "date"])
+    signed_in.get_by_role("button", name="Show 1 more (4 of 5 shown)").click()
+    expect(rows).to_have_count(5)
+    expect(signed_in.locator(".show-more")).to_have_count(0)
