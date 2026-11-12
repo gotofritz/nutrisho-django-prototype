@@ -16,22 +16,28 @@ headings split off once by a backfill that has since been deleted (#56);
 nothing splits or un-shouts a title at import or save time, because deciding
 that a colon introduces a heading is a judgement about legacy data, not a rule.
 
-## Merging, Splitting and Bulk-Deleting Steps (`recipes/utils/step_text.py`)
+## Merging, Splitting and Bulk-Deleting Steps (`recipes/services/step_editing.py`)
+
+`merge_steps` and `split_step` write the rows; the text rules they apply are
+the pure functions in `recipes/utils/step_text.py`.
 
 Every displayed step carries a checkbox (`.step-select`, posting `step_ids`).
 Checking one reveals the steps panel above the list — count, Merge, Delete,
 Cancel — the same hidden-until-checked pattern as the ingredient reassign
 panel; Merge stays disabled below two. The panel, any error and the `<ol>` live
 in `_steps_block.html` (`#steps-block`), which every multi-row step action
-re-renders whole; move up/down still swap only `#steps-list`.
+re-renders whole; move up/down still swap only `#steps-list`. Each up/down
+pair of routes (steps, ingredient rows, groups) is one view taking `direction`
+from the route, which keeps the `*_move_up`/`*_move_down` names.
 
 - **Bulk delete** removes the checked steps through
   `remove_many_and_compact`, closing every gap at once.
 - **Merge** appends the checked steps, however far apart, onto the one
   **highest up the page**, one space apart (`join_step_texts`). That step
   wins: it keeps its title and other fields; the others' titles go. The
-  result is validated through `StepForm`, so an over-long merge answers 422
-  and writes nothing rather than truncating.
+  result is checked against `Step.step_text`'s `max_length`, the limit an
+  edit obeys, so an over-long merge answers 422 and writes nothing rather
+  than truncating.
 - **Split at cursor** is a button in the edit form of a saved step. It posts
   the form as typed plus `split_at`, the cursor offset in code points (computed
   by `app.js` from the button's `data-split-at`; the server folds CRLF to LF so offsets match the
