@@ -163,7 +163,7 @@ def test_field_save_integrity_error_returns_edit_form_with_error(auth_client, re
 
     from django.db import IntegrityError
 
-    with patch("recipes.views.recipe_fields.RecipeFieldForm.save", side_effect=IntegrityError):
+    with patch("recipes.models.Recipe.save", side_effect=IntegrityError):
         response = auth_client.post(
             f"/recipes/{recipe.pk}/field/recipe_name/save/",
             {"recipe_name": recipe.recipe_name},

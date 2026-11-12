@@ -10,7 +10,7 @@ they draw on are split by who may change them:
   staff promote it to global in the clean-up tool.
 - **Tags**: global tags curated by staff (in Django admin, owner blank) plus
   private tags per user (`Tag.owner`). The metadata form takes tags as
-  comma-separated names; `resolve_tag` finds a global tag, then the owner's
+  comma-separated names, which `set_tags` (`services/recipe_metadata.py`) resolves: `resolve_tag` finds a global tag, then the owner's
   own, and creates a private one on a miss. Unique ignoring case within the
   global list and within each owner's tags; migration 0019 merged existing
   case-only duplicates into the most-used spelling.
