@@ -62,6 +62,10 @@ Easy to break, and not obvious from any one file:
   which never creates one; units and their aliases are staff-curated in admin.
   Free text from before #67 waits in `legacy_unit` for `normalise_units`.
 - `index_in_sequence` changes only through `utils/sequencing.py`.
+- A response that walks a recipe's groups or rows renders a recipe from
+  `with_ingredients` or a group from `with_rows` (`services/recipe_contents.py`),
+  called after its writes; otherwise its query count grows with the recipe.
+  A new such endpoint gets a case in `tests/recipes/test_query_counts.py`.
 - Recipe names and descriptions are written through `Recipe.save()`, which keeps
   `plain_name`/`plain_description` current; a queryset `update()` or
   `bulk_create` leaves them stale.

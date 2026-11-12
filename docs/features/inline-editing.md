@@ -37,6 +37,13 @@ form's Delete button asks first, naming how many ingredients go and pointing to
 holds: the form hides Delete for a recipe's only group, and the view, under a
 lock on the recipe row, swaps the block back in rather than delete it.
 
+Every response that re-renders groups or rows (`_groups_list.html`,
+`_iir_list.html`, `_group_block.html`, the clean-up tool's preview) passes the
+recipe through `with_ingredients` or the group through `with_rows`
+(`services/recipe_contents.py`), after its writes, so it costs the same queries
+at any recipe size; `tests/recipes/test_query_counts.py` checks each one on a
+small and a large recipe (#64).
+
 ## Template Filters (`recipes/templatetags/recipe_filters.py`)
 
 - `safe_step_html` — sanitizes step text, allowing only `<b>`, `<i>`, `<s>`, `<u>` inline tags; escapes everything else. Applied in `_step_display.html`.

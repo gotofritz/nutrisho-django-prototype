@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.decorators.vary import vary_on_headers
 
-from recipes.models import IngredientInRecipe, Recipe, Tag
+from recipes.models import Recipe, Tag
+from recipes.services.recipe_contents import ingredients_prefetch
 from recipes.services.recipe_search import RecipeSearch, search_recipes
 from recipes.utils.scaling import parse_servings, scale_factor
 from recipes.views._search import search_from, search_querystring
@@ -41,12 +42,7 @@ def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
         Recipe.objects.select_related("cuisine__parent__parent").prefetch_related(
             "step",
             Prefetch("tag", queryset=Tag.objects.order_by(Lower("tag"), "tag")),
-            Prefetch(
-                "ingredients_group__ingredient",
-                queryset=IngredientInRecipe.objects.select_related(
-                    "ingredient", "substitute", "ingredient_group", "unit"
-                ),
-            ),
+            ingredients_prefetch(),
         ),
         id=recipe_id,
         owner=request.user,

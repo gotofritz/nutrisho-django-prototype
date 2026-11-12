@@ -33,6 +33,7 @@ from recipes.services.ingredient_admin import (
     selected_ingredients,
     suggest_singular,
 )
+from recipes.services.recipe_contents import with_ingredients
 from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
 
@@ -370,7 +371,7 @@ def ingredient_manage_preview(request: AuthedRequest, recipe_id: int) -> HttpRes
     template pulls in the navbars and the add/edit HTMX triggers, none of which
     belong in a preview pane.
     """
-    recipe = owned_recipe(request=request, recipe_id=recipe_id)
+    recipe = with_ingredients(owned_recipe(request=request, recipe_id=recipe_id))
     return render(request, _T + "_recipe_preview.html", {"recipe": recipe})
 
 

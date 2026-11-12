@@ -8,6 +8,7 @@ from django.views.decorators.http import require_GET, require_POST
 from recipes.forms.ingredient_forms import IngredientGroupForm, IngredientInRecipeForm
 from recipes.models import IngredientGroup, IngredientInRecipe, Recipe
 from recipes.services.name_resolution import ingredient_names_for
+from recipes.services.recipe_contents import with_ingredients, with_rows
 from recipes.utils.sequencing import insert_at_index, move_in_sequence, remove_and_compact
 from recipes.views._announce import announce
 from recipes.views._auth import owned_recipe
@@ -19,6 +20,24 @@ def _reassign_select_oob(recipe: Recipe, request: AuthedRequest) -> str:
     return render_to_string(
         "recipes/partials/_reassign_select_oob.html", {"recipe": recipe}, request=request
     )
+
+
+def _groups_list(request: AuthedRequest, recipe: Recipe, *, error: str = "") -> HttpResponse:
+    """The whole ingredients column; with an error, a 422 that shows it."""
+    return render(
+        request,
+        "recipes/partials/_groups_list.html",
+        {"recipe": with_ingredients(recipe), "error": error},
+        status=422 if error else 200,
+    )
+
+
+def _whole_groups_list(request: AuthedRequest, recipe: Recipe) -> HttpResponse:
+    """`_groups_list` swapped over the whole column, for a request aimed at one group."""
+    response = _groups_list(request, recipe)
+    response["HX-Retarget"] = "#groups-list"
+    response["HX-Reswap"] = "innerHTML"
+    return response
 
 
 @require_GET
@@ -220,10 +239,7 @@ def recipe_ingredient_move_up(request: AuthedRequest, recipe_id: int, iir_id: in
             .first()
         )
         if fresh is None:
-            response = render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
-            response["HX-Retarget"] = "#groups-list"
-            response["HX-Reswap"] = "innerHTML"
-            return response
+            return _whole_groups_list(request, recipe)
         group = fresh.ingredient_group
         move_in_sequence(
             siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
@@ -231,11 +247,10 @@ def recipe_ingredient_move_up(request: AuthedRequest, recipe_id: int, iir_id: in
             direction="up",
         )
     if group.pk != original_group_id:
-        response = render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
-        response["HX-Retarget"] = "#groups-list"
-        response["HX-Reswap"] = "innerHTML"
-        return response
-    return render(request, "recipes/partials/_iir_list.html", {"recipe": recipe, "group": group})
+        return _whole_groups_list(request, recipe)
+    return render(
+        request, "recipes/partials/_iir_list.html", {"recipe": recipe, "group": with_rows(group)}
+    )
 
 
 @require_POST
@@ -254,10 +269,7 @@ def recipe_ingredient_move_down(
             .first()
         )
         if fresh is None:
-            response = render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
-            response["HX-Retarget"] = "#groups-list"
-            response["HX-Reswap"] = "innerHTML"
-            return response
+            return _whole_groups_list(request, recipe)
         group = fresh.ingredient_group
         move_in_sequence(
             siblings=IngredientInRecipe.objects.filter(ingredient_group=group),
@@ -265,11 +277,10 @@ def recipe_ingredient_move_down(
             direction="down",
         )
     if group.pk != original_group_id:
-        response = render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
-        response["HX-Retarget"] = "#groups-list"
-        response["HX-Reswap"] = "innerHTML"
-        return response
-    return render(request, "recipes/partials/_iir_list.html", {"recipe": recipe, "group": group})
+        return _whole_groups_list(request, recipe)
+    return render(
+        request, "recipes/partials/_iir_list.html", {"recipe": recipe, "group": with_rows(group)}
+    )
 
 
 @require_GET
@@ -344,7 +355,9 @@ def recipe_group_delete(request: AuthedRequest, recipe_id: int, group_id: int) -
             return HttpResponse(_reassign_select_oob(recipe, request))
         if IngredientGroup.objects.filter(recipe=recipe).count() < 2:
             response = render(
-                request, "recipes/partials/_group_block.html", {"recipe": recipe, "group": group}
+                request,
+                "recipes/partials/_group_block.html",
+                {"recipe": recipe, "group": with_rows(group)},
             )
             return announce(response, "A recipe keeps at least one group, so this one stayed.")
         remove_and_compact(siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group)
@@ -359,7 +372,7 @@ def recipe_group_move_up(request: AuthedRequest, recipe_id: int, group_id: int) 
     move_in_sequence(
         siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group, direction="up"
     )
-    return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
+    return _groups_list(request, recipe)
 
 
 @require_POST
@@ -370,7 +383,7 @@ def recipe_group_move_down(request: AuthedRequest, recipe_id: int, group_id: int
     move_in_sequence(
         siblings=IngredientGroup.objects.filter(recipe=recipe), instance=group, direction="down"
     )
-    return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
+    return _groups_list(request, recipe)
 
 
 @require_POST
@@ -423,17 +436,12 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
     raw_ids = request.POST.getlist("ingredient_ids")
 
     if not raw_ids:
-        return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
+        return _groups_list(request, recipe)
 
     try:
         ingredient_ids = [int(i) for i in raw_ids]
     except ValueError, TypeError:
-        return render(
-            request,
-            "recipes/partials/_groups_list.html",
-            {"recipe": recipe, "error": "Invalid ingredient IDs."},
-            status=422,
-        )
+        return _groups_list(request, recipe, error="Invalid ingredient IDs.")
 
     target_group_id = request.POST.get("target_group", "")
     is_new_group = target_group_id == "new"
@@ -441,20 +449,10 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
         try:
             group_pk = int(target_group_id)
         except ValueError, TypeError:
-            return render(
-                request,
-                "recipes/partials/_groups_list.html",
-                {"recipe": recipe, "error": "Invalid group."},
-                status=422,
-            )
+            return _groups_list(request, recipe, error="Invalid group.")
         target_group = IngredientGroup.objects.filter(id=group_pk, recipe=recipe).first()
         if target_group is None:
-            return render(
-                request,
-                "recipes/partials/_groups_list.html",
-                {"recipe": recipe, "error": "Invalid group."},
-                status=422,
-            )
+            return _groups_list(request, recipe, error="Invalid group.")
 
     # Visual page order: group order first, then row order within the group
     iirs = list(
@@ -464,12 +462,12 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
     )
 
     if not iirs:
-        return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
+        return _groups_list(request, recipe)
 
     if not is_new_group and all(iir.ingredient_group_id == target_group.id for iir in iirs):
         # Everything already lives in the target group — moving would only
         # reorder rows to the end, so do nothing.
-        return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
+        return _groups_list(request, recipe)
 
     with transaction.atomic():
         if is_new_group:
@@ -482,12 +480,7 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
                 group_count=existing_count + 1,
             )
             if not form.is_valid():
-                return render(
-                    request,
-                    "recipes/partials/_groups_list.html",
-                    {"recipe": recipe, "error": "Group name is required."},
-                    status=422,
-                )
+                return _groups_list(request, recipe, error="Group name is required.")
             agg = IngredientGroup.objects.filter(recipe=recipe).aggregate(Max("index_in_sequence"))
             last = agg["index_in_sequence__max"]
             target_group = form.save(commit=False)
@@ -503,12 +496,7 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
                 .first()
             )
             if target_group is None:
-                return render(
-                    request,
-                    "recipes/partials/_groups_list.html",
-                    {"recipe": recipe, "error": "Invalid group."},
-                    status=422,
-                )
+                return _groups_list(request, recipe, error="Invalid group.")
 
         iir_ids = [iir.id for iir in iirs]
 
@@ -532,7 +520,7 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
             # All selected rows were deleted concurrently; roll back any just-created group.
             if is_new_group:
                 target_group.delete()
-            return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
+            return _groups_list(request, recipe)
 
         affected_old_group_ids = {
             iir.ingredient_group_id
@@ -595,4 +583,4 @@ def recipe_ingredient_reassign(request: AuthedRequest, recipe_id: int) -> HttpRe
         for source in emptied:
             _prune_empty_group(recipe, source)
 
-    return render(request, "recipes/partials/_groups_list.html", {"recipe": recipe})
+    return _groups_list(request, recipe)
