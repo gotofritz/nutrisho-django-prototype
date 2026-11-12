@@ -1,4 +1,4 @@
-from django.db import IntegrityError, transaction
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
@@ -8,6 +8,7 @@ from recipes.forms.field_forms import RecipeMetadataForm
 from recipes.models import Recipe
 from recipes.services.name_resolution import cuisine_paths
 from recipes.services.recipe_duplication import duplicate_recipe
+from recipes.services.recipe_metadata import DuplicateRecipeNameError, create_recipe, save_metadata
 from recipes.services.recipe_scaling import ScaleError, save_scaled_copy
 from recipes.utils.scaling import MAX_SERVINGS, parse_servings
 from recipes.views._announce import announce
@@ -15,34 +16,34 @@ from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
 
 
+def _redirect_to(request: AuthedRequest, recipe: Recipe) -> HttpResponse:
+    """Go to `recipe`'s page: HX-Redirect for htmx, a plain redirect otherwise."""
+    if request.htmx:
+        response = HttpResponse()
+        response["HX-Redirect"] = recipe.get_absolute_url()
+        return response
+    return redirect(recipe.get_absolute_url())
+
+
 @require_http_methods(["GET", "POST"])
 def recipe_new(request: AuthedRequest) -> HttpResponse:
     """Create a recipe."""
+    form = RecipeMetadataForm(owner=request.user)
     if request.method == "POST":
         form = RecipeMetadataForm(data=request.POST, owner=request.user)
         if form.is_valid():
-            form.instance.owner = request.user
             try:
-                recipe = form.save()
-            except IntegrityError:
-                form.add_error("recipe_name", "You already have a recipe with that name.")
-                return render(
-                    request,
-                    "recipes/recipe_new.html",
-                    {"form": form, "all_cuisines": _cuisine_names()},
+                recipe = create_recipe(
+                    owner=request.user,
+                    recipe=form.save(commit=False),
+                    tag_names=form.cleaned_data["tags"],
                 )
-            if request.htmx:
-                response = HttpResponse()
-                response["HX-Redirect"] = recipe.get_absolute_url()
-                return response
-            return redirect(recipe.get_absolute_url())
-        return render(
-            request, "recipes/recipe_new.html", {"form": form, "all_cuisines": _cuisine_names()}
-        )
+            except DuplicateRecipeNameError as exc:
+                form.add_error("recipe_name", str(exc))
+            else:
+                return _redirect_to(request, recipe)
     return render(
-        request,
-        "recipes/recipe_new.html",
-        {"form": RecipeMetadataForm(owner=request.user), "all_cuisines": _cuisine_names()},
+        request, "recipes/recipe_new.html", {"form": form, "all_cuisines": _cuisine_names()}
     )
 
 
@@ -56,46 +57,18 @@ def _is_panel_request(request: AuthedRequest) -> bool:
 def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Edit recipe metadata."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
+    form = RecipeMetadataForm(instance=recipe, owner=recipe.owner)
     if request.method == "POST":
         form = RecipeMetadataForm(data=request.POST, instance=recipe, owner=recipe.owner)
         if form.is_valid():
             try:
-                with transaction.atomic():
-                    locked = list(
-                        Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk")
-                    )
-                    if not locked:
-                        return HttpResponse("", status=404)
-                    form.save(commit=False)
-                    recipe.save(
-                        update_fields=[
-                            "recipe_name",
-                            "short_description",
-                            "servings",
-                            "source_instance",
-                            "cuisine",
-                        ]
-                    )
-                    form.save_tags(recipe)
-            except IntegrityError:
-                form.add_error("recipe_name", "You already have a recipe with that name.")
+                save_metadata(recipe=form.save(commit=False), tag_names=form.cleaned_data["tags"])
+            except ObjectDoesNotExist:
+                return HttpResponse("", status=404)
+            except DuplicateRecipeNameError as exc:
+                form.add_error("recipe_name", str(exc))
             else:
-                if request.htmx:
-                    response = HttpResponse()
-                    response["HX-Redirect"] = recipe.get_absolute_url()
-                    return response
-                return redirect(recipe.get_absolute_url())
-        template = (
-            "recipes/partials/_metadata_panel.html"
-            if _is_panel_request(request)
-            else "recipes/recipe_metadata.html"
-        )
-        return render(
-            request,
-            template,
-            {"recipe": recipe, "form": form, "all_cuisines": _cuisine_names()},
-        )
-    form = RecipeMetadataForm(instance=recipe, owner=recipe.owner)
+                return _redirect_to(request, recipe)
     template = (
         "recipes/partials/_metadata_panel.html"
         if _is_panel_request(request)
@@ -156,12 +129,7 @@ def _next_recipe_url(deleted_id: int, user) -> str:
 def recipe_duplicate(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Duplicate a recipe."""
     original = owned_recipe(request=request, recipe_id=recipe_id)
-    new = duplicate_recipe(original)
-    if request.htmx:
-        response = HttpResponse()
-        response["HX-Redirect"] = new.get_absolute_url()
-        return response
-    return redirect(new.get_absolute_url())
+    return _redirect_to(request, duplicate_recipe(original))
 
 
 @require_GET
@@ -209,11 +177,7 @@ def recipe_scale_copy(request: AuthedRequest, recipe_id: int) -> HttpResponse:
         copy = save_scaled_copy(original, servings=servings)
     except ScaleError as exc:
         return _scale_panel(request, original, servings=servings, error=str(exc), status=422)
-    if request.htmx:
-        response = HttpResponse()
-        response["HX-Redirect"] = copy.get_absolute_url()
-        return response
-    return redirect(copy.get_absolute_url())
+    return _redirect_to(request, copy)
 
 
 def _cuisine_names() -> list[str]:

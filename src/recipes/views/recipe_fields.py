@@ -1,10 +1,10 @@
-from django.db import IntegrityError, transaction
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_GET, require_POST
 
 from recipes.forms.field_forms import EDITABLE_RECIPE_FIELDS, RecipeFieldForm
-from recipes.models import Recipe
+from recipes.services.recipe_metadata import DuplicateRecipeNameError, save_field
 from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
 
@@ -52,14 +52,11 @@ def recipe_field_save(request: AuthedRequest, recipe_id: int, field_name: str) -
     form = RecipeFieldForm(field_name, data=request.POST, instance=recipe)
     if form.is_valid():
         try:
-            with transaction.atomic():
-                locked = list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk"))
-                if not locked:
-                    return HttpResponse("", status=404)
-                form.save(commit=False)
-                recipe.save(update_fields=[field_name])
-        except IntegrityError:
-            form.add_error(field_name, "You already have a recipe with that name.")
+            save_field(recipe=form.save(commit=False), field_name=field_name)
+        except ObjectDoesNotExist:
+            return HttpResponse("", status=404)
+        except DuplicateRecipeNameError as exc:
+            form.add_error(field_name, str(exc))
         else:
             recipe.refresh_from_db()
             return render(

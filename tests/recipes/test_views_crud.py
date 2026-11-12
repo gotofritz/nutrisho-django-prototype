@@ -182,7 +182,7 @@ def test_recipe_metadata_post_integrity_error_returns_form_error(auth_client, re
 
     from django.db import IntegrityError
 
-    with patch("recipes.views.recipe_crud.RecipeMetadataForm.save", side_effect=IntegrityError):
+    with patch("recipes.models.Recipe.save", side_effect=IntegrityError):
         response = auth_client.post(
             f"/recipes/{recipe.pk}/metadata/",
             {"recipe_name": recipe.recipe_name, "servings": "4"},

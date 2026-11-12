@@ -4,7 +4,8 @@ from django.db import transaction
 
 from recipes.models import Cuisine, Recipe
 from recipes.models.tag import TAG_MAX_LENGTH
-from recipes.services.name_resolution import find_cuisine, resolve_tag
+from recipes.services.name_resolution import find_cuisine
+from recipes.services.recipe_metadata import set_tags
 
 EDITABLE_RECIPE_FIELDS = frozenset(["recipe_name", "short_description", "servings"])
 
@@ -20,8 +21,9 @@ class RecipeMetadataForm(forms.ModelForm):
     `tags` is comma-separated names, resolved within `owner`'s vocabulary (the
     recipe's owner): global tags or their private ones, an unknown name
     becoming a private tag (plan 011). Tags are an M2M, so they are written
-    after the recipe has a pk: by `save()` itself, or by `save_tags()` when the
-    caller saves with `commit=False`.
+    after the recipe has a pk: by `save()` itself, or by `create_recipe` and
+    `save_metadata` from the cleaned names when the caller saves with
+    `commit=False`.
     """
 
     cuisine_name = forms.CharField(max_length=200, required=False, label="Cuisine")
@@ -59,8 +61,7 @@ class RecipeMetadataForm(forms.ModelForm):
 
     def save_tags(self, recipe: Recipe) -> None:
         """Set the recipe's tags to exactly the typed names."""
-        tags = [resolve_tag(name, owner=self._owner) for name in self.cleaned_data["tags"]]
-        recipe.tag.set(tags)  # ty: ignore[unresolved-attribute]  # reverse M2M
+        set_tags(recipe, names=self.cleaned_data["tags"])
 
     def clean_cuisine_name(self) -> Cuisine | None:
         """The picked cuisine node, None when blank; unknown names are an error.
