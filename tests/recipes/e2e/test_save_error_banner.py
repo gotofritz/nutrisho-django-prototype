@@ -4,6 +4,7 @@ import pytest
 from playwright.sync_api import Page, Route, expect
 
 from recipes.models import Recipe
+from tests.recipes.e2e.htmx import settled
 
 pytestmark = pytest.mark.e2e
 
@@ -16,6 +17,7 @@ def editing(signed_in: Page, make_recipe, user, add_step) -> Page:
     signed_in.goto(f"/recipes/{recipe.pk}/")
     signed_in.locator(".step-content").click()
     expect(signed_in.get_by_placeholder("Title (optional)")).to_be_focused()
+    settled(signed_in)
     return signed_in
 
 

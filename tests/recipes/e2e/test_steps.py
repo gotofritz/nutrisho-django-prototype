@@ -4,6 +4,7 @@ import pytest
 from playwright.sync_api import Dialog, Locator, Page, expect
 
 from recipes.models import Recipe, Step
+from tests.recipes.e2e.htmx import settled
 
 pytestmark = pytest.mark.e2e
 
@@ -21,13 +22,14 @@ def _open(page: Page, recipe: Recipe) -> Locator:
 
 
 def _edit_form(page: Page) -> Locator:
-    """The open step form, once its title has taken focus.
+    """The open step form, once its swap has settled and its title has focus.
 
     The title's `autofocus` is applied when the swap settles; typing before
     then can land in the field that takes focus mid-way.
     """
     form = page.locator("#steps-list > li.is-editing").last
     expect(form.get_by_placeholder("Title (optional)")).to_be_focused()
+    settled(page)
     return form
 
 

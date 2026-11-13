@@ -4,6 +4,7 @@ import pytest
 from playwright.sync_api import Page, expect
 
 from recipes.models import IngredientGroup, Recipe
+from tests.recipes.e2e.htmx import settled
 
 pytestmark = pytest.mark.e2e
 
@@ -34,6 +35,7 @@ def test_adding_an_ingredient_to_a_new_group(
     sauce.get_by_role("button", name="+ Add ingredient").click()
     quantity = signed_in.get_by_label("Quantity")
     expect(quantity).to_be_focused()
+    settled(signed_in)
     quantity.fill("2")
     signed_in.get_by_label("Ingredient").fill("onion")
     signed_in.get_by_label("Chopped, blanched").fill("chopped")
