@@ -34,19 +34,19 @@ def recipe(user) -> Recipe:
 @pytest.fixture
 def step(recipe) -> Step:
     """The recipe's step."""
-    return recipe.step.get()
+    return recipe.steps.get()
 
 
 @pytest.fixture
 def group(recipe) -> IngredientGroup:
     """The recipe's ingredient group."""
-    return recipe.ingredients_group.get()
+    return recipe.ingredient_groups.get()
 
 
 @pytest.fixture
 def iir(group) -> IngredientInRecipe:
     """The recipe's ingredient row."""
-    return group.ingredient.get()
+    return group.items.get()
 
 
 @pytest.fixture

@@ -98,7 +98,7 @@ def test_duplicate_copies_step_titles(auth_client, recipe):
     Step.objects.create(recipe=recipe, step_title="Prep", step_text="Chop", index_in_sequence=0)
     auth_client.post(f"/recipes/{recipe.pk}/duplicate/")
     copy = Recipe.objects.exclude(pk=recipe.pk).get()
-    assert copy.step.get().step_title == "Prep"
+    assert copy.steps.get().step_title == "Prep"
 
 
 @pytest.mark.django_db
@@ -123,13 +123,13 @@ def test_duplicate_copies_tags(auth_client, recipe):
     """Duplicate copies tags."""
     vegan = Tag.objects.create(tag="vegan")
     quick = Tag.objects.create(tag="quick")
-    vegan.recipe.add(recipe)
-    quick.recipe.add(recipe)
+    vegan.recipes.add(recipe)
+    quick.recipes.add(recipe)
     auth_client.post(f"/recipes/{recipe.pk}/duplicate/")
     copy = Recipe.objects.exclude(pk=recipe.pk).get()
-    assert set(copy.tag.values_list("tag", flat=True)) == {"vegan", "quick"}
+    assert set(copy.tags.values_list("tag", flat=True)) == {"vegan", "quick"}
     # Original keeps its tags
-    assert set(recipe.tag.values_list("tag", flat=True)) == {"vegan", "quick"}
+    assert set(recipe.tags.values_list("tag", flat=True)) == {"vegan", "quick"}
 
 
 @pytest.mark.django_db

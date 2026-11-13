@@ -15,7 +15,7 @@ class Step(models.Model):
         "The description of a step",
         max_length=PROSE_MAX_LENGTH,
     )
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="step")
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="steps")
     index_in_sequence = models.SmallIntegerField("What step is this, for a given recipe?")
     objects = models.Manager()
 

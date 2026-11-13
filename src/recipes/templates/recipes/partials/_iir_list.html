@@ -1,4 +1,4 @@
-{% for iir in group.ingredient.all %}
+{% for iir in group.items.all %}
 {% include "./_ingredient_display.html" with recipe=recipe iir=iir %}
 {% endfor %}
 <button

@@ -8,6 +8,7 @@
 - Long prose (`Recipe.short_description`, `Step.step_text`) is a `TextField`, unlimited in the database; forms cap it at `PROSE_MAX_LENGTH` (4000), which step merge obeys too. `Ingredient.ingredient_name` and `.plural_name` share `INGREDIENT_NAME_MAX_LENGTH` (128)
 - `Cuisine`, `Tag` — lookup/classification models; `Cuisine` is a node of the cuisine tree (`parent`, at most three levels), its name unique case-insensitively among its siblings; `Tag.owner` is NULL for a global tag or the user it is private to
 - `Ingredient.family` and `.dietary_constraint` are staff data, set in the ingredient clean-up tool; the recipe page does not show them yet, and nothing rolls them up into a recipe-level label or filter
+- Collections are plural (#79): `recipe.steps`, `recipe.ingredient_groups`, `group.items` (its `IngredientInRecipe` rows), `recipe.tags` and `tag.recipes`. The tag-recipe table is still `recipes_tag_recipe`, pinned with `db_table`, so the rename ran no SQL. A test calling a data migration from before 0028 passes it `pre_rename_apps` (`tests/recipes/conftest.py`), where `Tag.recipe` still has its old name
 - Dropped as unused in migration 0027 (#65): the `Source` model and `Recipe.source` (a recipe's source is `source_instance`), `Step.duration` and `Step.extra_info`. No code path ever wrote them; the migration stops, naming the column, if a database holds data in any of them
 
 Empty text fields (`short_description`, `group_name`, `legacy_unit`,

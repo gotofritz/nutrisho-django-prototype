@@ -21,8 +21,8 @@
       hx-target="closest div"
       hx-swap="outerHTML"
     >Cancel</button>
-    {% if recipe.ingredients_group.count > 1 %}
-    {% with doomed=group.ingredient.count %}
+    {% if recipe.ingredient_groups.count > 1 %}
+    {% with doomed=group.items.count %}
     <button
       type="button"
       hx-post="{% url 'recipes:group_delete' recipe.id group.id %}"

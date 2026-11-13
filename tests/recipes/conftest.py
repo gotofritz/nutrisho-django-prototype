@@ -87,6 +87,24 @@ def without_ci_name_constraint(db):
 
 
 @pytest.fixture
+def pre_rename_apps(db):
+    """The models as of migration 0027: today's schema, `Tag.recipe` not yet `recipes`.
+
+    Tests that call an older data migration's function on the current database
+    pass it these, as the migration itself would, instead of the live models.
+    Migrating back to that migration is not an option: the seeded cuisine tree
+    cannot be reversed past 0020.
+    """
+    from django.db import connection
+    from django.db.migrations.loader import MigrationLoader
+
+    state = MigrationLoader(connection).project_state(
+        ("recipes", "0027_drop_unused_source_and_step_fields")
+    )
+    return state.apps
+
+
+@pytest.fixture
 def migrate_to(transactional_db):
     """Migrate the test database to a past state; afterwards, back to the latest.
 

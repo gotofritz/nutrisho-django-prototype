@@ -19,7 +19,7 @@ def recipe(user):
 @pytest.fixture
 def group(recipe):
     """The recipe's only group."""
-    return recipe.ingredients_group.get()
+    return recipe.ingredient_groups.get()
 
 
 @pytest.fixture
@@ -170,7 +170,7 @@ def test_a_substitute_cannot_be_an_alias_of_the_ingredient(auth_client, recipe, 
     aubergine = make_ingredient("aubergine")
     aubergine.aliases.create(alias_name="eggplant")
     row = IngredientInRecipe.objects.create(
-        ingredient=aubergine, ingredient_group=recipe.ingredients_group.get(), index_in_sequence=0
+        ingredient=aubergine, ingredient_group=recipe.ingredient_groups.get(), index_in_sequence=0
     )
     response = _save(
         auth_client, recipe, row, ingredient_name="aubergine", substitute_name="eggplant"

@@ -1,3 +1,3 @@
-{% for step in recipe.step.all %}
+{% for step in recipe.steps.all %}
 {% include "./_step_display.html" with recipe=recipe step=step %}
 {% endfor %}

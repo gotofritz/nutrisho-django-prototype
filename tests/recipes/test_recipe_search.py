@@ -225,7 +225,7 @@ def test_tags_and_cuisines_are_searched(user, make_recipe):
     area = Cuisine.objects.create(cuisine="testarea")
     region = Cuisine.objects.create(cuisine="testland", parent=area)
     tagged = make_recipe(owner=user, name="Tagged")
-    Tag.objects.create(tag="weeknight").recipe.add(tagged)
+    Tag.objects.create(tag="weeknight").recipes.add(tagged)
     placed = make_recipe(owner=user, name="Placed")
     placed.cuisine = region
     placed.save()
@@ -278,7 +278,7 @@ def test_the_cuisine_filter_includes_everything_below_the_node(user, make_recipe
 def test_the_tag_filter_narrows_the_list(user, pantry):
     """Only recipes carrying the tag."""
     tag = Tag.objects.create(tag="favourite")
-    tag.recipe.add(pantry["curry"], pantry["norma"])
+    tag.recipes.add(pantry["curry"], pantry["norma"])
     search = RecipeSearch(query="pasta", tag_id=tag.pk)
     assert _names(search_recipes(owner=user, search=search)) == ["Pasta alla norma"]
 
@@ -304,10 +304,10 @@ def test_the_tag_choices_are_the_tags_on_the_users_recipes(user, other_user, mak
     """Global or private, a tag is offered once one of the user's recipes carries it."""
     mine = make_recipe(owner=user, name="Mine")
     theirs = make_recipe(owner=other_user, name="Theirs")
-    Tag.objects.create(tag="weeknight").recipe.add(mine)
-    Tag.objects.create(tag="Batch", owner=user).recipe.add(mine)
+    Tag.objects.create(tag="weeknight").recipes.add(mine)
+    Tag.objects.create(tag="Batch", owner=user).recipes.add(mine)
     Tag.objects.create(tag="unused")
-    Tag.objects.create(tag="theirs", owner=other_user).recipe.add(theirs)
+    Tag.objects.create(tag="theirs", owner=other_user).recipes.add(theirs)
     assert [str(t.tag) for t in tag_choices(user)] == ["Batch", "weeknight"]
 
 

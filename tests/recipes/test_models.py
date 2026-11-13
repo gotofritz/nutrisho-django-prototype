@@ -220,3 +220,19 @@ def test_model_str_labels(user):
     assert str(iir) == "leek"
     assert str(step) == "2. Boil"
     assert str(Tag.objects.create(tag="quick")) == "quick"
+
+
+@pytest.mark.django_db
+def test_reverse_accessors_are_plural(user, make_recipe, make_ingredient, add_ingredient, add_step):
+    """Collections read as collections: recipe.steps, group.items, tag.recipes (#79)."""
+    recipe = make_recipe(owner=user, name="Curry")
+    step = add_step(recipe=recipe, text="Stir")
+    row = add_ingredient(recipe=recipe, ingredient=make_ingredient("onion"))
+    tag = Tag.objects.create(tag="quick")
+    tag.recipes.add(recipe)
+
+    assert list(recipe.steps.all()) == [step]
+    assert list(recipe.ingredient_groups.all()) == [row.ingredient_group]
+    assert list(row.ingredient_group.items.all()) == [row]
+    assert list(recipe.tags.all()) == [tag]
+    assert list(tag.recipes.all()) == [recipe]

@@ -19,18 +19,18 @@
   >Open to edit &nearr;</a>
   <h2 class="preview-title">{{ recipe.recipe_name|safe_title_html }}</h2>
   <p class="preview-serves">Serves {{ recipe.servings }}</p>
-  {% for group in recipe.ingredients_group.all %}
+  {% for group in recipe.ingredient_groups.all %}
   <div class="preview-group">
     {% if group.group_name %}<h3 class="preview-group-name">{{ group.group_name }}</h3>{% endif %}
     <ul class="preview-ingredients">
-      {% for iir in group.ingredient.all %}
+      {% for iir in group.items.all %}
       <li class="preview-ingredient">{{ iir.quantity|format_quantity }} {{ iir|display_unit }} {{ iir|display_ingredient_name }}{% if iir.preparation %}, {{ iir.preparation }}{% endif %}{% if iir.note %} ({{ iir.note }}){% endif %}{% if iir.substitute %} &mdash; or {{ iir.substitute.ingredient_name }}{% endif %}</li>
       {% endfor %}
     </ul>
   </div>
   {% endfor %}
   <ol class="preview-steps">
-    {% for step in recipe.step.all %}
+    {% for step in recipe.steps.all %}
     <li class="preview-step">{% if step.step_title %}<span class="step-title">{{ step.step_title }}</span>: {% endif %}{{ step.step_text|safe_step_html }}</li>
     {% endfor %}
   </ol>

@@ -223,9 +223,7 @@ def test_metadata_edit_can_clear_the_cuisine(auth_client, user):
 # --- Migration 0021: old flat cuisines -------------------------------------------
 
 
-def _map(legacy_ids: list[int]) -> None:
-    from django.apps import apps
-
+def _map(apps, legacy_ids: list[int]) -> None:
     nodes = {c.path: c for c in Cuisine.objects.exclude(pk__in=legacy_ids)}
     SEED.map_legacy_cuisines(
         cuisine_model=apps.get_model("recipes", "Cuisine"),
@@ -251,53 +249,53 @@ def legacy(db):
 
 
 @pytest.mark.django_db
-def test_an_adjective_moves_onto_its_node(legacy, user):
+def test_an_adjective_moves_onto_its_node(legacy, pre_rename_apps, user):
     """`Italian` recipes move to `med.italy` and the old row goes."""
     old = legacy("Italian")
     recipe = Recipe.objects.create(recipe_name="Pasta", owner=user, cuisine=old)
-    _map([old.pk])
+    _map(pre_rename_apps, [old.pk])
     recipe.refresh_from_db()
     assert recipe.cuisine == find_cuisine("med.italy")
     assert not Cuisine.objects.filter(pk=old.pk).exists()
 
 
 @pytest.mark.django_db
-def test_a_unique_node_name_moves_onto_that_node(legacy, user):
+def test_a_unique_node_name_moves_onto_that_node(legacy, pre_rename_apps, user):
     """`Sicily` needs no alias: only one node has that name."""
     old = legacy("Sicily ")
     recipe = Recipe.objects.create(recipe_name="Arancini", owner=user, cuisine=old)
-    _map([old.pk])
+    _map(pre_rename_apps, [old.pk])
     recipe.refresh_from_db()
     assert recipe.cuisine == find_cuisine("med.italy.sicily")
 
 
 @pytest.mark.django_db
-def test_fusion_becomes_a_tag(legacy, user):
+def test_fusion_becomes_a_tag(legacy, pre_rename_apps, user):
     """A `Fusion` recipe loses the cuisine and gains the global tag."""
     old = legacy("Fusion")
     recipe = Recipe.objects.create(recipe_name="Taco pizza", owner=user, cuisine=old)
-    _map([old.pk])
+    _map(pre_rename_apps, [old.pk])
     recipe.refresh_from_db()
     assert recipe.cuisine is None
-    assert list(recipe.tag.values_list("tag", flat=True)) == ["fusion"]
+    assert list(recipe.tags.values_list("tag", flat=True)) == ["fusion"]
     assert not Cuisine.objects.filter(pk=old.pk).exists()
 
 
 @pytest.mark.django_db
-def test_an_unmatched_cuisine_is_kept(legacy, user):
+def test_an_unmatched_cuisine_is_kept(legacy, pre_rename_apps, user):
     """Nothing to map onto: the row stays, so the recipe keeps its cuisine."""
     old = legacy("Klingon")
     recipe = Recipe.objects.create(recipe_name="Gagh", owner=user, cuisine=old)
-    _map([old.pk])
+    _map(pre_rename_apps, [old.pk])
     recipe.refresh_from_db()
     assert recipe.cuisine == old
 
 
 @pytest.mark.django_db
-def test_an_ambiguous_name_is_kept(legacy):
+def test_an_ambiguous_name_is_kept(legacy, pre_rename_apps):
     """`North` could be thailand, vietnam or mexico: left for staff."""
     old = legacy("North")
-    _map([old.pk])
+    _map(pre_rename_apps, [old.pk])
     assert Cuisine.objects.filter(pk=old.pk).exists()
 
 

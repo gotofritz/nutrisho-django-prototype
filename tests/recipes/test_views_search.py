@@ -73,7 +73,7 @@ def test_the_list_has_the_advanced_search_form(auth_client, user, three):
     three[0].cuisine = cuisine
     three[0].save()
     tag = Tag.objects.create(tag="weeknight")
-    tag.recipe.add(three[1])
+    tag.recipes.add(three[1])
     response = auth_client.get(
         "/recipes/",
         {"q": "aubergine", "in": "ingredient", "cuisine": cuisine.pk, "tag": tag.pk},
@@ -93,7 +93,7 @@ def test_the_list_has_the_advanced_search_form(auth_client, user, three):
 def test_the_filters_apply(auth_client, three):
     """Cuisine and tag narrow the list; `in=name` looks at titles only."""
     tag = Tag.objects.create(tag="weeknight")
-    tag.recipe.add(three[0])
+    tag.recipes.add(three[0])
     assert _listed(auth_client.get("/recipes/", {"tag": tag.pk})) == ["Curry"]
     assert _listed(auth_client.get("/recipes/", {"q": "aubergine", "in": "name"})) == []
 
@@ -249,7 +249,7 @@ def test_a_recipe_outside_the_search_walks_the_whole_list(auth_client, three):
 def test_the_search_survives_the_filters_in_the_query(auth_client, three):
     """Every part of the search is carried, not just the words."""
     tag = Tag.objects.create(tag="weeknight")
-    tag.recipe.add(three[0], three[2])
+    tag.recipes.add(three[0], three[2])
     response = auth_client.get(
         f"/recipes/{three[2].pk}/", {"q": "aubergine", "in": "ingredient", "tag": tag.pk}
     )

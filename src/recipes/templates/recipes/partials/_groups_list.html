@@ -9,7 +9,7 @@
     {% csrf_token %}
     <label for="reassign-target">Move to:</label>
     <select name="target_group" id="reassign-target">
-      {% for g in recipe.ingredients_group.all %}
+      {% for g in recipe.ingredient_groups.all %}
       <option value="{{ g.id }}">{{ g.group_name|default:"—" }}</option>
       {% endfor %}
       <option value="new">New group…</option>
@@ -25,6 +25,6 @@
     <button type="button" id="reassign-cancel">Cancel</button>
   </form>
 </div>
-{% for group in recipe.ingredients_group.all %}
+{% for group in recipe.ingredient_groups.all %}
 {% include "./_group_block.html" with recipe=recipe group=group %}
 {% endfor %}

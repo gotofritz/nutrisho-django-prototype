@@ -22,7 +22,7 @@ def test_tags_show_as_links_to_the_filtered_list(auth_client, user, recipe):
     """Each tag links to the recipe list filtered by it, A to Z."""
     quick = Tag.objects.create(tag="quick")
     summer = Tag.objects.create(tag="Summer", owner=user)
-    recipe.tag.add(summer, quick)
+    recipe.tags.add(summer, quick)
     content = _page(auth_client, recipe)
     assert f'href="/recipes/?tag={quick.pk}"' in content
     assert f'href="/recipes/?tag={summer.pk}"' in content
@@ -104,7 +104,7 @@ def test_detail_page_with_every_detail_keeps_a_constant_query_count(
     recipe.source_instance = "https://example.com"
     recipe.save()
     for i in range(5):
-        recipe.tag.add(Tag.objects.create(tag=f"t{i}"))
+        recipe.tags.add(Tag.objects.create(tag=f"t{i}"))
     with django_assert_max_num_queries(10):
         response = auth_client.get(f"/recipes/{recipe.pk}/")
     assert response.status_code == 200

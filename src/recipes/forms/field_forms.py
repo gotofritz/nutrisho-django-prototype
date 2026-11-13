@@ -43,7 +43,7 @@ class RecipeMetadataForm(forms.ModelForm):
         if self.instance and self.instance.pk and self.instance.cuisine:
             self.fields["cuisine_name"].initial = self.instance.cuisine.path
         if self.instance and self.instance.pk:
-            names = self.instance.tag.values_list("tag", flat=True)
+            names = self.instance.tags.values_list("tag", flat=True)
             self.fields["tags"].initial = ", ".join(sorted(names, key=str.lower))
 
     def clean_tags(self) -> list[str]:

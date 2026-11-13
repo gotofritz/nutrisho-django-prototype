@@ -20,7 +20,7 @@ def recipe(user, make_recipe) -> Recipe:
 
 
 def _tags(recipe: Recipe) -> list[str]:
-    return sorted(recipe.tag.values_list("tag", flat=True))  # ty: ignore[unresolved-attribute]
+    return sorted(recipe.tags.values_list("tag", flat=True))  # ty: ignore[unresolved-attribute]
 
 
 # --- set_tags ---

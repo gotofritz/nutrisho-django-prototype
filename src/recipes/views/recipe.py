@@ -40,8 +40,8 @@ def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Show a recipe."""
     recipe = get_object_or_404(
         Recipe.objects.select_related("cuisine__parent__parent").prefetch_related(
-            "step",
-            Prefetch("tag", queryset=Tag.objects.order_by(Lower("tag"), "tag")),
+            "steps",
+            Prefetch("tags", queryset=Tag.objects.order_by(Lower("tag"), "tag")),
             ingredients_prefetch(),
         ),
         id=recipe_id,
