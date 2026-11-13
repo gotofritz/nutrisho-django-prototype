@@ -9,7 +9,7 @@ of the per-recipe `<recipe_id>/ingredients/...` routes.
 The UI is four Miller columns — actions, ingredients, matching recipes, recipe
 preview. Clicking an action collapses columns 2-4 into a full-width workspace panel
 and turns the clicked button into Cancel. Column 4 is a fresh inert template, not a
-trimmed `partials/_recipe_content.html`: that one pulls in the navbars and its field
+trimmed `partials/_recipe_content.html`: that one pulls in the site header and margin tools, and its field
 includes carry `hx-get` edit triggers.
 
 Column 4 follows column 3 rather than holding state of its own: every response

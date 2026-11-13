@@ -1,9 +1,12 @@
 {% load static recipe_filters %}
-{% if request.htmx %}<title hx-swap-oob="true">{{ recipe.recipe_name|striptags }}</title>{% include "./_page_regions.html" %}{% include "./_site_search.html" %}{% endif %}
-{% include "../navbar.html" with template_name="recipes:recipe" %}
+{% if request.htmx %}<title hx-swap-oob="true">{{ recipe.recipe_name|striptags }}</title>{% include "./_page_regions.html" %}{% include "./_site_header.html" with show_search=True %}{% endif %}
+{% comment %}
+The sheet is the printed recipe and keeps its look (#76); the tools that act on
+it sit beside it in the margin, and previous/next sit at the foot of the page.
+{% endcomment %}
+<div class="recipe-page">
 <main class="recipe-contents">
   <div class="recipe-directions">
-    <div id="metadata-panel"></div>
     <h1 class="recipe-title" tabindex="-1">
       {% include "./_field_display.html" with field_name="recipe_name" value=recipe.recipe_name %}
     </h1>
@@ -18,11 +21,6 @@
   </div>
 
   <div class="sidebar">
-    <div class="recipe-tools no-print" role="group" aria-label="Recipe tools">
-      {% include "../nav_recipe.html" %}
-    </div>
-    <div id="scale-panel"></div>
-    <div id="delete-panel"></div>
     <h2 class="visually-hidden">Ingredients</h2>
     {% if scale %}
     <p class="serves">Serves {{ target_servings }}</p>
@@ -52,3 +50,8 @@
     </div>
   </div>
 </main>
+<aside class="recipe-margin no-print" aria-label="Recipe tools">
+  {% include "../nav_recipe.html" %}
+</aside>
+</div>
+{% include "../navbar.html" with template_name="recipes:recipe" %}

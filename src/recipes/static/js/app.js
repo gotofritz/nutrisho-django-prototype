@@ -8,7 +8,8 @@
 // Templates opt in with data attributes instead of onclick=/hx-on:
 //   data-cancel-draft="<row selector>"  removes an unsaved draft row
 //   data-close-panel="<panel id>"       empties a panel, refocuses its toggle
-//   data-panel-toggle="<panel id>"      a second click closes the open panel
+//   data-panel-toggle="<panel id>"      a second click closes the open panel;
+//                                       its aria-expanded follows the panel
 //   data-position-in / -of / -row       a draft posts its place in the list
 //   data-split-at="<textarea name>"     posts the cursor offset for a split
 //   data-indeterminate="true"           a checkbox shows the dashed state
@@ -251,10 +252,20 @@
       var panelId = close.dataset.closePanel;
       var panel = document.getElementById(panelId);
       if (panel) panel.innerHTML = '';
+      syncPanelToggles();
       var toggle = document.querySelector('[aria-controls="' + panelId + '"]');
       if (toggle) toggle.focus();
     }
   });
+  // A toggle says whether its panel is open: open means the panel has content.
+  function syncPanelToggles() {
+    document.querySelectorAll('[data-panel-toggle]').forEach(function (toggle) {
+      var panel = document.getElementById(toggle.dataset.panelToggle);
+      var open = Boolean(panel && panel.innerHTML.trim());
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+  document.addEventListener('htmx:afterSettle', syncPanelToggles);
   // A panel toggle loads its panel; clicked again while the panel is open, it
   // empties the panel instead of loading it a second time.
   document.addEventListener('htmx:beforeRequest', function (e) {
@@ -263,6 +274,7 @@
     var panel = document.getElementById(toggle.dataset.panelToggle);
     if (panel && panel.innerHTML.trim()) {
       panel.innerHTML = '';
+      syncPanelToggles();
       e.preventDefault();
     }
   });

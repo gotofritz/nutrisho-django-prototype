@@ -24,9 +24,8 @@ RESULTS_TARGET = "search-results"
 def home(request: AuthedRequest) -> HttpResponse:
     """List the signed-in user's recipes, searched, filtered and a page at a time."""
     search = search_from(request.GET)
-    page = Paginator(search_recipes(owner=request.user, search=search), PAGE_SIZE).get_page(
-        request.GET.get("page")
-    )
+    results = search_recipes(owner=request.user, search=search).select_related("cuisine")
+    page = Paginator(results, PAGE_SIZE).get_page(request.GET.get("page"))
     recipes = list(page.object_list)
     matches = matched_ingredients(recipes=recipes, search=search)
     list_url = reverse("recipes:home")

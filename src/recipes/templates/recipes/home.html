@@ -3,35 +3,25 @@
 {% block page_title %}Recipes{% endblock %}
 
 {# The list carries its own, fuller search box below. #}
-{% block site_search %}{% endblock %}
+{% block site_header %}{% include "./partials/_site_header.html" with show_search=False %}{% endblock %}
 
 {% block content %}
-<div class="home-header">
-  <h1 tabindex="-1">Recipes</h1>
-  <a href="{% url 'recipes:new' %}" class="btn-new-recipe">New Recipe</a>
-  {% if user.is_staff %}
-    <a href="{% url 'recipes:ingredient_manage' %}" class="btn-manage-ingredients">Manage ingredients</a>
-    <a href="{% url 'recipes:cuisine_manage' %}" class="btn-manage-cuisines">Manage cuisines</a>
-  {% endif %}
-  {# Log out (#59): LogoutView only accepts POST. Not boosted, so the login page is a full load. #}
-  <form method="post" action="{% url 'logout' %}" class="logout-form" hx-boost="false">
-    {% csrf_token %}
-    <button type="submit" class="list-btn">Log out</button>
-  </form>
-</div>
+<div class="contents-page">
+<h1 tabindex="-1">Contents</h1>
 {% comment %}
 Search (#32). Typing or picking a filter swaps #search-results only and pushes
 the URL, the active-search pattern of the ingredient tool; Enter submits the
-form as a plain (boosted) GET, so it works without htmx too.
+form as a plain (boosted) GET, so it works without htmx too. The filters read
+as one sentence: "looking in everything, from any kitchen, tagged anything".
 {% endcomment %}
 <form role="search" method="get" action="{% url 'recipes:home' %}" id="recipe-search" class="recipe-search no-print">
-  <label for="search-q">Search</label>
+  <label for="search-q" class="visually-hidden">Search</label>
   <input
     type="search"
     id="search-q"
     name="q"
     value="{{ search.query }}"
-    placeholder='aubergine pasta, "olive oil", -mushroom'
+    placeholder="Look for a recipe, an ingredient, a cuisine…"
     aria-describedby="search-help"
     hx-get="{% url 'recipes:home' %}"
     hx-trigger="input changed delay:300ms, search"
@@ -40,53 +30,52 @@ form as a plain (boosted) GET, so it works without htmx too.
     hx-push-url="true"
     hx-include="closest form"
   />
-  <label for="search-in">in</label>
-  <select
-    id="search-in"
-    name="in"
-    hx-get="{% url 'recipes:home' %}"
-    hx-trigger="change"
-    hx-target="#search-results"
-    hx-swap="outerHTML"
-    hx-push-url="true"
-    hx-include="closest form"
-  >
-    {% for value, label in search_fields.items %}<option value="{{ value }}"{% if value == search.field %} selected{% endif %}>{{ label }}</option>{% endfor %}
-  </select>
-  {% if cuisines %}
-  <label for="search-cuisine">Cuisine</label>
-  <select
-    id="search-cuisine"
-    name="cuisine"
-    hx-get="{% url 'recipes:home' %}"
-    hx-trigger="change"
-    hx-target="#search-results"
-    hx-swap="outerHTML"
-    hx-push-url="true"
-    hx-include="closest form"
-  >
-    <option value="">Any</option>
-    {% for cuisine in cuisines %}<option value="{{ cuisine.pk }}"{% if cuisine.pk == search.cuisine_id %} selected{% endif %}>{{ cuisine.path }}</option>{% endfor %}
-  </select>
-  {% endif %}
-  {% if tags %}
-  <label for="search-tag">Tag</label>
-  <select
-    id="search-tag"
-    name="tag"
-    hx-get="{% url 'recipes:home' %}"
-    hx-trigger="change"
-    hx-target="#search-results"
-    hx-swap="outerHTML"
-    hx-push-url="true"
-    hx-include="closest form"
-  >
-    <option value="">Any</option>
-    {% for tag in tags %}<option value="{{ tag.pk }}"{% if tag.pk == search.tag_id %} selected{% endif %}>{{ tag.tag }}</option>{% endfor %}
-  </select>
-  {% endif %}
-  <button type="submit">Search</button>
+  <p class="search-filters">
+    <label for="search-in">looking in</label>
+    <select
+      id="search-in"
+      name="in"
+      hx-get="{% url 'recipes:home' %}"
+      hx-trigger="change"
+      hx-target="#search-results"
+      hx-swap="outerHTML"
+      hx-push-url="true"
+      hx-include="closest form"
+    >
+      {% for value, label in search_fields.items %}<option value="{{ value }}"{% if value == search.field %} selected{% endif %}>{{ label|lower }}</option>{% endfor %}
+    </select>{% if cuisines %},
+    <label for="search-cuisine">from</label>
+    <select
+      id="search-cuisine"
+      name="cuisine"
+      hx-get="{% url 'recipes:home' %}"
+      hx-trigger="change"
+      hx-target="#search-results"
+      hx-swap="outerHTML"
+      hx-push-url="true"
+      hx-include="closest form"
+    >
+      <option value="">any kitchen</option>
+      {% for cuisine in cuisines %}<option value="{{ cuisine.pk }}"{% if cuisine.pk == search.cuisine_id %} selected{% endif %}>{{ cuisine.path }}</option>{% endfor %}
+    </select>{% endif %}{% if tags %},
+    <label for="search-tag">tagged</label>
+    <select
+      id="search-tag"
+      name="tag"
+      hx-get="{% url 'recipes:home' %}"
+      hx-trigger="change"
+      hx-target="#search-results"
+      hx-swap="outerHTML"
+      hx-push-url="true"
+      hx-include="closest form"
+    >
+      <option value="">anything</option>
+      {% for tag in tags %}<option value="{{ tag.pk }}"{% if tag.pk == search.tag_id %} selected{% endif %}>{{ tag.tag }}</option>{% endfor %}
+    </select>{% endif %}
+    <button type="submit">Search</button>
+  </p>
   <p id="search-help" class="search-help">Finds recipes with any of the words in their title, description, ingredients, tags or cuisine, best matches first. Quote a phrase; put a minus before a word to leave it out.</p>
 </form>
 {% include "./partials/_search_results.html" %}
+</div>
 {% endblock %}

@@ -1,11 +1,11 @@
 {% comment %}
-The search box at the top of every signed-in page (#32). A plain GET to the
-recipe list, so it works boosted or not; the list page renders its own,
-fuller box with active search and filters instead. On a recipe page it holds
-the search the user came from.
+The search box in the header of every signed-in page but the list (#32). A
+plain GET to the recipe list, so it works boosted or not; the list page renders
+its own, fuller box with active search and filters instead. On a recipe page it
+holds the search the user came from.
 {% endcomment %}
-<form role="search" method="get" action="{% url 'recipes:home' %}" class="site-search no-print">
+<form role="search" method="get" action="{% url 'recipes:home' %}" class="site-search">
   <label for="site-search-q" class="visually-hidden">Search recipes</label>
-  <input type="search" id="site-search-q" name="q" value="{% if search %}{{ search.query }}{% endif %}" placeholder="Search recipes, e.g. aubergine pasta" />
+  <input type="search" id="site-search-q" name="q" value="{% if search %}{{ search.query }}{% endif %}" placeholder="Look for a recipe…" />
   <button type="submit">Search</button>
 </form>

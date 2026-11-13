@@ -21,10 +21,16 @@
       type="font/woff2"
       crossorigin
     />
+    <link
+      rel="preload"
+      href="{% static 'fonts/libre-caslon-text/libre-caslon-text-latin-400.woff2' %}"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
 
     <link rel="icon" href="{% static 'favicon.ico' %}" sizes="any" />
 
-    <link rel="stylesheet" href="{% static 'css/output.css' %}" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print" />
     <script src="{% static 'django_htmx/htmx-2.min.js' %}" defer></script>
@@ -37,7 +43,7 @@
 
   <body hx-boost="true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% include "./partials/_page_regions.html" %}
-    {% block site_search %}{% if user.is_authenticated %}{% include "./partials/_site_search.html" %}{% endif %}{% endblock %}
+    {% block site_header %}{% if user.is_authenticated %}{% include "./partials/_site_header.html" with show_search=True %}{% endif %}{% endblock %}
     {# One <main> per page (#74); the recipe page brings its own, since a boosted visit swaps the whole body. #}
     {% block main %}<main>{% block content %}{% endblock %}</main>{% endblock %}
   </body>

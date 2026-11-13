@@ -1,6 +1,6 @@
 # Browser code, assets and the Content-Security-Policy
 
-Every asset is served by the app itself: pages make no third-party requests. The web fonts (Inconsolata, Lobster) are self-hosted as woff2 under `static/fonts/` with their OFL licences, declared with `font-display: swap` in `css/style.css`, and preloaded from `base.html`. A new font goes the same way, never through a font CDN.
+Every asset is served by the app itself: pages make no third-party requests. The web fonts (Libre Caslon Text, IM Fell English SC, Inconsolata, Lobster) are self-hosted as woff2 under `static/fonts/` with their OFL licences, declared with `font-display: swap` in `css/style.css`, and preloaded from `base.html`. A new font goes the same way, never through a font CDN.
 
 ## Browser code and the CSP (#62)
 
@@ -49,7 +49,7 @@ on a dropped connection; and a merge in the ingredient clean-up tool. Every
 test also fails on an uncaught script error or a CSP violation in the console.
 
 They are marked `e2e`, which the default pytest run (and so `make qa` and the
-pre-commit hook) deselects. `make e2e` builds the CSS and runs them; Chromium
+pre-commit hook) deselects. `make e2e` runs them; Chromium
 comes from `uv run playwright install chromium`, at the version the locked
 Playwright pins. CI runs them in their own `e2e` job and uploads a screenshot
 of any failure. The test rows are committed (`transactional_db`) so the live

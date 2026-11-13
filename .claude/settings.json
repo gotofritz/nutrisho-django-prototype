@@ -12,7 +12,6 @@
       "Bash(make test-cov)",
       "Bash(make test-cov *)",
       "Bash(make check-migrations)",
-      "Bash(make css)",
       "Bash(uv run pytest *)",
       "Bash(uv run ruff *)",
       "Bash(uv run ty *)",

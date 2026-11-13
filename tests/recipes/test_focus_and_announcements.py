@@ -376,18 +376,6 @@ def test_refused_last_group_delete_is_announced(auth_client, recipe, group):
     assert _announced(response) == "A recipe keeps at least one group, so this one stayed."
 
 
-@pytest.mark.django_db
-def test_recipe_delete_from_the_list_is_announced(auth_client, user, recipe):
-    """Deleting a row of the recipe list says so."""
-    Recipe.objects.create(recipe_name="Stew", owner=user)
-    response = auth_client.post(
-        reverse("recipes:delete", kwargs={"recipe_id": recipe.pk}),
-        HTTP_HX_REQUEST="true",
-        HTTP_HX_TARGET=f"recipe-{recipe.pk}",
-    )
-    assert _announced(response) == "Recipe deleted."
-
-
 # --- counts and "Saved" in the clean-up tools ------------------------------
 
 

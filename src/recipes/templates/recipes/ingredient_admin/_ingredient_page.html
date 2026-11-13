@@ -18,10 +18,10 @@ Show more swaps its own row for the next page's rows and a new Show-more row.
 </li>
 {% endfor %}
 {% if more_count > 0 %}
-<li class="show-more-row mt-2">
+<li class="show-more-row">
   <button
     type="button"
-    class="show-more rounded border border-gray-500 px-2 py-1 text-sm"
+    class="show-more"
     hx-get="{% url 'recipes:ingredient_manage_more' %}"
     hx-target="closest li"
     hx-swap="outerHTML"

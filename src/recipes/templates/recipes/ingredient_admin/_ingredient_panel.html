@@ -8,6 +8,6 @@
 >
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit" class="panel-save rounded border border-gray-400 px-3 py-1">Save</button>
-  {% if saved %}<span class="panel-saved text-sm text-gray-600" data-announce>Saved</span>{% endif %}
+  <button type="submit" class="panel-save">Save</button>
+  {% if saved %}<span class="panel-saved" data-announce>Saved</span>{% endif %}
 </form>

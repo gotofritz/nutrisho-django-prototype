@@ -210,22 +210,3 @@ def test_other_user_cannot_add_group(other_client, recipe):
 
 
 # --- Delete empty-state with two users ---
-
-
-@pytest.mark.django_db
-def test_delete_last_recipe_shows_empty_state_when_other_user_has_recipes(
-    owner_client, owner, other, recipe
-):
-    """Owner deletes their only recipe; other user still has one.
-
-    Should still show empty state for owner (not rely on global exists()).
-    """
-    Recipe.objects.create(recipe_name="Other's Recipe", owner=other)
-    response = owner_client.post(
-        f"/recipes/{recipe.pk}/delete/",
-        HTTP_HX_REQUEST="true",
-        HTTP_HX_TARGET=f"recipe-{recipe.pk}",
-    )
-    assert response.status_code == 200
-    assert "No recipes are available." in response.content.decode()
-    assert response["HX-Retarget"] == "#recipe-list"

@@ -40,6 +40,6 @@ def test_logging_out_lands_on_the_login_page(signed_in: Page):
     signed_in.goto("/recipes/")
     signed_in.get_by_role("button", name="Log out").click()
 
-    expect(signed_in.get_by_role("heading", name="Log in")).to_be_visible()
+    expect(signed_in.get_by_role("button", name="Log in")).to_be_visible()
     signed_in.goto("/recipes/")
     expect(signed_in).to_have_url(re.compile(r"/accounts/login/"))

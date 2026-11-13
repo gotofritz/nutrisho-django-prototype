@@ -52,19 +52,19 @@ def test_recipe_list_has_logout_form(auth_client):
 
 
 @pytest.mark.django_db
-def test_recipe_navbar_has_logout_form(auth_client, recipe):
-    """The recipe page navbar posts to the log-out view."""
+def test_recipe_page_header_has_logout_form(auth_client, recipe):
+    """The recipe page's site header posts to the log-out view."""
     html = auth_client.get(f"/recipes/{recipe.pk}/").content.decode()
-    navbar = html[html.index('class="navbar"') :]
-    form = _logout_form(navbar)
+    header = html[html.index('aria-label="Site"') :]
+    form = _logout_form(header)
     assert 'method="post"' in form
     assert 'name="csrfmiddlewaretoken"' in form
-    assert 'aria-label="Log out"' in form
+    assert '<button type="submit">Log out</button>' in form
 
 
 @pytest.mark.django_db
 def test_boosted_recipe_page_keeps_logout_form(auth_client, recipe):
-    """A boosted visit replaces the whole body, so it must carry the navbar's form."""
+    """A boosted visit replaces the whole body, so it must carry the header's form."""
     response = auth_client.get(
         f"/recipes/{recipe.pk}/", HTTP_HX_REQUEST="true", HTTP_HX_BOOSTED="true"
     )
@@ -115,7 +115,7 @@ def test_login_page_extends_base(login_html):
     assert "favicon.ico" in login_html
     assert "fonts/lobster/lobster-latin-400.woff2" in login_html
     assert 'id="a11y-status"' in login_html
-    assert '<h1 tabindex="-1">Log in</h1>' in login_html
+    assert '<h1 tabindex="-1">Nutrisho</h1>' in login_html
 
 
 def test_login_page_labels_its_fields(login_html):

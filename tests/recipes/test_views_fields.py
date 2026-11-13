@@ -277,9 +277,8 @@ def test_recipe_page_title_element_strips_tags(auth_client, recipe):
 
 @pytest.mark.django_db
 def test_recipe_list_renders_title_formatting(auth_client, recipe):
-    """The recipe list renders the title's markup and keeps the delete prompt plain."""
+    """The recipe list renders the title's markup."""
     recipe.recipe_name = "<s>Old</s> Ragú"
     recipe.save()
     content = auth_client.get("/recipes/").content.decode()
     assert 'class="recipe-name"><s>Old</s> Ragú</a>' in content
-    assert "hx-confirm=\"Delete 'Old Ragú'?\"" in content
