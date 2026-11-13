@@ -278,7 +278,7 @@ class Command(BaseCommand):
             _global_tag(name) if name in GLOBAL_TAGS else resolve_tag(name, owner=owner)
             for name in recipe.tags
         ]
-        row.tag.add(*tags)  # ty: ignore[unresolved-attribute]  # reverse M2M
+        row.tags.add(*tags)  # ty: ignore[unresolved-attribute]  # reverse M2M
         return True
 
 

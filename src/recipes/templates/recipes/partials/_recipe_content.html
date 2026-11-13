@@ -44,7 +44,7 @@ it sit beside it in the margin, and previous/next sit at the foot of the page.
     {% endif %}
     <div class="recipe-description">
       {% if recipe.cuisine %}<p class="recipe-cuisine no-print">Cuisine: <a href="{% url 'recipes:home' %}?cuisine={{ recipe.cuisine.pk }}">{{ recipe.cuisine.path }}</a></p>{% endif %}
-      {% with tags=recipe.tag.all %}{% if tags %}<p class="recipe-tags no-print">Tags: {% for tag in tags %}<a href="{% url 'recipes:home' %}?tag={{ tag.pk }}">{{ tag.tag }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}{% endwith %}
+      {% with tags=recipe.tags.all %}{% if tags %}<p class="recipe-tags no-print">Tags: {% for tag in tags %}<a href="{% url 'recipes:home' %}?tag={{ tag.pk }}">{{ tag.tag }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}{% endwith %}
       {% if recipe.source_instance %}<p class="recipe-source">Source: {% with url=recipe.source_instance|web_url %}{% if url %}<a href="{{ url }}" rel="noopener noreferrer">{{ recipe.source_instance }}</a>{% else %}{{ recipe.source_instance }}{% endif %}{% endwith %}</p>{% endif %}
       {% include "./_field_display.html" with field_name="short_description" value=recipe.short_description|default:"" %}
     </div>

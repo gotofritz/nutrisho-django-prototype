@@ -76,7 +76,7 @@ def populated_recipe(user):
         index_in_sequence=1,
         note="fresh if possible",
     )
-    Tag.objects.create(tag="spicy").recipe.add(recipe)
+    Tag.objects.create(tag="spicy").recipes.add(recipe)
     return recipe
 
 
@@ -93,7 +93,7 @@ def _add_content(recipe: Recipe, *, groups: int, ingredients: int, steps: int) -
                 index_in_sequence=i,
             )
     for t in range(3):
-        Tag.objects.get_or_create(tag=f"tag {t}")[0].recipe.add(recipe)
+        Tag.objects.get_or_create(tag=f"tag {t}")[0].recipes.add(recipe)
 
 
 @pytest.mark.django_db
@@ -141,7 +141,7 @@ def test_duplicate_leaves_original_children_in_place(populated_recipe):
         assert Step.objects.filter(recipe=recipe).count() == 1
         assert IngredientGroup.objects.filter(recipe=recipe).count() == 1
         assert IngredientInRecipe.objects.filter(ingredient_group__recipe=recipe).count() == 1
-        assert list(Tag.objects.filter(recipe=recipe).values_list("tag", flat=True)) == ["spicy"]
+        assert list(Tag.objects.filter(recipes=recipe).values_list("tag", flat=True)) == ["spicy"]
 
 
 @pytest.mark.django_db

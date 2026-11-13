@@ -31,7 +31,7 @@ def duplicate_recipe(original: Recipe) -> Recipe:
             _clone(iir, ingredient_group_id=new_group_ids[iir.ingredient_group_id])
             for iir in IngredientInRecipe.objects.filter(ingredient_group__recipe=original)
         )
-        new.tag.add(*original.tag.all())  # ty: ignore[unresolved-attribute]  # reverse M2M
+        new.tags.add(*original.tags.all())  # ty: ignore[unresolved-attribute]  # reverse M2M
     return new
 
 

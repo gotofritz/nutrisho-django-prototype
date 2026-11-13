@@ -79,7 +79,7 @@ def _term_q(term: str, *, field: str) -> tuple[Q, Q | None]:
     if field == "ingredient":
         return Q(ingredients), None
     tags = Exists(
-        Tag.objects.filter(recipe=OuterRef("pk")).filter(
+        Tag.objects.filter(recipes=OuterRef("pk")).filter(
             reduce(or_, (Q(tag__iregex=p) for p in patterns))
         )
     )
@@ -111,7 +111,7 @@ def search_recipes(*, owner: AbstractBaseUser, search: RecipeSearch) -> QuerySet
             reduce(or_, (Q(**{f"{level}_id": search.cuisine_id}) for level in _CUISINE_LEVELS))
         )
     if search.tag_id:
-        recipes = recipes.filter(tag__id=search.tag_id)
+        recipes = recipes.filter(tags__id=search.tag_id)
     parsed = parse_query(search.query)
     for term in parsed.excluded:
         anywhere, _title = _term_q(term, field=search.field)
@@ -171,4 +171,4 @@ def cuisine_choices(owner: AbstractBaseUser) -> list[Cuisine]:
 
 def tag_choices(owner: AbstractBaseUser) -> list[Tag]:
     """Tags on `owner`'s recipes, global or private, A to Z."""
-    return list(Tag.objects.filter(recipe__owner=owner).distinct().order_by(Lower("tag"), "tag"))
+    return list(Tag.objects.filter(recipes__owner=owner).distinct().order_by(Lower("tag"), "tag"))

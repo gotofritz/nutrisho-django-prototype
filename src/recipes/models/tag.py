@@ -21,10 +21,12 @@ class Tag(models.Model):
         blank=True,
         related_name="private_tags",
     )
-    recipe = models.ManyToManyField(
+    recipes = models.ManyToManyField(
         Recipe,
         blank=True,
-        related_name="tag",
+        related_name="tags",
+        # The table keeps the name it had when this field was `recipe` (#79).
+        db_table="recipes_tag_recipe",
     )
     objects = models.Manager()
 

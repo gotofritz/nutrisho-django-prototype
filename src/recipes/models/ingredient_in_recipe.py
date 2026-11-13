@@ -24,7 +24,7 @@ class IngredientInRecipe(models.Model):
         "quantity as recorded in source", decimal_places=2, max_digits=7, blank=True, null=True
     )
     ingredient_group = models.ForeignKey(
-        IngredientGroup, on_delete=models.CASCADE, related_name="ingredient"
+        IngredientGroup, on_delete=models.CASCADE, related_name="items"
     )
     index_in_sequence = models.SmallIntegerField(
         "Where to show this ingredient, for a given group?"

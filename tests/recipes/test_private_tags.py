@@ -14,7 +14,7 @@ from recipes.services.name_resolution import find_tag, resolve_tag
 
 
 def _tag_names(recipe: Recipe) -> list[str]:
-    return sorted(recipe.tag.values_list("tag", flat=True))  # ty: ignore[unresolved-attribute]  # reverse M2M
+    return sorted(recipe.tags.values_list("tag", flat=True))  # ty: ignore[unresolved-attribute]  # reverse M2M
 
 
 # --- Model -------------------------------------------------------------------
@@ -90,14 +90,14 @@ def test_new_recipe_gets_its_tags(user):
     form.instance.owner = user
     recipe = form.save()
     assert _tag_names(recipe) == ["Vegan", "quick"]
-    assert set(recipe.tag.values_list("owner", flat=True)) == {user.pk}  # ty: ignore[unresolved-attribute]  # reverse M2M
+    assert set(recipe.tags.values_list("owner", flat=True)) == {user.pk}  # ty: ignore[unresolved-attribute]  # reverse M2M
 
 
 @pytest.mark.django_db
 def test_form_shows_existing_tags(user):
     """The field starts with the recipe's tags, comma-separated."""
     recipe = Recipe.objects.create(recipe_name="Dal", owner=user)
-    recipe.tag.add(Tag.objects.create(tag="vegan"), Tag.objects.create(tag="quick", owner=user))
+    recipe.tags.add(Tag.objects.create(tag="vegan"), Tag.objects.create(tag="quick", owner=user))
     form = RecipeMetadataForm(instance=recipe, owner=user)
     assert form["tags"].value() == "quick, vegan"
 
@@ -114,21 +114,21 @@ def test_form_rejects_an_overlong_tag(user):
 def test_metadata_edit_replaces_the_tags(auth_client, user):
     """Saving the metadata panel sets exactly the typed tags."""
     recipe = Recipe.objects.create(recipe_name="Dal", owner=user, servings=4)
-    recipe.tag.add(Tag.objects.create(tag="old", owner=user))
+    recipe.tags.add(Tag.objects.create(tag="old", owner=user))
     vegan = Tag.objects.create(tag="vegan")
     response = auth_client.post(
         f"/recipes/{recipe.pk}/metadata/", _data(tags="Vegan, weeknight"), HTTP_HX_REQUEST="true"
     )
     assert response.status_code == 200
     assert _tag_names(recipe) == ["vegan", "weeknight"]
-    assert vegan in recipe.tag.all()
+    assert vegan in recipe.tags.all()
 
 
 @pytest.mark.django_db
 def test_metadata_edit_can_clear_the_tags(auth_client, user):
     """An empty field removes every tag."""
     recipe = Recipe.objects.create(recipe_name="Dal", owner=user, servings=4)
-    recipe.tag.add(Tag.objects.create(tag="old", owner=user))
+    recipe.tags.add(Tag.objects.create(tag="old", owner=user))
     auth_client.post(f"/recipes/{recipe.pk}/metadata/", _data(), HTTP_HX_REQUEST="true")
     assert _tag_names(recipe) == []
 
@@ -155,19 +155,19 @@ def without_tag_ci_constraints(db):
 
 
 @pytest.mark.django_db
-def test_migration_merges_case_duplicate_tags_into_the_most_used(without_tag_ci_constraints, user):
+def test_migration_merges_case_duplicate_tags_into_the_most_used(
+    without_tag_ci_constraints, pre_rename_apps, user
+):
     """Recipes move to the most-used spelling and the other rows go."""
     import importlib
-
-    from django.apps import apps
 
     lower = Tag.objects.create(tag="vegan")
     upper = Tag.objects.create(tag="Vegan")
     a = Recipe.objects.create(recipe_name="A", owner=user)
     b = Recipe.objects.create(recipe_name="B", owner=user)
-    lower.recipe.add(a)
-    upper.recipe.add(a, b)
+    lower.recipes.add(a)
+    upper.recipes.add(a, b)
     module = importlib.import_module("recipes.migrations.0019_tag_owner")
-    module.merge_case_duplicate_tags(apps, None)
+    module.merge_case_duplicate_tags(pre_rename_apps, None)
     assert list(Tag.objects.filter(tag__iexact="vegan")) == [upper]
-    assert sorted(upper.recipe.values_list("recipe_name", flat=True)) == ["A", "B"]
+    assert sorted(upper.recipes.values_list("recipe_name", flat=True)) == ["A", "B"]

@@ -1,6 +1,6 @@
 """Load a recipe's ingredient groups and rows in a fixed number of queries (#64).
 
-Every template that walks `recipe.ingredients_group` or `group.ingredient`
+Every template that walks `recipe.ingredient_groups` or `group.items`
 reads each row's ingredient, substitute and unit. Without these prefetches each
 group and each row costs queries of its own, so a re-render grows with the
 recipe. Call these after any write the render has to show: a lookup already
@@ -18,7 +18,7 @@ def _rows() -> QuerySet:
 
 def ingredients_prefetch() -> Prefetch:
     """A recipe's groups, each with its rows and what they display."""
-    return Prefetch("ingredients_group__ingredient", queryset=_rows())
+    return Prefetch("ingredient_groups__items", queryset=_rows())
 
 
 def with_ingredients(recipe: Recipe) -> Recipe:
@@ -29,5 +29,5 @@ def with_ingredients(recipe: Recipe) -> Recipe:
 
 def with_rows(group: IngredientGroup) -> IngredientGroup:
     """`group` with its rows prefetched for rendering."""
-    prefetch_related_objects([group], Prefetch("ingredient", queryset=_rows()))
+    prefetch_related_objects([group], Prefetch("items", queryset=_rows()))
     return group

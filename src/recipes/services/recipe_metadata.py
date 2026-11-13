@@ -31,7 +31,7 @@ def set_tags(recipe: Recipe, *, names: list[str]) -> None:
     transaction.
     """
     tags = [resolve_tag(name, owner=recipe.owner) for name in names]
-    recipe.tag.set(tags)  # ty: ignore[unresolved-attribute]  # reverse M2M
+    recipe.tags.set(tags)  # ty: ignore[unresolved-attribute]  # reverse M2M
 
 
 def _lock(recipe: Recipe) -> bool:

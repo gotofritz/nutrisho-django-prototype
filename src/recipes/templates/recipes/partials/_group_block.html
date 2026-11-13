@@ -1,7 +1,7 @@
 <div class="group-block" id="group-block-{{ group.id }}">
   {% include "./_group_display.html" %}
   <div class="ingredients-list" id="iir-list-{{ group.id }}">
-    {% for iir in group.ingredient.all %}
+    {% for iir in group.items.all %}
     {% include "./_ingredient_display.html" with recipe=recipe iir=iir %}
     {% endfor %}
     <button

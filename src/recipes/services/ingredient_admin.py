@@ -113,8 +113,8 @@ def recipes_referencing_ingredients(ingredient_ids: Iterable[int]) -> QuerySet:
         return Recipe.objects.none()
     return (
         Recipe.objects.filter(
-            Q(ingredients_group__ingredient__ingredient__in=ids)
-            | Q(ingredients_group__ingredient__substitute__in=ids)
+            Q(ingredient_groups__items__ingredient__in=ids)
+            | Q(ingredient_groups__items__substitute__in=ids)
         )
         .distinct()
         .order_by(Lower("recipe_name"), "recipe_name")

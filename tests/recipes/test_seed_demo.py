@@ -113,7 +113,7 @@ def test_covers_plural_overrides():
 def test_covers_groups_substitutes_and_step_titles():
     """Some recipes have named groups, a substitute and titled steps; some have none."""
     seed()
-    group_counts = [r.ingredients_group.count() for r in demo_recipes()]
+    group_counts = [r.ingredient_groups.count() for r in demo_recipes()]
 
     assert max(group_counts) >= 2
     assert min(group_counts) == 1
@@ -132,8 +132,8 @@ def test_covers_markup_tags_and_cuisines():
     assert demo_recipes().filter(recipe_name__contains="<").exists()
     assert demo_recipes().filter(short_description__contains="<").exists()
     assert demo_recipes().filter(cuisine__isnull=False).exists()
-    assert Tag.objects.filter(owner__isnull=True, recipe__owner=demo).exists()
-    assert Tag.objects.filter(owner=demo, recipe__owner=demo).exists()
+    assert Tag.objects.filter(owner__isnull=True, recipes__owner=demo).exists()
+    assert Tag.objects.filter(owner=demo, recipes__owner=demo).exists()
 
 
 @pytest.mark.django_db

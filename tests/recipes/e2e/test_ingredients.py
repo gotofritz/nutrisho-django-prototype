@@ -43,7 +43,7 @@ def test_adding_an_ingredient_to_a_new_group(
 
     expect(sauce.locator(".ingredient-content")).to_have_text("2 onions, chopped")
     group = IngredientGroup.objects.get(recipe=recipe, group_name="Sauce")
-    assert [iir.ingredient.ingredient_name for iir in group.ingredient.all()] == ["onion"]
+    assert [iir.ingredient.ingredient_name for iir in group.items.all()] == ["onion"]
 
 
 def test_ticked_ingredients_move_to_a_group_made_on_the_page(
@@ -74,7 +74,7 @@ def test_ticked_ingredients_move_to_a_group_made_on_the_page(
     expect(sauce.locator(".ingredient-name")).to_have_text(["tomatoes"])
     expect(panel).to_be_hidden()
     group = IngredientGroup.objects.get(recipe=recipe, group_name="Sauce")
-    assert [iir.ingredient.ingredient_name for iir in group.ingredient.all()] == ["tomato"]
+    assert [iir.ingredient.ingredient_name for iir in group.items.all()] == ["tomato"]
 
 
 def test_typing_a_name_fills_the_suggestions(
