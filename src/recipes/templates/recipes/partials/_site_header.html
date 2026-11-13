@@ -1,0 +1,25 @@
+{% comment %}
+The header on every signed-in page (#76): the site's name, the search box and
+the site navigation. The recipe list passes show_search=False, since it has its
+own fuller box. A boosted recipe visit replaces the whole <body>, so
+_recipe_content.html includes this too.
+{% endcomment %}
+{% with here=request.resolver_match.url_name %}
+<header class="site-header no-print">
+  <a href="{% url 'recipes:home' %}" class="site-name">Nutrisho</a>
+  {% if show_search %}{% include "./_site_search.html" %}{% endif %}
+  <nav aria-label="Site">
+    <a href="{% url 'recipes:home' %}"{% if here == "home" %} aria-current="page"{% endif %}>Recipes</a>
+    <a href="{% url 'recipes:new' %}"{% if here == "new" %} aria-current="page"{% endif %}>New recipe</a>
+    {% if user.is_staff %}
+    <a href="{% url 'recipes:ingredient_manage' %}"{% if here == "ingredient_manage" %} aria-current="page"{% endif %}>Ingredients</a>
+    <a href="{% url 'recipes:cuisine_manage' %}"{% if here == "cuisine_manage" %} aria-current="page"{% endif %}>Cuisines</a>
+    {% endif %}
+    {# Log out (#59): LogoutView only accepts POST. Not boosted, so the login page is a full load. #}
+    <form method="post" action="{% url 'logout' %}" class="logout-form" hx-boost="false">
+      {% csrf_token %}
+      <button type="submit">Log out</button>
+    </form>
+  </nav>
+</header>
+{% endwith %}

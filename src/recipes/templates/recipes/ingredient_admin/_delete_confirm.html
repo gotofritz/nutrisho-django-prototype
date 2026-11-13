@@ -1,4 +1,4 @@
-<div id="columns" class="columns workspace min-w-0 grow h-full min-h-0 overflow-y-auto overflow-x-hidden break-words">
+<div id="columns" class="columns workspace">
   {% include "./_workspace_selection.html" %}
   <form
     hx-post="{% url 'recipes:ingredient_manage_delete' %}"
@@ -25,6 +25,6 @@
     </select>
     {% endif %}
     {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
-    <button type="submit" class="panel-delete rounded border border-gray-400 px-3 py-1">Confirm delete</button>
+    <button type="submit" class="panel-delete">Confirm delete</button>
   </form>
 </div>

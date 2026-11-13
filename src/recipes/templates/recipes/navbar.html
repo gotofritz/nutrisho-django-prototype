@@ -1,16 +1,11 @@
-<nav class="navbar" aria-label="Recipes">
-  <div class="nav-button nav-home">
-    <a href="{{ nav.list_url }}">{% include "../icons/list.svg" %}</a>
-  </div>
-  <div class="nav-button nav-next">
-    <a href="{% url template_name nav.next_id %}{{ nav.query }}">{% include "../icons/arrow-next.svg" %}</a>
-  </div>
-  <div class="nav-button nav-prev">
-    <a href="{% url template_name nav.prev_id %}{{ nav.query }}">{% include "../icons/arrow-prev.svg" %}</a>
-  </div>
-  {# Log out (#59): LogoutView only accepts POST. Not boosted, so the login page is a full load. #}
-  <form method="post" action="{% url "logout" %}" class="nav-button nav-logout" hx-boost="false">
-    {% csrf_token %}
-    <button type="submit" aria-label="Log out" title="Log out">{% include "../icons/logout.svg" %}</button>
-  </form>
+{% comment %}
+Turning the page (#76): the previous and next recipe in the list the user came
+from, with the search kept in the query string, and the way back to the list.
+On a wide screen previous and next are quiet arrows at the page's edges; on a
+narrow one they sit at the foot with their labels.
+{% endcomment %}
+<nav class="page-turn no-print" aria-label="Recipes">
+  <a href="{% url template_name nav.prev_id %}{{ nav.query }}" rel="prev" class="turn turn-prev" title="Previous recipe"><span class="turn-arrow" aria-hidden="true">&lsaquo;</span><span class="turn-label">Previous recipe</span></a>
+  <a href="{{ nav.list_url }}">All recipes</a>
+  <a href="{% url template_name nav.next_id %}{{ nav.query }}" rel="next" class="turn turn-next" title="Next recipe"><span class="turn-label">Next recipe</span><span class="turn-arrow" aria-hidden="true">&rsaquo;</span></a>
 </nav>

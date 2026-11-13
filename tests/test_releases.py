@@ -1,6 +1,5 @@
 """Tests for the release setup: one version number, cut by commitizen (#72)."""
 
-import json
 import tomllib
 from pathlib import Path
 
@@ -36,14 +35,6 @@ def test_uv_lock_agrees_with_the_project_version():
     (entry,) = [package for package in lock["package"] if package["name"] == "nutrisho"]
 
     assert entry["version"] == PYPROJECT["project"]["version"]
-
-
-def test_package_json_has_no_version_of_its_own():
-    """pyproject.toml holds the only version number; package.json is private tooling."""
-    package = json.loads((ROOT / "package.json").read_text())
-
-    assert package["private"] is True
-    assert "version" not in package
 
 
 def test_changelog_has_a_section_for_the_current_version():

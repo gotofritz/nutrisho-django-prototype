@@ -4,7 +4,6 @@
 
 - [uv](https://docs.astral.sh/uv/) — Python dependency manager
 - [GNU Make](https://www.gnu.org/software/make/) — task runner (`make help` lists every target; preinstalled on macOS and most Linux distributions)
-- [pnpm](https://pnpm.io/) — Node dependency manager (for Tailwind CSS); the version is pinned in `packageManager` in `package.json`, so `corepack enable` picks it up
 - [jq](https://jqlang.org/) — JSON CLI tool, used by the caveman hooks (see [Claude Code](#claude-code))
 
 ## First-time setup
@@ -15,7 +14,6 @@ cp .env.example .env
 
 uv sync
 uv run pre-commit install   # git hooks: commit message format, and make qa on Python changes
-make css                    # install Node dependencies from the lockfile, compile Tailwind CSS
 make bootstrap
 ```
 
@@ -190,15 +188,15 @@ make test                    # pytest, no coverage: the fast TDD loop
 make test ARGS="tests/test_healthz.py -k healthz"  # a path or other arguments go to pytest
 make test-cov                # pytest with line and branch coverage (≥95% required)
 make coverage                # open the HTML report from the last make test-cov
-make audit                   # known vulnerabilities in uv.lock and pnpm-lock.yaml
-make e2e                     # browser smoke tests in Chromium (builds the CSS first)
+make audit                   # known vulnerabilities in uv.lock
+make e2e                     # browser smoke tests in Chromium
 ```
 
 `make test` prints one line of dots and the short tracebacks of any failures,
 so it suits a single file or test; add `ARGS="-v"` for test names. The 95% gate
 lives in `make test-cov`, because a subset of the suite never reaches it.
-`make qa` is Python-only: it needs neither Node nor the network, and never
-rewrites `pnpm-lock.yaml`. The Tailwind build runs in CI and in `make dev`.
+`make qa` needs no network. There is no build step for the front end: the
+stylesheets and `app.js` are served as written.
 
 Tests run with `--fail-on-template-vars`, so a template that uses an undefined
 variable fails the test instead of rendering an empty string. Every directory
@@ -212,17 +210,15 @@ so plain pytest, `make test` and `make qa` skip them. Add `ARGS="--headed"` to
 watch them, or `ARGS="--tracing retain-on-failure"` for a trace of a failure.
 
 `make audit` needs the network, so it is not part of `make qa`. It runs
-`pip-audit` over `uv export --all-groups` and `pnpm audit --audit-level=high`,
-and fails on any Python advisory or a high or critical Node one. CI runs it in
+`pip-audit` over `uv export --all-groups` and fails on any advisory. CI runs it in
 the `Audit` workflow on every PR, on pushes to `main`, and every Monday, so a
 new advisory against an unchanged lockfile still shows up.
 
 ## CI
 
-The `CI` workflow (`.github/workflows/ci.yml`) installs from the lockfiles
-(`uv sync --locked`, `pnpm install --frozen-lockfile`), so a `uv.lock` that is
-out of date with `pyproject.toml` fails the build, then builds the CSS with
-`make css` and runs `make qa`. On `main` it also runs `make coverage-badge`,
+The `CI` workflow (`.github/workflows/ci.yml`) installs from the lockfile
+(`uv sync --locked`), so a `uv.lock` that is out of date with `pyproject.toml`
+fails the build, then runs `make qa`. On `main` it also runs `make coverage-badge`,
 which writes the coverage total as a shields.io endpoint JSON, and a separate
 `badge` job publishes that file to the `badges` branch for the README badge,
 and a `release` job publishes a new version (see [Releases](#releases)).
@@ -305,20 +301,10 @@ production settings are the point.
 
 ## CSS
 
-Tailwind CSS v4. Source: `src/recipes/static/css/tailwind.css`. Output is a build artifact — not committed.
-
-```bash
-pnpm css         # build once (minified)
-pnpm css:watch   # rebuild on change
-```
-
-Or via make, which first installs the Node dependencies from `pnpm-lock.yaml`
-(`pnpm install --frozen-lockfile`):
-
-```bash
-make css
-make css-watch
-```
+Plain CSS, no framework and no build step (#76): `src/recipes/static/css/style.css`
+for the screen and `print.css` for print, served as written. Most of it styles
+HTML elements directly, so a template needs few classes. The look and its
+colours are described in [the design note](features/design.md).
 
 ## Tech stack
 
@@ -332,7 +318,7 @@ make css-watch
 | Types | ty |
 | Tests | pytest + pytest-django |
 | Tasks | GNU Make (`Makefile`) |
-| CSS | Tailwind CSS v4 (pnpm) |
+| CSS | Plain CSS, no build step |
 | HTMX | django-htmx |
 
 ### Django version policy

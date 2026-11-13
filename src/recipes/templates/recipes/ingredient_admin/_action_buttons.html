@@ -5,14 +5,14 @@ into Cancel without any client-side bookkeeping.
 {% endcomment %}
 <div
   id="action-buttons"
-  class="action-buttons contents"
+  class="action-buttons"
   {% if oob %}hx-swap-oob="true"{% endif %}
 >
   {% if active_action == "edit" %}
   <button
     type="button"
     id="action-edit"
-    class="action-cancel rounded border border-gray-400 px-3 py-1"
+    class="action-cancel"
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
@@ -22,7 +22,6 @@ into Cancel without any client-side bookkeeping.
   <button
     type="button"
     id="action-edit"
-    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
     hx-get="{% url 'recipes:ingredient_manage_edit' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
@@ -35,7 +34,7 @@ into Cancel without any client-side bookkeeping.
   <button
     type="button"
     id="action-delete"
-    class="action-cancel rounded border border-gray-400 px-3 py-1"
+    class="action-cancel"
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
@@ -45,7 +44,6 @@ into Cancel without any client-side bookkeeping.
   <button
     type="button"
     id="action-delete"
-    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
     hx-get="{% url 'recipes:ingredient_manage_delete' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
@@ -58,7 +56,7 @@ into Cancel without any client-side bookkeeping.
   <button
     type="button"
     id="action-merge"
-    class="action-cancel rounded border border-gray-400 px-3 py-1"
+    class="action-cancel"
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
@@ -68,7 +66,6 @@ into Cancel without any client-side bookkeeping.
   <button
     type="button"
     id="action-merge"
-    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
     hx-get="{% url 'recipes:ingredient_manage_merge' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
@@ -81,7 +78,7 @@ into Cancel without any client-side bookkeeping.
   <button
     type="button"
     id="action-merge-plural"
-    class="action-cancel rounded border border-gray-400 px-3 py-1"
+    class="action-cancel"
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
@@ -94,7 +91,6 @@ into Cancel without any client-side bookkeeping.
   <button
     type="button"
     id="action-merge-plural"
-    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
     hx-get="{% url 'recipes:ingredient_manage_merge_plural' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
@@ -107,7 +103,7 @@ into Cancel without any client-side bookkeeping.
   <button
     type="button"
     id="action-promote"
-    class="action-cancel rounded border border-gray-400 px-3 py-1"
+    class="action-cancel"
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
@@ -117,7 +113,6 @@ into Cancel without any client-side bookkeeping.
   <button
     type="button"
     id="action-promote"
-    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
     hx-get="{% url 'recipes:ingredient_manage_promote' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
@@ -130,7 +125,7 @@ into Cancel without any client-side bookkeeping.
   <button
     type="button"
     id="action-alias"
-    class="action-cancel rounded border border-gray-400 px-3 py-1"
+    class="action-cancel"
     hx-get="{% url 'recipes:ingredient_manage_cancel' %}"
     hx-target="#columns"
     hx-swap="outerHTML"
@@ -143,7 +138,6 @@ into Cancel without any client-side bookkeeping.
   <button
     type="button"
     id="action-alias"
-    class="rounded border border-gray-400 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
     hx-get="{% url 'recipes:ingredient_manage_alias' %}"
     hx-target="#columns"
     hx-swap="outerHTML"

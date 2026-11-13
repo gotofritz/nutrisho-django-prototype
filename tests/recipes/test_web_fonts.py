@@ -58,7 +58,9 @@ def test_page_links_no_third_party_stylesheet_or_script(home_html):
     assert external == []
 
 
-@pytest.mark.parametrize("family", ["Inconsolata", "Lobster"])
+@pytest.mark.parametrize(
+    "family", ["Inconsolata", "Lobster", "Libre Caslon Text", "IM Fell English SC"]
+)
 def test_style_declares_font_face_for_family(style_css, family):
     """Each family the stylesheet uses has a self-hosted ``@font-face``."""
     families = re.findall(r'font-family:\s*"([^"]+)"', "".join(_font_faces(style_css)))
@@ -94,6 +96,7 @@ def test_page_preloads_the_latin_font_files(home_html):
     hrefs = sorted(re.findall(r'href="/static/([^"]+)"', "".join(preloads)))
     assert hrefs == [
         "fonts/inconsolata/inconsolata-latin-400.woff2",
+        "fonts/libre-caslon-text/libre-caslon-text-latin-400.woff2",
         "fonts/lobster/lobster-latin-400.woff2",
     ]
     for href in hrefs:
@@ -119,7 +122,9 @@ def test_preloads_come_before_the_stylesheets(home_html):
     assert first_preload < first_stylesheet
 
 
-@pytest.mark.parametrize("family", ["inconsolata", "lobster"])
+@pytest.mark.parametrize(
+    "family", ["inconsolata", "lobster", "libre-caslon-text", "im-fell-english-sc"]
+)
 def test_font_licence_ships_with_the_files(family):
     """The SIL OFL requires the licence to travel with the font files."""
     path = finders.find(f"fonts/{family}/OFL.txt")

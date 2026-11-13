@@ -1,3 +1,6 @@
+body {
+  background: #fff;
+}
 .no-print,
 .btn-add,
 .move-btns,
@@ -5,13 +8,15 @@ input[type=checkbox],
 [data-empty] {
   display: none !important;
 }
+.recipe-page {
+  display: block;
+  padding: 0;
+}
 .recipe-contents {
   box-shadow: none;
+  min-height: 0;
   padding: 0;
   width: 100%;
-}
-.navbar {
-  visibility: hidden;
 }
 
 .sidebar {

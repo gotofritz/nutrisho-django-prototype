@@ -3,15 +3,13 @@
 {% block page_title %}Manage ingredients{% endblock %}
 
 {% block content %}
-<div class="ingredient-manager flex h-screen items-stretch gap-4 p-4">
-  <div id="col-actions" class="col-actions flex shrink-0 flex-col gap-2">
+<div class="ingredient-manager">
+  <div id="col-actions" class="col-actions">
     <h1 class="visually-hidden" tabindex="-1">Manage ingredients</h1>
-    <a href="{% url 'recipes:home' %}" class="back-link">&larr; back</a>
     <input
       type="search"
       name="q"
       id="ingredient-search"
-      class="rounded border border-gray-500 px-2 py-1"
       placeholder="search&hellip;"
       value="{{ query }}"
       hx-get="{% url 'recipes:ingredient_manage_search' %}"

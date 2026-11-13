@@ -26,7 +26,7 @@
 
 Multi-user Django recipe manager, prototype quality. One app, `recipes`, under
 `src/`; server-rendered templates with HTMX partial swaps (django-htmx), no
-REST API; Tailwind built with pnpm; SQLite in WAL mode with IMMEDIATE
+REST API; plain CSS with no build step; SQLite in WAL mode with IMMEDIATE
 transactions, and no other database. Auth is Django's `User`; the owner
 superuser comes from `make bootstrap`, never from credentials in the repo. The
 debug toolbar is a dev-group package, mounted only when installed.
@@ -105,6 +105,7 @@ Read the note for the area you are changing; skip the rest.
 - `docs/features/units.md` — the unit vocabulary, aliases, unit plurals, the `normalise_units` clean-up
 - `docs/features/shared-vocabularies.md` — global and private ingredients and tags, the cuisine tree and its tool
 - `docs/features/ingredient-cleanup-tool.md` — the staff ingredient tool: merge, plurals, aliases, promote
+- `docs/features/design.md` — the storybook look: palette, type, page layouts, plates, print
 - `docs/features/data-and-operations.md` — key models, backups, seed data, concurrent writes, logging, SQLite limits
 
 Before merging a change to the architecture, boundaries or core patterns,

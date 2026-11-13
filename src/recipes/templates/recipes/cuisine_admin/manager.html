@@ -3,15 +3,13 @@
 {% block page_title %}Manage cuisines{% endblock %}
 
 {% block content %}
-<div class="cuisine-manager flex h-screen items-stretch gap-4 p-4">
-  <div id="col-actions" class="col-actions flex shrink-0 flex-col gap-2">
+<div class="cuisine-manager">
+  <div id="col-actions" class="col-actions">
     <h1 class="visually-hidden" tabindex="-1">Manage cuisines</h1>
-    <a href="{% url 'recipes:home' %}" class="back-link">&larr; back</a>
     <input
       type="search"
       name="q"
       id="cuisine-search"
-      class="rounded border border-gray-500 px-2 py-1"
       placeholder="search&hellip;"
       value="{{ query }}"
       hx-get="{% url 'recipes:cuisine_manage_columns' %}"
@@ -48,7 +46,6 @@
       <select
         id="cuisine-sort"
         name="sort"
-        class="rounded border border-gray-500 px-2 py-1"
         hx-get="{% url 'recipes:cuisine_manage_columns' %}"
         hx-trigger="change"
         hx-target="#cuisine-columns"

@@ -8,17 +8,19 @@
       hx-swap="outerHTML"
     >{% if step.step_title %}<span class="step-title">{{ step.step_title }}</span>: {% endif %}{{ step.step_text|safe_step_html }}</span>
     <span class="step-check">
-      <input type="checkbox" class="step-select" name="step_ids" value="{{ step.id }}">
+      <input type="checkbox" class="step-select" name="step_ids" value="{{ step.id }}" aria-label="Select step: {% firstof step.step_title step.step_text|striptags|truncatewords:6 %}">
     </span>
     <span class="move-btns">
       <button
         id="step-{{ step.id }}-up"
+        aria-label="Move step {% firstof step.step_title step.step_text|striptags|truncatewords:6 %} up"
         hx-post="{% url 'recipes:step_move_up' recipe.id step.id %}"
         hx-target="#steps-list"
         hx-swap="innerHTML"
       >↑</button>
       <button
         id="step-{{ step.id }}-down"
+        aria-label="Move step {% firstof step.step_title step.step_text|striptags|truncatewords:6 %} down"
         hx-post="{% url 'recipes:step_move_down' recipe.id step.id %}"
         hx-target="#steps-list"
         hx-swap="innerHTML"

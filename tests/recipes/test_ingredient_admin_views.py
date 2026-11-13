@@ -2,11 +2,13 @@
 
 import re
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
 from recipes.models import Ingredient
 
+STYLE_CSS = Path(__file__).resolve().parents[2] / "src" / "recipes" / "static" / "css" / "style.css"
 MANAGE_URL = "/recipes/ingredients/manage/"
 SEARCH_URL = "/recipes/ingredients/manage/search/"
 
@@ -140,16 +142,17 @@ def test_search_header_reports_found_and_selected_counts(auth_client, make_ingre
 
 
 @pytest.mark.django_db
-def test_search_column_carries_width_scroll_and_wrap_classes(auth_client):
-    """Search column carries width scroll and wrap classes."""
+def test_search_column_is_narrow_and_scrolls(auth_client):
+    """Search column is narrow, scrolls on its own and wraps long names."""
     html = auth_client.get(SEARCH_URL).content.decode()
     column = tag(html, "col-ingredients")
-    assert "max-w-[38ch]" in column
-    assert "h-full" in column
-    assert "min-h-0" in column
-    assert "overflow-y-auto" in column
-    assert "overflow-x-hidden" in column
-    assert "break-words" in column
+    assert 'class="col-ingredients"' in column
+    css = STYLE_CSS.read_text()
+    assert re.search(r"(?m)^\.col-ingredients,\n\.col-cuisines \{\s*flex: 0 1 38ch;", css)
+    shared = re.search(r"(?m)^\.col-ingredients,\n[^{]*\{(?P<body>[^}]*)\}", css)
+    assert shared
+    for rule in ("height: 100%", "min-height: 0", "overflow-y: auto", "overflow-wrap: anywhere"):
+        assert rule in shared.group("body")
 
 
 @pytest.mark.django_db
@@ -234,28 +237,33 @@ def test_matches_with_empty_selection_lists_nothing(
 
 
 @pytest.mark.django_db
-def test_matches_column_carries_width_scroll_and_wrap_classes(auth_client):
-    """Matches column carries width scroll and wrap classes."""
+def test_matches_column_is_wide_and_scrolls(auth_client):
+    """Matches column is wider, scrolls on its own and wraps long names."""
     html = auth_client.get(RECIPES_URL).content.decode()
     column = tag(html, "col-recipes")
-    assert "max-w-[62ch]" in column
-    assert "h-full" in column
-    assert "min-h-0" in column
-    assert "overflow-y-auto" in column
-    assert "overflow-x-hidden" in column
-    assert "break-words" in column
+    assert 'class="col-recipes"' in column
+    css = STYLE_CSS.read_text()
+    assert re.search(r"\.col-recipes \{\s*flex: 0 1 62ch;", css)
+    shared = re.search(r"(?m)^\.col-ingredients,\n[^{]*\{(?P<body>[^}]*)\}", css)
+    assert shared
+    for rule in ("height: 100%", "min-height: 0", "overflow-y: auto", "overflow-wrap: anywhere"):
+        assert rule in shared.group("body")
 
 
 @pytest.mark.django_db
 def test_matches_rows_link_to_the_recipe_preview(
     auth_client, user, make_ingredient, make_recipe, add_ingredient
 ):
-    """Matches rows link to the recipe preview."""
+    """Each match is a button that loads the recipe preview."""
     onion = make_ingredient("onion")
     moussaka = make_recipe(owner=user, name="Moussaka")
     add_ingredient(recipe=moussaka, ingredient=onion)
     html = auth_client.get(RECIPES_URL, {"ingredient_ids": [onion.pk]}).content.decode()
-    assert f'hx-get="{preview_url(moussaka.pk)}"' in html
+    match = re.search(rf'<(\w+)[^>]*hx-get="{preview_url(moussaka.pk)}"[^>]*>', html)
+    assert match
+    # A button, so the keyboard reaches it (#60): an <a> without href is not focusable.
+    assert match.group(1) == "button"
+    assert 'type="button"' in match.group(0)
 
 
 @pytest.mark.django_db
@@ -877,11 +885,10 @@ def test_action_panels_collapse_the_columns_into_a_full_width_workspace(
     """Action panels collapse the columns into a full width workspace."""
     onion = make_ingredient("onion")
     html = auth_client.get(url, {"ingredient_ids": [onion.pk]}).content.decode()
-    workspace = tag(html, "columns")
-    assert "workspace" in workspace
-    assert "grow" in workspace
-    assert "h-full" in workspace
-    assert "overflow-y-auto" in workspace
+    assert 'class="columns workspace"' in tag(html, "columns")
+    workspace = re.search(r"\.columns\.workspace \{(?P<body>[^}]*)\}", STYLE_CSS.read_text())
+    assert workspace
+    assert "overflow-y: auto" in workspace.group("body")
     for column in ("col-ingredients", "col-recipes", "col-preview"):
         assert f'id="{column}"' not in html
 

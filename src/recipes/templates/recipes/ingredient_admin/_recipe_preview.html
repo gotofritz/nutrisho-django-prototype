@@ -1,7 +1,7 @@
 {% load recipe_filters %}
 <div
   id="col-preview"
-  class="col-preview grow basis-[30ch] min-w-0 h-full min-h-0 overflow-y-auto overflow-x-hidden break-words rounded border border-gray-300 p-2"
+  class="col-preview"
   {% if oob %}hx-swap-oob="true"{% endif %}
 >
   {% if recipe %}
@@ -11,7 +11,7 @@
   would otherwise swap that page in place of opening the tab.
   {% endcomment %}
   <a
-    class="preview-open underline decoration-dotted"
+    class="preview-open"
     href="{{ recipe.get_absolute_url }}"
     target="_blank"
     rel="noopener"

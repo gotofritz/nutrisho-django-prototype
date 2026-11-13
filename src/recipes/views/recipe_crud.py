@@ -11,7 +11,6 @@ from recipes.services.recipe_duplication import duplicate_recipe
 from recipes.services.recipe_metadata import DuplicateRecipeNameError, create_recipe, save_metadata
 from recipes.services.recipe_scaling import ScaleError, save_scaled_copy
 from recipes.utils.scaling import MAX_SERVINGS, parse_servings
-from recipes.views._announce import announce
 from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
 
@@ -98,16 +97,7 @@ def recipe_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     recipe.delete()
     if request.htmx:
-        target = request.htmx.target or ""
-        if target.startswith("recipe-"):
-            # List page: replace row or swap in empty state when last recipe gone.
-            if not Recipe.objects.filter(owner=request.user).exists():
-                response = render(request, "recipes/partials/_recipe_list_empty.html")
-                response["HX-Retarget"] = "#recipe-list"
-                response["HX-Reswap"] = "outerHTML"
-                return announce(response, "Recipe deleted.")
-            return announce(HttpResponse(""), "Recipe deleted.")
-        # Detail page: compute redirect after deletion so it reflects current state.
+        # Delete lives on the recipe page only (#75): go on to the next recipe.
         response = HttpResponse("")
         response["HX-Redirect"] = _next_recipe_url(recipe_id, request.user)
         return response

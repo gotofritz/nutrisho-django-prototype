@@ -96,3 +96,23 @@ def test_typing_a_name_fills_the_suggestions(
     signed_in.get_by_label("Or:", exact=True).press_sequentially("sha")
     expect(options).to_have_count(1)
     expect(options).to_have_attribute("value", "shallot")
+
+
+def test_a_group_s_move_buttons_sit_above_its_dotted_line(
+    signed_in: Page, recipe, add_ingredient, make_ingredient
+):
+    """The ↑/↓ beside a group name stay above the dotted line that opens its list."""
+    add_ingredient(recipe=recipe, ingredient=make_ingredient("beef"), quantity=500)
+    signed_in.goto(f"/recipes/{recipe.pk}/")
+    block = signed_in.locator(".group-block").first
+    block.hover()
+
+    line = block.locator(".ingredients-list").bounding_box()
+    name = block.locator(".group-name").bounding_box()
+    assert line and name
+    for button in block.locator(".ingredient-group .move-btns button").all():
+        box = button.bounding_box()
+        assert box
+        assert box["y"] + box["height"] <= line["y"], "button hangs over the dotted line"
+    # The name itself still sits on the line, as on the printed sheet.
+    assert name["y"] + name["height"] >= line["y"]

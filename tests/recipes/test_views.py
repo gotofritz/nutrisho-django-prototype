@@ -131,15 +131,6 @@ def test_recipe_detail_has_inline_edit_triggers(auth_client, recipe):
 
 
 @pytest.mark.django_db
-def test_list_delete_button_has_hx_confirm(auth_client, recipe):
-    """Recipe list page includes delete button with hx-confirm."""
-    response = auth_client.get("/recipes/")
-    content = response.content.decode()
-    assert "hx-confirm" in content
-    assert f"/recipes/{recipe.pk}/delete/" in content
-
-
-@pytest.mark.django_db
 def test_list_has_new_recipe_link(auth_client):
     """Recipe list page includes 'New Recipe' link."""
     response = auth_client.get("/recipes/")

@@ -7,8 +7,7 @@ client never runs is exercised: ``hx-include``, out-of-band swaps,
 a request, and the bulk-selection panels.
 
 They are marked ``e2e`` and skipped by the default run; ``make e2e`` runs them.
-The page needs the built Tailwind CSS (``make css``) and Chromium
-(``uv run playwright install chromium``).
+They need Chromium (``uv run playwright install chromium``).
 """
 
 from collections.abc import Iterator

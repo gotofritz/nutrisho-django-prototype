@@ -12,8 +12,8 @@ admin is behind the same middleware; its views carry a `login_url`, so an
 anonymous visit to `/admin/` still goes to `/admin/login/`.
 
 Log-out (#59) is a POST form to Django's `LogoutView` (it refuses GET) in the
-recipe list header and at the foot of the recipe navbar; it lands on the login
-page. `registration/login.html` extends `base.html`. The log-out and log-in
+site header (`partials/_site_header.html`) on every signed-in page; it lands on
+the login page. `registration/login.html` extends `base.html`. The log-out and log-in
 forms both carry `hx-boost="false"`: logging in rotates the CSRF token, and a
 boosted swap would leave the old one in `<body hx-headers>`. The login page
 also clears htmx's `htmx-history-cache` in localStorage, so Back on a shared

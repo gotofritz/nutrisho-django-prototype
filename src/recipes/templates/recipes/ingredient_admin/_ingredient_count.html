@@ -1,14 +1,14 @@
 <div
   id="ingredient-count"
-  class="column-header sticky top-0 mb-2 flex items-center justify-between gap-2 border-b border-gray-200 bg-white pb-1"
+  class="column-header"
   {% if oob %}hx-swap-oob="true"{% endif %}
 >
   {# How many rows the column shows; every request that re-renders it sends this back (#80). #}
   <input type="hidden" id="ingredient-limit" name="limit" value="{{ limit }}">
-  <p class="column-count text-sm font-semibold text-gray-600" data-announce>
+  <p class="column-count" data-announce>
     {{ found_count }} found / {{ selected_count }} selected
   </p>
-  <label class="select-all shrink-0" title="Select all / none">
+  <label class="select-all" title="Select all / none">
     <input
       type="checkbox"
       id="select-all"

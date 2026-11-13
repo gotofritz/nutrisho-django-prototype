@@ -17,8 +17,6 @@ TASKS = (
     "check-migrations",
     "coverage",
     "coverage-badge",
-    "css",
-    "css-watch",
     "dev",
     "e2e",
     "help",
@@ -26,7 +24,6 @@ TASKS = (
     "lint-fix",
     "manage",
     "migrate",
-    "node-install",
     "qa",
     "release",
     "schema",
@@ -145,26 +142,34 @@ def test_test_cov_target_gates_coverage_and_passes_args():
 
 
 @needs_make
-def test_node_install_keeps_the_lockfile():
-    """`make node-install` installs from pnpm-lock.yaml and never rewrites it (#68)."""
-    assert "pnpm install --frozen-lockfile" in run_make("--dry-run", "node-install")
+@pytest.mark.parametrize("target", ["dev", "e2e", "audit"])
+def test_no_target_needs_node(target: str):
+    """The CSS is hand-written and served as is, so nothing installs Node or builds CSS."""
+    output = run_make("--dry-run", target)
+
+    assert "pnpm" not in output
+    assert "tailwind" not in output
+
+
+def test_makefile_has_no_css_build_targets():
+    """There is no stylesheet to build, so the Tailwind and Node targets are gone."""
+    targets = set(re.findall(r"(?m)^([a-zA-Z0-9_-]+):", MAKEFILE.read_text()))
+
+    assert not targets & {"css", "css-watch", "node-install"}
 
 
 @needs_make
-def test_dev_builds_css_first():
-    """`make dev` still builds the Tailwind CSS that qa no longer does."""
-    output = run_make("--dry-run", "dev")
-
-    assert output.index("pnpm run css") < output.index("runserver")
+def test_dev_runs_the_server():
+    """`make dev` starts the dev server on PORT."""
+    assert "runserver 8987" in run_make("--dry-run", "dev")
 
 
 @needs_make
-def test_e2e_builds_css_then_runs_only_the_browser_tests_and_passes_args():
-    """`make e2e` runs the `e2e`-marked tests under the test settings, after the CSS (#63)."""
+def test_e2e_runs_only_the_browser_tests_and_passes_args():
+    """`make e2e` runs the `e2e`-marked tests under the test settings (#63)."""
     output = run_make("--dry-run", "e2e", "ARGS=-k login")
 
     assert "DJANGO_SETTINGS_MODULE=nutrisho.settings.test" in output
-    assert output.index("pnpm run css") < output.index("pytest")
     assert "pytest --tb=short -m e2e -k login" in output
     assert "--cov" not in output
 
@@ -267,13 +272,12 @@ def test_check_migrations_fails_on_a_stale_schema(tmp_path: Path):
 
 
 @needs_make
-def test_audit_checks_both_lockfiles():
-    """`make audit` runs pip-audit over every uv dependency group, then pnpm audit."""
+def test_audit_checks_the_lockfile():
+    """`make audit` runs pip-audit over every uv dependency group."""
     output = run_make("--dry-run", "audit")
 
     assert "uv export --all-groups" in output
     assert "pip-audit --strict" in output
-    assert "pnpm audit --audit-level=high" in output
 
 
 @needs_make

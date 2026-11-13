@@ -1,32 +1,52 @@
-<div class="nav-button">
+{% comment %}
+The recipe's tools, in the margin beside the sheet (#76). Each opens its panel
+below it; a second click closes it again (data-panel-toggle in app.js).
+{% endcomment %}
+<div class="margin-tool">
   <button
     type="button"
+    aria-expanded="false"
     aria-controls="metadata-panel"
     data-panel-toggle="metadata-panel"
     hx-get="{% url 'recipes:metadata_edit' recipe.id %}"
     hx-target="#metadata-panel"
     hx-swap="innerHTML"
-  >{% include "../icons/edit.svg" %}</button>
+  >Edit details</button>
+  <div id="metadata-panel"></div>
 </div>
 
-<div class="nav-button">
+<div class="margin-tool">
   <button
     type="button"
+    aria-expanded="false"
     aria-controls="scale-panel"
     data-panel-toggle="scale-panel"
     hx-get="{% url 'recipes:scale_panel' recipe.id %}{% if target_servings %}?servings={{ target_servings }}{% endif %}"
     hx-target="#scale-panel"
     hx-swap="innerHTML"
-  >{% include "../icons/scale.svg" %}</button>
+  >Scale</button>
+  <div id="scale-panel"></div>
 </div>
 
-<div class="nav-button">
+<div class="margin-tool">
+  <form method="post" action="{% url 'recipes:duplicate' recipe.id %}">
+    {% csrf_token %}
+    <button type="submit">Duplicate</button>
+  </form>
+</div>
+
+<div class="margin-tool">
   <button
     type="button"
+    aria-expanded="false"
     aria-controls="delete-panel"
     data-panel-toggle="delete-panel"
     hx-get="{% url 'recipes:delete_panel' recipe.id %}"
     hx-target="#delete-panel"
     hx-swap="innerHTML"
-  >{% include "../icons/trash.svg" %}</button>
+    class="danger"
+  >Delete</button>
+  <div id="delete-panel"></div>
 </div>
+
+<p class="margin-hint">Click any line of the recipe to change it. Tick steps or ingredients to merge, move or remove them.</p>

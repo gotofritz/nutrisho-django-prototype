@@ -1,6 +1,6 @@
 name: Audit
 
-# Checks the locked Python and Node dependencies against known advisories.
+# Checks the locked Python dependencies against known advisories.
 # Runs weekly as well as on changes, so a new advisory against an unchanged
 # lockfile still turns the build red.
 on:
@@ -30,10 +30,6 @@ jobs:
         uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
           version: "0.13.7"
-
-      # Reads the pnpm version from `packageManager` in package.json.
-      - name: Install pnpm
-        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
 
       - name: Audit dependencies
         run: make audit

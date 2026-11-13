@@ -1,6 +1,5 @@
 """Tests for the GitHub Actions workflows: token scope, pinning and run limits."""
 
-import json
 import re
 from pathlib import Path
 from typing import Any
@@ -94,28 +93,25 @@ def test_uv_version_is_pinned(path: Path):
 
 
 @workflow_files
-def test_pnpm_version_comes_from_package_json(path: Path):
-    """pnpm/action-setup reads the `packageManager` pin rather than its own version."""
-    for step in steps_using(load(path), "pnpm/action-setup"):
-        assert "version" not in step.get("with", {})
+def test_no_workflow_sets_up_node(path: Path):
+    """The app has no Node toolchain since Tailwind went, so no job installs pnpm."""
+    assert not steps_using(load(path), "pnpm/action-setup")
+    assert "pnpm" not in run_lines(load(path))
 
 
 @workflow_files
 def test_nothing_is_installed_outside_the_lockfiles(path: Path):
-    """No step installs packages with pip or apt; uv and pnpm use the lockfiles."""
+    """No step installs packages with pip or apt; uv uses the lockfile."""
     scripts = run_lines(load(path))
 
     assert "pip install" not in scripts
     assert "apt-get" not in scripts
 
 
-def test_package_json_pins_pnpm():
-    """`packageManager` names one exact pnpm version for CI, corepack and developers."""
-    package = json.loads((ROOT / "package.json").read_text())
-
-    name, _, version = package["packageManager"].partition("@")
-    assert name == "pnpm"
-    assert EXACT_VERSION.match(version)
+def test_there_is_no_node_project():
+    """No package.json or pnpm lockfile: the stylesheets are plain CSS."""
+    for name in ("package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml"):
+        assert not (ROOT / name).exists(), name
 
 
 def test_ci_installs_python_dependencies_from_the_lockfile():
@@ -180,11 +176,12 @@ def qa_job_steps() -> list[dict[str, Any]]:
     return load(ROOT / ".github/workflows/ci.yml")["jobs"]["qa"]["steps"]
 
 
-def test_ci_builds_the_css_that_qa_skips():
-    """`make qa` is Python-only, so CI builds the Tailwind CSS itself, before QA (#68)."""
+def test_ci_has_no_css_build_step():
+    """The stylesheets are served as written, so CI builds no CSS before QA."""
     runs = [step.get("run", "") for step in qa_job_steps()]
 
-    assert runs.index("make css") < runs.index("make qa")
+    assert "make css" not in runs
+    assert "make qa" in runs
 
 
 PR_TITLE = ROOT / ".github/workflows/pr-title.yml"

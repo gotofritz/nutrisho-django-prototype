@@ -36,19 +36,8 @@ jobs:
         with:
           python-version: "3.14"
 
-      # Reads the pnpm version from `packageManager` in package.json.
-      - name: Install pnpm
-        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-
       - name: Install dependencies
         run: uv sync --locked --all-groups
-
-      - name: Install Node dependencies
-        run: pnpm install --frozen-lockfile
-
-      # `make qa` is Python-only, so the Tailwind build is checked here.
-      - name: Build CSS
-        run: make css
 
       - name: Run QA
         run: make qa
@@ -84,10 +73,6 @@ jobs:
         with:
           python-version: "3.14"
 
-      # Reads the pnpm version from `packageManager` in package.json.
-      - name: Install pnpm
-        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-
       - name: Install dependencies
         run: uv sync --locked --all-groups
 
@@ -95,7 +80,6 @@ jobs:
       - name: Install Chromium
         run: uv run playwright install --only-shell chromium
 
-      # `make e2e` installs the Node dependencies and builds the CSS first.
       - name: Run browser tests
         run: make e2e ARGS="--screenshot only-on-failure"
 

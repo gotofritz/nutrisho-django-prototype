@@ -14,18 +14,17 @@ PORT ?= 8987
 ARGS ?=
 SCHEMA ?= docs/schema.sql
 
-.PHONY: help audit backup bootstrap check-migrations coverage coverage-badge css css-watch dev e2e lint lint-fix manage \
-	migrate node-install qa release schema seed test test-cov test-hooks typecheck
+.PHONY: help audit backup bootstrap check-migrations coverage coverage-badge dev e2e lint lint-fix manage \
+	migrate qa release schema seed test test-cov test-hooks typecheck
 
 help: ## List the available targets
 	@echo "Usage: make <target> [VAR=value]"
 	@echo
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z0-9_-]+:.*## / {printf "  %-14s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-audit: ## Check locked Python and Node dependencies for known vulnerabilities
+audit: ## Check locked Python dependencies for known vulnerabilities
 	uv export --all-groups --no-emit-project --format requirements-txt --quiet \
 		| uvx pip-audit --strict --disable-pip --requirement /dev/stdin
-	pnpm audit --audit-level=high
 
 backup: ## Write the schema to docs/schema.sql and a full SQL dump to docs/dump-<timestamp>.sql
 	uv run python manage.py backup_db
@@ -61,18 +60,12 @@ coverage-badge: ## Write the last test run's coverage total to badge-out/coverag
 	printf '{"schemaVersion": 1, "label": "coverage", "message": "%s%%", "color": "%s"}\n' \
 		"$$pct" "$$color" > badge-out/coverage.json
 
-css: node-install ## Build Tailwind CSS (minified)
-	pnpm run css
-
-css-watch: node-install ## Watch and rebuild Tailwind CSS on changes
-	pnpm run css:watch
-
-dev: css ## Run the dev server on PORT (default 8987); builds CSS first
+dev: ## Run the dev server on PORT (default 8987)
 	uv run python manage.py runserver $(PORT)
 
 # The browser smoke tests (#63), which the default pytest run and `make qa` skip.
-# They need the CSS, built first, and Chromium: `uv run playwright install chromium`.
-e2e: css ## Run the browser smoke tests in Chromium (pass extra pytest args as ARGS="...")
+# They need Chromium: `uv run playwright install chromium`.
+e2e: ## Run the browser smoke tests in Chromium (pass extra pytest args as ARGS="...")
 	DJANGO_SETTINGS_MODULE=nutrisho.settings.test uv run pytest --tb=short -m e2e $(ARGS)
 
 lint: ## Run ruff (non-mutating)
@@ -89,10 +82,7 @@ manage: ## Run a manage.py command under dev settings (pass the command as ARGS=
 migrate: ## Apply database migrations
 	uv run python manage.py migrate
 
-node-install: ## Install Node dependencies from pnpm-lock.yaml, never rewriting it
-	pnpm install --frozen-lockfile
-
-# Python only, so it needs neither Node nor the network. CI and `make dev` build the CSS.
+# Python only, so it needs no network.
 qa: lint typecheck check-migrations test-cov ## Run linting, type checking, migration and schema checks, and tests with coverage
 
 # Run from a clean checkout. Leaves you on the new branch (or on a detached

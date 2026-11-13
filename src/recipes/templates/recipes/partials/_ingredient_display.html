@@ -13,17 +13,19 @@
     {% if iir.note %}<span class="ingredient-note">({{ iir.note }})</span>{% endif %}
   </div>
   <span class="ingredient-check">
-    <input type="checkbox" class="ingredient-select" name="ingredient_ids" value="{{ iir.id }}">
+    <input type="checkbox" class="ingredient-select" name="ingredient_ids" value="{{ iir.id }}" aria-label="Select {{ iir|display_ingredient_name|default:"ingredient" }}">
   </span>
   <span class="move-btns">
     <button
       id="iir-{{ iir.id }}-up"
+      aria-label="Move {{ iir|display_ingredient_name|default:"ingredient" }} up"
       hx-post="{% url 'recipes:ingredient_move_up' recipe.id iir.id %}"
       hx-target="#iir-list-{{ iir.ingredient_group.id }}"
       hx-swap="innerHTML"
     >↑</button>
     <button
       id="iir-{{ iir.id }}-down"
+      aria-label="Move {{ iir|display_ingredient_name|default:"ingredient" }} down"
       hx-post="{% url 'recipes:ingredient_move_down' recipe.id iir.id %}"
       hx-target="#iir-list-{{ iir.ingredient_group.id }}"
       hx-swap="innerHTML"

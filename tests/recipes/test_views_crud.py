@@ -384,34 +384,6 @@ def test_recipe_delete_htmx_returns_hx_redirect(auth_client, recipe):
 
 
 @pytest.mark.django_db
-def test_recipe_delete_last_from_list_returns_empty_state(auth_client, recipe):
-    """Deleting the final recipe from the list page swaps in the empty state."""
-    response = auth_client.post(
-        f"/recipes/{recipe.pk}/delete/",
-        HTTP_HX_REQUEST="true",
-        HTTP_HX_TARGET=f"recipe-{recipe.pk}",
-    )
-    assert response.status_code == 200
-    assert "No recipes are available." in response.content.decode()
-    assert response["HX-Retarget"] == "#recipe-list"
-    assert response["HX-Reswap"] == "outerHTML"
-
-
-@pytest.mark.django_db
-def test_recipe_delete_from_list_with_remaining_returns_empty_body(auth_client, user, recipe):
-    """Row delete with other recipes left still returns empty 200 (row removal only)."""
-    Recipe.objects.create(recipe_name="Still Here", owner=user)
-    response = auth_client.post(
-        f"/recipes/{recipe.pk}/delete/",
-        HTTP_HX_REQUEST="true",
-        HTTP_HX_TARGET=f"recipe-{recipe.pk}",
-    )
-    assert response.status_code == 200
-    assert response.content == b""
-    assert "HX-Retarget" not in response
-
-
-@pytest.mark.django_db
 def test_recipe_delete_last_from_detail_panel_redirects_to_list(auth_client, recipe):
     """Detail-page delete with no remaining recipes redirects to the list page."""
     response = auth_client.post(f"/recipes/{recipe.pk}/delete/", HTTP_HX_REQUEST="true")

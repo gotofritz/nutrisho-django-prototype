@@ -1,28 +1,42 @@
 {% extends "recipes/base.html" %}
+{% load static %}
 
 {% block page_title %}Log in{% endblock %}
 
 {% block content %}
 {# Log-out and session expiry land here; data-clear-history has app.js drop htmx's localStorage snapshots. #}
 <div class="login-page" data-clear-history>
-  <h1 tabindex="-1">Log in</h1>
-  {# Not boosted: logging in rotates the CSRF token, which a boosted swap would leave stale in <body hx-headers>. #}
-  <form method="post" class="login-form" hx-boost="false">
-    {% csrf_token %}
-    {% if form.non_field_errors %}
-    <div role="alert" class="login-error">
-      {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
-    </div>
-    {% endif %}
-    {% for field in form %}
-    <p class="login-field">
-      {{ field.label_tag }}
-      {{ field }}
-      {{ field.errors }}
-    </p>
-    {% endfor %}
-    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
-    <button type="submit" class="list-btn">Log in</button>
-  </form>
+  {# A book's opening spread (#76): the plate on one side, the title page on the other. #}
+  <figure class="plate">
+    <img
+      src="{% static 'img/plate-lineout.webp' %}"
+      width="1400"
+      height="1107"
+      alt="Watercolour of a rugby lineout: a player in yellow, lifted high, reaches for a cauliflower thrown in place of the ball, while players of both teams, among them a greyhound, a rhino, a bull and a bear, brace below."
+    >
+    <figcaption>&copy; 2022&ndash;{% now "Y" %} gotofritz</figcaption>
+  </figure>
+  <div class="login-panel">
+    <h1 tabindex="-1">Nutrisho</h1>
+    <p class="tagline">A book of recipes, and the means of writing in it.</p>
+    {# Not boosted: logging in rotates the CSRF token, which a boosted swap would leave stale in <body hx-headers>. #}
+    <form method="post" class="login-form" hx-boost="false">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+      <div role="alert" class="login-error">
+        {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+      </div>
+      {% endif %}
+      {% for field in form %}
+      <p class="login-field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {{ field.errors }}
+      </p>
+      {% endfor %}
+      {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+      <button type="submit">Log in</button>
+    </form>
+  </div>
 </div>
 {% endblock %}

@@ -277,19 +277,24 @@ def _rule(selector: str) -> str:
 
 
 @pytest.mark.parametrize(
-    "selector",
+    ("selector", "border"),
     [
-        'textarea,\ninput[type="text"]',
-        ".move-btns button",
-        ".login-field input",
-        ".site-search input,\n.recipe-search input,\n.recipe-search select",
+        (
+            'input:not([type="checkbox"], [type="radio"], [type="hidden"]),\nselect,\ntextarea',
+            "border-bottom: 1px solid var(--color-field-border);",
+        ),
+        (
+            '.recipe-contents textarea,\n.recipe-contents input[type="text"]',
+            "border: 1px solid var(--color-field-border);",
+        ),
+        (".move-btns button", "border: 1px solid var(--color-field-border);"),
     ],
 )
-def test_input_borders_are_at_least_3_to_1(selector: str) -> None:
-    """Field and move-button borders use #767676 (4.5:1 on white), not silver or #ccc."""
-    assert "--color-field-border: #767676;" in _rule(":root")
+def test_input_borders_are_at_least_3_to_1(selector: str, border: str) -> None:
+    """Field edges use #7a7062 (4.6:1 on paper, 4.9:1 on white), not silver or #ccc."""
+    assert "--color-field-border: #7a7062;" in _rule(":root")
     body = _rule(selector)
-    assert "border: 1px solid var(--color-field-border);" in body, body
+    assert border in body, body
 
 
 def test_no_tailwind_gray_400_borders_on_inputs() -> None:

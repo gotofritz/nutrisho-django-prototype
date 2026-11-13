@@ -17,17 +17,6 @@ updates:
       python-minor-patch:
         update-types: [minor, patch]
 
-  - package-ecosystem: npm # pnpm-lock.yaml
-    directory: /
-    schedule:
-      interval: weekly
-    commit-message:
-      prefix: chore
-      include: scope
-    groups:
-      node-minor-patch:
-        update-types: [minor, patch]
-
   - package-ecosystem: github-actions
     directory: /
     schedule:

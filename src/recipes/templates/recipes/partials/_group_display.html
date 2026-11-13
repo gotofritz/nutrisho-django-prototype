@@ -11,12 +11,14 @@
   <span class="move-btns">
     <button
       id="group-{{ group.id }}-up"
+      aria-label="Move group {{ group.group_name|striptags|default:"untitled" }} up"
       hx-post="{% url 'recipes:group_move_up' recipe.id group.id %}"
       hx-target="#groups-list"
       hx-swap="innerHTML"
     >↑</button>
     <button
       id="group-{{ group.id }}-down"
+      aria-label="Move group {{ group.group_name|striptags|default:"untitled" }} down"
       hx-post="{% url 'recipes:group_move_down' recipe.id group.id %}"
       hx-target="#groups-list"
       hx-swap="innerHTML"
