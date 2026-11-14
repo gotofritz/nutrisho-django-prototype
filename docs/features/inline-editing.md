@@ -18,7 +18,15 @@ the same rule (`{% if reading %}…{% else %}…{% endif %}`).
 In edit mode each line's trigger is a `<button type="button" class="editable">`
 (#60), styled to look like the line, so Tab reaches it and Enter or Space opens
 its editor. Escape in an open editor presses its Cancel (`data-escape`), which
-puts the line back with focus on it, or drops an unsaved draft.
+puts the line back with focus on it, or drops an unsaved draft. Resting on any
+control shows which keys work it ([key hints](browser-code-and-csp.md#key-hints-60)).
+
+`tests/recipes/test_keyboard_access.py` walks the URLconf and parses every page
+and partial a staff owner can GET (plus the blank drafts) for what #60 forbids:
+an element other than a link, button or form field that starts a request on a
+click, a link without `href`, a link or button with no name, and a field with
+only a placeholder for a label. A new template is checked as soon as a route
+renders it.
 
 ## Inline Editing Pattern
 

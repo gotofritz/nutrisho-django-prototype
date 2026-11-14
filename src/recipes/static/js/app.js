@@ -17,6 +17,8 @@
 //   data-dismiss-toast                  removes the toast it sits in
 //   data-toast-text                     a toast's text, read out on arrival
 //   data-escape                         Escape in its form presses it (Cancel)
+//
+// Not opt-in: resting on any control shows the keys that work it (#60).
 (function () {
   'use strict';
 
@@ -319,6 +321,179 @@
       var t = split.form.elements[split.dataset.splitAt];
       params.split_at = Array.from(t.value.slice(0, t.selectionStart)).length;
     }
+  });
+
+  // --- Key hints (#60) ------------------------------------------------------
+  // A pointer that rests on a control, or keyboard focus that stays on one,
+  // shows after a pause which keys work it: Enter for a link, Enter or Space
+  // for a button, Space for a tick box, and in an editor's field the Enter and
+  // Escape of its Save and Cancel. It is visual help only (aria-hidden): a
+  // screen reader already says what a control is. Any key, a press, leaving
+  // the control or scrolling puts it away; the pointer may move onto it
+  // (WCAG 1.4.13). A titled control shows its title in the hint, and loses
+  // the attribute while hovered, so the browser's tooltip cannot cover it.
+
+  var KEY_HINT_DELAY = 2000;
+  var HINTED = 'a[href], button, input, select, textarea, summary, label';
+  var hintTimer = null;
+  var hintAnchor = null;
+  var hintTitled = null;
+  var pressed = null; // a control just pressed gets no hint until left
+
+  function hintBox() {
+    var box = document.getElementById('key-hint');
+    if (!box) {
+      // Made on demand: a boosted visit replaces <body>, and the box with it.
+      box = document.createElement('div');
+      box.id = 'key-hint';
+      box.className = 'key-hint';
+      box.setAttribute('aria-hidden', 'true');
+      box.hidden = true;
+      document.body.appendChild(box);
+    }
+    return box;
+  }
+  function lowerFirst(text) {
+    text = (text || '').replace(/\s+/g, ' ').trim();
+    return text.charAt(0).toLowerCase() + text.slice(1);
+  }
+  // [{keys: [...], does: '...'}] for a control, or [] when no key works it.
+  function keysFor(el) {
+    if (el.disabled) return [];
+    var type = (el.getAttribute('type') || '').toLowerCase();
+    var form = el.form || el.closest('form');
+    if (el.matches('a[href]')) return [{ keys: ['Enter'], does: 'to open' }];
+    if (el.matches('button, summary, input[type="submit"], input[type="button"], input[type="reset"]')) {
+      var does = el.matches('.editable') ? 'to edit'
+        : el.hasAttribute('aria-expanded') || el.matches('summary') ? 'to open or close'
+          : 'to press';
+      var hints = [{ keys: ['Enter', 'Space'], does: does }];
+      if (el.hasAttribute('data-escape')) {
+        hints.push({ keys: ['Esc'], does: 'from any field of this form' });
+      }
+      return hints;
+    }
+    if (type === 'checkbox') return [{ keys: ['Space'], does: 'to tick or untick' }];
+    if (type === 'radio') {
+      return [{ keys: ['Space'], does: 'to choose' }, { keys: ['↑', '↓'], does: 'to move between choices' }];
+    }
+    if (type === 'hidden') return [];
+    if (el.matches('select')) return [{ keys: ['↑', '↓'], does: 'to change' }];
+    // A field: Enter submits its form (not in a textarea), Escape cancels.
+    var fieldHints = [];
+    var submit = form && form.querySelector('button[type="submit"], button:not([type]), input[type="submit"]');
+    if (submit && !el.matches('textarea')) {
+      fieldHints.push({ keys: ['Enter'], does: 'to ' + lowerFirst(submit.textContent || submit.value) });
+    }
+    var cancel = form && form.querySelector('[data-escape]');
+    if (cancel) fieldHints.push({ keys: ['Esc'], does: 'to ' + lowerFirst(cancel.textContent) });
+    return fieldHints;
+  }
+  function fillHint(box, title, hints) {
+    box.textContent = '';
+    if (title) {
+      var p = document.createElement('p');
+      p.className = 'key-hint-title';
+      p.textContent = title;
+      box.appendChild(p);
+    }
+    hints.forEach(function (hint) {
+      var line = document.createElement('p');
+      hint.keys.forEach(function (key, i) {
+        if (i) line.appendChild(document.createTextNode(' or '));
+        var kbd = document.createElement('kbd');
+        kbd.textContent = key;
+        line.appendChild(kbd);
+      });
+      line.appendChild(document.createTextNode(' ' + hint.does));
+      box.appendChild(line);
+    });
+  }
+  // Above the control, or below it when there is no room; inside the window.
+  function placeHint(box, anchor) {
+    var r = anchor.getBoundingClientRect();
+    var gap = 6;
+    var w = box.offsetWidth;
+    var h = box.offsetHeight;
+    var top = r.top - h - gap >= 0 ? r.top - h - gap : r.bottom + gap;
+    var left = Math.max(gap, Math.min(r.left, document.documentElement.clientWidth - w - gap));
+    box.style.top = top + 'px';
+    box.style.left = left + 'px';
+  }
+  function restoreTitle() {
+    if (hintTitled && hintTitled.hasAttribute('data-key-hint-title')) {
+      hintTitled.setAttribute('title', hintTitled.getAttribute('data-key-hint-title'));
+      hintTitled.removeAttribute('data-key-hint-title');
+    }
+    hintTitled = null;
+  }
+  function hideHint() {
+    clearTimeout(hintTimer);
+    hintTimer = null;
+    hintAnchor = null;
+    restoreTitle();
+    var box = document.getElementById('key-hint');
+    if (box) box.hidden = true;
+  }
+  function showHint(anchor) {
+    if (!anchor.isConnected) return;
+    var control = anchor.matches('label') ? anchor.control : anchor;
+    var hints = control ? keysFor(control) : [];
+    var title = hintTitled ? hintTitled.getAttribute('data-key-hint-title') : '';
+    if (!hints.length) return;
+    var box = hintBox();
+    fillHint(box, title, hints);
+    box.hidden = false;
+    placeHint(box, anchor);
+  }
+  function startHint(anchor, titled) {
+    hideHint();
+    hintAnchor = anchor;
+    // The browser's own tooltip would show first and cover the hint.
+    if (titled && titled.hasAttribute('title')) {
+      titled.setAttribute('data-key-hint-title', titled.getAttribute('title'));
+      titled.removeAttribute('title');
+      hintTitled = titled;
+    }
+    hintTimer = setTimeout(function () { showHint(anchor); }, KEY_HINT_DELAY);
+  }
+  function insideHint(node) {
+    var box = document.getElementById('key-hint');
+    return Boolean(node && box && box.contains(node));
+  }
+  document.addEventListener('pointerover', function (e) {
+    if (e.pointerType === 'touch' || !e.target.closest) return;
+    var anchor = e.target.closest(HINTED);
+    if (!anchor || anchor === hintAnchor || anchor === pressed) return;
+    if (insideHint(e.target)) return;
+    pressed = null;
+    var titled = e.target.closest('[title]');
+    startHint(anchor, titled && anchor.contains(titled) ? titled : null);
+  });
+  document.addEventListener('pointerout', function (e) {
+    if (pressed && !(e.relatedTarget && pressed.contains(e.relatedTarget))) pressed = null;
+    if (e.pointerType === 'touch' || !hintAnchor) return;
+    var to = e.relatedTarget;
+    if (to && (hintAnchor.contains(to) || insideHint(to))) return;
+    if (insideHint(e.target) || hintAnchor.contains(e.target)) hideHint();
+  });
+  document.addEventListener('focusin', function (e) {
+    var el = e.target;
+    // Focus from a click shows no hint; from the keyboard (or a text field) it does.
+    if (!el.matches || !el.matches(HINTED) || !el.matches(':focus-visible')) return;
+    startHint(el, null);
+  });
+  document.addEventListener('focusout', function (e) {
+    if (e.target === hintAnchor) hideHint();
+  });
+  document.addEventListener('keydown', hideHint, true);
+  document.addEventListener('pointerdown', function (e) {
+    pressed = e.target.closest ? e.target.closest(HINTED) : null;
+    hideHint();
+  }, true);
+  document.addEventListener('scroll', hideHint, true);
+  document.addEventListener('htmx:beforeSwap', function (e) {
+    if (hintAnchor && e.detail.target && e.detail.target.contains(hintAnchor)) hideHint();
   });
 
   // --- New content, on page load and after every swap -----------------------

@@ -15,6 +15,26 @@ Templates opt in with data attributes, never with inline code:
 `data-clear-history`, `data-dismiss-toast`, `data-toast-text` and `data-escape` (the header of
 `app.js` lists what each does).
 
+## Key hints (#60)
+
+One behaviour needs no attribute: when the pointer, or keyboard focus, rests on
+any control for two seconds (`KEY_HINT_DELAY`), `app.js` shows a small box
+beside it naming the keys that work it. A link says Enter; a button Enter or
+Space (to edit, for a line of the recipe; to open or close, for a panel
+toggle); a tick box Space; a select ↑ ↓; and a field in a form names the form's
+own buttons, as in "Enter to save, Esc to cancel" (Enter is left out in a
+textarea, where it is a new line). Focus from a click shows no hint, except in
+a text field, which always shows its focus; nor does a control the pointer has
+just pressed, or a touch. Any key, a press, a scroll, leaving the control or a
+swap that removes it puts the box away, and the pointer can move onto the box
+without losing it (WCAG 1.4.13). The box is built with DOM calls, placed
+through `element.style` (which the CSP allows, unlike a `style` attribute in
+markup) and `aria-hidden`, since a screen reader already says how a control
+works. It is made on demand, because a boosted visit replaces `<body>`. A
+control with a `title` loses the attribute while the pointer is on it and the
+hint shows the title instead, so the browser's own tooltip cannot cover it; it
+gets it back as the pointer leaves.
+
 Django's `ContentSecurityPolicyMiddleware` enforces `SECURE_CSP` (in
 `settings/base.py`): everything from `'self'`, no `'unsafe-inline'`, no
 `'unsafe-eval'`, no plugins, no `<base>`, forms post only to the app and no page
@@ -47,8 +67,8 @@ editing, moving, splitting (emoji and a line break before the cursor), merging
 and bulk-deleting steps; adding a group and an ingredient and moving a ticked
 ingredient into it; showing other servings; the save-error banner on a 404 and
 on a dropped connection; a merge in the ingredient clean-up tool; and the
-recipe page's read mode, editing from the keyboard (Enter, Escape) and the
-phone layout (no sideways scroll, ingredients above the steps). Every
+recipe page's read mode, editing from the keyboard (Enter, Escape), the key
+hints (with Playwright's clock skipping the pause) and the phone layout (no sideways scroll, ingredients above the steps). Every
 test also fails on an uncaught script error or a CSP violation in the console.
 
 They are marked `e2e`, which the default pytest run (and so `make qa` and the
