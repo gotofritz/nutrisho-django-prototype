@@ -1,3 +1,4 @@
+from .api_token import ApiToken
 from .cuisine import Cuisine
 from .ingredient import Ingredient
 from .ingredient_alias import IngredientAlias
@@ -10,6 +11,7 @@ from .tag import Tag
 from .unit import Unit, UnitAlias
 
 __all__ = [
+    "ApiToken",
     "Cuisine",
     "Ingredient",
     "IngredientAlias",

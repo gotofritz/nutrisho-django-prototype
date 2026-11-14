@@ -9,6 +9,8 @@ serves both of a pair while the templates keep the `*_move_up` and
 from django.urls import path
 
 from recipes.views import (
+    api,
+    config,
     cuisine_admin,
     home,
     ingredient_admin,
@@ -17,6 +19,7 @@ from recipes.views import (
     recipe_fields,
     recipe_ingredients,
     recipe_steps,
+    recipe_transfer,
     recipe_trash,
 )
 from recipes.views._auth import htmx_staff_required
@@ -31,7 +34,12 @@ app_name = "recipes"
 urlpatterns = [
     path("", home.home, name="home"),
     path("new/", recipe_crud.recipe_new, name="new"),
+    path("config/", config.config, name="config"),
     path("trash/", recipe_trash.trash, name="trash"),
+    path("export/", recipe_transfer.recipe_export, name="export"),
+    path("import/", recipe_transfer.recipe_import, name="import"),
+    # For the recipe clipper: token-authenticated JSON, not a page (#78).
+    path("api/recipes/", api.api_recipes, name="api_recipes"),
     # Shared-ingredient clean-up tool (Miller columns). The `manage/` prefix keeps
     # these clear of the per-recipe `<recipe_id>/ingredients/...` inline-edit routes.
     path(

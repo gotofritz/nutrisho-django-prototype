@@ -91,10 +91,10 @@ def test_mutations_are_staff_only_and_write_nothing(other_client, user):
 
 
 @pytest.mark.django_db
-def test_home_links_the_tool_for_staff_only(staff_client, other_client):
-    """The link sits next to "Manage ingredients", for staff only."""
-    assert MANAGE in staff_client.get("/recipes/").content.decode()
-    assert MANAGE not in other_client.get("/recipes/").content.decode()
+def test_config_links_the_tool_for_staff_only(staff_client, other_client):
+    """The link sits on Config beside Ingredients, for staff only."""
+    assert MANAGE in staff_client.get("/recipes/config/").content.decode()
+    assert MANAGE not in other_client.get("/recipes/config/").content.decode()
 
 
 # --- Browsing --------------------------------------------------------------------

@@ -23,6 +23,8 @@ CREATE UNIQUE INDEX "django_content_type_app_label_model_76bd3d3b_uniq" ON "djan
 CREATE TABLE "django_migrations" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "app" varchar(255) NOT NULL, "name" varchar(255) NOT NULL, "applied" datetime NOT NULL);
 CREATE TABLE "django_session" ("session_key" varchar(40) NOT NULL PRIMARY KEY, "session_data" text NOT NULL, "expire_date" datetime NOT NULL);
 CREATE INDEX "django_session_expire_date_a5c62663" ON "django_session" ("expire_date");
+CREATE TABLE "recipes_apitoken" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(64) NOT NULL, "key_digest" varchar(64) NOT NULL UNIQUE, "created_at" datetime NOT NULL, "last_used_at" datetime NULL, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE INDEX "recipes_apitoken_user_id_30e4fa54" ON "recipes_apitoken" ("user_id");
 CREATE TABLE "recipes_cuisine" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "cuisine" varchar(200) NOT NULL, "parent_id" integer NULL REFERENCES "recipes_cuisine" ("id") DEFERRABLE INITIALLY DEFERRED);
 CREATE UNIQUE INDEX "cuisine_ci_unique" ON "recipes_cuisine" ((LOWER("cuisine"))) WHERE "parent_id" IS NULL;
 CREATE UNIQUE INDEX "cuisine_ci_unique_per_parent" ON "recipes_cuisine" ((LOWER("cuisine")), "parent_id");

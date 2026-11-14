@@ -1,0 +1,29 @@
+{% extends "./base.html" %}
+
+{% block page_title %}Config{% endblock %}
+
+{% block content %}
+<div class="form-page config-page">
+  <h1 tabindex="-1">Config</h1>
+  <ul class="config-list">
+    <li>
+      <a href="{% url 'recipes:trash' %}">Trash</a>
+      <span class="config-note">Deleted recipes, to restore or delete for good.</span>
+    </li>
+    <li>
+      <a href="{% url 'recipes:import' %}">Import &amp; export</a>
+      <span class="config-note">Download all your recipes, or import a file of them.</span>
+    </li>
+    {% if user.is_staff %}
+    <li>
+      <a href="{% url 'recipes:ingredient_manage' %}">Ingredients</a>
+      <span class="config-note">Clean up the shared ingredients: merge, plurals, aliases.</span>
+    </li>
+    <li>
+      <a href="{% url 'recipes:cuisine_manage' %}">Cuisines</a>
+      <span class="config-note">Curate the shared cuisine tree.</span>
+    </li>
+    {% endif %}
+  </ul>
+</div>
+{% endblock %}

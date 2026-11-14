@@ -20,8 +20,8 @@ that sheet.
 - Delete sits apart from the everyday actions: only in the recipe page's
   margin, behind a confirmation panel, never on the contents page (#75). It
   moves the recipe to the trash; the next page carries an ink toast at the
-  bottom of the window with Undo, and the Trash page (in the site header)
-  restores or deletes for good.
+  bottom of the window with Undo, and the Trash page (on Config) restores or
+  deletes for good.
 - Anything that only makes sense on screen carries `no-print`.
 
 ## Palette
@@ -59,8 +59,12 @@ refuses a font size in `px`.
 ## Pages
 
 - Site header (`partials/_site_header.html`): the name, a search box and the
-  site navigation, on every signed-in page. Ingredients and Cuisines appear
-  for staff only. The current page's link has `aria-current="page"`.
+  site navigation, on every signed-in page. The navigation holds only Recipes,
+  New recipe, Config and Log out, so it fits on one line; the current page's
+  link has `aria-current="page"`.
+- Config (`config.html`): a list of the tools that need no place in the
+  header, each with a line on what it is for: Trash and Import & export, and
+  for staff Ingredients and Cuisines. Account settings will join it (#150).
 - Recipe list (`home.html`): a book's contents page. Each entry is the name,
   a dotted leader, then the cuisine and servings, with the blurb below. The
   list is an `<ol>` numbered in Roman numerals that continue across pages

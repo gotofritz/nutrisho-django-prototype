@@ -187,14 +187,14 @@ def test_staff_can_merge(staff_client, pair):
 
 
 @pytest.mark.django_db
-def test_home_hides_the_manage_link_from_non_staff(other_client):
+def test_config_hides_the_manage_link_from_non_staff(other_client):
     """Non-staff see no link to a tool they cannot open."""
-    html = other_client.get("/recipes/").content.decode()
+    html = other_client.get("/recipes/config/").content.decode()
     assert MANAGE not in html
 
 
 @pytest.mark.django_db
-def test_home_shows_the_manage_link_to_staff(staff_client):
-    """Staff see the link."""
-    html = staff_client.get("/recipes/").content.decode()
+def test_config_shows_the_manage_link_to_staff(staff_client):
+    """Staff see the link on Config."""
+    html = staff_client.get("/recipes/config/").content.decode()
     assert MANAGE in html

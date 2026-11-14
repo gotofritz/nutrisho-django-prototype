@@ -125,3 +125,74 @@ def migrate_to(transactional_db):
     executor = MigrationExecutor(connection)
     executor.loader.build_graph()
     executor.migrate(executor.loader.graph.leaf_nodes())
+
+
+@pytest.fixture
+def rich_recipe(user):
+    """A recipe that uses every field an export carries, with two groups and markup (#78).
+
+    Its first ingredient is private to `user` and has display data of its own;
+    its second row's unit is legacy free text. A second recipe sits in the trash.
+    """
+    from datetime import UTC, datetime
+    from decimal import Decimal
+
+    from recipes.models import Tag
+    from recipes.services.name_resolution import find_cuisine
+
+    recipe = Recipe.objects.create(
+        recipe_name="<u>Pasta</u> alla Norma",
+        short_description="Rich\nand <i>warm</i>",
+        owner=user,
+        servings=4,
+        source_instance="https://example.com/norma",
+        cuisine=find_cuisine("med.italy.sicily"),
+    )
+    Recipe.objects.filter(pk=recipe.pk).update(created_date=datetime(2024, 1, 2, 3, 4, tzinfo=UTC))
+    recipe.refresh_from_db()
+    recipe.tags.add(
+        Tag.objects.create(tag="dinner"), Tag.objects.create(tag="favourite", owner=user)
+    )
+    Step.objects.create(
+        recipe=recipe,
+        step_title="Prep",
+        step_text="Chop the <b>aubergine</b>.",
+        index_in_sequence=0,
+    )
+    Step.objects.create(recipe=recipe, step_text="Fry.", index_in_sequence=1)
+    sauce = IngredientGroup.objects.create(recipe=recipe, group_name="Sauce", index_in_sequence=0)
+    aubergine = Ingredient.objects.create(
+        ingredient_name="aubergine-x",
+        owner=user,
+        plural_name="aubergines-x",
+        family="VEG",
+        dietary_constraint="VGN",
+    )
+    IngredientInRecipe.objects.create(
+        ingredient_group=sauce,
+        index_in_sequence=0,
+        ingredient=aubergine,
+        substitute=Ingredient.objects.create(ingredient_name="courgette-x"),
+        quantity=Decimal("1.50"),
+        unit=find_unit("kg"),
+        preparation="cubed",
+        note="firm ones",
+    )
+    IngredientInRecipe.objects.create(
+        ingredient_group=sauce,
+        index_in_sequence=1,
+        ingredient=Ingredient.objects.create(ingredient_name="basil-x"),
+        legacy_unit="handful",
+        preparation="torn",
+    )
+    pasta = IngredientGroup.objects.create(recipe=recipe, group_name="Pasta", index_in_sequence=1)
+    IngredientInRecipe.objects.create(
+        ingredient_group=pasta,
+        index_in_sequence=0,
+        ingredient=Ingredient.objects.create(ingredient_name="rigatoni-x"),
+        quantity=Decimal(400),
+        unit=find_unit("g"),
+    )
+    trashed = Recipe.objects.create(recipe_name="Old soup", owner=user, servings=2)
+    Recipe.objects.filter(pk=trashed.pk).update(deleted_at=datetime(2025, 5, 6, tzinfo=UTC))
+    return recipe

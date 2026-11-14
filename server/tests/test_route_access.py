@@ -36,6 +36,8 @@ PUBLIC_ROUTES = frozenset(
         "accounts/reset/<uidb64>/<token>/",
         "accounts/reset/done/",
         "admin/login/",
+        # Signed in by an API token instead, and answers 401 without one (#78).
+        "recipes/api/recipes/",
     }
 )
 

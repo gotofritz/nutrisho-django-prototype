@@ -241,9 +241,10 @@ def test_trash_page_hides_other_users_recipes(other_client, trashed):
 
 
 @pytest.mark.django_db
-def test_site_header_links_to_the_trash(auth_client, recipe):
-    """The trash is reachable from every page."""
-    assert 'href="/recipes/trash/"' in auth_client.get("/recipes/").content.decode()
+def test_config_page_links_to_the_trash(auth_client, recipe):
+    """The trash is reachable from Config, which every page's header links."""
+    assert 'href="/recipes/config/"' in auth_client.get("/recipes/").content.decode()
+    assert 'href="/recipes/trash/"' in auth_client.get("/recipes/config/").content.decode()
 
 
 # --- Restore ---

@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import (
+    ApiToken,
     Cuisine,
     Ingredient,
     IngredientAlias,
@@ -87,3 +88,20 @@ class UnitAliasAdmin(admin.ModelAdmin):
     list_display = ("alias_name", "unit")
     list_select_related = ("unit",)
     search_fields = ("alias_name", "unit__name")
+
+
+@admin.register(ApiToken)
+class ApiTokenAdmin(admin.ModelAdmin):
+    """List and revoke API tokens (#78). A key is made by `create_api_token`, which shows it once."""
+
+    list_display = ("name", "user", "created_at", "last_used_at")
+    list_select_related = ("user",)
+    readonly_fields = ("user", "name", "created_at", "last_used_at")
+
+    def has_add_permission(self, request) -> bool:  # noqa: ARG002 - ModelAdmin API
+        """Never: a key made here could not be shown to anyone."""
+        return False
+
+    def has_change_permission(self, request, obj=None) -> bool:  # noqa: ARG002 - ModelAdmin API
+        """Never: a token is kept or deleted."""
+        return False

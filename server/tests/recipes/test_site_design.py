@@ -85,15 +85,33 @@ def test_boosted_recipe_page_carries_the_site_header(auth_client: Client, recipe
 
 
 @pytest.mark.django_db
-def test_staff_tools_are_in_the_header_for_staff_only(auth_client: Client, user: User):
-    """Ingredients and Cuisines are staff tools, so only staff see the links."""
-    tools = (reverse("recipes:ingredient_manage"), reverse("recipes:cuisine_manage"))
-    nav = _site_nav(auth_client.get("/recipes/").content.decode())
-    assert not any(url in nav for url in tools)
-
+def test_header_holds_only_the_everyday_links(auth_client: Client, user: User):
+    """Recipes, New recipe, Config and Log out; everything else moved to Config so it fits."""
     User.objects.filter(pk=user.pk).update(is_staff=True)
     nav = _site_nav(auth_client.get("/recipes/").content.decode())
-    assert all(url in nav for url in tools)
+    links = re.findall(r'<a href="([^"]+)"', nav)
+    assert links == [reverse("recipes:home"), reverse("recipes:new"), reverse("recipes:config")]
+
+
+_TOOLS = ("recipes:trash", "recipes:import", "recipes:ingredient_manage", "recipes:cuisine_manage")
+
+
+@pytest.mark.django_db
+def test_config_page_links_the_tools(auth_client: Client, user: User):
+    """Config lists Trash and Import & export; Ingredients and Cuisines for staff only."""
+    html = auth_client.get(reverse("recipes:config")).content.decode()
+    assert [reverse(name) in html for name in _TOOLS] == [True, True, False, False]
+
+    User.objects.filter(pk=user.pk).update(is_staff=True)
+    html = auth_client.get(reverse("recipes:config")).content.decode()
+    assert all(reverse(name) in html for name in _TOOLS)
+
+
+@pytest.mark.django_db
+def test_config_link_marks_the_config_page(auth_client: Client):
+    """On Config, its header link is the current page."""
+    nav = _site_nav(auth_client.get(reverse("recipes:config")).content.decode())
+    assert f'<a href="{reverse("recipes:config")}" aria-current="page"' in nav
 
 
 @pytest.mark.django_db

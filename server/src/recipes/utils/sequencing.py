@@ -1,5 +1,6 @@
 """Sequencing helpers for index_in_sequence-ordered rows."""
 
+from collections.abc import Iterable
 from typing import Literal, Protocol
 
 from django.db import models, transaction
@@ -18,6 +19,15 @@ class Sequenced(Protocol):
     def delete(self) -> object:
         """Delete the row."""
         ...
+
+
+def number_in_order(rows: Iterable[models.Model]) -> None:
+    """Give new, unsaved rows the positions 0, 1, 2, … in the order given.
+
+    For rows written together with `bulk_create`, such as an import's (#78).
+    """
+    for index, row in enumerate(rows):
+        row.index_in_sequence = index  # ty: ignore[unresolved-attribute]  # every sequenced model has it
 
 
 @transaction.atomic
