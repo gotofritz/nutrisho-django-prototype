@@ -3,8 +3,8 @@
 ## Read First
 
 - `README.md` — project overview
-- The Architecture section below; the `docs/features/` note for the area you
-  are changing
+- The Architecture section below; the `server/docs/features/` note for the
+  area you are changing
 - `docs/plans/*.md` — active plans
 
 ## Project Rules
@@ -12,6 +12,27 @@
 - Use `gh` for all GitHub operations
 - Use `make` for workflow discovery (`make help` lists every target); tasks live in `Makefile`
 - Run commands from project root
+
+## Repository Layout
+
+Two parts, released and checked separately (#145):
+
+- `server/` — the Django app: a self-contained uv project with its own
+  `pyproject.toml`, `uv.lock`, `CHANGELOG.md`, `docs/features/` and
+  `docs/schema.sql`
+- `extension/` — the recipe clipper browser extension; no code yet, see
+  `extension/README.md`. Don't add extension code outside it
+
+The top-level `Makefile` serves both. Server targets keep their plain names
+(`make qa`, `make test`) and run inside `server/`, so a path in `ARGS` is
+relative to `server/` (`make test` also accepts `server/tests/...`). Run any
+other uv command in `server/`, or as `uv run --directory server <cmd>`.
+Extension targets will be prefixed `ext-`.
+
+Workflows are per part and path-filtered: the server's skip changes under
+`extension/**` alone. Release tags are `server-v<version>` and
+`ext-v<version>`. Repo-wide files (`.github/`, `.claude/`, `AGENTS.md`,
+`.pre-commit-config.yaml`, `docs/`) stay at the root.
 
 ## Plans
 
@@ -23,6 +44,8 @@
   Example: `2026-05-24-2013-8a8c2cf-002-htmx-tailwind.md`
 
 ## Architecture
+
+Paths in this section are relative to `server/`.
 
 Multi-user Django recipe manager, prototype quality. One app, `recipes`, under
 `src/`; server-rendered templates with HTMX partial swaps (django-htmx), no
@@ -104,19 +127,19 @@ Easy to break, and not obvious from any one file:
 
 Read the note for the area you are changing; skip the rest.
 
-- `docs/features/auth-and-ownership.md` — login middleware, log-out, owner scoping, route-access test
-- `docs/features/browser-code-and-csp.md` — `app.js`, data attributes, CSP rules, self-hosted assets
-- `docs/features/inline-editing.md` — read and edit modes, display/edit/save endpoints, drafts, error banner, focus and announcements, groups, template filters
-- `docs/features/steps.md` — step titles, merge/split/bulk delete, sequencing helpers
-- `docs/features/recipe-duplication.md` — generic row cloning
-- `docs/features/scaling.md` — `?servings=N`, rounding, scaled copies
-- `docs/features/search.md` — query parsing, matching, filters, plain-text columns, prev/next
-- `docs/features/pluralisation.md` — the rule, `plural_name` overrides, when it applies
-- `docs/features/units.md` — the unit vocabulary, aliases, unit plurals, the `normalise_units` clean-up
-- `docs/features/shared-vocabularies.md` — global and private ingredients and tags, the cuisine tree and its tool
-- `docs/features/ingredient-cleanup-tool.md` — the staff ingredient tool: merge, plurals, aliases, promote, history and Undo
-- `docs/features/design.md` — the storybook look: palette, type, page layouts, plates, print
-- `docs/features/data-and-operations.md` — key models, the recipe trash, backups, seed data, concurrent writes, logging, SQLite limits
+- `server/docs/features/auth-and-ownership.md` — login middleware, log-out, owner scoping, route-access test
+- `server/docs/features/browser-code-and-csp.md` — `app.js`, data attributes, CSP rules, self-hosted assets
+- `server/docs/features/inline-editing.md` — read and edit modes, display/edit/save endpoints, drafts, error banner, focus and announcements, groups, template filters
+- `server/docs/features/steps.md` — step titles, merge/split/bulk delete, sequencing helpers
+- `server/docs/features/recipe-duplication.md` — generic row cloning
+- `server/docs/features/scaling.md` — `?servings=N`, rounding, scaled copies
+- `server/docs/features/search.md` — query parsing, matching, filters, plain-text columns, prev/next
+- `server/docs/features/pluralisation.md` — the rule, `plural_name` overrides, when it applies
+- `server/docs/features/units.md` — the unit vocabulary, aliases, unit plurals, the `normalise_units` clean-up
+- `server/docs/features/shared-vocabularies.md` — global and private ingredients and tags, the cuisine tree and its tool
+- `server/docs/features/ingredient-cleanup-tool.md` — the staff ingredient tool: merge, plurals, aliases, promote, history and Undo
+- `server/docs/features/design.md` — the storybook look: palette, type, page layouts, plates, print
+- `server/docs/features/data-and-operations.md` — key models, the recipe trash, backups, seed data, concurrent writes, logging, SQLite limits
 
 Before merging a change to the architecture, boundaries or core patterns,
 update this section; update the feature note for any area whose behaviour
@@ -124,7 +147,7 @@ changed.
 
 ## Database Schema
 
-`docs/schema.sql` is the current schema, generated — never hand-edit it.
+`server/docs/schema.sql` is the current schema, generated — never hand-edit it.
 Any PR that adds or changes a migration must regenerate it against a freshly
 migrated database and commit the result:
 
@@ -133,7 +156,7 @@ make schema    # migrate, then backup_db --schema-only
 ```
 
 `make qa` runs `make check-migrations`, which fails when a model change has no
-migration or `docs/schema.sql` differs from a freshly migrated scratch database.
+migration or `server/docs/schema.sql` differs from a freshly migrated scratch database.
 
 `manage.py` defaults to production settings, so run any other management
 command through `make manage ARGS="<command>"`, which uses the dev settings.
@@ -176,6 +199,8 @@ Prioritize:
 - Imperative present tense
 - Subject ≤ 72 chars
 - Reference issues when relevant
+- Scope extension-only commits `ext` (`feat(ext): ...`): the server's changelog
+  sees every commit, and the scope makes them easy to spot
 
 ### Branches
 
@@ -201,10 +226,11 @@ If an open PR exists that covers the same area, commit directly to its branch in
 
 ## Releases
 
-The version in `pyproject.toml` is the only one. Never edit it by hand: cut a
-release with `make release`, which runs `cz bump` on a new branch and commits
-the version and `CHANGELOG.md` section for a PR. CI tags `v<version>` and
-publishes the GitHub release when that PR merges. See
+The server's version in `server/pyproject.toml` is its only one. Never edit it
+by hand: cut a release with `make release`, which runs `cz bump` in `server/` on
+a new branch and commits the version and `server/CHANGELOG.md` section for a PR.
+CI tags `server-v<version>` and publishes the GitHub release when that PR
+merges. The extension will release on its own `ext-v<version>` tags. See
 `docs/developer-guide.md#releases`.
 
 ## Pull Requests
@@ -249,12 +275,13 @@ lower case and the issue number are still up to you.
 
 ### Interpreter — 3.14 only
 
-Pinned to 3.14 (`pyproject.toml` `requires-python = ">=3.14,<3.15"`, `uv.lock`
-`requires-python = "==3.14.*"`, ruff `target-version = "py314"`). CI installs 3.14
-(`.github/workflows/ci.yml`).
+Pinned to 3.14 (`server/pyproject.toml` `requires-python = ">=3.14,<3.15"`,
+`server/uv.lock` `requires-python = "==3.14.*"`, ruff `target-version = "py314"`).
+CI installs 3.14 (`.github/workflows/server.yml`).
 
 Never invoke a bare `python`/`python3` — system interpreter may be older (3.11) and
-will fail on 3.14 syntax. Always `uv run <cmd>` or `.venv/bin/python`.
+will fail on 3.14 syntax. Always `uv run <cmd>` (in `server/`) or
+`server/.venv/bin/python`.
 
 **PEP 758 is in use.** Unparenthesized multi-exception handlers are valid 3.14:
 
@@ -302,7 +329,7 @@ Use what Django already provides before adding a dependency:
 ## Environment
 
 ```bash
-source .venv/bin/activate
+source server/.venv/bin/activate
 ```
 
 ## Failure Policy

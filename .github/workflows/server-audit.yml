@@ -1,13 +1,15 @@
-name: Audit
+name: Server audit
 
-# Checks the locked Python dependencies against known advisories.
+# Checks the server's locked Python dependencies against known advisories.
 # Runs weekly as well as on changes, so a new advisory against an unchanged
-# lockfile still turns the build red.
+# lockfile still turns the build red. Extension-only changes skip it (#145).
 on:
   push:
     branches: ["main"]
+    paths-ignore: ["extension/**"]
   pull_request:
     branches: ["**"]
+    paths-ignore: ["extension/**"]
   schedule:
     - cron: "17 6 * * 1" # Mondays 06:17 UTC
   workflow_dispatch:

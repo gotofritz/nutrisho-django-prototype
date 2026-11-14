@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]  # the repository; the server is ROOT / "server"
 MAKEFILE = ROOT / "Makefile"
 TASKS = (
     "audit",
@@ -73,7 +73,7 @@ def test_every_task_is_documented():
 def test_poe_config_is_gone():
     """The Makefile replaces poethepoet: no `.poe.toml` is left behind."""
     assert not (ROOT / ".poe.toml").exists()
-    assert "[tool.poe]" not in (ROOT / "pyproject.toml").read_text()
+    assert "[tool.poe]" not in (ROOT / "server" / "pyproject.toml").read_text()
 
 
 @needs_make
@@ -106,6 +106,43 @@ def test_qa_runs_every_check_in_order():
 
     positions = [output.index(step) for step in steps]
     assert positions == sorted(positions)
+
+
+@needs_make
+@pytest.mark.parametrize(
+    "target",
+    [
+        "audit",
+        "backup",
+        "check-migrations",
+        "dev",
+        "e2e",
+        "lint",
+        "manage",
+        "qa",
+        "test",
+        "test-cov",
+    ],
+)
+def test_server_targets_run_inside_the_server_directory(target: str):
+    """One top-level Makefile serves both parts: every server command runs from `server/` (#145)."""
+    # A recipe continued with backslashes is one shell command.
+    output = run_make("--dry-run", target).replace("\\\n", " ")
+    commands = [line for line in output.splitlines() if "uv " in line]
+
+    assert commands
+    for command in commands:
+        assert "cd server &&" in command, command
+
+
+@needs_make
+@pytest.mark.parametrize("target", ["test", "test-cov", "e2e"])
+def test_test_paths_may_be_given_from_the_repository_root(target: str):
+    """`server/tests/...` and `tests/...` name the same tests, since pytest runs in `server/`."""
+    output = run_make("--dry-run", target, "ARGS=server/tests/test_healthz.py -k healthz")
+
+    assert " tests/test_healthz.py -k healthz" in output
+    assert "server/tests/" not in output
 
 
 @needs_make
@@ -186,7 +223,7 @@ def test_coverage_opens_the_report_on_any_platform():
     output = run_make("--dry-run", "coverage")
 
     assert "uv run python -m webbrowser" in output
-    assert "htmlcov/index.html" in output
+    assert "/server/htmlcov/index.html" in output
     assert not output.startswith("open ")
 
 
@@ -247,7 +284,7 @@ def test_check_migrations_rebuilds_the_schema_in_a_scratch_database():
     migrate = output.index("manage.py migrate")
     check = output.index("manage.py makemigrations --check --dry-run")
     backup = output.index("manage.py backup_db --schema-only --schema")
-    diff = output.index("diff -u docs/schema.sql")
+    diff = output.index(f"diff -u {ROOT}/server/docs/schema.sql")
     assert migrate < check < backup < diff
 
 
@@ -291,13 +328,13 @@ def test_coverage_badge_writes_a_shields_endpoint_from_the_coverage_total():
 
 @needs_make
 def test_release_bumps_on_a_fresh_branch_from_main_and_commits():
-    """`make release` branches off origin/main, runs `cz bump` on the files only, and commits (#72)."""
+    """`make release` branches off origin/main, bumps the server's files only, and commits (#72, #145)."""
     output = run_make("--dry-run", "release")
 
     fetch = output.index("git fetch origin main --tags")
-    branch = output.index("git switch -c chore-release-v")
+    branch = output.index("git switch -c chore-release-server-v")
     bump = output.index("cz bump --version-files-only --yes")
-    commit = output.index('git commit -m "chore(release): v')
+    commit = output.index('git commit -m "chore(release): server-v')
     assert fetch < branch < bump < commit
     assert "git push" not in output
     assert "git tag" not in output

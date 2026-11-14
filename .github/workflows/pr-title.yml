@@ -33,4 +33,4 @@ jobs:
       - name: Check the title with commitizen
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
-        run: uv run --locked --only-group dev cz check --message "$PR_TITLE"
+        run: uv run --directory server --locked --only-group dev cz check --message "$PR_TITLE"

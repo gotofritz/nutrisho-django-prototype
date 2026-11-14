@@ -4,10 +4,10 @@ import re
 import tomllib
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]  # the repository; the server is ROOT / "server"
 AGENTS = (ROOT / "AGENTS.md").read_text()
 DEVELOPER_GUIDE = (ROOT / "docs" / "developer-guide.md").read_text()
-PYPROJECT = tomllib.loads((ROOT / "pyproject.toml").read_text())
+PYPROJECT = tomllib.loads((ROOT / "server" / "pyproject.toml").read_text())
 
 
 def section(text: str, heading: str) -> str:
@@ -54,7 +54,7 @@ def test_first_time_setup_installs_the_git_hooks():
     # Not `section()`: the setup code block holds a `# ...` shell comment.
     setup = DEVELOPER_GUIDE.split("## First-time setup\n")[1].split("\n## ")[0]
 
-    assert "uv run pre-commit install" in setup
+    assert "pre-commit install" in setup
     assert "pnpm install\n" not in setup
 
 

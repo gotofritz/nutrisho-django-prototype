@@ -1,5 +1,21 @@
 # Developer Guide
 
+The repository holds two parts (#145):
+
+- `server/` — the Django app, a self-contained uv project with its own
+  `pyproject.toml`, `uv.lock`, `CHANGELOG.md` and docs. Everything in this guide
+  is about the server unless it says otherwise.
+- `extension/` — the browser extension that will clip recipes into Nutrisho.
+  It has no code yet; [its README](../extension/README.md) sets out how it
+  will fit in.
+
+One top-level `Makefile` drives both, and you run it from the repository root.
+The server targets keep their plain names (`make qa`, `make test`) and run
+inside `server/`, so a path in `ARGS` is relative to `server/`
+(`make test` also accepts `server/tests/...`). Run any other uv command in
+`server/`, or as `uv run --directory server ...`. Extension targets will take
+an `ext-` prefix.
+
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) — Python dependency manager
@@ -9,13 +25,17 @@
 ## First-time setup
 
 ```bash
-cp .env.example .env
-# Set SECRET_KEY to a long random string in .env
+cp server/.env.example server/.env
+# Set SECRET_KEY to a long random string in server/.env
 
-uv sync
-uv run pre-commit install   # git hooks: commit message format, and make qa on Python changes
+uv sync --directory server
+uv run --project server pre-commit install   # git hooks: commit message format, and make qa on Python changes
 make bootstrap
 ```
+
+A checkout from before the split keeps `.env`, `db.sqlite3` (with any
+`db.sqlite3-wal` and `db.sqlite3-shm`) and `.venv` at the root. Stop the app,
+move the first two into `server/`, and delete the root `.venv`.
 
 The hooks are what check each commit message against Conventional Commits
 before it reaches CI; CI checks the PR title, which becomes the squash-merge
@@ -24,7 +44,7 @@ subject on `main`.
 `make bootstrap` applies migrations and creates the owner: one superuser
 (the only account that can log in, including at `/admin/`). It reads
 `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL` and
-`DJANGO_SUPERUSER_PASSWORD` from the environment or `.env`, and prompts for any
+`DJANGO_SUPERUSER_PASSWORD` from the environment or `server/.env`, and prompts for any
 that are blank. There are no defaults. The password must pass Django's password
 validators, so a short or guessable one is refused. If the username already
 exists it does nothing, so it is safe to re-run; it never changes an existing
@@ -46,7 +66,7 @@ Opens at <http://127.0.0.1:8987/recipes/>.
 
 ## The database
 
-`db.sqlite3` is the only copy of the data. A fresh checkout starts empty:
+`server/db.sqlite3` is the only copy of the data. A fresh checkout starts empty:
 `make bootstrap` (see *First-time setup*) creates the tables and the owner.
 
 ### Demo data
@@ -142,12 +162,12 @@ make schema    # migrate, then schema only
 
 `backup_db` writes two files:
 
-- `docs/schema.sql` — `CREATE` statements only, sorted so the file changes only
+- `server/docs/schema.sql` — `CREATE` statements only, sorted so the file changes only
   when the schema does. **Committed.** Regenerate it with `make schema` in any PR
   that adds a migration (see [AGENTS.md](../AGENTS.md)).
-- `docs/dump-<timestamp>.sql` — schema and every row. **Git-ignored**
-  (`docs/dump-*`), since it holds the data. Restore into an empty database with
-  `sqlite3 db.sqlite3 < docs/dump-<timestamp>.sql`, with the app stopped and
+- `server/docs/dump-<timestamp>.sql` — schema and every row. **Git-ignored**
+  (`server/docs/dump-*`), since it holds the data. Restore into an empty database
+  with `sqlite3 db.sqlite3 < docs/dump-<timestamp>.sql` in `server/`, with the app stopped and
   any old `db.sqlite3-wal`/`-shm` files moved aside with the old database.
 
 `--schema PATH` and `--dump PATH` override either location. SQLite only.
@@ -155,7 +175,7 @@ make schema    # migrate, then schema only
 `make check-migrations` (part of `make qa`) keeps both honest: it migrates a
 throwaway SQLite database, fails if `makemigrations --check` finds a model
 change with no migration, then writes that database's schema to a temp file and
-diffs it against `docs/schema.sql`. It never touches `db.sqlite3`.
+diffs it against `server/docs/schema.sql`. It never touches `db.sqlite3`.
 
 ## Errors and outages in production
 
@@ -183,12 +203,12 @@ healthchecks.io ping with the backup job (#44).
 make qa                      # lint + typecheck + migrations + tests with coverage
 make lint                    # ruff only
 make typecheck               # ty only
-make check-migrations        # no missing migration, docs/schema.sql up to date
+make check-migrations        # no missing migration, server/docs/schema.sql up to date
 make test                    # pytest, no coverage: the fast TDD loop
 make test ARGS="tests/test_healthz.py -k healthz"  # a path or other arguments go to pytest
 make test-cov                # pytest with line and branch coverage (≥95% required)
 make coverage                # open the HTML report from the last make test-cov
-make audit                   # known vulnerabilities in uv.lock
+make audit                   # known vulnerabilities in server/uv.lock
 make e2e                     # browser smoke tests in Chromium
 ```
 
@@ -200,25 +220,34 @@ stylesheets and `app.js` are served as written.
 
 Tests run with `--fail-on-template-vars`, so a template that uses an undefined
 variable fails the test instead of rendering an empty string. Every directory
-under `src/` is a package (`tests/test_project_config.py` checks it), so
+under `server/src/` is a package (`server/tests/test_project_config.py` checks it), so
 coverage reports every module, tested or not.
 
-`make e2e` runs the browser smoke tests in `tests/recipes/e2e/`, which drive
-the app in Chromium (see [Browser tests](features/browser-code-and-csp.md#browser-tests-63)).
-They need a browser, installed once with `uv run playwright install chromium`,
+`make e2e` runs the browser smoke tests in `server/tests/recipes/e2e/`, which drive
+the app in Chromium (see [Browser tests](../server/docs/features/browser-code-and-csp.md#browser-tests-63)).
+They need a browser, installed once with `uv run --directory server playwright install chromium`,
 so plain pytest, `make test` and `make qa` skip them. Add `ARGS="--headed"` to
 watch them, or `ARGS="--tracing retain-on-failure"` for a trace of a failure.
 
 `make audit` needs the network, so it is not part of `make qa`. It runs
 `pip-audit` over `uv export --all-groups` and fails on any advisory. CI runs it in
-the `Audit` workflow on every PR, on pushes to `main`, and every Monday, so a
+the `Server audit` workflow on every PR, on pushes to `main`, and every Monday, so a
 new advisory against an unchanged lockfile still shows up.
 
 ## CI
 
-The `CI` workflow (`.github/workflows/ci.yml`) installs from the lockfile
-(`uv sync --locked`), so a `uv.lock` that is out of date with `pyproject.toml`
-fails the build, then runs `make qa`. On `main` it also runs `make coverage-badge`,
+Each part has its own workflows, filtered by path, so a change to one part
+does not run the other's checks. The server workflows (`server.yml` and
+`server-audit.yml`) skip a change that touches only `extension/**`; anything
+else, workflows and docs included, runs them, because the server's tests check
+those files. The extension's workflow will run only for `extension/**`.
+Path filters have one catch: a required status check from one part never
+reports on a PR that touches only the other, so review the branch protection
+rules when the extension workflow lands.
+
+The `Server` workflow (`.github/workflows/server.yml`) installs from the lockfile
+(`uv sync --locked` in `server/`), so a `uv.lock` that is out of date with
+`pyproject.toml` fails the build, then runs `make qa`. On `main` it also runs `make coverage-badge`,
 which writes the coverage total as a shields.io endpoint JSON, and a separate
 `badge` job publishes that file to the `badges` branch for the README badge,
 and a `release` job publishes a new version (see [Releases](#releases)).
@@ -229,7 +258,7 @@ The `PR title` workflow (`.github/workflows/pr-title.yml`) runs `cz check` on
 the PR title whenever a PR is opened, pushed to or retitled, because the title
 becomes the squash-merge subject on `main` and no commit hook sees it.
 
-Every workflow follows the same rules, and `tests/test_workflows.py` checks
+Every workflow follows the same rules, and `server/tests/test_workflows.py` checks
 them:
 
 - The token is read-only; only the `badge` and `release` jobs get
@@ -243,40 +272,48 @@ them:
 
 ## Releases
 
-The version lives in `pyproject.toml` (and its copy in `uv.lock`); it is the
-only version number, so `package.json` has none. Each release is tagged
-`v<version>` on `main` and has a GitHub release whose notes are its section of
-[`CHANGELOG.md`](../CHANGELOG.md). Deploy a tag, not a branch: the tag answers
+The server and the extension release separately, each with its own tag
+prefix: `server-v<version>` and `ext-v<version>`. The rest of this section is
+about the server; the extension's plan is in [its README](../extension/README.md).
+
+The server's version lives in `server/pyproject.toml` (and its copy in
+`server/uv.lock`); it is the only server version number. Each release is tagged
+`server-v<version>` on `main` (releases up to `v0.3.0` were tagged without the
+prefix) and has a GitHub release whose notes are its section of
+[`server/CHANGELOG.md`](../server/CHANGELOG.md). Deploy a tag, not a branch: the tag answers
 "what is running", and rolling back is checking out the previous tag.
 
-Commitizen (`[tool.commitizen]` in `pyproject.toml`) works out the next
-version from the Conventional Commit subjects on `main` since the last tag:
-a `feat` bumps the minor version, a `fix` or `perf` the patch. Until 1.0 a
+Commitizen (`[tool.commitizen]` in `server/pyproject.toml`) works out the next
+version from the Conventional Commit subjects on `main` since the last server
+tag. It ignores `ext-v*` tags, but it has no path filter, so extension commits
+land in the server's changelog too: scope them `ext` (`feat(ext): ...`) so they
+are easy to spot, and trim them from the section in the release PR. A `feat` bumps the minor version, a `fix` or `perf` the patch. Until 1.0 a
 breaking change bumps the minor version too (`major_version_zero`).
 
 `main` only takes squash-merged PRs, so a release is a PR:
 
 1. `make release` on a clean checkout. It fetches `main` and its tags, makes
-   a `chore-release-v<next>` branch off `origin/main`, runs
-   `cz bump --version-files-only`, which writes the new version to
+   a `chore-release-server-v<next>` branch off `origin/main`, runs
+   `cz bump --version-files-only` in `server/`, which writes the new version to
    `pyproject.toml` and `uv.lock` and adds its section to `CHANGELOG.md`, and
-   commits that as `chore(release): v<next>`. It stops if there is nothing to
+   commits that as `chore(release): server-v<next>`. It stops if there is nothing to
    release (only `chore`, `docs`, `test` and similar commits since the last
    tag).
-2. Read the new `CHANGELOG.md` section and edit it if a line needs it, then
-   push the branch and open a PR titled `chore(release): v<next>`.
+2. Read the new `server/CHANGELOG.md` section and edit it if a line needs it,
+   then push the branch and open a PR titled `chore(release): server-v<next>`.
 3. When it merges, the CI `release` job sees a version with no release yet,
-   tags the merge commit `v<next>` and publishes the GitHub release. Pushes
+   tags the merge commit `server-v<next>` and publishes the GitHub release. Pushes
    that leave the version alone do nothing there.
 
 Never edit the version by hand: `cz bump` keeps `pyproject.toml`, `uv.lock`
-and `CHANGELOG.md` in step, and `tests/test_releases.py` checks they agree.
+and `CHANGELOG.md` in step, and `server/tests/test_releases.py` checks they agree.
 
 ## Dependency updates
 
-Dependabot (`.github/dependabot.yml`) opens update PRs for four ecosystems:
-uv, npm (pnpm) and GitHub Actions weekly, and pre-commit hook revs
-monthly. Minor and patch bumps arrive grouped into one PR per ecosystem; a
+Dependabot (`.github/dependabot.yml`) has one entry per ecosystem and
+directory: uv in `/server` and GitHub Actions in `/` weekly, and pre-commit
+hook revs in `/` monthly. The extension gets an npm entry for `/extension`
+with its first `package.json`. Minor and patch bumps arrive grouped into one PR per ecosystem; a
 major bump gets its own PR. Review them like any other PR: CI must be green,
 and a `uv.lock` change that touches Django follows the
 [version policy](#django-version-policy) below.
@@ -301,10 +338,10 @@ production settings are the point.
 
 ## CSS
 
-Plain CSS, no framework and no build step (#76): `src/recipes/static/css/style.css`
+Plain CSS, no framework and no build step (#76): `server/src/recipes/static/css/style.css`
 for the screen and `print.css` for print, served as written. Most of it styles
 HTML elements directly, so a template needs few classes. The look and its
-colours are described in [the design note](features/design.md).
+colours are described in [the design note](../server/docs/features/design.md).
 
 ## Tech stack
 
@@ -323,7 +360,7 @@ colours are described in [the design note](features/design.md).
 
 ### Django version policy
 
-`pyproject.toml` pins `Django ~=6.1`, which allows any 6.x release from 6.1
+`server/pyproject.toml` pins `Django ~=6.1`, which allows any 6.x release from 6.1
 on, and `uv.lock` holds the exact version. Each feature release only gets
 security fixes for a limited time, so the pin has to move on purpose:
 
@@ -346,25 +383,33 @@ Then bump the pin, refresh the lock with
 ## Project layout
 
 ```
-src/
-  nutrisho/      # Django project (settings, urls, wsgi, health check)
-  recipes/       # Main app: models, views, templates, management commands
+Makefile               # tasks for both parts
+server/                # the Django app, its own uv project
+  pyproject.toml
+  uv.lock
+  CHANGELOG.md
+  manage.py
+  src/
+    nutrisho/          # Django project (settings, urls, wsgi, health check)
+    recipes/           # Main app: models, views, templates, management commands
+  tests/
+    conftest.py
+    recipes/
+  docs/
+    features/          # one note per feature area: design and pitfalls
+    schema.sql         # current DB schema (generated by backup_db)
+extension/             # the recipe clipper, not started
 docs/
-  features/            # one note per feature area: design and pitfalls
-  schema.sql           # current DB schema (generated by backup_db)
   developer-guide.md   # this file
   plans/               # active work plans
   archive/             # completed plans
   reviews/             # raw review and assessment reports
-tests/
-  conftest.py
-  recipes/
 ```
 
 ## Claude Code
 
 `.claude/settings.json` holds a permission allowlist for the `make`, `uv run`
-and read-only `git` commands AGENTS.md asks for, and a `startup` hook that
+(from `server/`) and read-only `git` commands AGENTS.md asks for, and a `startup` hook that
 reminds the assistant to confirm the branch. Project skills live in
 `.claude/skills/<name>/SKILL.md`; `tdd` is the one AGENTS.md mandates.
 
@@ -379,7 +424,7 @@ git-ignored `.claude/settings.local.json`.
 
 The architecture summary, boundaries and invariants are in the Architecture
 section of [AGENTS.md](../AGENTS.md); each feature area has a note in
-[docs/features/](features/).
+[server/docs/features/](../server/docs/features/).
 
 ## Workflow
 

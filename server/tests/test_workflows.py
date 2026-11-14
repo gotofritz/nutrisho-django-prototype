@@ -7,7 +7,7 @@ from typing import Any
 import pytest
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]  # the repository; the server is ROOT / "server"
 WORKFLOWS = sorted((ROOT / ".github" / "workflows").glob("*.yml"))
 SHA_PIN = re.compile(r"^[\w.-]+/[\w.-]+@[0-9a-f]{40}$")
 EXACT_VERSION = re.compile(r"^\d+\.\d+\.\d+$")
@@ -108,34 +108,68 @@ def test_nothing_is_installed_outside_the_lockfiles(path: Path):
     assert "apt-get" not in scripts
 
 
-def test_there_is_no_node_project():
-    """No package.json or pnpm lockfile: the stylesheets are plain CSS."""
-    for name in ("package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml"):
-        assert not (ROOT / name).exists(), name
+def test_there_is_no_node_project_outside_the_extension():
+    """No package.json or pnpm lockfile for the server: its stylesheets are plain CSS."""
+    for directory in (ROOT, ROOT / "server"):
+        for name in ("package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml"):
+            assert not (directory / name).exists(), directory / name
+
+
+def triggers(path: Path) -> dict[str, Any]:
+    """The `on:` block of a workflow, which PyYAML reads as the key True."""
+    return yaml.safe_load(path.read_text())[True]
+
+
+SERVER_WORKFLOWS = [
+    ROOT / ".github/workflows/server.yml",
+    ROOT / ".github/workflows/server-audit.yml",
+]
+
+
+@pytest.mark.parametrize("path", SERVER_WORKFLOWS, ids=lambda path: path.name)
+def test_server_workflows_skip_extension_only_changes(path: Path):
+    """A change under `extension/` alone never runs the server's checks (#145)."""
+    for event in ("push", "pull_request"):
+        assert "extension/**" in triggers(path)[event]["paths-ignore"]
+
+
+def test_the_audit_still_runs_weekly():
+    """A new advisory against an unchanged lockfile still turns the audit red."""
+    assert triggers(ROOT / ".github/workflows/server-audit.yml")["schedule"]
+
+
+@pytest.mark.parametrize("job", ["qa", "e2e"])
+def test_server_dependencies_are_installed_in_the_server_directory(job: str):
+    """`server/` holds its own pyproject.toml and uv.lock, so uv runs there (#145)."""
+    workflow = {"jobs": {job: load(ROOT / ".github/workflows/server.yml")["jobs"][job]}}
+
+    for step in steps(workflow):
+        if step.get("run", "").startswith("uv "):
+            assert step["working-directory"] == "server", step["run"]
 
 
 def test_ci_installs_python_dependencies_from_the_lockfile():
     """CI fails when uv.lock is out of date instead of re-resolving it."""
-    assert "uv sync --locked --all-groups" in run_lines(load(ROOT / ".github/workflows/ci.yml"))
+    assert "uv sync --locked --all-groups" in run_lines(load(ROOT / ".github/workflows/server.yml"))
 
 
 def test_ci_builds_the_badge_with_make():
     """The badge JSON is written by `make coverage-badge` in the QA job."""
-    ci = load(ROOT / ".github/workflows/ci.yml")
+    ci = load(ROOT / ".github/workflows/server.yml")
 
     assert "make coverage-badge" in run_lines({"jobs": {"qa": ci["jobs"]["qa"]}})
 
 
 def test_badge_job_runs_no_code_of_its_own():
     """The write-scoped badge job only downloads the badge JSON and publishes it."""
-    badge = load(ROOT / ".github/workflows/ci.yml")["jobs"]["badge"]
+    badge = load(ROOT / ".github/workflows/server.yml")["jobs"]["badge"]
 
     assert all("run" not in step for step in badge["steps"])
 
 
 def release_workflow() -> dict[str, Any]:
-    """`ci.yml` cut down to its release job, for the step helpers above."""
-    return {"jobs": {"release": load(ROOT / ".github/workflows/ci.yml")["jobs"]["release"]}}
+    """`server.yml` cut down to its release job, for the step helpers above."""
+    return {"jobs": {"release": load(ROOT / ".github/workflows/server.yml")["jobs"]["release"]}}
 
 
 def test_release_job_runs_only_after_qa_passes_on_main():
@@ -146,6 +180,11 @@ def test_release_job_runs_only_after_qa_passes_on_main():
     assert "needs.qa.result == 'success'" in release["if"]
     assert "github.event_name == 'push'" in release["if"]
     assert "github.ref == 'refs/heads/main'" in release["if"]
+
+
+def test_release_job_treats_the_unprefixed_tag_as_released():
+    """`v0.3.0` predates the `server-v` prefix, so the job does not release 0.3.0 again (#145)."""
+    assert 'gh release view "v$version"' in run_lines(release_workflow())
 
 
 def test_release_job_runs_no_project_code():
@@ -164,16 +203,17 @@ def test_release_job_publishes_the_changelog_section_for_a_new_tag():
     """The release job tags `v<version>` once and uses its CHANGELOG.md section as notes."""
     scripts = run_lines(release_workflow())
 
-    assert 'tag="v$version"' in scripts
+    assert 'tag="server-v$version"' in scripts
     assert 'gh release view "$tag"' in scripts
-    assert "CHANGELOG.md" in scripts
+    assert "server/pyproject.toml" in scripts
+    assert "server/CHANGELOG.md" in scripts
     assert 'gh release create "$tag"' in scripts
     assert '--target "$GITHUB_SHA"' in scripts
 
 
 def qa_job_steps() -> list[dict[str, Any]]:
     """The steps of the CI `qa` job, in order."""
-    return load(ROOT / ".github/workflows/ci.yml")["jobs"]["qa"]["steps"]
+    return load(ROOT / ".github/workflows/server.yml")["jobs"]["qa"]["steps"]
 
 
 def test_ci_has_no_css_build_step():
@@ -189,10 +229,10 @@ PR_TITLE = ROOT / ".github/workflows/pr-title.yml"
 
 def test_pr_titles_are_linted_when_opened_or_edited():
     """The PR title becomes the squash-merge subject, so CI checks it on every change (#68)."""
-    triggers = yaml.safe_load(PR_TITLE.read_text())[True]  # PyYAML reads `on:` as True
+    on = triggers(PR_TITLE)
 
-    assert set(triggers) == {"pull_request"}
-    assert {"opened", "edited", "reopened", "synchronize"} <= set(triggers["pull_request"]["types"])
+    assert set(on) == {"pull_request"}
+    assert {"opened", "edited", "reopened", "synchronize"} <= set(on["pull_request"]["types"])
 
 
 def test_pr_title_is_checked_with_commitizen_from_the_environment():
@@ -202,12 +242,13 @@ def test_pr_title_is_checked_with_commitizen_from_the_environment():
 
     assert step["env"]["PR_TITLE"] == "${{ github.event.pull_request.title }}"
     assert 'cz check --message "$PR_TITLE"' in step["run"]
+    assert "--directory server" in step["run"]
     assert "github.event" not in step["run"]
 
 
 def e2e_job() -> dict[str, Any]:
-    """`ci.yml` cut down to its browser-test job."""
-    return {"jobs": {"e2e": load(ROOT / ".github/workflows/ci.yml")["jobs"]["e2e"]}}
+    """`server.yml` cut down to its browser-test job."""
+    return {"jobs": {"e2e": load(ROOT / ".github/workflows/server.yml")["jobs"]["e2e"]}}
 
 
 def test_ci_runs_the_browser_tests_in_chromium():
@@ -227,4 +268,4 @@ def test_ci_keeps_screenshots_of_failed_browser_tests():
 
     assert "--screenshot only-on-failure" in run_lines(job)
     assert upload["if"] == "failure()"
-    assert upload["with"]["path"] == "test-results/"
+    assert upload["with"]["path"] == "server/test-results/"

@@ -45,9 +45,10 @@ repos:
   # UV_EXCLUDE_NEWER that differs from the lock's) would abort the commit or rebase.
   - repo: local
     hooks:
+      # --project, not --directory: git passes the message file relative to the root.
       - id: commitizen
         name: commitizen
-        entry: uv run --frozen cz check
+        entry: uv run --project server --frozen cz check
         args: [--commit-msg-file]
         require_serial: true
         language: system

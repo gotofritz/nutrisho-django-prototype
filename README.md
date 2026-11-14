@@ -1,7 +1,7 @@
 # Nutrisho
 
-[![CI](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/ci.yml/badge.svg)](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/gotofritz/nutrisho-django-prototype/badges/coverage.json)](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/ci.yml)
+[![Server CI](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/server.yml/badge.svg)](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/server.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/gotofritz/nutrisho-django-prototype/badges/coverage.json)](https://github.com/gotofritz/nutrisho-django-prototype/actions/workflows/server.yml)
 [![License: 0BSD](https://img.shields.io/badge/license-0BSD-green.svg)](LICENSE.md)
 
 A personal recipe manager. Browse, edit, and organise your recipes in one place.
@@ -51,18 +51,19 @@ make backup
 ```
 
 This writes the whole database — every recipe, ingredient and user — to
-`docs/dump-<date>-<time>.sql`, and refreshes the table layout in
-`docs/schema.sql`. The dump stays on your machine (git ignores it); keep it
+`server/docs/dump-<date>-<time>.sql`, and refreshes the table layout in
+`server/docs/schema.sql`. The dump stays on your machine (git ignores it); keep it
 somewhere safe. To restore one, stop the app and move the old database aside
 first, together with its `db.sqlite3-wal` and `db.sqlite3-shm` files if they
 are there, then:
 
 ```bash
+cd server
 sqlite3 db.sqlite3 < docs/dump-20261030-001904.sql
 ```
 
-While the app runs, recent changes can sit in `db.sqlite3-wal` rather than
-`db.sqlite3`. Never delete that file, and never copy `db.sqlite3` on its own as
+The database is `server/db.sqlite3`. While the app runs, recent changes can sit
+in `db.sqlite3-wal` rather than `db.sqlite3`. Never delete that file, and never copy `db.sqlite3` on its own as
 a backup: use `make backup`, which always sees every saved change.
 
 ---

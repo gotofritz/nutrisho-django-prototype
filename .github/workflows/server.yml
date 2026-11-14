@@ -1,10 +1,16 @@
-name: CI
+name: Server
 
+# The Django app under server/ (#145). A change under extension/ alone skips
+# it; everything else, workflows and docs included, runs it, because the
+# server's tests check them. The extension gets its own workflow, filtered to
+# extension/**, with its first code.
 on:
   push:
     branches: ["main"]
+    paths-ignore: ["extension/**"]
   pull_request:
     branches: ["**"]
+    paths-ignore: ["extension/**"]
 
 # Read-only token by default; only the badge and release jobs widen it.
 permissions:
@@ -37,6 +43,7 @@ jobs:
           python-version: "3.14"
 
       - name: Install dependencies
+        working-directory: server
         run: uv sync --locked --all-groups
 
       - name: Run QA
@@ -51,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: coverage-badge
-          path: badge-out/coverage.json
+          path: server/badge-out/coverage.json
           if-no-files-found: error
 
   # Browser smoke tests (#63): Chromium drives the app through pytest-playwright.
@@ -74,10 +81,12 @@ jobs:
           python-version: "3.14"
 
       - name: Install dependencies
+        working-directory: server
         run: uv sync --locked --all-groups
 
       # Headless runs use the shell build alone.
       - name: Install Chromium
+        working-directory: server
         run: uv run playwright install --only-shell chromium
 
       - name: Run browser tests
@@ -88,7 +97,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: e2e-screenshots
-          path: test-results/
+          path: server/test-results/
           if-no-files-found: ignore
 
   # Runs no code of its own: it only publishes the JSON the qa job wrote.
@@ -116,9 +125,10 @@ jobs:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
 
-  # Runs no project code: when a push to main carries a version that has no
-  # release yet, it tags that commit v<version> and publishes the version's
-  # CHANGELOG.md section as the release notes. `make release` starts the PR.
+  # Runs no project code: when a push to main carries a server version that has
+  # no release yet, it tags that commit server-v<version> and publishes the
+  # version's server/CHANGELOG.md section as the release notes. `make release`
+  # starts the PR. The extension will release from its own ext-v* tags.
   release:
     needs: qa
     if: needs.qa.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -135,16 +145,21 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          version=$(sed -n '/^\[project\]/,/^\[/ s/^version = "\(.*\)"$/\1/p' pyproject.toml)
-          tag="v$version"
+          version=$(sed -n '/^\[project\]/,/^\[/ s/^version = "\(.*\)"$/\1/p' server/pyproject.toml)
+          tag="server-v$version"
           if gh release view "$tag" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
             echo "$tag is already released"
             exit 0
           fi
+          # Releases up to 0.3.0 were tagged without the server- prefix.
+          if gh release view "v$version" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "v$version is already released"
+            exit 0
+          fi
           awk -v tag="$tag" '$1 == "##" && $2 == tag { found = 1; next } found && /^## / { exit } found' \
-            CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+            server/CHANGELOG.md > "$RUNNER_TEMP/notes.md"
           if [ ! -s "$RUNNER_TEMP/notes.md" ]; then
-            echo "CHANGELOG.md has no section for $tag" >&2
+            echo "server/CHANGELOG.md has no section for $tag" >&2
             exit 1
           fi
           gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
