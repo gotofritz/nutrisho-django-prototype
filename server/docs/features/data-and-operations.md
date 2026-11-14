@@ -5,6 +5,7 @@
 - `Recipe` — core entity, owns name, description, cuisine, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`); `plain_name` / `plain_description` are the tag-free name and description `save()` keeps current, for search and the per-owner name rule; `source_instance` (labelled Source) is free text, a book and page or a web address, and the recipe page links it only when it is a whole http(s) URL (`web_url` filter)
 - `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient.owner` is NULL for the global list or the user a row is private to, and `ingredient_name` is unique case-insensitively among global rows and within each owner's private rows; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientAlias` maps a case-insensitively unique `alias_name` to a global `canonical` ingredient (`CASCADE`), input-only; `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`, and the optional substitute shows as `or X` after the name; `IngredientInRecipe.unit` is a `PROTECT` foreign key to `Unit` (canonical name, optional `plural_name`, `dimension` mass/volume/count), with `UnitAlias` for input-only spellings and `legacy_unit` holding free text from before #67 (see `units.md`)
 - `Recipe.deleted_at` is set while a recipe is in the trash (#75); see below
+- `ApiToken` — a user's key for the JSON endpoint, stored as its SHA-256 digest; made by `create_api_token`, revoked in admin; see `import-export.md`
 - `IngredientChange` — one clean-up tool change to the shared ingredients, its steps in `events` (JSON) for Undo; see `ingredient-cleanup-tool.md`
 - `Step` — ordered recipe steps; `step_title` is an optional heading, stored as `""` when absent and rendered underlined in front of the step text, followed by a colon
 - Long prose (`Recipe.short_description`, `Step.step_text`) is a `TextField`, unlimited in the database; forms cap it at `PROSE_MAX_LENGTH` (4000), which step merge obeys too. `Ingredient.ingredient_name` and `.plural_name` share `INGREDIENT_NAME_MAX_LENGTH` (128)
@@ -20,13 +21,19 @@ Empty text fields (`short_description`, `group_name`, `legacy_unit`,
 
 Browser → HTMX views → Django ORM → SQLite. The database is the only copy of the
 data; the YAML seed files and their import/export commands were bootstrap
-scaffolding and are gone (issue #27).
+scaffolding and are gone (issue #27). A user can export their own recipes as a
+Nutrisho JSON document and import one, or a page's schema.org JSON-LD, and the
+recipe clipper posts recipes to a token-authenticated JSON endpoint (#78); see
+`import-export.md`.
 
 `backup_db` (`make backup`) writes `docs/schema.sql` (committed, schema
 only, deterministic order) and `docs/dump-<timestamp>.sql` (git-ignored, full
 dump for restoring with `sqlite3`). SQLite only, like the rest of the app. The
 dump is read inside one read transaction, so it is a consistent snapshot even
 while the app writes (WAL lets those writes carry on).
+
+`create_api_token <username> [--name ...]` makes an API token and prints its key
+once (#78).
 
 `delete_recipe --id <N>` removes recipes by primary key, trashed or not, for good.
 

@@ -49,8 +49,9 @@ Paths in this section are relative to `server/`.
 
 Multi-user Django recipe manager, prototype quality. One app, `recipes`, under
 `src/`; server-rendered templates with HTMX partial swaps (django-htmx), no
-REST API; plain CSS with no build step; SQLite in WAL mode with IMMEDIATE
-transactions, and no other database. Auth is Django's `User`; the owner
+REST API apart from one token-authenticated JSON endpoint for the recipe
+clipper (`views/api.py`); plain CSS with no build step; SQLite in WAL mode
+with IMMEDIATE transactions, and no other database. Auth is Django's `User`; the owner
 superuser comes from `make bootstrap`, never from credentials in the repo. The
 debug toolbar is a dev-group package, mounted only when installed.
 
@@ -122,6 +123,11 @@ Easy to break, and not obvious from any one file:
 - A new column on `Recipe`, `Step`, `IngredientGroup` or `IngredientInRecipe`
   needs a non-default value in the fixture of
   `tests/recipes/test_recipe_duplication.py`.
+- A new column on any of those or on `Ingredient` must be exported
+  (`services/recipe_export.py`) and read back (`services/recipe_document.py`),
+  or `tests/recipes/test_recipe_export.py` fails: an export must round-trip.
+- The JSON endpoint is signed in by an API token only, never the session, which
+  is what makes its `@csrf_exempt` safe.
 
 ### Feature notes
 
@@ -139,6 +145,7 @@ Read the note for the area you are changing; skip the rest.
 - `server/docs/features/shared-vocabularies.md` — global and private ingredients and tags, the cuisine tree and its tool
 - `server/docs/features/ingredient-cleanup-tool.md` — the staff ingredient tool: merge, plurals, aliases, promote, history and Undo
 - `server/docs/features/design.md` — the storybook look: palette, type, page layouts, plates, print
+- `server/docs/features/import-export.md` — the export format, how an import writes, JSON-LD and ingredient lines, the clipper endpoint and API tokens
 - `server/docs/features/data-and-operations.md` — key models, the recipe trash, backups, seed data, concurrent writes, logging, SQLite limits
 
 Before merging a change to the architecture, boundaries or core patterns,

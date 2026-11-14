@@ -1,0 +1,56 @@
+{% extends "./base.html" %}
+{% load recipe_filters %}
+
+{% block page_title %}Import and export{% endblock %}
+
+{% block content %}
+<div class="form-page transfer-page">
+  <h1 tabindex="-1">Import and export</h1>
+  {% if result %}
+  <section class="import-result" aria-labelledby="import-result-heading">
+    <h2 id="import-result-heading">Imported {{ result.recipes|length }} recipe{{ result.recipes|length|pluralize }}</h2>
+    <ul>
+      {% for imported in result.recipes %}
+      <li>
+        {% if imported.recipe.deleted_at %}
+        {{ imported.recipe.recipe_name|safe_title_html }} <span class="import-note">(in the trash)</span>
+        {% else %}
+        <a href="{{ imported.recipe.get_absolute_url }}">{{ imported.recipe.recipe_name|safe_title_html }}</a>
+        {% endif %}
+        {% if imported.renamed %}<span class="import-note">renamed, since you already had “{{ imported.requested_name|safe_title_html }}”</span>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% if result.warnings %}
+    <h3>Not carried over</h3>
+    <ul class="import-warnings">
+      {% for warning in result.warnings %}<li>{{ warning }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <section aria-labelledby="export-heading">
+    <h2 id="export-heading">Export</h2>
+    <p>Download every recipe you have, the trash included, as one file. Import it here or on another Nutrisho server to get them all back.</p>
+    {# Not boosted: htmx would fetch the file and swap it into the page. #}
+    <p><a href="{% url 'recipes:export' %}" download hx-boost="false">Download my recipes</a></p>
+  </section>
+
+  <section aria-labelledby="import-heading">
+    <h2 id="import-heading">Import</h2>
+    <p>Recipes you already have are kept: an imported recipe whose name you use gets “Imported” added to it.</p>
+    {# Not boosted: a plain multipart post and a full page back. #}
+    <form action="{% url 'recipes:import' %}" method="post" enctype="multipart/form-data" hx-boost="false">
+      {% csrf_token %}
+      <p>
+        {{ form.file.label_tag }}
+        {{ form.file }}
+        <span class="helptext" id="{{ form.file.auto_id }}_helptext">{{ form.file.help_text }}</span>
+        {{ form.file.errors }}
+      </p>
+      <button type="submit">Import</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

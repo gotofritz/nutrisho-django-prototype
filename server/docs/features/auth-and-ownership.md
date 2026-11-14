@@ -3,7 +3,9 @@
 Login is the default, not a decorator (#48). `HtmxLoginRequiredMiddleware`
 subclasses Django's `LoginRequiredMiddleware`, so every view needs a signed-in
 user unless it is marked `@login_not_required`: Django's login and
-password-reset views, the admin login, and `/healthz`. Its
+password-reset views, the admin login, `/healthz`, and the clipper's JSON
+endpoint `/recipes/api/recipes/`, which signs in with an API token instead and
+answers 401 without one (#78, `import-export.md`). Its
 `handle_no_permission` sends a plain request a 302 to the login page and an htmx
 request an empty 200 with `HX-Redirect`, because htmx would otherwise swap the
 login page into the panel. The `next` it adds is always safe to GET: the current

@@ -899,9 +899,9 @@ def test_action_panels_collapse_the_columns_into_a_full_width_workspace(
 
 
 @pytest.mark.django_db
-def test_recipe_list_links_to_the_clean_up_tool(auth_client):
-    """Recipe list links to the clean up tool."""
-    html = auth_client.get("/recipes/").content.decode()
+def test_config_links_to_the_clean_up_tool(auth_client):
+    """Config links to the clean up tool."""
+    html = auth_client.get("/recipes/config/").content.decode()
     assert MANAGE_URL in html
 
 

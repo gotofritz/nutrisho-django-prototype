@@ -49,6 +49,7 @@ def test_restore_from_the_trash(signed_in: Page, user, make_recipe):
     soup.save(update_fields=["deleted_at"])
     signed_in.goto("/recipes/")
 
+    signed_in.get_by_role("link", name="Config").click()
     signed_in.get_by_role("link", name="Trash").click()
     expect(signed_in.locator(".trash-name")).to_have_text(["Soup"])
     signed_in.get_by_role("button", name="Restore").click()

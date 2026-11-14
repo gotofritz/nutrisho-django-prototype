@@ -77,16 +77,20 @@ def _by_alias(visible: QuerySet, *, name: str) -> Ingredient | None:
     return None
 
 
-def resolve_ingredient(name: str, *, owner: AbstractBaseUser) -> Ingredient:
+def resolve_ingredient(
+    name: str, *, owner: AbstractBaseUser, defaults: dict[str, str] | None = None
+) -> Ingredient:
     """`find_ingredient`, or on a miss a new row private to `owner`, as typed.
 
     Private until staff promote it (plan 011): an unknown name is one user's
     vocabulary, typos included, and must not appear in anyone else's editor.
+    `defaults` are further columns for a new row, such as an import's
+    `plural_name` (#78); a row that is found keeps its own.
     """
     found = find_ingredient(name, owner=owner)
     if found is not None:
         return found
-    return Ingredient.objects.create(ingredient_name=name.strip(), owner=owner)
+    return Ingredient.objects.create(ingredient_name=name.strip(), owner=owner, **(defaults or {}))
 
 
 SUGGESTION_LIMIT = 20
@@ -161,18 +165,23 @@ def find_cuisine(text: str) -> Cuisine | None:
     return named[0] if len(named) == 1 else None
 
 
-def cuisine_paths() -> list[str]:
-    """Every node's dotted path, sorted: the editor's cuisine suggestions."""
+def cuisine_path_map() -> dict[int, str]:
+    """Every node's dotted path by its id, read in one query."""
     nodes = {c.pk: c for c in Cuisine.objects.all()}
-    paths = []
-    for cuisine in nodes.values():
+    paths = {}
+    for pk, cuisine in nodes.items():
         names = [str(cuisine.cuisine)]
         parent_id = cuisine.parent_id
         while parent_id is not None and parent_id in nodes and len(names) <= MAX_CUISINE_DEPTH:
             names.insert(0, str(nodes[parent_id].cuisine))
             parent_id = nodes[parent_id].parent_id
-        paths.append(PATH_SEPARATOR.join(names))
-    return sorted(paths, key=str.lower)
+        paths[pk] = PATH_SEPARATOR.join(names)
+    return paths
+
+
+def cuisine_paths() -> list[str]:
+    """Every node's dotted path, sorted: the editor's cuisine suggestions."""
+    return sorted(cuisine_path_map().values(), key=str.lower)
 
 
 def find_unit(text: str) -> Unit | None:

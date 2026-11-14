@@ -5,6 +5,11 @@ written yet: this directory holds its place in the repository (#145).
 
 ## Plan
 
+- **Server side**: the clipper posts the page's schema.org Recipe JSON-LD to
+  `POST /recipes/api/recipes/` with `Authorization: Bearer <key>`, from the
+  background service worker. The server already takes it (#78); see
+  `server/docs/features/import-export.md`.
+
 - **Tooling**: Node with [web-ext](https://github.com/mozilla/web-ext), its own
   `package.json` and lockfile here, independent of the server's uv project.
 - **Make targets**: in the top-level `Makefile`, prefixed `ext-` (`ext-lint`,
