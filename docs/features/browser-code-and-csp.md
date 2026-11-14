@@ -11,8 +11,9 @@ some pages load would be missing after a boosted visit. Every listener is
 delegated to `document` and does nothing on a page without its markup.
 Templates opt in with data attributes, never with inline code:
 `data-cancel-draft`, `data-close-panel`, `data-panel-toggle`,
-`data-position-in`/`-of`/`-row`, `data-split-at`, `data-indeterminate` and
-`data-clear-history` (the header of `app.js` lists what each does).
+`data-position-in`/`-of`/`-row`, `data-split-at`, `data-indeterminate`,
+`data-clear-history`, `data-dismiss-toast` and `data-toast-text` (the header of
+`app.js` lists what each does).
 
 Django's `ContentSecurityPolicyMiddleware` enforces `SECURE_CSP` (in
 `settings/base.py`): everything from `'self'`, no `'unsafe-inline'`, no

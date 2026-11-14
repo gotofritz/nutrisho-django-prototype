@@ -17,6 +17,7 @@ from recipes.views import (
     recipe_fields,
     recipe_ingredients,
     recipe_steps,
+    recipe_trash,
 )
 from recipes.views._auth import htmx_staff_required
 
@@ -30,10 +31,16 @@ app_name = "recipes"
 urlpatterns = [
     path("", home.home, name="home"),
     path("new/", recipe_crud.recipe_new, name="new"),
+    path("trash/", recipe_trash.trash, name="trash"),
     # Shared-ingredient clean-up tool (Miller columns). The `manage/` prefix keeps
     # these clear of the per-recipe `<recipe_id>/ingredients/...` inline-edit routes.
     path(
         "ingredients/manage/", _staff(ingredient_admin.ingredient_manage), name="ingredient_manage"
+    ),
+    path(
+        "ingredients/manage/undo/",
+        _staff(ingredient_admin.ingredient_manage_undo),
+        name="ingredient_manage_undo",
     ),
     path(
         "ingredients/manage/search/",
@@ -134,6 +141,8 @@ urlpatterns = [
     path("<int:recipe_id>/", recipe.recipe, name="recipe"),
     path("<int:recipe_id>/delete/", recipe_crud.recipe_delete, name="delete"),
     path("<int:recipe_id>/delete/panel/", recipe_crud.recipe_delete_panel, name="delete_panel"),
+    path("<int:recipe_id>/restore/", recipe_trash.recipe_restore, name="restore"),
+    path("<int:recipe_id>/purge/", recipe_trash.recipe_purge, name="purge"),
     path("<int:recipe_id>/duplicate/", recipe_crud.recipe_duplicate, name="duplicate"),
     path("<int:recipe_id>/metadata/", recipe_crud.recipe_metadata_edit, name="metadata_edit"),
     path("<int:recipe_id>/scale/copy/", recipe_crud.recipe_scale_copy, name="scale_copy"),

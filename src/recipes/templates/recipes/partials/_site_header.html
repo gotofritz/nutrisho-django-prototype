@@ -11,6 +11,7 @@ _recipe_content.html includes this too.
   <nav aria-label="Site">
     <a href="{% url 'recipes:home' %}"{% if here == "home" %} aria-current="page"{% endif %}>Recipes</a>
     <a href="{% url 'recipes:new' %}"{% if here == "new" %} aria-current="page"{% endif %}>New recipe</a>
+    <a href="{% url 'recipes:trash' %}"{% if here == "trash" %} aria-current="page"{% endif %}>Trash</a>
     {% if user.is_staff %}
     <a href="{% url 'recipes:ingredient_manage' %}"{% if here == "ingredient_manage" %} aria-current="page"{% endif %}>Ingredients</a>
     <a href="{% url 'recipes:cuisine_manage' %}"{% if here == "cuisine_manage" %} aria-current="page"{% endif %}>Cuisines</a>

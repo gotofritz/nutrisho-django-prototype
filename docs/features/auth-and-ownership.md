@@ -22,7 +22,9 @@ device cannot replay a recipe after log-out.
 A recipe-scoped view loads its recipe with `owned_recipe(request=..., recipe_id=...)`,
 which 404s on another user's recipe as on a missing one, then loads child rows
 through that recipe (`Step` with `recipe=recipe`, and so on). Never look a recipe
-up by id alone.
+up by id alone. A recipe in the trash (#75) is missing to `owned_recipe` too, so
+it cannot be viewed or edited; the trash's restore and purge views load it with
+`trashed_recipe`, which is owner-scoped the same way.
 
 `tests/test_route_access.py` walks the URLconf, so a new route is covered as soon
 as it exists: an anonymous request (GET or POST, plain or htmx) must be sent to

@@ -105,7 +105,7 @@ def _count(conditions: list[Q]) -> Case | Value:
 
 def search_recipes(*, owner: AbstractBaseUser, search: RecipeSearch) -> QuerySet:
     """`owner`'s recipes matching `search`, best match first."""
-    recipes = Recipe.objects.filter(owner=owner)
+    recipes = Recipe.objects.live().filter(owner=owner)
     if search.cuisine_id:
         recipes = recipes.filter(
             reduce(or_, (Q(**{f"{level}_id": search.cuisine_id}) for level in _CUISINE_LEVELS))
@@ -161,7 +161,11 @@ def matched_ingredients(*, recipes: Iterable[Recipe], search: RecipeSearch) -> d
 
 def cuisine_choices(owner: AbstractBaseUser) -> list[Cuisine]:
     """Every cuisine node with one of `owner`'s recipes on it or below it, by path."""
-    used = Cuisine.objects.filter(recipe__owner=owner).select_related("parent__parent").distinct()
+    used = (
+        Cuisine.objects.filter(recipe__owner=owner, recipe__deleted_at__isnull=True)
+        .select_related("parent__parent")
+        .distinct()
+    )
     nodes: dict[int, Cuisine] = {}
     for node in used:
         for n in [*node.ancestors, node]:
@@ -171,4 +175,8 @@ def cuisine_choices(owner: AbstractBaseUser) -> list[Cuisine]:
 
 def tag_choices(owner: AbstractBaseUser) -> list[Tag]:
     """Tags on `owner`'s recipes, global or private, A to Z."""
-    return list(Tag.objects.filter(recipes__owner=owner).distinct().order_by(Lower("tag"), "tag"))
+    return list(
+        Tag.objects.filter(recipes__owner=owner, recipes__deleted_at__isnull=True)
+        .distinct()
+        .order_by(Lower("tag"), "tag")
+    )

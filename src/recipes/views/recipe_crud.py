@@ -1,6 +1,8 @@
+from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django.views.decorators.vary import vary_on_headers
 
@@ -10,6 +12,7 @@ from recipes.services.name_resolution import cuisine_paths
 from recipes.services.recipe_duplication import duplicate_recipe
 from recipes.services.recipe_metadata import DuplicateRecipeNameError, create_recipe, save_metadata
 from recipes.services.recipe_scaling import ScaleError, save_scaled_copy
+from recipes.services.recipe_trash import trash_recipe
 from recipes.utils.scaling import MAX_SERVINGS, parse_servings
 from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
@@ -93,9 +96,15 @@ def recipe_delete_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 @require_POST
 def recipe_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
-    """Delete a recipe."""
+    """Move a recipe to the trash; the next page offers Undo (#75)."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
-    recipe.delete()
+    trash_recipe(recipe)
+    # The message's extra_tags carry its Undo URL; _page_regions.html posts to it.
+    messages.success(
+        request,
+        f"Deleted “{recipe.plain_name}”.",
+        extra_tags=reverse("recipes:restore", kwargs={"recipe_id": recipe_id}),
+    )
     if request.htmx:
         # Delete lives on the recipe page only (#75): go on to the next recipe.
         response = HttpResponse("")
@@ -105,7 +114,7 @@ def recipe_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 
 def _next_recipe_url(deleted_id: int, user) -> str:
-    qs = Recipe.objects.filter(owner=user)
+    qs = Recipe.objects.live().filter(owner=user)
     nxt = qs.filter(id__gt=deleted_id).order_by("id").first()
     if nxt:
         return nxt.get_absolute_url()

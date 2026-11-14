@@ -366,12 +366,12 @@ def test_recipe_delete_panel_has_delete_url(auth_client, recipe):
 
 
 @pytest.mark.django_db
-def test_recipe_delete_removes_recipe(auth_client, recipe):
-    """Recipe delete removes recipe."""
+def test_recipe_delete_removes_recipe_from_the_live_list(auth_client, recipe):
+    """Recipe delete takes the recipe out of the live list (into the trash, #75)."""
     recipe_id = recipe.pk
     response = auth_client.post(f"/recipes/{recipe_id}/delete/", HTTP_HX_REQUEST="true")
     assert response.status_code == 200
-    assert not Recipe.objects.filter(pk=recipe_id).exists()
+    assert not Recipe.objects.live().filter(pk=recipe_id).exists()
 
 
 @pytest.mark.django_db

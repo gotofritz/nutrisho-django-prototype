@@ -14,6 +14,7 @@ from django.db.models import Count, Q, QuerySet
 from django.db.models.functions import Lower
 
 from recipes.models import Ingredient, IngredientAlias, IngredientInRecipe, Recipe
+from recipes.services.ingredient_journal import Journal, quoted
 
 
 class IngredientInUseError(Exception):
@@ -126,11 +127,18 @@ def recipes_for_ingredients(*, ingredient_ids: Iterable[int], owner: AbstractBas
 
     Column 3 stays owner-scoped even though the ingredients themselves are not.
     """
-    return recipes_referencing_ingredients(ingredient_ids).filter(owner=owner)
+    return recipes_referencing_ingredients(ingredient_ids).filter(
+        owner=owner, deleted_at__isnull=True
+    )
 
 
 @transaction.atomic
-def delete_ingredients(*, ingredient_ids: Iterable[int], replacement_id: int | None = None) -> int:
+def delete_ingredients(
+    *,
+    ingredient_ids: Iterable[int],
+    replacement_id: int | None = None,
+    journal: Journal | None = None,
+) -> int:
     """Delete ingredients, repointing every recipe reference first.
 
     `IngredientInRecipe.ingredient` and `.substitute` are both PROTECTed, so a
@@ -144,11 +152,16 @@ def delete_ingredients(*, ingredient_ids: Iterable[int], replacement_id: int | N
     at a global row. Raises `IngredientInUseError` when recipes still reference a
     victim and no usable replacement was given; nothing is written in that case.
 
+    Each write is noted in `journal` first, so the change can be undone (#75).
+
     Returns the number of `Ingredient` rows deleted.
     """
+    journal = journal or Journal()
     victim_ids = [i for i in dict.fromkeys(ingredient_ids) if i != replacement_id]
     if not victim_ids:
         return 0
+    victims = Ingredient.objects.filter(pk__in=victim_ids)
+    journal.describe(f"Deleted {quoted(_names(victims))}")
     references = IngredientInRecipe.objects.filter(
         Q(ingredient__in=victim_ids) | Q(substitute__in=victim_ids)
     )
@@ -173,19 +186,33 @@ def delete_ingredients(*, ingredient_ids: Iterable[int], replacement_id: int | N
         # Lock the referencing rows before rewriting them, matching
         # recipe_ingredient_reassign (a no-op on SQLite, which serializes anyway).
         list(references.select_for_update().values("pk"))
-        IngredientInRecipe.objects.filter(ingredient__in=victim_ids).update(ingredient=replacement)
-        IngredientInRecipe.objects.filter(substitute__in=victim_ids).update(substitute=replacement)
+        for field in ("ingredient", "substitute"):
+            rows = IngredientInRecipe.objects.filter(**{f"{field}__in": victim_ids})
+            journal.repointed(rows, field=field, to=replacement.pk)
+            rows.update(**{field: replacement})
     if (
         replacement_id is not None
         and Ingredient.objects.filter(pk=replacement_id, owner__isnull=True).exists()
     ):
-        IngredientAlias.objects.filter(canonical__in=victim_ids).update(canonical=replacement_id)
-    _, per_model = Ingredient.objects.filter(pk__in=victim_ids).delete()
+        aliases = IngredientAlias.objects.filter(canonical__in=victim_ids)
+        journal.repointed(aliases, field="canonical", to=replacement_id)
+        aliases.update(canonical=replacement_id)
+    # Whatever aliases are left go with their canonical (CASCADE).
+    journal.deleted(IngredientAlias.objects.filter(canonical__in=victim_ids))
+    journal.deleted(victims)
+    _, per_model = victims.delete()
     return per_model.get("recipes.Ingredient", 0)
 
 
+def _names(ingredients: QuerySet) -> list[str]:
+    """The rows' names, A to Z ignoring case."""
+    return sorted(ingredients.values_list("ingredient_name", flat=True), key=str.lower)
+
+
 @transaction.atomic
-def merge_ingredients(*, survivor_id: int, victim_ids: Iterable[int]) -> int:
+def merge_ingredients(
+    *, survivor_id: int, victim_ids: Iterable[int], journal: Journal | None = None
+) -> int:
     """Collapse `victim_ids` into `survivor_id`, carrying their recipes across.
 
     Repoints both `IngredientInRecipe.ingredient` and `.substitute` onto the
@@ -211,17 +238,17 @@ def merge_ingredients(*, survivor_id: int, victim_ids: Iterable[int]) -> int:
     if survivor is None:
         msg = f"No Ingredient with id {survivor_id}"
         raise ObjectDoesNotExist(msg)
+    journal = journal or Journal()
     victim_ids = list(victim_ids)
-    victim_names = list(
-        Ingredient.objects.filter(pk__in=victim_ids)
-        .exclude(pk=survivor_id)
-        .values_list("ingredient_name", flat=True)
+    victim_names = _names(Ingredient.objects.filter(pk__in=victim_ids).exclude(pk=survivor_id))
+    journal.describe(f"Merged {quoted(victim_names)} into “{survivor}”")
+    merged = delete_ingredients(
+        ingredient_ids=victim_ids, replacement_id=survivor_id, journal=journal
     )
-    merged = delete_ingredients(ingredient_ids=victim_ids, replacement_id=survivor_id)
     if survivor.owner_id is None:
         for name in victim_names:
             if not _resolves_to(survivor, name=name):
-                add_alias(canonical_id=survivor_id, alias_name=name)
+                add_alias(canonical_id=survivor_id, alias_name=name, journal=journal)
     return merged
 
 
@@ -232,7 +259,7 @@ def _resolves_to(ingredient: Ingredient, *, name: str) -> bool:
 
 
 @transaction.atomic
-def add_alias(*, canonical_id: int, alias_name: str) -> int:
+def add_alias(*, canonical_id: int, alias_name: str, journal: Journal | None = None) -> int:
     """Make `alias_name` resolve to the global `canonical_id` on input (plan 008).
 
     If the name already exists as ingredient rows (anyone's, ignoring case),
@@ -268,13 +295,18 @@ def add_alias(*, canonical_id: int, alias_name: str) -> int:
             return 0
         msg = f"“{name}” is already an alias of “{existing.canonical}”."
         raise AliasError(msg)
+    journal = journal or Journal()
+    journal.describe(f"Added alias “{name}” for “{canonical}”")
     same_name = Ingredient.objects.filter(ingredient_name__iexact=name).exclude(pk=canonical.pk)
     merged = delete_ingredients(
-        ingredient_ids=list(same_name.values_list("pk", flat=True)), replacement_id=canonical.pk
+        ingredient_ids=list(same_name.values_list("pk", flat=True)),
+        replacement_id=canonical.pk,
+        journal=journal,
     )
     alias = IngredientAlias(alias_name=name, canonical=canonical)
     alias.full_clean()
     alias.save()
+    journal.created(alias)
     return merged
 
 
@@ -284,7 +316,9 @@ def remove_alias(*, alias_id: int) -> None:
 
 
 @transaction.atomic
-def promote_ingredients(ingredient_ids: Iterable[int]) -> list[int]:
+def promote_ingredients(
+    ingredient_ids: Iterable[int], *, journal: Journal | None = None
+) -> list[int]:
     """Make private rows global, folding in every same-named private row.
 
     For each selected private row: if a global row already has its name
@@ -296,19 +330,23 @@ def promote_ingredients(ingredient_ids: Iterable[int]) -> list[int]:
     Returns the ids of the resulting global rows, in selection order, so the
     view can keep them ticked.
     """
+    journal = journal or Journal()
+    selected = list(selected_ingredients(ingredient_ids))
+    journal.describe(f"Promoted {quoted([str(i) for i in selected])}")
     promoted: list[int] = []
-    for ingredient in list(selected_ingredients(ingredient_ids)):
+    for ingredient in selected:
         if not Ingredient.objects.filter(pk=ingredient.pk).exists():
             continue  # folded into an earlier selected row of the same name
         name = cast(str, ingredient.ingredient_name)
         same_name = Ingredient.objects.filter(ingredient_name__iexact=name)
         target = same_name.filter(owner__isnull=True).first()
         if target is None:
+            journal.updated(ingredient, fields=["owner"])
             ingredient.owner = None
             ingredient.save(update_fields=["owner"])
             target = ingredient
         victims = list(same_name.filter(owner__isnull=False).values_list("pk", flat=True))
-        delete_ingredients(ingredient_ids=victims, replacement_id=target.pk)
+        delete_ingredients(ingredient_ids=victims, replacement_id=target.pk, journal=journal)
         if target.pk not in promoted:
             promoted.append(target.pk)
     return promoted
@@ -335,7 +373,9 @@ def suggest_singular(candidates: Sequence[Ingredient]) -> int | None:
 
 
 @transaction.atomic
-def merge_plural_ingredients(*, singular_id: int, plural_id: int) -> None:
+def merge_plural_ingredients(
+    *, singular_id: int, plural_id: int, journal: Journal | None = None
+) -> None:
     """Fold a plural row into its singular, keeping the plural as a display form.
 
     The plural-aware counterpart to `merge_ingredients`: recipes move across the
@@ -365,8 +405,11 @@ def merge_plural_ingredients(*, singular_id: int, plural_id: int) -> None:
     if singular.pk == plural.pk:
         msg = "An ingredient cannot be its own plural."
         raise ValueError(msg)
+    journal = journal or Journal()
     plural_spelling = cast(str, plural.ingredient_name)
-    delete_ingredients(ingredient_ids=[plural.pk], replacement_id=singular.pk)
+    journal.describe(f"Merged plural “{plural_spelling}” into “{singular}”")
+    delete_ingredients(ingredient_ids=[plural.pk], replacement_id=singular.pk, journal=journal)
+    journal.updated(singular, fields=["plural_name"])
     singular.plural_name = plural_spelling
     singular.save(update_fields=["plural_name"])
 

@@ -1,6 +1,7 @@
 from .cuisine import Cuisine
 from .ingredient import Ingredient
 from .ingredient_alias import IngredientAlias
+from .ingredient_change import IngredientChange
 from .ingredient_group import IngredientGroup
 from .ingredient_in_recipe import IngredientInRecipe
 from .recipe import Recipe
@@ -12,6 +13,7 @@ __all__ = [
     "Cuisine",
     "Ingredient",
     "IngredientAlias",
+    "IngredientChange",
     "IngredientGroup",
     "IngredientInRecipe",
     "Recipe",

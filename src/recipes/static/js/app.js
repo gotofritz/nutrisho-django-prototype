@@ -14,6 +14,8 @@
 //   data-split-at="<textarea name>"     posts the cursor offset for a split
 //   data-indeterminate="true"           a checkbox shows the dashed state
 //   data-clear-history                  drops htmx's localStorage snapshots
+//   data-dismiss-toast                  removes the toast it sits in
+//   data-toast-text                     a toast's text, read out on arrival
 (function () {
   'use strict';
 
@@ -115,6 +117,15 @@
     if (e.target.id === 'save-error-dismiss') {
       document.getElementById('save-error').hidden = true;
     }
+  });
+
+  // --- Toasts (#75) ---------------------------------------------------------
+  // "Deleted X. Undo" arrives with the next page; its text goes through the
+  // live region, since a region rendered with its text is often not read out.
+
+  document.addEventListener('click', function (e) {
+    var dismiss = e.target.closest('[data-dismiss-toast]');
+    if (dismiss) dismiss.closest('[data-toast]').remove();
   });
 
   // --- Announcements (#61) --------------------------------------------------
@@ -310,6 +321,9 @@
     // Log-out and session expiry land on the login page: drop htmx's page
     // snapshots so the Back button cannot replay a recipe from localStorage on
     // a shared device.
+    root.querySelectorAll('[data-toast-text]').forEach(function (el) {
+      announce(el.textContent + (el.parentElement.querySelector('form') ? ' Undo is available.' : ''));
+    });
     if (root.querySelector('[data-clear-history]')) {
       try { localStorage.removeItem('htmx-history-cache'); } catch (err) { /* storage off */ }
     }

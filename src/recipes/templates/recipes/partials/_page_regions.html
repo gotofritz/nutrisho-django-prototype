@@ -9,3 +9,20 @@ partial replaces the whole <body>.
   <button type="button" id="save-error-dismiss" aria-label="Dismiss">&times;</button>
 </div>
 <div id="a11y-status" class="visually-hidden" role="status" aria-live="polite"></div>
+{% if messages %}
+{# Toasts (#75): one per message. A message whose extra_tags hold a URL offers Undo, posting there. #}
+<div class="toasts no-print">
+  {% for message in messages %}
+  <div class="toast" data-toast>
+    <span data-toast-text>{{ message }}</span>
+    {% if message.extra_tags %}
+    <form method="post" action="{{ message.extra_tags }}">
+      {% csrf_token %}
+      <button type="submit">Undo</button>
+    </form>
+    {% endif %}
+    <button type="button" data-dismiss-toast aria-label="Dismiss">&times;</button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

@@ -1,0 +1,32 @@
+{% extends "./base.html" %}
+{% load recipe_filters %}
+
+{% block page_title %}Trash{% endblock %}
+
+{% block content %}
+<div class="form-page trash-page">
+  <h1 tabindex="-1">Trash</h1>
+  {% if recipes %}
+  <p>Deleted recipes wait here until you restore them or delete them for good.</p>
+  <ul class="trash-list">
+    {% for recipe in recipes %}
+    <li class="trash-row">
+      <span class="trash-name">{{ recipe.recipe_name|safe_title_html }}</span>
+      <span class="trash-when">deleted {{ recipe.deleted_at|date:"j M Y, H:i" }}</span>
+      <form method="post" action="{% url 'recipes:restore' recipe.id %}">
+        {% csrf_token %}
+        <button type="submit">Restore</button>
+      </form>
+      <form method="post" action="{% url 'recipes:purge' recipe.id %}"
+            hx-confirm="Delete this recipe for good? This cannot be undone.">
+        {% csrf_token %}
+        <button type="submit" class="danger">Delete for good</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>The trash is empty.</p>
+  {% endif %}
+</div>
+{% endblock %}

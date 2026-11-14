@@ -34,6 +34,13 @@ from recipes.services.ingredient_admin import (
     selected_ingredients,
     suggest_singular,
 )
+from recipes.services.ingredient_journal import (
+    UndoError,
+    journaled,
+    recent_changes,
+    undo_change,
+    undoable_change,
+)
 from recipes.services.recipe_contents import with_ingredients
 from recipes.views._auth import owned_recipe
 from recipes.views._types import AuthedRequest
@@ -304,10 +311,25 @@ def _guard(*, action: str, selected_ids: list[int]) -> HttpResponse | None:
     )
 
 
+def _history_context(*, error: str = "") -> dict[str, object]:
+    """Context for the change history: the newest changes and which one Undo takes back."""
+    undoable = undoable_change()
+    return {
+        "changes": recent_changes(),
+        "undoable_id": undoable.pk if undoable else None,
+        "history_error": error,
+    }
+
+
 def _columns_response(
-    request: AuthedRequest, *, selected_ids: list[int], **filters: Unpack[_Filters]
+    request: AuthedRequest,
+    *,
+    selected_ids: list[int],
+    history_error: str = "",
+    status: int = 200,
+    **filters: Unpack[_Filters],
 ) -> HttpResponse:
-    """Restore columns 2-4 and reset the column-1 buttons."""
+    """Restore columns 2-4 and reset the column-1 buttons and history."""
     return HttpResponse(
         _fragment(
             request,
@@ -315,6 +337,10 @@ def _columns_response(
             _columns_context(owner=request.user, selected_ids=selected_ids, **filters),
         )
         + _actions_oob(request, selected_ids=selected_ids, action=None)
+        + _fragment(
+            request, "_change_history.html", _history_context(error=history_error), oob=True
+        ),
+        status=status,
     )
 
 
@@ -347,7 +373,8 @@ def ingredient_manage(request: AuthedRequest) -> HttpResponse:
             owner=request.user,
             **_filters(request.GET),
             selected_ids=_selected_ids(request.GET),
-        ),
+        )
+        | _history_context(),
     )
 
 
@@ -499,10 +526,12 @@ def ingredient_manage_delete(request: AuthedRequest) -> HttpResponse:
         return blocked
     if request.method == "POST":
         try:
-            delete_ingredients(
-                ingredient_ids=selected_ids,
-                replacement_id=_optional_id(payload.get("replacement_id")),
-            )
+            with journaled(user=request.user) as journal:
+                delete_ingredients(
+                    ingredient_ids=selected_ids,
+                    replacement_id=_optional_id(payload.get("replacement_id")),
+                    journal=journal,
+                )
         except IngredientInUseError as error:
             return HttpResponse(
                 _fragment(
@@ -553,7 +582,8 @@ def ingredient_manage_merge(request: AuthedRequest) -> HttpResponse:
             )
         get_object_or_404(Ingredient, pk=survivor_id)
         try:
-            merge_ingredients(survivor_id=survivor_id, victim_ids=selected_ids)
+            with journaled(user=request.user) as journal:
+                merge_ingredients(survivor_id=survivor_id, victim_ids=selected_ids, journal=journal)
         except IngredientInUseError as error:
             return HttpResponse(
                 _fragment(
@@ -618,7 +648,10 @@ def ingredient_manage_merge_plural(request: AuthedRequest) -> HttpResponse:
             )
         plural_id = next(pk for pk in selected_ids if pk != singular_id)
         try:
-            merge_plural_ingredients(singular_id=singular_id, plural_id=plural_id)
+            with journaled(user=request.user) as journal:
+                merge_plural_ingredients(
+                    singular_id=singular_id, plural_id=plural_id, journal=journal
+                )
         except IngredientInUseError as error:
             return HttpResponse(
                 _fragment(
@@ -676,7 +709,8 @@ def ingredient_manage_promote(request: AuthedRequest) -> HttpResponse:
     if blocked is not None:
         return blocked
     if request.method == "POST":
-        promoted = promote_ingredients(selected_ids)
+        with journaled(user=request.user) as journal:
+            promoted = promote_ingredients(selected_ids, journal=journal)
         return _columns_response(request, **_filters(payload), selected_ids=promoted)
     return _workspace_response(
         request,
@@ -741,7 +775,8 @@ def ingredient_manage_alias(request: AuthedRequest) -> HttpResponse:
     else:
         name = payload.get("alias_name", "").strip()
         try:
-            merged = add_alias(canonical_id=ingredient.pk, alias_name=name)
+            with journaled(user=request.user) as journal:
+                merged = add_alias(canonical_id=ingredient.pk, alias_name=name, journal=journal)
         except (AliasError, ValidationError) as error:
             message = error.messages[0] if isinstance(error, ValidationError) else str(error)
             extra |= {"error": message, "alias_name": name}
@@ -752,3 +787,25 @@ def ingredient_manage_alias(request: AuthedRequest) -> HttpResponse:
         _fragment(request, "_alias_panel.html", _alias_context(ingredient=ingredient) | extra),
         status=status,
     )
+
+
+@require_POST
+def ingredient_manage_undo(request: AuthedRequest) -> HttpResponse:
+    """Take back the newest change and restore the columns with what came back ticked.
+
+    A refusal (not the newest change, or a name taken again since) comes back
+    as 422 with the reason in the history, and nothing written.
+    """
+    filters = _filters(request.POST)
+    change_id = _optional_id(request.POST.get("change_id"))
+    if change_id is None:
+        return _undo_refused(request, filters=filters, reason="Pick a change to undo.")
+    try:
+        restored = undo_change(change_id=change_id)
+    except UndoError as error:
+        return _undo_refused(request, filters=filters, reason=str(error))
+    return _columns_response(request, **filters, selected_ids=restored)
+
+
+def _undo_refused(request: AuthedRequest, *, filters: _Filters, reason: str) -> HttpResponse:
+    return _columns_response(request, **filters, selected_ids=[], history_error=reason, status=422)
