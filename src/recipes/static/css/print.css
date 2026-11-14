@@ -22,3 +22,7 @@ input[type=checkbox],
 .sidebar {
   padding-top: 10px;
 }
+
+.key-hint {
+  display: none !important;
+}
