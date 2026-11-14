@@ -14,8 +14,14 @@ def owned_recipe(request: AuthedRequest, recipe_id: int) -> Recipe:
     """Return the signed-in user's recipe, or 404 when it is missing or someone else's.
 
     404 rather than 403, so a recipe id never reveals that another user has it.
+    A recipe in the trash (#75) is missing here too; `trashed_recipe` loads one.
     """
-    return get_object_or_404(Recipe, id=recipe_id, owner=request.user)
+    return get_object_or_404(Recipe.objects.live(), id=recipe_id, owner=request.user)
+
+
+def trashed_recipe(request: AuthedRequest, recipe_id: int) -> Recipe:
+    """Return the signed-in user's recipe from the trash, or 404, as `owned_recipe`."""
+    return get_object_or_404(Recipe.objects.trashed(), id=recipe_id, owner=request.user)
 
 
 _STAFF_ONLY = "Only staff can use the ingredient clean-up tool."

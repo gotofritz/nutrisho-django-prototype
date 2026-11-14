@@ -56,6 +56,13 @@ Easy to break, and not obvious from any one file:
   test's `path_values` fixture.
 - Load a recipe with `owned_recipe(request=..., recipe_id=...)` and its child
   rows through it. Never look a recipe up by id alone.
+- Deleting a recipe moves it to the trash (`Recipe.deleted_at`, #75). Anything
+  a user sees reads `Recipe.objects.live()` (`owned_recipe` does); only the trash
+  page, `restore` and `purge` read `trashed()`. A bulk write by cuisine or
+  ingredient covers trashed recipes too, so a restore finds them consistent.
+- A clean-up tool action that deletes ingredients runs inside
+  `journaled(user=...)` and passes its `Journal` down, noting each write before
+  it makes it (`services/ingredient_journal.py`), so Undo can take it back.
 - A route that changes a global row (ingredient, tag, cuisine) is staff-only
   (`htmx_staff_required`); its tests use the `other_user` fixture to show a
   non-staff user is refused and nothing is written.
@@ -104,9 +111,9 @@ Read the note for the area you are changing; skip the rest.
 - `docs/features/pluralisation.md` — the rule, `plural_name` overrides, when it applies
 - `docs/features/units.md` — the unit vocabulary, aliases, unit plurals, the `normalise_units` clean-up
 - `docs/features/shared-vocabularies.md` — global and private ingredients and tags, the cuisine tree and its tool
-- `docs/features/ingredient-cleanup-tool.md` — the staff ingredient tool: merge, plurals, aliases, promote
+- `docs/features/ingredient-cleanup-tool.md` — the staff ingredient tool: merge, plurals, aliases, promote, history and Undo
 - `docs/features/design.md` — the storybook look: palette, type, page layouts, plates, print
-- `docs/features/data-and-operations.md` — key models, backups, seed data, concurrent writes, logging, SQLite limits
+- `docs/features/data-and-operations.md` — key models, the recipe trash, backups, seed data, concurrent writes, logging, SQLite limits
 
 Before merging a change to the architecture, boundaries or core patterns,
 update this section; update the feature note for any area whose behaviour

@@ -39,7 +39,9 @@ def _get_recipe_nav(recipe_id: int, user: AbstractBaseUser, search: RecipeSearch
 def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     """Show a recipe."""
     recipe = get_object_or_404(
-        Recipe.objects.select_related("cuisine__parent__parent").prefetch_related(
+        Recipe.objects.live()
+        .select_related("cuisine__parent__parent")
+        .prefetch_related(
             "steps",
             Prefetch("tags", queryset=Tag.objects.order_by(Lower("tag"), "tag")),
             ingredients_prefetch(),

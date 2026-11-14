@@ -18,7 +18,10 @@ that sheet.
   sunflower wash with an uneven edge (`--wash-radius`), like paint, not a pill.
 - Delete and errors are `--smock-red`; nothing else is red.
 - Delete sits apart from the everyday actions: only in the recipe page's
-  margin, behind a confirmation panel, never on the contents page (#75).
+  margin, behind a confirmation panel, never on the contents page (#75). It
+  moves the recipe to the trash; the next page carries an ink toast at the
+  bottom of the window with Undo, and the Trash page (in the site header)
+  restores or deletes for good.
 - Anything that only makes sense on screen carries `no-print`.
 
 ## Palette

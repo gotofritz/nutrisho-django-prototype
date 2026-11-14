@@ -15,6 +15,18 @@ PROSE_MAX_LENGTH = 4000
 _PLAIN_COLUMNS = {"recipe_name": "plain_name", "short_description": "plain_description"}
 
 
+class RecipeQuerySet(models.QuerySet):
+    """Recipes split by whether they are in the trash (#75)."""
+
+    def live(self) -> RecipeQuerySet:
+        """Recipes not in the trash: what every page shows."""
+        return self.filter(deleted_at__isnull=True)
+
+    def trashed(self) -> RecipeQuerySet:
+        """Recipes in the trash, waiting to be restored or deleted for good."""
+        return self.filter(deleted_at__isnull=False)
+
+
 class Recipe(models.Model):
     """Recipe model.
 
@@ -28,6 +40,10 @@ class Recipe(models.Model):
     all (#17). `plain_name` and `plain_description` hold the same text without
     tags, written by `save()`; search reads them, and a name is unique per owner
     by its plain text, so `Foo` and `<u>Foo</u>` clash (#32).
+
+    Deleting a recipe moves it to the trash by setting `deleted_at` (#75); the
+    row and its contents stay until it is restored or deleted for good. Pages
+    read `Recipe.objects.live()`; the name rule covers live recipes only.
     """
 
     id = models.AutoField(primary_key=True)
@@ -53,7 +69,9 @@ class Recipe(models.Model):
     plain_description = models.TextField(
         "short_description without inline tags", editable=False, blank=True, default=""
     )
-    objects = models.Manager()
+    # Set while the recipe is in the trash (#75); NULL for a live recipe.
+    deleted_at = models.DateTimeField("moved to the trash", null=True, blank=True, editable=False)
+    objects = models.Manager.from_queryset(RecipeQuerySet)()
 
     class Meta:
         constraints = [
@@ -63,6 +81,7 @@ class Recipe(models.Model):
             ),
             models.UniqueConstraint(
                 fields=["owner", "plain_name"],
+                condition=models.Q(deleted_at__isnull=True),
                 name="recipes_recipe_unique_plain_name_per_owner",
             ),
         ]

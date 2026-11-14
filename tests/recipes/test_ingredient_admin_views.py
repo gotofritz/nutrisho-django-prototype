@@ -39,6 +39,11 @@ def has_bare_attr(tag_text: str, name: str) -> bool:
     return re.search(rf"\s{name}(?=[\s>])", tag_text) is not None
 
 
+def without_history(html: str) -> str:
+    """The response minus the change history (#75), which names what was just deleted."""
+    return html.split('id="ingredient-changes"')[0]
+
+
 def tag(html: str, element_id: str) -> str:
     """The opening tag carrying the given id, for attribute assertions."""
     match = re.search(rf"<[^>]*\bid=\"{element_id}\"[^>]*>", html)
@@ -714,7 +719,7 @@ def test_delete_post_removes_unused_ingredients_and_refreshes_the_column(
     make_ingredient("carrot")
     response = auth_client.post(DELETE_URL, {"ingredient_ids": [onion.pk]})
     assert response.status_code == 200
-    html = response.content.decode()
+    html = without_history(response.content.decode())
     assert not Ingredient.objects.filter(pk=onion.pk).exists()
     assert "1 found / 0 selected" in html
     assert "onion" not in html
@@ -1009,9 +1014,11 @@ def test_delete_leaves_the_unused_filter_applied(
     doomed = make_ingredient("doomed")
     make_ingredient("leftover")
     add_ingredient(recipe=make_recipe(owner=user, name="Moussaka"), ingredient=onion)
-    html = auth_client.post(
-        DELETE_URL, {"ingredient_ids": [doomed.pk], "unused": "1"}
-    ).content.decode()
+    html = without_history(
+        auth_client.post(
+            DELETE_URL, {"ingredient_ids": [doomed.pk], "unused": "1"}
+        ).content.decode()
+    )
     assert "leftover" in html
     assert "onion" not in html
     assert "doomed" not in html
@@ -1325,10 +1332,12 @@ def test_merge_leaves_the_plurals_filter_applied(auth_client, make_ingredient):
     onions = make_ingredient("onions")
     make_ingredient("tomato")
     make_ingredient("tomatoes")
-    html = auth_client.post(
-        MERGE_URL,
-        {"ingredient_ids": [onion.pk, onions.pk], "survivor_id": onion.pk, "plurals": "1"},
-    ).content.decode()
+    html = without_history(
+        auth_client.post(
+            MERGE_URL,
+            {"ingredient_ids": [onion.pk, onions.pk], "survivor_id": onion.pk, "plurals": "1"},
+        ).content.decode()
+    )
     # 2, not 3: the surviving `onion` has no plural partner left, so it drops
     # out of the filtered column along with the row it absorbed.
     assert "2 found / 1 selected" in html

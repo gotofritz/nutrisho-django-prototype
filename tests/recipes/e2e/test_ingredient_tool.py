@@ -37,6 +37,34 @@ def test_merging_two_ingredients_repoints_their_recipes(
     assert IngredientInRecipe.objects.get().ingredient == courgette
 
 
+def test_undo_takes_a_merge_back(
+    signed_in: Page, user, make_recipe, add_ingredient, make_ingredient
+):
+    """Recent changes lists the merge; Undo brings the row back, ticked, recipe and all (#75)."""
+    user.is_staff = True
+    user.save()
+    recipe = make_recipe(owner=user, name="Ratatouille")
+    courgette = make_ingredient("courgette")
+    zucchini = make_ingredient("zucchini")
+    add_ingredient(recipe=recipe, ingredient=zucchini, quantity=2)
+    signed_in.goto("/recipes/ingredients/manage/")
+    rows = signed_in.locator("#col-ingredients .ingredient-row")
+    rows.filter(has_text="courgette").get_by_role("checkbox").check()
+    rows.filter(has_text="zucchini").get_by_role("checkbox").check()
+    signed_in.locator("#action-merge").click()
+    signed_in.locator(".merge-candidates").get_by_label("courgette").check()
+    signed_in.locator(".panel-merge").click()
+
+    history = signed_in.locator("#ingredient-changes")
+    expect(history).to_contain_text("Merged “zucchini” into “courgette”")
+    history.get_by_role("button", name="Undo").click()
+
+    expect(rows.filter(has_text="zucchini").get_by_role("checkbox")).to_be_checked()
+    expect(history).to_contain_text("undone")
+    assert IngredientInRecipe.objects.get().ingredient == zucchini
+    assert Ingredient.objects.filter(pk=courgette.pk).exists()
+
+
 def test_show_more_appends_rows_and_closing_an_action_keeps_them(
     signed_in: Page, user, make_ingredient, monkeypatch
 ):

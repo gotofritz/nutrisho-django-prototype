@@ -1,0 +1,37 @@
+{% comment %}
+Column 1's history (#75): the newest changes to the shared ingredients, and
+Undo on the newest one still in force. Rendered out of band by every response
+that restores the columns, so it follows each merge, delete and undo.
+{% endcomment %}
+<section
+  id="ingredient-changes"
+  class="ingredient-changes"
+  aria-labelledby="ingredient-changes-heading"
+  {% if oob %}hx-swap-oob="true"{% endif %}
+>
+  <h2 id="ingredient-changes-heading">Recent changes</h2>
+  {% if history_error %}<p class="form-error" role="alert">{{ history_error }}</p>{% endif %}
+  {% if changes %}
+  <ul>
+    {% for change in changes %}
+    <li{% if change.undone_at %} class="undone"{% endif %}>
+      <span>{{ change.summary }}</span>
+      <span class="change-meta">{{ change.user|default:"someone" }}, {{ change.created_at|date:"j M, H:i" }}{% if change.undone_at %}, undone{% endif %}</span>
+      {% if change.pk == undoable_id %}
+      <form
+        hx-post="{% url 'recipes:ingredient_manage_undo' %}"
+        hx-target="#columns"
+        hx-swap="outerHTML"
+        hx-include="#ingredient-search, #unused-only, #plurals-only, #private-only, #ingredient-limit"
+      >
+        <input type="hidden" name="change_id" value="{{ change.pk }}">
+        <button type="submit">Undo</button>
+      </form>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No changes yet.</p>
+  {% endif %}
+</section>

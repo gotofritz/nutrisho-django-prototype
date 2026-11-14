@@ -41,7 +41,11 @@ def _create_with_free_name(original: Recipe) -> Recipe:
     while True:
         try:
             with transaction.atomic():
-                new = _clone(original, recipe_name=_copy_name(str(original.recipe_name), n))
+                new = _clone(
+                    original,
+                    recipe_name=_copy_name(str(original.recipe_name), n),
+                    deleted_at=None,
+                )
                 new.save()
                 return new
         except IntegrityError:

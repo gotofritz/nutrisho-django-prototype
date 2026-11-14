@@ -89,7 +89,7 @@ def recipes_using_cuisines(cuisine_ids: Iterable[int]) -> QuerySet:
 
 def recipes_for_cuisines(*, cuisine_ids: Iterable[int], owner: AbstractBaseUser) -> QuerySet:
     """The owner's slice of `recipes_using_cuisines`, as in the ingredient tool."""
-    return recipes_using_cuisines(cuisine_ids).filter(owner=owner)
+    return recipes_using_cuisines(cuisine_ids).filter(owner=owner, deleted_at__isnull=True)
 
 
 def _refuse_parents(cuisine_ids: list[int]) -> None:

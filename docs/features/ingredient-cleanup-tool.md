@@ -114,6 +114,25 @@ result, so all their recipes share it. The confirmation lists what each row
 will fold in; the promoted rows stay ticked. The **Private only** filter
 narrows column 2 to promotion candidates.
 
+**History and Undo (#75).** Delete, Merge, Merge plural, Promote and adding an
+Alias all end in `delete_ingredients`, which rewrites recipes every user owns.
+Each view runs its service inside `journaled(user=request.user)`
+(`services/ingredient_journal.py`) and passes the `Journal` down; the services
+note each step just before writing it: rows about to be deleted (serialised
+whole, aliases that would cascade included), each recipe row and alias about to
+be repointed with its old target, rows created (a merge's new aliases) and
+fields about to change (Promote's `owner`, Merge plural's `plural_name`). The
+outermost service names the change ("Merged “shallot” into “onion”"). On success
+the steps are one `IngredientChange` row; a failure rolls the record back with
+the change. Column 1 lists the five newest under **Recent changes**, refreshed
+out of band by every `_columns_response`. `undo_change` replays the steps
+backwards, but only for the newest change not yet undone, so a later change
+never stands on rows an undo takes back. Deleted rows come back with their old
+ids (SQLite `AUTOINCREMENT` never reuses one); a recipe row goes back only if it
+still points where the change left it, so an edit made since wins. A deleted
+name taken again since refuses the whole undo with a 422 naming it. The
+restored ingredients come back ticked.
+
 **Staff only (#46).** Every route is wrapped in `htmx_staff_required`
 (`recipes/views/_auth.py`): anonymous users go to the login page through the
 login middleware, a signed-in user who is not `is_staff` gets 403. An htmx request gets a short

@@ -12,7 +12,8 @@ A personal recipe manager. Browse, edit, and organise your recipes in one place.
 
 - Keeps each person's recipes in their own account, behind a login
 - Write, edit, duplicate and delete recipes; every field, step and ingredient
-  is edited in place on the recipe page
+  is edited in place on the recipe page. A deleted recipe goes to the Trash:
+  Undo it straight away, or restore it from there later
 - Group ingredients, note a substitute (**2 onions or shallots**), give steps
   optional titles, and merge or split steps
 - Tag recipes, give each a cuisine and a source; a web address links to the page
@@ -133,6 +134,12 @@ Tick one or more ingredients, then:
   stores the ingredient itself, so recipes always read `aubergine`. Add an alias
   that already exists as an ingredient and that ingredient is merged in, recipes
   and all. Aliases belong to global ingredients: promote a private one first.
+
+Every Delete, Merge, Merge plural, Promote and Alias is listed under **Recent
+changes** in the first column. **Undo** on the newest one puts it back exactly:
+the ingredients return, ticked, and every recipe that used them points at them
+again, unless someone has changed that line since. Undo again to step further
+back.
 
 Typing in the search box filters the list; the counts above each column tell you
 how many ingredients matched and how many you have selected.
