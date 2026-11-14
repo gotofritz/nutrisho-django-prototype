@@ -7,6 +7,7 @@
   <button type="submit">Save</button>
   <button
     type="button"
+    data-escape
     hx-get="{% url 'recipes:field_display' recipe.id field_name %}"
     hx-target="closest form"
     hx-swap="outerHTML"

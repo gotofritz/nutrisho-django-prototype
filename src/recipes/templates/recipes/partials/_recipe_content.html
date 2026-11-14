@@ -3,6 +3,7 @@
 {% comment %}
 The sheet is the printed recipe and keeps its look (#76); the tools that act on
 it sit beside it in the margin, and previous/next sit at the foot of the page.
+It opens to be read; with `reading` false (?edit=1) every line is editable (#58).
 {% endcomment %}
 <div class="recipe-page">
 <main class="recipe-contents">
@@ -10,18 +11,20 @@ it sit beside it in the margin, and previous/next sit at the foot of the page.
     <h1 class="recipe-title" tabindex="-1">
       {% include "./_field_display.html" with field_name="recipe_name" value=recipe.recipe_name %}
     </h1>
-    <h2 class="visually-hidden">Method</h2>
+    <h2 class="sheet-heading">Method</h2>
     {% include "./_steps_block.html" %}
+    {% if not reading %}
     <button
       hx-post="{% url 'recipes:step_add' recipe.id %}"
       hx-target=".recipe-steps"
       hx-swap="beforeend"
       class="btn-add"
     >+ Add step</button>
+    {% endif %}
   </div>
 
   <div class="sidebar">
-    <h2 class="visually-hidden">Ingredients</h2>
+    <h2 class="sheet-heading">Ingredients</h2>
     {% if scale %}
     <p class="serves">Serves {{ target_servings }}</p>
     <p class="scaled-note">scaled from {{ recipe.servings }}<span class="no-print">, not saved &middot; <a href="{{ recipe.get_absolute_url }}">Reset</a></span></p>
@@ -34,12 +37,14 @@ it sit beside it in the margin, and previous/next sit at the foot of the page.
       <div id="groups-list">
         {% include "./_groups_list.html" %}
       </div>
+      {% if not reading %}
       <button
         hx-post="{% url 'recipes:group_add' recipe.id %}"
         hx-target="#groups-list"
         hx-swap="beforeend"
         class="btn-add"
       >+ Add group</button>
+      {% endif %}
     </div>
     {% endif %}
     <div class="recipe-description">

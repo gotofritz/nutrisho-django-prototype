@@ -38,6 +38,7 @@
     {% if iir %}
     <button
       type="button"
+      data-escape
       hx-get="{% url 'recipes:ingredient_display' recipe.id iir.id %}"
       hx-target="closest div"
       hx-swap="outerHTML"
@@ -49,7 +50,7 @@
       hx-swap="outerHTML"
     >Delete</button>
     {% else %}
-    <button type="button" data-cancel-draft="div">Cancel</button>
+    <button type="button" data-escape data-cancel-draft="div">Cancel</button>
     {% endif %}
   </form>
 </div>

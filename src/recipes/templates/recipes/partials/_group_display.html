@@ -1,13 +1,26 @@
+{% comment %}
+An ingredient group's name. Read mode (#58) shows the name alone, and nothing
+for a recipe's one unnamed group; edit mode makes it a button that opens its
+editor (#60), with the move buttons.
+{% endcomment %}
+{% if reading %}
+<div id="group-{{ group.id }}" class="ingredient-group">
+  {% if group.group_name %}<h3 class="group-name">{{ group.group_name }}</h3>{% endif %}
+</div>
+{% else %}
 <div
   id="group-{{ group.id }}"
   class="ingredient-group editable-row"
 >
-  <h3
-    class="editable group-name"
-    hx-get="{% url 'recipes:group_edit' recipe.id group.id %}"
-    hx-target="closest div.ingredient-group"
-    hx-swap="outerHTML"
-  >{{ group.group_name|default:"—" }}</h3>
+  <h3 class="group-name">
+    <button
+      type="button"
+      class="editable"
+      hx-get="{% url 'recipes:group_edit' recipe.id group.id %}"
+      hx-target="closest div.ingredient-group"
+      hx-swap="outerHTML"
+    >{{ group.group_name|default:"—" }}</button>
+  </h3>
   <span class="move-btns">
     <button
       id="group-{{ group.id }}-up"
@@ -25,3 +38,4 @@
     >↓</button>
   </span>
 </div>
+{% endif %}

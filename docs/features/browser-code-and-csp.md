@@ -12,7 +12,7 @@ delegated to `document` and does nothing on a page without its markup.
 Templates opt in with data attributes, never with inline code:
 `data-cancel-draft`, `data-close-panel`, `data-panel-toggle`,
 `data-position-in`/`-of`/`-row`, `data-split-at`, `data-indeterminate`,
-`data-clear-history`, `data-dismiss-toast` and `data-toast-text` (the header of
+`data-clear-history`, `data-dismiss-toast`, `data-toast-text` and `data-escape` (the header of
 `app.js` lists what each does).
 
 Django's `ContentSecurityPolicyMiddleware` enforces `SECURE_CSP` (in
@@ -46,7 +46,9 @@ drives the app in Chromium through `pytest-playwright`, against pytest-django's
 editing, moving, splitting (emoji and a line break before the cursor), merging
 and bulk-deleting steps; adding a group and an ingredient and moving a ticked
 ingredient into it; showing other servings; the save-error banner on a 404 and
-on a dropped connection; and a merge in the ingredient clean-up tool. Every
+on a dropped connection; a merge in the ingredient clean-up tool; and the
+recipe page's read mode, editing from the keyboard (Enter, Escape) and the
+phone layout (no sideways scroll, ingredients above the steps). Every
 test also fails on an uncaught script error or a CSP violation in the console.
 
 They are marked `e2e`, which the default pytest run (and so `make qa` and the

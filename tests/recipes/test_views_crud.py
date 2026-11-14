@@ -203,7 +203,7 @@ def test_recipe_new_htmx_post_valid_returns_hx_redirect(auth_client, user):
     assert response.status_code == 200
     assert "HX-Redirect" in response
     recipe = Recipe.objects.get(recipe_name="HTMX New Recipe")
-    assert response["HX-Redirect"] == recipe.get_absolute_url()
+    assert response["HX-Redirect"] == recipe.get_absolute_url() + "?edit=1"
 
 
 # --- Metadata edit ---

@@ -29,6 +29,7 @@
     >Split at cursor</button>
     <button
       type="button"
+      data-escape
       hx-get="{% url 'recipes:step_display' recipe.id step.id %}"
       hx-target="closest li"
       hx-swap="outerHTML"
@@ -40,7 +41,7 @@
       hx-swap="outerHTML"
     >Delete</button>
     {% else %}
-    <button type="button" data-cancel-draft="li">Cancel</button>
+    <button type="button" data-escape data-cancel-draft="li">Cancel</button>
     {% endif %}
   </form>
 </li>

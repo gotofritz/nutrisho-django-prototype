@@ -1,12 +1,20 @@
 {% load recipe_filters %}
+{% comment %}
+A step. Read mode (#58) shows its text alone; edit mode makes the text a button
+that opens its editor (#60), with the row's tick box and move buttons.
+{% endcomment %}
 <li id="step-{{ step.id }}" class="step">
+  {% if reading %}
+  <span class="step-content">{% if step.step_title %}<span class="step-title">{{ step.step_title }}</span>: {% endif %}{{ step.step_text|safe_step_html }}</span>
+  {% else %}
   <div class="editable-row">
-    <span
+    <button
+      type="button"
       class="editable step-content"
       hx-get="{% url 'recipes:step_edit' recipe.id step.id %}"
       hx-target="closest li"
       hx-swap="outerHTML"
-    >{% if step.step_title %}<span class="step-title">{{ step.step_title }}</span>: {% endif %}{{ step.step_text|safe_step_html }}</span>
+    >{% if step.step_title %}<span class="step-title">{{ step.step_title }}</span>: {% endif %}{{ step.step_text|safe_step_html }}</button>
     <span class="step-check">
       <input type="checkbox" class="step-select" name="step_ids" value="{{ step.id }}" aria-label="Select step: {% firstof step.step_title step.step_text|striptags|truncatewords:6 %}">
     </span>
@@ -27,4 +35,5 @@
       >↓</button>
     </span>
   </div>
+  {% endif %}
 </li>

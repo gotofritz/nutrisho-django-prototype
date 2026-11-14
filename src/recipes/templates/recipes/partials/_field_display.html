@@ -1,6 +1,11 @@
 {% load recipe_filters %}
-<span
+{% comment %}
+A recipe field. Read mode (#58) shows the value, or nothing; edit mode makes it
+a button that opens its editor (#60), with a dash to click when it is empty.
+{% endcomment %}
+{% if reading %}{% if value %}<span class="field-{{ field_name }}">{% if field_name == "recipe_name" %}{{ value|safe_title_html }}{% elif field_name == "short_description" %}{{ value|safe_blurb_html }}{% else %}{{ value }}{% endif %}</span>{% endif %}{% else %}<button
+  type="button"
   hx-get="{% url 'recipes:field_edit' recipe.id field_name %}"
   hx-swap="outerHTML"
   class="editable field-{{ field_name }}"{% if not value %} data-empty{% endif %}
->{% if not value %}—{% elif field_name == "recipe_name" %}{{ value|safe_title_html }}{% elif field_name == "short_description" %}{{ value|safe_blurb_html }}{% else %}{{ value }}{% endif %}</span>
+>{% if not value %}—{% elif field_name == "recipe_name" %}{{ value|safe_title_html }}{% elif field_name == "short_description" %}{{ value|safe_blurb_html }}{% else %}{{ value }}{% endif %}</button>{% endif %}

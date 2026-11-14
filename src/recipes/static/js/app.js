@@ -16,6 +16,7 @@
 //   data-clear-history                  drops htmx's localStorage snapshots
 //   data-dismiss-toast                  removes the toast it sits in
 //   data-toast-text                     a toast's text, read out on arrival
+//   data-escape                         Escape in its form presses it (Cancel)
 (function () {
   'use strict';
 
@@ -266,6 +267,17 @@
       syncPanelToggles();
       var toggle = document.querySelector('[aria-controls="' + panelId + '"]');
       if (toggle) toggle.focus();
+    }
+  });
+  // Escape in an inline editor presses its Cancel (#60), which puts the line
+  // back and, through the focus handling above, focus on it.
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' || e.defaultPrevented || !e.target.closest) return;
+    var form = e.target.closest('form');
+    var cancel = form && form.querySelector('[data-escape]');
+    if (cancel) {
+      e.preventDefault();
+      cancel.click();
     }
   });
   // A toggle says whether its panel is open: open means the panel has content.

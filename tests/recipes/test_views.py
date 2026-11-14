@@ -83,9 +83,9 @@ def test_recipe_nav_wraps_at_boundaries(auth_client, two_recipes):
 
 @pytest.mark.django_db
 def test_serves_field_always_editable(auth_client, user):
-    """Detail page always shows the Serves inline-edit widget."""
+    """In edit mode the page always shows the Serves inline-edit widget."""
     r = Recipe.objects.create(recipe_name="Mystery Soup", owner=user)
-    response = auth_client.get(f"/recipes/{r.pk}/")
+    response = auth_client.get(f"/recipes/{r.pk}/?edit=1")
     assert response.status_code == 200
     content = response.content.decode()
     assert "Serves" in content
@@ -107,7 +107,7 @@ def test_serves_label_shown_when_servings_set(auth_client, user):
 def test_field_display_has_data_empty_when_value_blank(auth_client, user):
     """Empty editable fields get data-empty attr so print CSS can hide them."""
     r = Recipe.objects.create(recipe_name="No Desc", owner=user, short_description="")
-    response = auth_client.get(f"/recipes/{r.pk}/")
+    response = auth_client.get(f"/recipes/{r.pk}/?edit=1")
     content = response.content.decode()
     assert 'class="editable field-short_description" data-empty' in content
 
@@ -123,8 +123,8 @@ def test_field_display_no_data_empty_when_value_present(auth_client, user):
 
 @pytest.mark.django_db
 def test_recipe_detail_has_inline_edit_triggers(auth_client, recipe):
-    """Recipe detail page includes hx-get triggers for field inline editing."""
-    response = auth_client.get(f"/recipes/{recipe.pk}/")
+    """In edit mode the recipe page includes hx-get triggers for field inline editing."""
+    response = auth_client.get(f"/recipes/{recipe.pk}/?edit=1")
     content = response.content.decode()
     field_edit_url = f"/recipes/{recipe.pk}/field/recipe_name/edit/"
     assert field_edit_url in content

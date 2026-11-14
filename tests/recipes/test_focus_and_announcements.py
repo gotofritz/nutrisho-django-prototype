@@ -184,7 +184,7 @@ def test_delete_panel_autofocuses_cancel(auth_client, recipe):
 @pytest.mark.django_db
 def test_move_buttons_have_stable_ids(auth_client, recipe, step, group, iir):
     """The ids let htmx refocus a move button after the list is re-rendered."""
-    html = auth_client.get(recipe.get_absolute_url()).content.decode()
+    html = auth_client.get(recipe.get_absolute_url() + "?edit=1").content.decode()
     for prefix in (f"step-{step.pk}", f"iir-{iir.pk}", f"group-{group.pk}"):
         assert f'id="{prefix}-up"' in html
         assert f'id="{prefix}-down"' in html
@@ -206,7 +206,7 @@ def test_step_move_keeps_the_button_ids(auth_client, recipe, step):
 @pytest.mark.parametrize("panel", ["metadata-panel", "scale-panel", "delete-panel"])
 def test_panel_toggles_name_their_panel(auth_client, recipe, panel):
     """Closing a panel sends focus back to the toggle that names it."""
-    html = auth_client.get(recipe.get_absolute_url()).content.decode()
+    html = auth_client.get(recipe.get_absolute_url() + "?edit=1").content.decode()
     assert f'aria-controls="{panel}"' in html
 
 

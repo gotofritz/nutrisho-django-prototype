@@ -157,7 +157,7 @@ def test_recipe_page_leaves_missing_quantities_blank(auth_client, recipe, make_i
 @pytest.mark.django_db
 def test_recipe_page_at_stored_servings_is_the_normal_page(auth_client, recipe, iir):
     """?servings equal to the stored count is not scaling: the editable page."""
-    content = auth_client.get(f"/recipes/{recipe.pk}/?servings=4").content.decode()
+    content = auth_client.get(f"/recipes/{recipe.pk}/?servings=4&edit=1").content.decode()
     assert "scaled-note" not in content
     assert f"/recipes/{recipe.pk}/ingredients/{iir.pk}/edit/" in content
 
@@ -308,7 +308,7 @@ def test_scale_copy_htmx_redirects_to_the_copy(auth_client, recipe, iir):
     response = _copy(auth_client, recipe, "6", HTTP_HX_REQUEST="true")
     copy = Recipe.objects.exclude(pk=recipe.pk).get()
     assert response.status_code == 200
-    assert response["HX-Redirect"] == copy.get_absolute_url()
+    assert response["HX-Redirect"] == copy.get_absolute_url() + "?edit=1"
 
 
 @pytest.mark.django_db
@@ -317,7 +317,7 @@ def test_scale_copy_non_htmx_redirects_to_the_copy(auth_client, recipe, iir):
     response = _copy(auth_client, recipe, "6")
     copy = Recipe.objects.exclude(pk=recipe.pk).get()
     assert response.status_code == 302
-    assert response["Location"] == copy.get_absolute_url()
+    assert response["Location"] == copy.get_absolute_url() + "?edit=1"
 
 
 @pytest.mark.parametrize("raw", ["abc", "0", "-1", "1.5", "99999", ""])

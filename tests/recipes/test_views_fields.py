@@ -237,7 +237,7 @@ def test_field_display_renders_title_formatting(auth_client, recipe):
     recipe.recipe_name = "<u>Ragú</u> <s>old</s> <script>x()</script>"
     recipe.save()
     content = auth_client.get(f"/recipes/{recipe.pk}/field/recipe_name/").content.decode()
-    assert "<u>Ragú</u> <s>old</s> x()</span>" in content
+    assert "<u>Ragú</u> <s>old</s> x()</button>" in content
     assert "<script>" not in content
 
 
@@ -247,7 +247,7 @@ def test_field_display_renders_blurb_formatting(auth_client, recipe):
     recipe.short_description = "<b>Rich</b> and <i>quick</i>\n<script>x()</script>"
     recipe.save()
     content = auth_client.get(f"/recipes/{recipe.pk}/field/short_description/").content.decode()
-    assert "<b>Rich</b> and <i>quick</i><br>x()</span>" in content
+    assert "<b>Rich</b> and <i>quick</i><br>x()</button>" in content
     assert "<script>" not in content
 
 
@@ -256,14 +256,14 @@ def test_field_display_empty_blurb_shows_placeholder(auth_client, recipe):
     """An empty blurb still shows the dash placeholder."""
     content = auth_client.get(f"/recipes/{recipe.pk}/field/short_description/").content.decode()
     assert "data-empty" in content
-    assert ">—</span>" in content
+    assert ">—</button>" in content
 
 
 @pytest.mark.django_db
 def test_field_display_servings_unchanged(auth_client, recipe):
     """Servings render as plain text, as before."""
     content = auth_client.get(f"/recipes/{recipe.pk}/field/servings/").content.decode()
-    assert ">2</span>" in content
+    assert ">2</button>" in content
 
 
 @pytest.mark.django_db

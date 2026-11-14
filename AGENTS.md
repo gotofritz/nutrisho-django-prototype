@@ -54,6 +54,9 @@ Easy to break, and not obvious from any one file:
   needs `@login_not_required` and an entry in `PUBLIC_ROUTES` in
   `tests/test_route_access.py`; a new path parameter needs a value in that
   test's `path_values` fixture.
+- The recipe page opens in read mode (`reading`, #58), which leaves every
+  editing control out; `?edit=1` is edit mode. Partial endpoints never set
+  `reading`, so a display partial renders editable unless told otherwise.
 - Load a recipe with `owned_recipe(request=..., recipe_id=...)` and its child
   rows through it. Never look a recipe up by id alone.
 - Deleting a recipe moves it to the trash (`Recipe.deleted_at`, #75). Anything
@@ -103,7 +106,7 @@ Read the note for the area you are changing; skip the rest.
 
 - `docs/features/auth-and-ownership.md` — login middleware, log-out, owner scoping, route-access test
 - `docs/features/browser-code-and-csp.md` — `app.js`, data attributes, CSP rules, self-hosted assets
-- `docs/features/inline-editing.md` — display/edit/save endpoints, drafts, error banner, focus and announcements, groups, template filters
+- `docs/features/inline-editing.md` — read and edit modes, display/edit/save endpoints, drafts, error banner, focus and announcements, groups, template filters
 - `docs/features/steps.md` — step titles, merge/split/bulk delete, sequencing helpers
 - `docs/features/recipe-duplication.md` — generic row cloning
 - `docs/features/scaling.md` — `?servings=N`, rounding, scaled copies

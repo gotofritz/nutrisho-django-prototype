@@ -19,12 +19,17 @@ from recipes.views._types import AuthedRequest
 
 
 def _redirect_to(request: AuthedRequest, recipe: Recipe) -> HttpResponse:
-    """Go to `recipe`'s page: HX-Redirect for htmx, a plain redirect otherwise."""
+    """Go to `recipe`'s page in edit mode: HX-Redirect for htmx, a plain redirect otherwise.
+
+    Every caller has just made or changed the recipe (new, details, duplicate,
+    scaled copy), so it opens ready to go on editing (#58).
+    """
+    url = recipe.get_absolute_url() + "?edit=1"
     if request.htmx:
         response = HttpResponse()
-        response["HX-Redirect"] = recipe.get_absolute_url()
+        response["HX-Redirect"] = url
         return response
-    return redirect(recipe.get_absolute_url())
+    return redirect(url)
 
 
 @require_http_methods(["GET", "POST"])
