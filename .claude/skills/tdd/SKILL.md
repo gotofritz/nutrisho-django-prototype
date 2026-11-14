@@ -101,7 +101,7 @@ Vague name, tests mock not code.
 **MANDATORY. Never skip.**
 
 ```bash
-uv run pytest tests/recipes/test_models.py::test_slug_from_title_basic -v
+make test ARGS="tests/recipes/test_models.py::test_slug_from_title_basic -v"
 ```
 
 Confirm:
@@ -140,7 +140,7 @@ Don't add features, refactor other code, or "improve" beyond what the failing te
 **MANDATORY.**
 
 ```bash
-uv run pytest tests/ -v
+make test ARGS="-v"
 ```
 
 Confirm:
@@ -229,7 +229,7 @@ def test_slug_from_title_empty_input():
 
 **Verify RED**
 ```bash
-$ uv run pytest tests/recipes/test_utils.py::test_slug_from_title_empty_input -v
+$ make test ARGS="tests/recipes/test_utils.py::test_slug_from_title_empty_input -v"
 FAILED tests/recipes/test_utils.py::test_slug_from_title_empty_input
 AssertionError: assert "-" == ""
 ```
@@ -245,7 +245,7 @@ def slug_from_title(title: str) -> str:
 
 **Verify GREEN**
 ```bash
-$ uv run pytest tests/ -v
+$ make test ARGS="-v"
 PASSED tests/recipes/test_utils.py::test_slug_from_title_empty_input
 ```
 
@@ -259,7 +259,7 @@ Before marking work complete:
 - [ ] Watched each test fail before implementing
 - [ ] Each test failed for the expected reason (feature missing, not import error)
 - [ ] Wrote minimal code to pass each test
-- [ ] All tests pass: `uv run pytest tests/ -v`
+- [ ] All tests pass: `make test ARGS="-v"`
 - [ ] Full QA passes: `make qa`
 
 Can't check all boxes? You skipped TDD. Start over.

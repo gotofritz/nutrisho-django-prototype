@@ -6,12 +6,12 @@ from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]  # the repository; the server is ROOT / "server"
 CLAUDE = ROOT / ".claude"
 SETTINGS = json.loads((CLAUDE / "settings.json").read_text())
 HOOKS = CLAUDE / "hooks"
 AGENTS = (ROOT / "AGENTS.md").read_text()
-FEATURES = ROOT / "docs" / "features"
+FEATURES = ROOT / "server" / "docs" / "features"
 
 
 def hook_commands(settings: dict) -> list[str]:

@@ -29,12 +29,16 @@ dependencies = [
   "sentry-sdk>=2.0"
 ]
 
-# Releases: `make release` runs `cz bump`; see docs/developer-guide.md.
+# Releases: `make release` runs `cz bump`; see docs/developer-guide.md. The
+# server and the extension release separately, so server tags carry a prefix;
+# v0.3.0 predates it (#145).
 [tool.commitizen]
 changelog_incremental = true
+ignored_tag_formats = ["ext-v*"]
+legacy_tag_formats = ["v$version"]
 major_version_zero = true
 name = "cz_conventional_commits"
-tag_format = "v$version"
+tag_format = "server-v$version"
 update_changelog_on_bump = true
 version_provider = "uv"
 version_scheme = "semver2"

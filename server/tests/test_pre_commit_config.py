@@ -5,7 +5,7 @@ from typing import Any
 
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]  # the repository; the server is ROOT / "server"
 CONFIG = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
 
 
@@ -17,10 +17,13 @@ def local_hook(hook_id: str) -> dict[str, Any]:
 
 
 def test_commit_messages_are_checked_through_uv():
-    """The commitizen hook works without a `.venv` at a fixed path."""
+    """The commitizen hook uses the server's tools, from the repository root (#145).
+
+    `--project` rather than `--directory`: git passes the message file relative to the root.
+    """
     hook = local_hook("commitizen")
 
-    assert hook["entry"] == "uv run --frozen cz check"
+    assert hook["entry"] == "uv run --project server --frozen cz check"
     assert hook["stages"] == ["commit-msg"]
 
 

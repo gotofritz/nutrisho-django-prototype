@@ -37,3 +37,19 @@ def test_the_default_run_skips_the_browser_tests():
 
     assert addopts[addopts.index("-m") + 1] == "not e2e"
     assert any(marker.startswith("e2e:") for marker in pytest_options["markers"])
+
+
+REPO = ROOT.parent
+
+
+def test_the_repository_holds_the_server_and_the_extension_side_by_side():
+    """The Django app is self-contained under `server/`; `extension/` waits for the clipper (#145)."""
+    for name in ("pyproject.toml", "uv.lock", "manage.py", "CHANGELOG.md"):
+        assert (ROOT / name).exists(), name
+        assert not (REPO / name).exists(), name
+    assert (REPO / "extension" / "README.md").exists()
+
+
+def test_database_dumps_stay_out_of_git():
+    """`make backup` writes its dumps to `server/docs/`, which the root .gitignore covers."""
+    assert "server/docs/dump-*" in (REPO / ".gitignore").read_text().splitlines()

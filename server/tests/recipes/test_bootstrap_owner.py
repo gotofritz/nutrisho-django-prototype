@@ -149,7 +149,7 @@ def test_addinitialuser_is_gone():
 
 def test_makefile_has_no_hard_coded_credentials():
     """No Makefile target carries a username, email or password."""
-    text = (Path(__file__).resolve().parents[2] / "Makefile").read_text()
+    text = (Path(__file__).resolve().parents[3] / "Makefile").read_text()
 
     assert "createsuperuser" not in text
     assert re.search(r"^bootstrap:", text, re.MULTILINE)
