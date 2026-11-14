@@ -37,7 +37,12 @@ def _get_recipe_nav(recipe_id: int, user: AbstractBaseUser, search: RecipeSearch
 
 @vary_on_headers("HX-Request")
 def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
-    """Show a recipe."""
+    """Show a recipe, to read unless ?edit=1 asks to edit it (#58).
+
+    Read mode leaves every editing control out of the sheet, so a tap while
+    scrolling on a tablet opens nothing. The partial endpoints never set
+    `reading`, so the lines they return are always editable.
+    """
     recipe = get_object_or_404(
         Recipe.objects.live()
         .select_related("cuisine__parent__parent")
@@ -54,6 +59,9 @@ def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     scale = scale_factor(servings=int(recipe.servings), target=target)
     template = "recipes/partials/_recipe_content.html" if request.htmx else "recipes/recipe.html"
     nav = _get_recipe_nav(recipe_id, request.user, search_from(request.GET))
+    # The mode toggle keeps the search, so previous and next still walk the same list.
+    read_url = recipe.get_absolute_url() + nav["query"]
+    edit_url = f"{recipe.get_absolute_url()}?edit=1{nav['query'].replace('?', '&', 1)}"
     return render(
         request,
         template,
@@ -63,5 +71,8 @@ def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
             "search": nav["search"],
             "scale": scale,
             "target_servings": target if scale else None,
+            "reading": request.GET.get("edit") != "1",
+            "read_url": read_url,
+            "edit_url": edit_url,
         },
     )

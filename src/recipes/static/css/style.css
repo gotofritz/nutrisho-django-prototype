@@ -157,7 +157,7 @@
 body {
   background: var(--paper);
   color: var(--ink);
-  font: 18px/1.5 var(--font-text);
+  font: 1.125rem/1.5 var(--font-text);
   margin: 0;
 }
 
@@ -166,7 +166,8 @@ body * {
 }
 
 /* Hidden on screen, still read by assistive tech (the #a11y-status region). */
-.visually-hidden {
+.visually-hidden,
+.sheet-heading {
   border: 0;
   clip-path: inset(50%);
   height: 1px;
@@ -288,7 +289,7 @@ button:disabled {
   background: var(--smock-red);
   color: #fff;
   display: flex;
-  font-size: 15px;
+  font-size: 0.9375rem;
   gap: 12px;
   justify-content: center;
   left: 0;
@@ -726,10 +727,17 @@ body > main > h1:only-child {
   padding-top: 1.75rem;
 }
 
+.margin-tool > a,
 .margin-tool > button,
 .margin-tool > form > button {
   font-size: 1.05rem;
   padding: 0.2em 0;
+}
+
+.mode-toggle > a {
+  font-family: var(--font-caps);
+  letter-spacing: 0.08em;
+  text-decoration: none;
 }
 
 .margin-tool > form > button[type="submit"] {
@@ -851,7 +859,7 @@ body > main > h1:only-child {
   box-shadow: 0 1px 4px rgba(46, 42, 36, 0.15);
   color: #000;
   display: flex;
-  font: 20px Verdana;
+  font: 1.25rem Verdana;
   gap: 20px;
   line-height: normal;
   min-height: 18cm;
@@ -907,26 +915,26 @@ body > main > h1:only-child {
 
 .group-name,
 .group-name input[type="text"] {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: normal;
   margin: 0 0 3px 0;
   text-align: end;
 }
 
 .recipe-title {
-  font-size: 44px;
+  font-size: 2.75rem;
   font-family: "Lobster", "Trebuchet MS";
   font-weight: normal;
   letter-spacing: normal;
-  line-height: 37px;
+  line-height: 2.3125rem;
   margin: 0 0 18px 0;
   text-transform: none;
   width: 100%;
 }
 
 .recipe-title input[type="text"] {
-  line-height: 62px;
-  height: 62px;
+  line-height: 3.875rem;
+  height: 3.875rem;
   margin-top: -10px;
 }
 
@@ -934,13 +942,13 @@ body > main > h1:only-child {
   background: #fff;
   display: flex;
   flex-direction: column;
-  font: 14px "Inconsolata", monospace;
+  font: 0.875rem "Inconsolata", monospace;
   width: 28%;
 }
 
 .recipe-description {
   border-top: var(--hbar);
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.2;
   margin-top: 1em;
   padding: 1em 0 0;
@@ -1055,6 +1063,32 @@ ol.recipe-steps {
   text-decoration: underline;
 }
 
+/*
+ * In edit mode each line is a button (#60), so the keyboard reaches it and
+ * Enter opens its editor; it still looks like the line it edits.
+ */
+.recipe-contents button.editable {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  margin: 0;
+  min-height: 0;
+  padding: 0;
+  text-align: inherit;
+  text-indent: inherit;
+  text-transform: inherit;
+  word-spacing: inherit;
+}
+
+.recipe-contents button.editable:hover {
+  background: var(--honey-wash);
+  color: inherit;
+}
+
 /* Annotation controls stay faint until the row is pointed at, focused or ticked. */
 .move-btns,
 .step-check,
@@ -1080,7 +1114,7 @@ ol.recipe-steps {
   border: 1px solid var(--color-field-border);
   border-radius: 2px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 0.6875rem;
   line-height: 1;
   min-height: 24px;
   min-width: 24px;
@@ -1131,7 +1165,7 @@ ol.recipe-steps {
   align-items: center;
   gap: 6px;
   padding: 4px 6px;
-  font-size: 12px;
+  font-size: 0.75rem;
   flex-wrap: wrap;
 }
 
@@ -1141,12 +1175,12 @@ ol.recipe-steps {
 
 .reassign-panel select,
 .reassign-panel input[type="text"] {
-  font-size: 12px;
+  font-size: 0.75rem;
   width: auto;
 }
 
 .reassign-panel button {
-  font-size: 12px;
+  font-size: 0.75rem;
   cursor: pointer;
 }
 
@@ -1167,17 +1201,94 @@ ol.recipe-steps {
   pointer-events: none;
 }
 
-/* On a phone the sheet stacks: method first, then ingredients. */
-@media (max-width: 760px) {
+/*
+ * On a phone the sheet gives way to a plain list in the site's own type (#58):
+ * the title, the ingredients under their group names, then the steps, then
+ * the notes. The two columns let their children into one flex column
+ * (display: contents) so `order` can put the ingredients first. Screen only:
+ * a printed page is narrow too, and must keep the sheet.
+ */
+@media screen and (max-width: 760px) {
   .recipe-contents {
+    background: none;
+    box-shadow: none;
+    color: inherit;
     flex-direction: column;
+    font: inherit;
+    gap: 0;
     min-height: 0;
-    padding: 20px;
+    padding: 0;
   }
 
   .recipe-directions,
   .sidebar {
-    width: 100%;
+    display: contents;
+    font: inherit;
+  }
+
+  .recipe-title {
+    font: 1.75rem/1.2 var(--font-text);
+    margin: 0 0 1rem;
+    order: -2;
+  }
+
+  .sidebar > * {
+    order: -1;
+  }
+
+  .sidebar > .recipe-description {
+    order: 1;
+  }
+
+  .sheet-heading {
+    clip-path: none;
+    color: var(--marmalade);
+    font: 1.1rem var(--font-caps);
+    height: auto;
+    letter-spacing: 0.08em;
+    margin: 1.5rem 0 0.5rem;
+    overflow: visible;
+    position: static;
+    white-space: normal;
+    width: auto;
+  }
+
+  .sidebar .serves,
+  .sidebar .scaled-note {
+    text-align: start;
+  }
+
+  .recipe-ingredients,
+  .ingredients-list,
+  .recipe-description {
+    border-top: 0;
+  }
+
+  .ingredient-in-group-show,
+  .ingredient-in-group-edit {
+    border-bottom: 0;
+    padding: 0.15rem 0 0.15rem 1.5rem;
+    text-indent: -1.5rem;
+  }
+
+  .ingredient-group {
+    margin: 0.75rem 0 0;
+  }
+
+  .group-name {
+    flex: 1;
+    font-style: italic;
+    text-align: start;
+  }
+
+  .btn-add {
+    align-self: flex-start;
+  }
+
+  .recipe-description {
+    color: var(--pencil);
+    font-size: 0.9rem;
+    margin-top: 2rem;
   }
 }
 

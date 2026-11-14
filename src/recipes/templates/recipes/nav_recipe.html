@@ -1,7 +1,17 @@
 {% comment %}
 The recipe's tools, in the margin beside the sheet (#76). Each opens its panel
-below it; a second click closes it again (data-panel-toggle in app.js).
+below it; a second click closes it again (data-panel-toggle in app.js). The
+first switches between reading the recipe and editing it (#58).
 {% endcomment %}
+<div class="margin-tool mode-toggle">
+  {% if reading %}
+  <a href="{{ edit_url }}">Edit recipe</a>
+  {% else %}
+  <a href="{{ read_url }}">Done editing</a>
+  {% endif %}
+</div>
+
+{% if not reading %}
 <div class="margin-tool">
   <button
     type="button"
@@ -14,6 +24,7 @@ below it; a second click closes it again (data-panel-toggle in app.js).
   >Edit details</button>
   <div id="metadata-panel"></div>
 </div>
+{% endif %}
 
 <div class="margin-tool">
   <button
@@ -49,4 +60,6 @@ below it; a second click closes it again (data-panel-toggle in app.js).
   <div id="delete-panel"></div>
 </div>
 
-<p class="margin-hint">Click any line of the recipe to change it. Tick steps or ingredients to merge, move or remove them.</p>
+{% if not reading %}
+<p class="margin-hint">Click any line of the recipe, or tab to it and press Enter, to change it; Escape cancels. Tick steps or ingredients to merge, move or remove them.</p>
+{% endif %}

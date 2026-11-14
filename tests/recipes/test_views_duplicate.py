@@ -138,7 +138,7 @@ def test_duplicate_redirects_to_copy(auth_client, recipe):
     response = auth_client.post(f"/recipes/{recipe.pk}/duplicate/")
     copy = Recipe.objects.exclude(pk=recipe.pk).get()
     assert response.status_code == 302
-    assert response["Location"] == copy.get_absolute_url()
+    assert response["Location"] == copy.get_absolute_url() + "?edit=1"
 
 
 @pytest.mark.django_db
@@ -148,7 +148,7 @@ def test_duplicate_htmx_returns_hx_redirect(auth_client, recipe):
     copy = Recipe.objects.exclude(pk=recipe.pk).get()
     assert response.status_code == 200
     assert "HX-Redirect" in response
-    assert response["HX-Redirect"] == copy.get_absolute_url()
+    assert response["HX-Redirect"] == copy.get_absolute_url() + "?edit=1"
 
 
 @pytest.mark.django_db

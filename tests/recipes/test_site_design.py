@@ -193,7 +193,7 @@ def test_login_page_shows_the_plate_and_copyright(client: Client):
 @pytest.mark.django_db
 def test_recipe_tools_sit_in_the_margin_outside_the_sheet(auth_client: Client, recipe: Recipe):
     """The sheet is the printed recipe; the tools that act on it sit beside it."""
-    html = auth_client.get(recipe.get_absolute_url()).content.decode()
+    html = auth_client.get(recipe.get_absolute_url() + "?edit=1").content.decode()
     sheet = html[html.index("<main") : html.index("</main>")]
     margin = re.search(
         r'<aside[^>]*aria-label="Recipe tools"[^>]*>(.*?)</aside>', html, flags=re.DOTALL
@@ -243,7 +243,7 @@ def test_page_turn_arrows_sit_either_side_of_the_recipe(auth_client: Client, rec
 @pytest.mark.django_db
 def test_margin_toggles_say_whether_their_panel_is_open(auth_client: Client, recipe: Recipe):
     """Each margin toggle starts closed; app.js keeps aria-expanded in step with its panel."""
-    html = auth_client.get(recipe.get_absolute_url()).content.decode()
+    html = auth_client.get(recipe.get_absolute_url() + "?edit=1").content.decode()
     toggles = re.findall(r"<button[^>]*data-panel-toggle[^>]*>", html, flags=re.DOTALL)
 
     assert len(toggles) == 3
@@ -259,7 +259,7 @@ def test_row_checkboxes_and_move_buttons_name_their_row(
     add_step(recipe=recipe, text="Sweat the leeks in butter until soft.", title="Leeks")
     add_step(recipe=recipe, text="Add the stock and simmer.")
     add_ingredient(recipe=recipe, ingredient=make_ingredient("leek"))
-    html = auth_client.get(recipe.get_absolute_url()).content.decode()
+    html = auth_client.get(recipe.get_absolute_url() + "?edit=1").content.decode()
     group = IngredientGroup.objects.get(recipe=recipe)
 
     for label in (

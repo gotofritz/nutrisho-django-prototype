@@ -1,5 +1,25 @@
 # Inline editing
 
+## Read mode and edit mode (#58)
+
+A recipe page opens to be read: `recipe` passes `reading=True`, and every
+display partial then leaves out its editor trigger, tick box and move buttons,
+and the sheet its `+ Add` buttons and selection panels. A tap while scrolling on
+a kitchen tablet opens nothing. `?edit=1` is edit mode; Edit recipe and Done
+editing, first in the margin, switch between the two, keeping the search in the
+query string so previous and next still walk the same list. Edit details shows
+in edit mode only. A recipe just created, duplicated, saved from Edit details or
+copied at other servings opens in edit mode (`_redirect_to`).
+
+The partial endpoints never set `reading`, so what they return is always
+editable: they are only reached from edit mode. A new display partial follows
+the same rule (`{% if reading %}…{% else %}…{% endif %}`).
+
+In edit mode each line's trigger is a `<button type="button" class="editable">`
+(#60), styled to look like the line, so Tab reaches it and Enter or Space opens
+its editor. Escape in an open editor presses its Cancel (`data-escape`), which
+puts the line back with focus on it, or drops an unsaved draft.
+
 ## Inline Editing Pattern
 
 Each editable entity (field, step, ingredient, group) has three endpoints:
@@ -13,7 +33,7 @@ HTMX swaps partials in place (`hx-swap="outerHTML"`). The `+ Add` buttons (`hx-p
 
 Failed requests are not swapped: the `htmx-config` meta in `base.html` swaps 2xx/3xx and 422 (validation errors re-render the edit form) and marks everything else as an error with `swap: false`, so an open edit form keeps the typed text. One global listener in `app.js` catches `htmx:responseError`, `htmx:sendError` and `htmx:timeout` and shows the fixed `#save-error` banner ("Your change was not saved." for writes, "That did not load." for GETs), with a reload hint on 403/404 (stale CSRF token, row deleted in another tab) and a connection hint on network errors. It is dismissible and hides itself when a later write succeeds. With `DEBUG=True`, django-htmx's debug script replaces the page with Django's error page on a 4xx/5xx before the banner can show, so check the banner with `DEBUG=False`.
 
-Focus and announcements after swaps (#61) also live in `app.js`. htmx itself refocuses an element whose id survives a swap, which is why the ↑/↓ buttons carry stable ids (`step-<id>-up`, `iir-<id>-down`, …) and the cuisine tool's checkboxes `cuisine-pick-<id>`, and it focuses `[autofocus]` in new content: the first field of every inline form gets `autofocus` from its form class (the Cancel button, in the delete panel). Anything else that removes the focused element (Save, Cancel, Delete) would drop focus to `<body>`, so a `htmx:beforeSwap` listener remembers the spot and `htmx:afterRequest` focuses what replaced it (its `.editable`, made focusable with `tabindex="-1"`) or the nearest surviving neighbour; unsaved drafts (`data-cancel-draft`) and panels (`data-close-panel`, back to the toggle named by `aria-controls`) do the same without a request. A form re-rendered with errors focuses its first `aria-invalid` field; the hand-rendered `ingredient_name` and `cuisine_name` inputs set `aria-invalid`/`aria-describedby` themselves, matching Django's own widgets. A boosted page swap focuses the page's `<h1 tabindex="-1">`, or announces the page title when there is none or an `[autofocus]` field took focus.
+Focus and announcements after swaps (#61) also live in `app.js`. htmx itself refocuses an element whose id survives a swap, which is why the ↑/↓ buttons carry stable ids (`step-<id>-up`, `iir-<id>-down`, …) and the cuisine tool's checkboxes `cuisine-pick-<id>`, and it focuses `[autofocus]` in new content: the first field of every inline form gets `autofocus` from its form class (the Cancel button, in the delete panel). Anything else that removes the focused element (Save, Cancel, Delete) would drop focus to `<body>`, so a `htmx:beforeSwap` listener remembers the spot and `htmx:afterRequest` focuses what replaced it (its `.editable` button) or the nearest surviving neighbour; unsaved drafts (`data-cancel-draft`) and panels (`data-close-panel`, back to the toggle named by `aria-controls`) do the same without a request. A form re-rendered with errors focuses its first `aria-invalid` field; the hand-rendered `ingredient_name` and `cuisine_name` inputs set `aria-invalid`/`aria-describedby` themselves, matching Django's own widgets. A boosted page swap focuses the page's `<h1 tabindex="-1">`, or announces the page title when there is none or an `[autofocus]` field took focus.
 
 Announcements go through one polite live region, `#a11y-status`, that is always in the page, since a region swapped in with its text already set is often not read out. It and the `#save-error` banner live in `partials/_page_regions.html`, which `_recipe_content.html` renders again for a boosted visit because that partial replaces the whole `<body>`. The text of any `[data-announce]` element in swapped content (the clean-up tools' counts, "Saved") is read out after settle; views announce what a swap cannot show, such as a deletion, with `announce()` (`recipes/views/_announce.py`), which sets an `announce` event in `HX-Trigger`. Every `.form-error` is `role="alert"`.
 

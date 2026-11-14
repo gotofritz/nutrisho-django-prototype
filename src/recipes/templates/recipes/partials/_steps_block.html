@@ -1,5 +1,6 @@
 <div id="steps-block">
   {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+  {% if not reading %}
   <div id="steps-panel" class="reassign-panel no-print" hidden>
     <span id="steps-panel-count"></span>
     <button
@@ -20,6 +21,7 @@
     >Delete</button>
     <button type="button" id="steps-cancel">Cancel</button>
   </div>
+  {% endif %}
   <ol class="recipe-steps" id="steps-list">
     {% include "./_steps_list.html" %}
   </ol>

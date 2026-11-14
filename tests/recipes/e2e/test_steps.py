@@ -17,7 +17,7 @@ def recipe(make_recipe, user) -> Recipe:
 
 def _open(page: Page, recipe: Recipe) -> Locator:
     """Open the recipe page and return its step texts, in page order."""
-    page.goto(f"/recipes/{recipe.pk}/")
+    page.goto(f"/recipes/{recipe.pk}/?edit=1")
     return page.locator("#steps-list > li.step .step-content")
 
 

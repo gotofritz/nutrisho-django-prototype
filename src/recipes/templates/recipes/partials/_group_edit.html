@@ -17,6 +17,7 @@
     {% if group %}
     <button
       type="button"
+      data-escape
       hx-get="{% url 'recipes:group_display' recipe.id group.id %}"
       hx-target="closest div"
       hx-swap="outerHTML"
@@ -33,7 +34,7 @@
     {% endwith %}
     {% endif %}
     {% else %}
-    <button type="button" data-cancel-draft="div">Cancel</button>
+    <button type="button" data-escape data-cancel-draft="div">Cancel</button>
     {% endif %}
   </form>
 </div>

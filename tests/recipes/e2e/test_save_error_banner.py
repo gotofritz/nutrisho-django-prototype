@@ -14,7 +14,7 @@ def editing(signed_in: Page, make_recipe, user, add_step) -> Page:
     """The recipe page with its one step's edit form open."""
     recipe = make_recipe(owner=user, name="Bread")
     add_step(recipe=recipe, text="Knead the dough.")
-    signed_in.goto(f"/recipes/{recipe.pk}/")
+    signed_in.goto(f"/recipes/{recipe.pk}/?edit=1")
     signed_in.locator(".step-content").click()
     expect(signed_in.get_by_placeholder("Title (optional)")).to_be_focused()
     settled(signed_in)

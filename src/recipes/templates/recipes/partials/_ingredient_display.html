@@ -1,17 +1,21 @@
 {% load recipe_filters %}
+{% comment %}
+An ingredient row. Read mode (#58) shows the line alone; edit mode makes it a
+button that opens its editor (#60), with the row's tick box and move buttons.
+{% endcomment %}
+{% if reading %}
+<div id="iir-{{ iir.id }}" class="ingredient-in-group-show">
+  <span class="ingredient-content">{% include "./_ingredient_text.html" %}</span>
+</div>
+{% else %}
 <div id="iir-{{ iir.id }}" class="ingredient-in-group-show editable-row">
-  <div
+  <button
+    type="button"
     class="editable ingredient-content"
     hx-get="{% url 'recipes:ingredient_edit' recipe.id iir.id %}"
     hx-target="closest div.ingredient-in-group-show"
     hx-swap="outerHTML"
-  >
-    <span class="ingredient-quantity">{{ iir.quantity|format_quantity }}</span>
-    <span class="ingredient-unit">{{ iir|display_unit }}</span>
-    <span class="ingredient-name">{{ iir|display_ingredient_name }}</span>{% if iir.substitute %} <span class="ingredient-substitute">or {{ iir|display_substitute_name }}</span>{% endif %}{% if iir.ingredient.ingredient_name and iir.preparation %},{% endif %}
-    <span class="ingredient-preparation">{{ iir.preparation|default:"" }}</span>
-    {% if iir.note %}<span class="ingredient-note">({{ iir.note }})</span>{% endif %}
-  </div>
+  >{% include "./_ingredient_text.html" %}</button>
   <span class="ingredient-check">
     <input type="checkbox" class="ingredient-select" name="ingredient_ids" value="{{ iir.id }}" aria-label="Select {{ iir|display_ingredient_name|default:"ingredient" }}">
   </span>
@@ -32,3 +36,4 @@
     >↓</button>
   </span>
 </div>
+{% endif %}

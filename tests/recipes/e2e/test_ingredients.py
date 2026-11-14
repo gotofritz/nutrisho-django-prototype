@@ -20,7 +20,7 @@ def test_adding_an_ingredient_to_a_new_group(
 ):
     """A new group saves in place and takes an ingredient, shown in its plural."""
     add_ingredient(recipe=recipe, ingredient=make_ingredient("beef"), quantity=500)
-    signed_in.goto(f"/recipes/{recipe.pk}/")
+    signed_in.goto(f"/recipes/{recipe.pk}/?edit=1")
 
     signed_in.get_by_role("button", name="+ Add group").click()
     name = signed_in.get_by_label("Group name")
@@ -52,7 +52,7 @@ def test_ticked_ingredients_move_to_a_group_made_on_the_page(
     """The move panel's group list is refreshed out of band when a group is added."""
     add_ingredient(recipe=recipe, ingredient=make_ingredient("beef"), quantity=500)
     add_ingredient(recipe=recipe, ingredient=make_ingredient("tomato"), quantity=4)
-    signed_in.goto(f"/recipes/{recipe.pk}/")
+    signed_in.goto(f"/recipes/{recipe.pk}/?edit=1")
     panel = signed_in.locator("#reassign-panel")
 
     signed_in.get_by_role("button", name="+ Add group").click()
@@ -84,7 +84,7 @@ def test_typing_a_name_fills_the_suggestions(
     add_ingredient(recipe=recipe, ingredient=make_ingredient("beef"), quantity=500)
     for name in ("onion", "spring onion", "shallot", "garlic"):
         make_ingredient(name)
-    signed_in.goto(f"/recipes/{recipe.pk}/")
+    signed_in.goto(f"/recipes/{recipe.pk}/?edit=1")
 
     signed_in.get_by_role("button", name="+ Add ingredient").click()
     expect(signed_in.get_by_label("Quantity")).to_be_focused()
@@ -105,7 +105,7 @@ def test_a_group_s_move_buttons_sit_above_its_dotted_line(
 ):
     """The ↑/↓ beside a group name stay above the dotted line that opens its list."""
     add_ingredient(recipe=recipe, ingredient=make_ingredient("beef"), quantity=500)
-    signed_in.goto(f"/recipes/{recipe.pk}/")
+    signed_in.goto(f"/recipes/{recipe.pk}/?edit=1")
     block = signed_in.locator(".group-block").first
     block.hover()
 

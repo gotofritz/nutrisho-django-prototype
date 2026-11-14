@@ -53,7 +53,7 @@ def test_step_display_has_a_selection_checkbox(auth_client, recipe, steps):
 @pytest.mark.django_db
 def test_recipe_page_has_the_bulk_panel(auth_client, recipe, steps):
     """The recipe page offers Merge and Delete for the checked steps."""
-    content = auth_client.get(f"/recipes/{recipe.pk}/").content.decode()
+    content = auth_client.get(f"/recipes/{recipe.pk}/?edit=1").content.decode()
     assert 'id="steps-block"' in content
     assert f"/recipes/{recipe.pk}/steps/merge/" in content
     assert f"/recipes/{recipe.pk}/steps/bulk-delete/" in content

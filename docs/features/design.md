@@ -51,7 +51,10 @@ wash darker than `--sunflower-wash`.
 - The recipe sheet keeps its own: Lobster for the title, Verdana at 20px for the
   text, Inconsolata for quantities.
 
-All are self-hosted; see `browser-code-and-csp.md`.
+All are self-hosted; see `browser-code-and-csp.md`. Sizes are in `rem`, so the
+browser's font-size setting reaches every page; at the default 16px they match
+the pixel sizes the sheet was drawn in. `tests/recipes/test_read_mode.py`
+refuses a font size in `px`.
 
 ## Pages
 
@@ -67,6 +70,14 @@ All are self-hosted; see `browser-code-and-csp.md`.
   fixed half way down either edge of the window, like turning a page; All
   recipes sits at the foot. Below 1000px the margin goes under the sheet and
   previous and next join All recipes at the foot, with their labels.
+  The page opens to be read (#58); Edit recipe, first in the margin, switches
+  to editing (see `inline-editing.md`).
+- Recipe page on a phone (760px and below, on screen only): no sheet and no
+  Lobster. The recipe is a plain list in the site's own type: the title, the
+  ingredients under their group names, then the method, then the notes. The
+  sheet's columns become `display: contents`, so `order` can put the
+  ingredients first without changing the markup a printed page uses; its
+  visually hidden Method and Ingredients headings (`.sheet-heading`) show.
 - Login (`registration/login.html`): a spread, with the lineout plate on one
   side and the name and form on the other. The copyright sits under the plate
   where a plate's caption would.
@@ -83,4 +94,5 @@ Give it an `alt` that describes the drawing, and its `width` and `height`.
 
 `print.css` hides every `no-print` element and the margin, drops the sheet's
 shadow and prints the sheet on white. A printed recipe looks as it did before
-the redesign.
+the redesign. A printed page is as narrow as a phone, so the phone layout is
+`@media screen` only.
