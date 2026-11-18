@@ -50,14 +50,15 @@ not need it, since readers ignore keys they do not know.
   never changed. A name the user already has on a live recipe gets " Imported"
   (" Imported 2", …), as a restored recipe gets " Restored"; the result says
   which were renamed. A recipe imported into the trash keeps its name.
-- Ingredient and tag names go through `name_resolution` like typed ones
+- Ingredient, tag and unit names go through `name_resolution` like typed ones
   (aliases and plurals included). One the user cannot see becomes private to
   them; a new ingredient takes its display data from the document's
   `ingredients` list, while one that is found keeps its own.
-- Cuisines and units are never created, since staff curate both. An unknown
-  unit is kept as written in `legacy_unit`, where `normalise_units` can pick it
-  up later; an unknown cuisine is left blank. Both come back as warnings, shown
-  on the page and in the endpoint's response.
+- Cuisines are never created, since staff curate them; an unknown cuisine is
+  left blank. A size word or an amount phrase in a row's `unit` (`small`, `to
+  taste`) never becomes a unit: it is kept as written in `legacy_unit`, where
+  `normalise_units` can move it. Both come back as warnings, shown on the page
+  and in the endpoint's response.
 - Steps, groups and rows take their list order (`sequencing.number_in_order`)
   and are written with `bulk_create`, so `Recipe.save()` still runs for the
   recipe itself and keeps `plain_name` current.
@@ -86,7 +87,8 @@ rather than refused, since a page's length is no fault of the user's. `keywords`
 not made into tags: sites fill them for search engines, and each would become a
 private tag. Ingredient lines are split by `utils/ingredient_line.py`: a
 quantity (whole, decimal with point or comma, fraction, mixed, `½`, the low end
-of a range, noted as written), then a unit from the vocabulary (only after a
+of a range, noted as written), then a unit from the global vocabulary (parsing
+knows no owner, so a user's own unit stays part of the name; only after a
 quantity, two words before one, an `of` after it dropped), then the name;
 after the first comma comes the preparation, brackets are a note, and a size
 or an amount phrase moves as the editor would ask (`unit_words.py`).

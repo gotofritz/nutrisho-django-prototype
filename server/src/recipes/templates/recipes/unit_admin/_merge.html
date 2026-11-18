@@ -1,0 +1,33 @@
+<div id="unit-columns" class="columns workspace">
+  {% include "./_selection.html" %}
+  <form
+    hx-post="{% url 'recipes:unit_manage_merge' %}"
+    hx-target="#unit-columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #unit-search, #unit-private-only, #unit-unused-only, #unit-sort"
+  >
+    {% csrf_token %}
+    <p class="merge-intro">
+      Which unit should survive? The others are deleted and every user&rsquo;s rows move to it.
+      A user&rsquo;s own unit can only take units from that user&rsquo;s recipes.
+    </p>
+    <ul class="merge-candidates">
+      {% for row in candidates %}
+      <li class="merge-candidate">
+        <label>
+          <input type="radio" name="survivor_id" value="{{ row.unit.pk }}" {% if forloop.first %}checked{% endif %}>
+          <span class="unit-name">{{ row.unit.name }}</span>
+          {% if row.owner_name %}<span class="unit-detail">({{ row.owner_name }}&rsquo;s own)</span>{% endif %}
+        </label>
+      </li>
+      {% endfor %}
+    </ul>
+    <label>
+      <input type="checkbox" name="keep_aliases" value="1" checked>
+      Keep the other names as spellings of the survivor (shared units only)
+    </label>
+    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+    <button type="submit" class="panel-merge">Merge</button>
+    {% include "./_cancel.html" %}
+  </form>
+</div>

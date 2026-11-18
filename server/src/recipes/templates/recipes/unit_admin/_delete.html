@@ -1,0 +1,31 @@
+<div id="unit-columns" class="columns workspace">
+  {% include "./_selection.html" %}
+  <form
+    hx-post="{% url 'recipes:unit_manage_delete' %}"
+    hx-target="#unit-columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #unit-search, #unit-private-only, #unit-unused-only, #unit-sort"
+  >
+    {% csrf_token %}
+    <p class="delete-summary">
+      Delete {{ victims|length }} unit{{ victims|length|pluralize }}:
+      {% for row in victims %}<span class="delete-victim">{{ row.unit.name }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}
+    </p>
+    {% if affected_count %}
+    <p class="delete-warning">
+      Used in {{ affected_count }} ingredient row{{ affected_count|pluralize }}, across every user.
+      They move to the replacement below, or keep the unit&rsquo;s name as plain text if you pick none.
+    </p>
+    <label for="unit-replacement">Replace with</label>
+    <select name="replacement_id" id="unit-replacement">
+      <option value="">(none: rows keep the name as text)</option>
+      {% for row in replacements %}
+      <option value="{{ row.unit.pk }}">{{ row.unit.name }}</option>
+      {% endfor %}
+    </select>
+    {% endif %}
+    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+    <button type="submit" class="panel-delete">Confirm delete</button>
+    {% include "./_cancel.html" %}
+  </form>
+</div>

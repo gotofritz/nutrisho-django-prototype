@@ -23,6 +23,7 @@ from recipes.models import (
     IngredientInRecipe,
     Recipe,
     Step,
+    Unit,
 )
 
 # Routes an anonymous user may reach. Adding one is a deliberate choice: mark the
@@ -98,6 +99,7 @@ def path_values(owner) -> dict[str, str]:
         ingredient=ingredient, ingredient_group=group, index_in_sequence=0
     )
     cuisine = Cuisine.objects.create(cuisine="route-cuisine")
+    unit = Unit.objects.create(name="route-unit", dimension=Unit.COUNT)
     return {
         "recipe_id": str(recipe.pk),
         "step_id": str(step.pk),
@@ -105,6 +107,7 @@ def path_values(owner) -> dict[str, str]:
         "iir_id": str(iir.pk),
         "ingredient_id": str(ingredient.pk),
         "cuisine_id": str(cuisine.pk),
+        "unit_id": str(unit.pk),
         "field_name": "recipe_name",
         "uidb64": "MQ",
         "token": "set-password",

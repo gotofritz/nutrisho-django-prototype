@@ -90,15 +90,18 @@ Easy to break, and not obvious from any one file:
 - A clean-up tool action that deletes ingredients runs inside
   `journaled(user=...)` and passes its `Journal` down, noting each write before
   it makes it (`services/ingredient_journal.py`), so Undo can take it back.
-- A route that changes a global row (ingredient, tag, cuisine) is staff-only
-  (`htmx_staff_required`); its tests use the `other_user` fixture to show a
-  non-staff user is refused and nothing is written.
+- A route that changes a global row (ingredient, tag, cuisine, unit) is
+  staff-only (`htmx_staff_required`); its tests use the `other_user` fixture to
+  show a non-staff user is refused and nothing is written.
 - Typed ingredient, tag and cuisine names become rows only through
   `services/name_resolution.py`. Names are unique ignoring case, so a raw
   `get_or_create(name=...)` fails.
-- A typed unit becomes `IngredientInRecipe.unit` only through `find_unit`,
-  which never creates one; units and their aliases are staff-curated in admin.
-  Free text from before #67 waits in `legacy_unit` for `normalise_units`.
+- A typed unit becomes `IngredientInRecipe.unit` only through `resolve_unit`
+  (`find_unit` to look one up without creating it), which sees the global
+  units plus the owner's own and makes a private unit on a miss, never from a
+  size word or an amount phrase. Global units and all aliases are
+  staff-curated, in the unit tool or admin. Free text from before #67 waits in
+  `legacy_unit` for `normalise_units`.
 - `index_in_sequence` changes only through `utils/sequencing.py`.
 - A response that walks a recipe's groups or rows renders a recipe from
   `with_ingredients` or a group from `with_rows` (`services/recipe_contents.py`),
@@ -141,7 +144,7 @@ Read the note for the area you are changing; skip the rest.
 - `server/docs/features/scaling.md` — `?servings=N`, rounding, scaled copies
 - `server/docs/features/search.md` — query parsing, matching, filters, plain-text columns, prev/next
 - `server/docs/features/pluralisation.md` — the rule, `plural_name` overrides, when it applies
-- `server/docs/features/units.md` — the unit vocabulary, aliases, unit plurals, the `normalise_units` clean-up
+- `server/docs/features/units.md` — the unit vocabulary, private units, aliases, unit plurals, the staff unit tool, the `normalise_units` clean-up
 - `server/docs/features/shared-vocabularies.md` — global and private ingredients and tags, the cuisine tree and its tool
 - `server/docs/features/ingredient-cleanup-tool.md` — the staff ingredient tool: merge, plurals, aliases, promote, history and Undo
 - `server/docs/features/design.md` — the storybook look: palette, type, page layouts, plates, print

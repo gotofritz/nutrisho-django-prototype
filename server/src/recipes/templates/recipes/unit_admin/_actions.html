@@ -1,0 +1,54 @@
+{% comment %}
+Column 1 actions, re-rendered out of band whenever the selection changes so the
+`disabled` state comes from the server.
+{% endcomment %}
+<div
+  id="unit-actions"
+  class="action-buttons"
+  {% if oob %}hx-swap-oob="true"{% endif %}
+>
+  <button
+    type="button"
+    id="unit-action-add"
+    hx-get="{% url 'recipes:unit_manage_add' %}"
+    hx-target="#unit-columns"
+    hx-swap="outerHTML"
+    hx-include=".unit-pick:checked, #unit-search, #unit-private-only, #unit-unused-only, #unit-sort"
+  >Add</button>
+  <button
+    type="button"
+    id="unit-action-edit"
+    hx-get="{% url 'recipes:unit_manage_edit' %}"
+    hx-target="#unit-columns"
+    hx-swap="outerHTML"
+    hx-include=".unit-pick:checked, #unit-search, #unit-private-only, #unit-unused-only, #unit-sort"
+    {% if selected_count != 1 %}disabled{% endif %}
+  >Edit</button>
+  <button
+    type="button"
+    id="unit-action-promote"
+    hx-get="{% url 'recipes:unit_manage_promote' %}"
+    hx-target="#unit-columns"
+    hx-swap="outerHTML"
+    hx-include=".unit-pick:checked, #unit-search, #unit-private-only, #unit-unused-only, #unit-sort"
+    {% if selected_count < 1 %}disabled{% endif %}
+  >Promote</button>
+  <button
+    type="button"
+    id="unit-action-merge"
+    hx-get="{% url 'recipes:unit_manage_merge' %}"
+    hx-target="#unit-columns"
+    hx-swap="outerHTML"
+    hx-include=".unit-pick:checked, #unit-search, #unit-private-only, #unit-unused-only, #unit-sort"
+    {% if selected_count < 2 %}disabled{% endif %}
+  >Merge</button>
+  <button
+    type="button"
+    id="unit-action-delete"
+    hx-get="{% url 'recipes:unit_manage_delete' %}"
+    hx-target="#unit-columns"
+    hx-swap="outerHTML"
+    hx-include=".unit-pick:checked, #unit-search, #unit-private-only, #unit-unused-only, #unit-sort"
+    {% if selected_count < 1 %}disabled{% endif %}
+  >Delete</button>
+</div>

@@ -1,0 +1,21 @@
+<div id="unit-columns" class="columns workspace">
+  {% include "./_selection.html" %}
+  <form
+    {% if unit %}hx-post="{% url 'recipes:unit_manage_save' unit.pk %}"{% else %}hx-post="{% url 'recipes:unit_manage_add' %}"{% endif %}
+    hx-target="#unit-columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #unit-search, #unit-private-only, #unit-unused-only, #unit-sort"
+  >
+    {% csrf_token %}
+    <p class="unit-form-intro">
+      {% if unit %}
+        Edit <strong>{{ unit.name }}</strong>{% if unit.owner %}, {{ unit.owner.get_username }}&rsquo;s own unit. It stays theirs: promote it to share it{% endif %}.
+      {% else %}
+        Add a unit to the shared list.
+      {% endif %}
+    </p>
+    {{ form.as_p }}
+    <button type="submit" class="panel-save">{% if unit %}Save{% else %}Add{% endif %}</button>
+    {% include "./_cancel.html" %}
+  </form>
+</div>

@@ -1,0 +1,47 @@
+{% load recipe_filters %}
+<div id="unit-columns" class="columns">
+  <div
+    id="col-units"
+    class="col-units"
+    hx-get="{% url 'recipes:unit_manage_columns' %}"
+    hx-trigger="change target:.unit-pick"
+    hx-target="#unit-columns"
+    hx-swap="outerHTML"
+    hx-include=".unit-pick:checked, #unit-search, #unit-private-only, #unit-unused-only, #unit-sort"
+  >
+    <p class="column-count" data-announce>{{ rows|length }} unit{{ rows|length|pluralize }} / {{ selected_count }} selected</p>
+    <ul class="unit-rows">
+      {% for row in rows %}
+      <li class="unit-row">
+        <label>
+          <input
+            type="checkbox"
+            id="unit-pick-{{ row.unit.pk }}"
+            class="unit-pick"
+            name="unit_ids"
+            value="{{ row.unit.pk }}"
+            {% if row.unit.pk in selected_ids %}checked{% endif %}
+          >
+          <span class="unit-name">{{ row.unit.name }}</span>
+          <span class="unit-detail">
+            {% if row.unit.dimension %}{{ row.unit.get_dimension_display|lower }}{% else %}no dimension{% endif %}{% if row.owner_name %}, {{ row.owner_name }}&rsquo;s own{% endif %}{% if row.row_count %}, in {{ row.row_count }} row{{ row.row_count|pluralize }}{% endif %}{% if row.aliases %}; also {{ row.aliases|join:", " }}{% endif %}
+          </span>
+        </label>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div
+    id="col-unit-recipes"
+    class="col-recipes"
+  >
+    <p class="column-count" data-announce>{{ recipes|length }} of your recipes</p>
+    <ul class="recipe-rows">
+      {% for recipe in recipes %}
+      <li class="recipe-row">
+        <a class="recipe-match" href="{% url 'recipes:recipe' recipe.pk %}">{{ recipe.recipe_name|safe_title_html }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>

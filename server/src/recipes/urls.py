@@ -21,6 +21,7 @@ from recipes.views import (
     recipe_steps,
     recipe_transfer,
     recipe_trash,
+    unit_admin,
 )
 from recipes.views._auth import htmx_staff_required
 
@@ -145,6 +146,43 @@ urlpatterns = [
         "cuisines/manage/delete/",
         _staff(cuisine_admin.cuisine_manage_delete),
         name="cuisine_manage_delete",
+    ),
+    # Staff unit tool: the shared unit vocabulary and users' own units (#154).
+    path("units/manage/", _staff(unit_admin.unit_manage), name="unit_manage"),
+    path(
+        "units/manage/columns/",
+        _staff(unit_admin.unit_manage_columns),
+        name="unit_manage_columns",
+    ),
+    path(
+        "units/manage/add/",
+        _staff(unit_admin.unit_manage_add),
+        name="unit_manage_add",
+    ),
+    path(
+        "units/manage/edit/",
+        _staff(unit_admin.unit_manage_edit),
+        name="unit_manage_edit",
+    ),
+    path(
+        "units/manage/promote/",
+        _staff(unit_admin.unit_manage_promote),
+        name="unit_manage_promote",
+    ),
+    path(
+        "units/manage/merge/",
+        _staff(unit_admin.unit_manage_merge),
+        name="unit_manage_merge",
+    ),
+    path(
+        "units/manage/delete/",
+        _staff(unit_admin.unit_manage_delete),
+        name="unit_manage_delete",
+    ),
+    path(
+        "units/manage/<int:unit_id>/save/",
+        _staff(unit_admin.unit_manage_save),
+        name="unit_manage_save",
     ),
     path("<int:recipe_id>/", recipe.recipe, name="recipe"),
     path("<int:recipe_id>/delete/", recipe_crud.recipe_delete, name="delete"),
