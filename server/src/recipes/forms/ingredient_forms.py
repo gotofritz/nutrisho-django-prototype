@@ -4,15 +4,11 @@ from django import forms
 from django.contrib.auth.models import AbstractBaseUser
 from django.urls import reverse_lazy
 
-from recipes.models import IngredientGroup, IngredientInRecipe, Unit
+from recipes.models import IngredientGroup, IngredientInRecipe
 from recipes.models.ingredient import INGREDIENT_NAME_MAX_LENGTH
 from recipes.models.unit import UNIT_NAME_MAX_LENGTH
 from recipes.services.ingredient_groups import resolve_row_names
-from recipes.services.name_resolution import (
-    find_ingredient,
-    find_unit,
-    unit_names,
-)
+from recipes.services.name_resolution import find_ingredient, unit_names
 from recipes.utils.unit_words import not_a_unit
 
 # Both name inputs share one datalist and refill it from the top matches as the
@@ -33,11 +29,12 @@ class IngredientInRecipeForm(forms.ModelForm):
 
     `owner` is the recipe's owner: names resolve to the global list or their
     private rows, and an unknown name becomes private to them (plan 011). The
-    optional substitute (`2 onions or shallots`, #65) resolves the same way. The
-    typed unit resolves to the shared vocabulary and is never created (#67).
+    optional substitute (`2 onions or shallots`, #65) resolves the same way, and
+    so does the unit (#67, #154), except a size word or an amount phrase, which
+    is an error naming the field it belongs in.
 
-    Neither name is written by `save(commit=False)`: resolving may create an
-    ingredient row, so `create_row` and `save_row` do it inside their
+    No name is written by `save(commit=False)`: resolving may create an
+    ingredient or a unit, so `create_row` and `save_row` do it inside their
     transaction, from the cleaned names.
     """
 
@@ -83,8 +80,8 @@ class IngredientInRecipeForm(forms.ModelForm):
 
     @property
     def unit_names(self) -> list[str]:
-        """The vocabulary, for the unit field's datalist."""
-        return unit_names()
+        """The units `owner` sees, for the unit field's datalist."""
+        return unit_names(owner=self._owner)
 
     def clean_quantity(self) -> Decimal | None:
         """Reject negative quantities."""
@@ -94,20 +91,14 @@ class IngredientInRecipeForm(forms.ModelForm):
             raise forms.ValidationError(msg)
         return qty
 
-    def clean_unit(self) -> Unit | None:
-        """The unit the text names; blank is none, and anything else is an error."""
-        text = self.cleaned_data.get("unit") or ""
-        if not text.strip():
-            return None
-        unit = find_unit(text)
-        if unit is not None:
-            return unit
+    def clean_unit(self) -> str:
+        """The typed unit, stripped; a size word or an amount phrase is an error."""
+        text = (self.cleaned_data.get("unit") or "").strip()
         field = not_a_unit(text)
         if field is not None:
-            msg = f"“{text.strip()}” is not a unit: put it under {field}."
-        else:
-            msg = f"“{text.strip()}” is not a unit we know: pick one from the list."
-        raise forms.ValidationError(msg)
+            msg = f"“{text}” is not a unit: put it under {field}."
+            raise forms.ValidationError(msg)
+        return text
 
     def clean(self) -> dict:
         """Refuse a substitute that names the ingredient itself, by any spelling."""
@@ -127,9 +118,8 @@ class IngredientInRecipeForm(forms.ModelForm):
         return found is not None and found == find_ingredient(other, owner=self._owner)
 
     def save(self, commit: bool = True) -> IngredientInRecipe:
-        """Save the row's own fields; with `commit`, resolve both names first."""
+        """Save the row's own fields; with `commit`, resolve the names and the unit first."""
         iir = super().save(commit=False)
-        iir.unit = self.cleaned_data["unit"]
         iir.legacy_unit = ""
         if commit:
             self.resolve_names(iir)
@@ -137,7 +127,7 @@ class IngredientInRecipeForm(forms.ModelForm):
         return iir
 
     def resolve_names(self, iir: IngredientInRecipe) -> None:
-        """Point `iir` at the typed ingredient and substitute, creating either if new.
+        """Point `iir` at the typed ingredient, substitute and unit, creating any that is new.
 
         Call inside the write's transaction, before `iir.save()`.
         """
@@ -146,6 +136,7 @@ class IngredientInRecipeForm(forms.ModelForm):
             owner=self._owner,
             ingredient_name=self.cleaned_data["ingredient_name"],
             substitute_name=self.cleaned_data["substitute_name"],
+            unit_name=self.cleaned_data["unit"],
         )
 
 

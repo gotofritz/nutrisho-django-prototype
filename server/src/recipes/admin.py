@@ -73,10 +73,15 @@ class UnitAliasInline(admin.TabularInline):
 
 @admin.register(Unit)
 class UnitAdmin(admin.ModelAdmin):
-    """The canonical unit vocabulary (#67): what recipe rows point at."""
+    """The unit vocabulary (#67): what recipe rows point at.
 
-    list_display = ("name", "plural", "dimension")
-    list_filter = ("dimension",)
+    Global units have no owner. A user's own unit (#154) becomes global when
+    its owner is cleared, which needs a dimension too.
+    """
+
+    list_display = ("name", "plural", "dimension", "owner")
+    list_filter = ("dimension", ("owner", admin.EmptyFieldListFilter))
+    list_select_related = ("owner",)
     search_fields = ("name", "aliases__alias_name")
     inlines = (UnitAliasInline,)
 

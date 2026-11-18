@@ -94,19 +94,6 @@ def test_import_finds_existing_ingredients_and_leaves_them_alone(user, other_use
 
 
 @pytest.mark.django_db
-def test_import_keeps_an_unknown_unit_as_written(user):
-    """A unit the server lacks is never created: the row keeps it as legacy text."""
-    document = _minimal(
-        ingredient_groups=[{"items": [{"ingredient": "basil", "unit": "bunchlet"}]}]
-    )
-    result = _import(user, document)
-    row = IngredientInRecipe.objects.get(ingredient_group__recipe__owner=user)
-    assert row.unit is None
-    assert row.legacy_unit == "bunchlet"
-    assert result.warnings == ["“Soup”: “bunchlet” is not a unit here, so it is kept as written."]
-
-
-@pytest.mark.django_db
 def test_import_leaves_out_an_unknown_cuisine(user):
     """A cuisine the server lacks is never created; the recipe has none, and says so."""
     result = _import(user, _minimal(cuisine="atlantis.north"))

@@ -39,7 +39,7 @@ def make_iir(group):
             ingredient_group=group,
             index_in_sequence=IngredientInRecipe.objects.filter(ingredient_group=group).count(),
             quantity=quantity,
-            unit=find_unit(unit),
+            unit=find_unit(unit, owner=None),
         )
 
     return _make

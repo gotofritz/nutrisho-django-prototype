@@ -38,7 +38,8 @@ def make_recipe(db):
 def add_ingredient(db):
     """Attach an ingredient to a recipe, creating a default group on demand.
 
-    `unit` is typed text, resolved to the vocabulary as the editor would (#67).
+    `unit` is typed text, resolved to the vocabulary as the editor would (#67):
+    the global units and the recipe owner's own (#154).
     """
 
     def _add(*, recipe, ingredient, substitute=None, quantity=None, unit="") -> IngredientInRecipe:
@@ -49,7 +50,7 @@ def add_ingredient(db):
             ingredient=ingredient,
             substitute=substitute,
             quantity=quantity,
-            unit=find_unit(unit),
+            unit=find_unit(unit, owner=recipe.owner),
             ingredient_group=group,
             index_in_sequence=IngredientInRecipe.objects.filter(ingredient_group=group).count(),
         )
@@ -174,7 +175,7 @@ def rich_recipe(user):
         ingredient=aubergine,
         substitute=Ingredient.objects.create(ingredient_name="courgette-x"),
         quantity=Decimal("1.50"),
-        unit=find_unit("kg"),
+        unit=find_unit("kg", owner=None),
         preparation="cubed",
         note="firm ones",
     )
@@ -191,7 +192,7 @@ def rich_recipe(user):
         index_in_sequence=0,
         ingredient=Ingredient.objects.create(ingredient_name="rigatoni-x"),
         quantity=Decimal(400),
-        unit=find_unit("g"),
+        unit=find_unit("g", owner=None),
     )
     trashed = Recipe.objects.create(recipe_name="Old soup", owner=user, servings=2)
     Recipe.objects.filter(pk=trashed.pk).update(deleted_at=datetime(2025, 5, 6, tzinfo=UTC))

@@ -39,7 +39,7 @@ def iir(group):
         ingredient_group=group,
         index_in_sequence=0,
         quantity=2,
-        unit=find_unit("pcs"),
+        unit=find_unit("pcs", owner=None),
         preparation="diced",
         note="",
     )

@@ -23,7 +23,7 @@ from django.db import transaction
 from django.db.models import Max
 
 from recipes.models import IngredientGroup, IngredientInRecipe, Recipe
-from recipes.services.name_resolution import resolve_ingredient
+from recipes.services.name_resolution import resolve_ingredient, resolve_unit
 from recipes.utils.sequencing import insert_at_index, move_in_sequence, remove_and_compact
 
 _GROUP_NAME_MAX_LENGTH = IngredientGroup._meta.get_field("group_name").max_length  # ty: ignore[unresolved-attribute]  # no Django stubs
@@ -131,17 +131,19 @@ def resolve_row_names(
     owner: AbstractBaseUser,
     ingredient_name: str,
     substitute_name: str = "",
+    unit_name: str = "",
 ) -> None:
-    """Point `row` at the named ingredient and substitute, creating either if new.
+    """Point `row` at the named ingredient, substitute and unit, creating any that is new.
 
-    Names resolve within `owner`'s vocabulary, and a blank substitute clears it.
-    Call inside the write's transaction, before saving the row.
+    Names resolve within `owner`'s vocabulary, and a blank substitute or unit
+    clears it. Call inside the write's transaction, before saving the row.
     """
     row.ingredient = resolve_ingredient(ingredient_name.strip(), owner=owner)  # ty: ignore[invalid-assignment]  # FK descriptor
     substitute_name = substitute_name.strip()
     row.substitute = (  # ty: ignore[invalid-assignment]  # FK descriptor
         resolve_ingredient(substitute_name, owner=owner) if substitute_name else None
     )
+    row.unit = resolve_unit(unit_name, owner=owner)  # ty: ignore[invalid-assignment]  # FK descriptor
 
 
 def create_row(
@@ -151,6 +153,7 @@ def create_row(
     row: IngredientInRecipe,
     ingredient_name: str,
     substitute_name: str = "",
+    unit_name: str = "",
     position: str | None = None,
 ) -> IngredientInRecipe:
     """Add `row`, its own fields already set, to a group at `position`.
@@ -167,6 +170,7 @@ def create_row(
                 owner=recipe.owner,
                 ingredient_name=ingredient_name,
                 substitute_name=substitute_name,
+                unit_name=unit_name,
             )
             row.ingredient_group = group
             insert_at_index(
@@ -185,8 +189,9 @@ def save_row(
     row: IngredientInRecipe,
     ingredient_name: str,
     substitute_name: str = "",
+    unit_name: str = "",
 ) -> None:
-    """Save `row`'s own fields and names, never its group or position.
+    """Save `row`'s own fields, names and unit, never its group or position.
 
     A reassign or move since the form opened is kept. `ObjectDoesNotExist` when
     the row has gone.
@@ -203,6 +208,7 @@ def save_row(
                 owner=recipe.owner,
                 ingredient_name=ingredient_name,
                 substitute_name=substitute_name,
+                unit_name=unit_name,
             )
             row.save(update_fields=_ROW_FIELDS)
     if not found:

@@ -342,13 +342,17 @@ def _read_row(row: _Reader) -> RowDraft:
 
 
 def _unit_checker():
-    """`find_unit` as a yes or no, remembering each answer for this import."""
+    """`find_unit` as a yes or no, remembering each answer for this import.
+
+    Parsing knows no owner, so a line's unit is recognised from the global
+    units only; a user's own unit stays part of the ingredient's name.
+    """
     answers: dict[str, bool] = {}
 
     def is_unit(text: str) -> bool:
         key = text.lower()
         if key not in answers:
-            answers[key] = find_unit(text) is not None
+            answers[key] = find_unit(text, owner=None) is not None
         return answers[key]
 
     return is_unit

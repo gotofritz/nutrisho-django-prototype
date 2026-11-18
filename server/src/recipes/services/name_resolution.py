@@ -3,10 +3,10 @@
 Names are unique ignoring case, so `Onion` typed on a phone that
 auto-capitalises is the stored `onion`, not a second row; and a plural is a
 display form, so `onions` is the stored `onion` too (#66). Lookups are
-case-insensitive and keep the stored spelling; a miss creates an ingredient or
-tag as typed, but never a cuisine or a unit, which only staff add.
-Ingredients and tags are scoped to the recipe's owner: the global list plus
-their own private rows (plan 011).
+case-insensitive and keep the stored spelling; a miss creates an ingredient,
+tag or unit as typed, but never a cuisine, which only staff add.
+Ingredients, tags and units are scoped to the recipe's owner: the global list
+plus their own private rows (plan 011, #154).
 Every editor path goes through here rather than calling `get_or_create` on the
 raw name, which matched case-sensitively and then hit the unique index (#34).
 """
@@ -18,6 +18,7 @@ from django.db.models.functions import Lower
 from recipes.models import Cuisine, Ingredient, IngredientAlias, Tag, Unit, UnitAlias
 from recipes.models.cuisine import MAX_CUISINE_DEPTH, PATH_SEPARATOR
 from recipes.utils.pluralise import pluralise
+from recipes.utils.unit_words import not_a_unit
 
 
 def _visible_ingredients(owner: AbstractBaseUser) -> QuerySet:
@@ -184,29 +185,67 @@ def cuisine_paths() -> list[str]:
     return sorted(cuisine_path_map().values(), key=str.lower)
 
 
-def find_unit(text: str) -> Unit | None:
-    """The unit `text` spells, ignoring case, space and a trailing full stop; never creates one.
+def _visible_units(owner: AbstractBaseUser | None) -> QuerySet:
+    """The global units plus `owner`'s own, global first; only the global ones for None."""
+    visible = Q(owner__isnull=True) if owner is None else Q(owner__isnull=True) | Q(owner=owner)
+    return Unit.objects.filter(visible).order_by(F("owner").asc(nulls_first=True), "pk")
+
+
+def _unit_text(text: str) -> str:
+    """`text` as a unit name: spaces collapsed, a trailing full stop dropped."""
+    return " ".join(text.split()).removesuffix(".").strip()
+
+
+def find_unit(text: str, *, owner: AbstractBaseUser | None) -> Unit | None:
+    """The unit `owner` sees as `text`, ignoring case, space and a trailing full stop.
 
     `Tbsp`, `tbsp.`, `tablespoons` and `tbs` are all `tbsp` (#67): the unit's
-    name, its plural, an alias, or an alias's plural, in that order. The
+    name, its plural, an alias, or an alias's plural, in that order. `owner`
+    sees the global units and their own (#154), a global unit winning, as for
+    ingredients; None sees the global ones only. Never creates a unit. The
     vocabulary is a few dozen rows, so plurals are matched in Python.
     """
-    name = " ".join(text.split()).removesuffix(".").strip()
+    name = _unit_text(text)
     if not name:
         return None
     lowered = name.lower()
-    exact = Unit.objects.filter(name__iexact=name).first()
+    visible = _visible_units(owner)
+    exact = visible.filter(name__iexact=name).first()
     if exact is not None:
         return exact
-    plural = next((u for u in Unit.objects.all() if u.plural.lower() == lowered), None)
+    plural = next((u for u in visible if u.plural.lower() == lowered), None)
     if plural is not None:
         return plural
-    for alias in UnitAlias.objects.select_related("unit").order_by("pk"):
+    aliases = UnitAlias.objects.select_related("unit").filter(unit__owner__isnull=True)
+    for alias in aliases.order_by("pk"):
         if lowered in {str(alias.alias_name).lower(), pluralise(str(alias.alias_name)).lower()}:
             return alias.unit
     return None
 
 
-def unit_names() -> list[str]:
-    """Canonical unit names to suggest in the recipe editor, sorted ignoring case."""
-    return sorted(Unit.objects.values_list("name", flat=True), key=lambda n: (n.lower(), n))
+def resolve_unit(text: str, *, owner: AbstractBaseUser) -> Unit | None:
+    """`find_unit`, or on a miss a new unit private to `owner`, with no dimension (#154).
+
+    None for blank text, and for a size word or an amount phrase (`small`,
+    `to taste`), which belong in the preparation or the note and never become
+    a unit (`utils/unit_words.py`).
+    """
+    name = _unit_text(text)
+    if not name or not_a_unit(name) is not None:
+        return None
+    found = find_unit(name, owner=owner)
+    if found is not None:
+        return found
+    return Unit.objects.create(name=name, owner=owner)
+
+
+def unit_names(*, owner: AbstractBaseUser) -> list[str]:
+    """Unit names to suggest in `owner`'s editor, sorted ignoring case.
+
+    The global units and `owner`'s own; a name they have in both is offered
+    once, in the global spelling, which is the unit it resolves to.
+    """
+    names: dict[str, str] = {}
+    for name in _visible_units(owner).values_list("name", flat=True):
+        names.setdefault(name.lower(), name)
+    return sorted(names.values(), key=lambda n: (n.lower(), n))
