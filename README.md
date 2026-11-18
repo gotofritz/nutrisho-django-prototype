@@ -199,15 +199,17 @@ links `onion` rather than creating an `onions` ingredient.
 
 ## Units
 
-Units come from a fixed list, so `Tbsp`, `tbsp.`, `tbs` and `tablespoons` are
+Units come from a shared list, so `Tbsp`, `tbsp.`, `tbs` and `tablespoons` are
 all stored as `tbsp`. Type any of them in a recipe and the right unit is picked;
 the field suggests the rest. Units read in the plural like ingredients do (**1
 clove**, **2 cloves**), while abbreviations stay as they are (**200 g**).
 
 Sizes and amounts are not units: put `small` or `large` under preparation, and
 `to taste` in the note, with no quantity. The editor tells you if you type one
-in the unit field, and refuses a unit it does not know. Staff add units, and
-other spellings for them, in the admin under **Units**.
+in the unit field. A unit that is not on the list (`punnet`) becomes your own:
+only you see it, until staff add it to the shared list. Staff look after the
+units under **Config → Units**: add, rename, merge or delete them, give them
+other spellings, and share the ones users made.
 
 Units typed before the list existed are still shown as typed. To move them onto
 the list, review what would change, then apply it:

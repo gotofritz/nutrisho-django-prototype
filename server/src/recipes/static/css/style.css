@@ -1331,11 +1331,12 @@ ol.recipe-steps {
 }
 
 /* ---------------------------------------------------------------------------
- * The staff tools: Miller columns for ingredients and cuisines.
+ * The staff tools: Miller columns for ingredients, cuisines and units.
  * ------------------------------------------------------------------------- */
 
 .ingredient-manager,
-.cuisine-manager {
+.cuisine-manager,
+.unit-manager {
   align-items: stretch;
   display: flex;
   gap: 2rem;
@@ -1433,6 +1434,7 @@ ol.recipe-steps {
 
 .col-ingredients,
 .col-cuisines,
+.col-units,
 .col-recipes,
 .col-preview {
   height: 100%;
@@ -1444,7 +1446,8 @@ ol.recipe-steps {
 }
 
 .col-ingredients,
-.col-cuisines {
+.col-cuisines,
+.col-units {
   flex: 0 1 38ch;
 }
 
@@ -1481,6 +1484,7 @@ p.column-count {
 
 .ingredient-rows,
 .cuisine-rows,
+.unit-rows,
 .recipe-rows,
 .promote-rows,
 .merge-candidates,
@@ -1492,7 +1496,8 @@ p.column-count {
 }
 
 .ingredient-row label,
-.cuisine-row label {
+.cuisine-row label,
+.unit-row label {
   align-items: baseline;
   border-radius: var(--wash-radius);
   color: var(--ink);
@@ -1504,12 +1509,14 @@ p.column-count {
 }
 
 .ingredient-row label:has(input:checked),
-.cuisine-row label:has(input:checked) {
+.cuisine-row label:has(input:checked),
+.unit-row label:has(input:checked) {
   background: var(--honey-wash);
 }
 
 .ingredient-owner,
 .cuisine-recipe-count,
+.unit-detail,
 .panel-saved,
 .alias-notice,
 .alias-none {

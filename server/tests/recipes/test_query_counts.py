@@ -43,7 +43,7 @@ def staff_client(user) -> Client:
 @pytest.fixture
 def build(user) -> Callable[..., Built]:
     """Build a recipe of `groups` groups of `rows` rows each, and `steps` steps."""
-    unit = find_unit("clove")
+    unit = find_unit("clove", owner=None)
     assert unit is not None
     made = 0
 

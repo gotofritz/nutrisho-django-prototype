@@ -2,10 +2,11 @@
 
 `parse_document` reads a file or request body into drafts; `import_recipes`
 writes them as new recipes of `owner`, never touching one they already have.
-Names go through `name_resolution` as typed names do: ingredients and tags the
-owner cannot see become private to them, while a cuisine or unit the server
-does not know is never created. An unknown unit stays as written in
-`legacy_unit`, and an unknown cuisine is left blank; both come back as warnings.
+Names go through `name_resolution` as typed names do: ingredients, tags and
+units the owner cannot see become private to them (#154), while a cuisine the
+server does not know is never created and is left blank, with a warning. A size
+word or an amount phrase in the unit field (`small`, `to taste`) never becomes
+a unit: it stays as written in `legacy_unit`, with a warning too.
 
 A recipe whose name the owner already uses is imported as "<name> Imported"
 (" Imported 2", …), so importing never loses either recipe. Each recipe is
@@ -27,7 +28,7 @@ from recipes.models import (
     Step,
     Unit,
 )
-from recipes.services.name_resolution import find_cuisine, find_unit, resolve_ingredient
+from recipes.services.name_resolution import find_cuisine, resolve_ingredient, resolve_unit
 from recipes.services.recipe_document import ImportBatch, IngredientDraft, RecipeDraft, RowDraft
 from recipes.services.recipe_metadata import set_tags
 from recipes.utils.plain_text import plain_text
@@ -154,7 +155,7 @@ class _Writer:
         if not key:
             return None
         if key not in self._units:
-            self._units[key] = find_unit(text)
+            self._units[key] = resolve_unit(text, owner=self._owner)
         return self._units[key]
 
     def _cuisine(self, path: str, *, label: str) -> Cuisine | None:

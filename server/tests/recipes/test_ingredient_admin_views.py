@@ -153,7 +153,9 @@ def test_search_column_is_narrow_and_scrolls(auth_client):
     column = tag(html, "col-ingredients")
     assert 'class="col-ingredients"' in column
     css = STYLE_CSS.read_text()
-    assert re.search(r"(?m)^\.col-ingredients,\n\.col-cuisines \{\s*flex: 0 1 38ch;", css)
+    assert re.search(
+        r"(?m)^\.col-ingredients,\n\.col-cuisines,\n\.col-units \{\s*flex: 0 1 38ch;", css
+    )
     shared = re.search(r"(?m)^\.col-ingredients,\n[^{]*\{(?P<body>[^}]*)\}", css)
     assert shared
     for rule in ("height: 100%", "min-height: 0", "overflow-y: auto", "overflow-wrap: anywhere"):

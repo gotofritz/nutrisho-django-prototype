@@ -1,0 +1,75 @@
+{% extends "../base.html" %}
+
+{% block page_title %}Manage units{% endblock %}
+
+{% block content %}
+<div class="unit-manager">
+  <div id="col-actions" class="col-actions">
+    <h1 class="visually-hidden" tabindex="-1">Manage units</h1>
+    <label for="unit-search" class="visually-hidden">Search units</label>
+    <input
+      type="search"
+      name="q"
+      id="unit-search"
+      placeholder="search&hellip;"
+      value="{{ query }}"
+      hx-get="{% url 'recipes:unit_manage_columns' %}"
+      hx-trigger="input changed delay:250ms, search"
+      hx-target="#unit-columns"
+      hx-swap="outerHTML"
+      hx-include=".unit-pick:checked, #unit-private-only, #unit-unused-only, #unit-sort"
+    >
+    {% comment %}
+    Private units are the ones users made by typing or importing a unit the
+    list did not have: what waits for curation.
+    {% endcomment %}
+    <label class="unused-toggle">
+      <input
+        type="checkbox"
+        id="unit-private-only"
+        name="private"
+        value="1"
+        {% if private_only %}checked{% endif %}
+        hx-get="{% url 'recipes:unit_manage_columns' %}"
+        hx-trigger="change"
+        hx-target="#unit-columns"
+        hx-swap="outerHTML"
+        hx-include=".unit-pick:checked, #unit-search, #unit-unused-only, #unit-sort"
+      >
+      Private only
+    </label>
+    <label class="unused-toggle">
+      <input
+        type="checkbox"
+        id="unit-unused-only"
+        name="unused"
+        value="1"
+        {% if unused_only %}checked{% endif %}
+        hx-get="{% url 'recipes:unit_manage_columns' %}"
+        hx-trigger="change"
+        hx-target="#unit-columns"
+        hx-swap="outerHTML"
+        hx-include=".unit-pick:checked, #unit-search, #unit-private-only, #unit-sort"
+      >
+      Unused only
+    </label>
+    <label class="sort-choice">
+      Sort
+      <select
+        id="unit-sort"
+        name="sort"
+        hx-get="{% url 'recipes:unit_manage_columns' %}"
+        hx-trigger="change"
+        hx-target="#unit-columns"
+        hx-swap="outerHTML"
+        hx-include=".unit-pick:checked, #unit-search, #unit-private-only, #unit-unused-only"
+      >
+        <option value="name"{% if not by_added %} selected{% endif %}>A&ndash;Z</option>
+        <option value="added"{% if by_added %} selected{% endif %}>Order added</option>
+      </select>
+    </label>
+    {% include "./_actions.html" %}
+  </div>
+  {% include "./_columns.html" %}
+</div>
+{% endblock %}

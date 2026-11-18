@@ -14,6 +14,13 @@ they draw on are split by who may change them:
   own, and creates a private one on a miss. Unique ignoring case within the
   global list and within each owner's tags; migration 0019 merged existing
   case-only duplicates into the most-used spelling.
+- **Units**: global units curated by staff (in Django admin, owner blank) plus
+  private units per user (`Unit.owner`, #154). The recipe editor and the
+  import resolve a unit with `resolve_unit`: a global unit, then the owner's
+  own, and a private one made on a miss, but never from a size word or an
+  amount phrase. A private unit has no dimension until staff promote it in the
+  unit tool at `/recipes/units/manage/`, which also adds, edits, merges and
+  deletes units. Aliases are global only. See `units.md`.
 - **Cuisines**: one global, curated tree, `area.region.subregion`
   (`med.italy.sicily`), via `Cuisine.parent` (PROTECT). A recipe points at any
   depth: `middle east` for a dish many countries claim, `med.italy` with no

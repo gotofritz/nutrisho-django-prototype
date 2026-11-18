@@ -59,8 +59,10 @@ CREATE TABLE "recipes_tag_recipe" ("id" integer NOT NULL PRIMARY KEY AUTOINCREME
 CREATE INDEX "recipes_tag_recipe_recipe_id_b4820a65" ON "recipes_tag_recipe" ("recipe_id");
 CREATE INDEX "recipes_tag_recipe_tag_id_ef49d1f8" ON "recipes_tag_recipe" ("tag_id");
 CREATE UNIQUE INDEX "recipes_tag_recipe_tag_id_recipe_id_2ef3b99f_uniq" ON "recipes_tag_recipe" ("tag_id", "recipe_id");
-CREATE TABLE "recipes_unit" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(32) NOT NULL, "plural_name" varchar(32) NOT NULL, "dimension" varchar(8) NOT NULL);
-CREATE UNIQUE INDEX "unit_name_ci_unique" ON "recipes_unit" ((LOWER("name")));
+CREATE TABLE "recipes_unit" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(32) NOT NULL, "plural_name" varchar(32) NOT NULL, "owner_id" integer NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "dimension" varchar(8) NOT NULL);
+CREATE INDEX "recipes_unit_owner_id_7ddc46c5" ON "recipes_unit" ("owner_id");
+CREATE UNIQUE INDEX "unit_name_ci_unique" ON "recipes_unit" ((LOWER("name"))) WHERE "owner_id" IS NULL;
+CREATE UNIQUE INDEX "unit_name_ci_unique_per_owner" ON "recipes_unit" ((LOWER("name")), "owner_id");
 CREATE TABLE "recipes_unitalias" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "alias_name" varchar(32) NOT NULL, "unit_id" integer NOT NULL REFERENCES "recipes_unit" ("id") DEFERRABLE INITIALLY DEFERRED);
 CREATE INDEX "recipes_unitalias_unit_id_8760814d" ON "recipes_unitalias" ("unit_id");
 CREATE UNIQUE INDEX "unit_alias_name_ci_unique" ON "recipes_unitalias" ((LOWER("alias_name")));

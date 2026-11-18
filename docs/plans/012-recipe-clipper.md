@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: Proposed, nothing built
+## Status: In progress, M1 done (#154)
 
 ## What we are building
 
@@ -100,6 +100,8 @@ anklipper's first such pass found three bugs its fakes had missed. The PR
 that finishes a milestone marks it done here.
 
 ### M1 · server · Units become a shared vocabulary
+
+**Done** (#154).
 
 Today units are one global list that only staff add to: an unknown unit is
 an error in the editor, and an import keeps it as text in `legacy_unit`.

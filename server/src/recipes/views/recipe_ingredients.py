@@ -103,6 +103,7 @@ def _typed_names(form: IngredientInRecipeForm) -> dict[str, str]:
     return {
         "ingredient_name": form.cleaned_data["ingredient_name"],
         "substitute_name": form.cleaned_data["substitute_name"],
+        "unit_name": form.cleaned_data["unit"],
     }
 
 

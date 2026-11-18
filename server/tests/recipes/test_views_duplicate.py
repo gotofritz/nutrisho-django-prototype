@@ -38,7 +38,7 @@ def recipe_with_content(recipe):
         ingredient_group=group,
         index_in_sequence=0,
         quantity=2,
-        unit=find_unit("cups"),
+        unit=find_unit("cups", owner=None),
     )
     return recipe
 

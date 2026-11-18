@@ -21,7 +21,15 @@ from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import URLPattern, URLResolver, get_resolver, reverse
 
-from recipes.models import Cuisine, Ingredient, IngredientGroup, IngredientInRecipe, Recipe, Step
+from recipes.models import (
+    Cuisine,
+    Ingredient,
+    IngredientGroup,
+    IngredientInRecipe,
+    Recipe,
+    Step,
+    Unit,
+)
 
 _PARAM = re.compile(r"<(?:\w+:)?(\w+)>")
 # Django's own admin and auth pages are not ours to change.
@@ -184,6 +192,7 @@ def path_values(staff: User) -> dict[str, str]:
         "iir_id": str(iir.pk),
         "ingredient_id": str(leek.pk),
         "cuisine_id": str(cuisine.pk),
+        "unit_id": str(Unit.objects.get(name="cup").pk),
         "field_name": "recipe_name",
     }
 

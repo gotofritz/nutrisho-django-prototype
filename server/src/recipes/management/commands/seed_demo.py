@@ -267,7 +267,7 @@ class Command(BaseCommand):
                     if item.substitute
                     else None,
                     quantity=Decimal(item.quantity) if item.quantity else None,
-                    unit=find_unit(item.unit),
+                    unit=find_unit(item.unit, owner=owner),
                     preparation=item.preparation,
                 )
         for step_index, (title, text) in enumerate(recipe.steps):

@@ -1,0 +1,30 @@
+<div id="unit-columns" class="columns workspace">
+  {% include "./_selection.html" %}
+  <form
+    hx-post="{% url 'recipes:unit_manage_promote' %}"
+    hx-target="#unit-columns"
+    hx-swap="outerHTML"
+    hx-include=".workspace-pick, #unit-search, #unit-private-only, #unit-unused-only, #unit-sort"
+  >
+    {% csrf_token %}
+    <p class="promote-intro">
+      Share these units with everyone. A unit whose name is already shared joins
+      that one, and every user&rsquo;s own unit of the same name joins it too.
+    </p>
+    <ul class="promote-rows">
+      {% for row in candidates %}
+      <li>{{ row.unit.name }}{% if row.owner_name %} <span class="unit-detail">({{ row.owner_name }}&rsquo;s own)</span>{% else %} <span class="unit-detail">(already shared)</span>{% endif %}</li>
+      {% endfor %}
+    </ul>
+    <label for="unit-promote-dimension">Measures</label>
+    <select name="dimension" id="unit-promote-dimension">
+      <option value="">(pick one)</option>
+      {% for value, label in dimensions %}
+      <option value="{{ value }}">{{ label }}</option>
+      {% endfor %}
+    </select>
+    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+    <button type="submit" class="panel-save">Promote</button>
+    {% include "./_cancel.html" %}
+  </form>
+</div>

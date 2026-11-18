@@ -4,7 +4,8 @@
 it becomes: a canonical `Unit` (`Tbsp`, `tbs`, `cloves`), a word for
 `preparation` (`small`) or the `note` (`to taste`, whose quantity is dropped
 because scaling would multiply it), or unknown. `apply_unit_plan` writes that
-plan. Unknown values stay as typed, still shown on the page, until staff add an
+plan, against the global units only, since one value may be in many users' rows.
+Unknown values stay as typed, still shown on the page, until staff add an
 alias in admin or fix the row; re-running picks them up. The
 `normalise_units` command is the reviewed front end: a dry run unless told to
 apply.
@@ -53,7 +54,7 @@ def plan_unit_normalisation() -> list[UnitPlanEntry]:
         counts[value] = counts.get(value, 0) + 1
     entries = []
     for value, rows in sorted(counts.items(), key=lambda item: (-item[1], item[0])):
-        unit = find_unit(value)
+        unit = find_unit(value, owner=None)
         entries.append(
             UnitPlanEntry(
                 value=value,

@@ -126,7 +126,7 @@ def test_unit_plural_follows_the_rule_or_the_override():
 )
 def test_find_unit_resolves_case_plurals_and_aliases(typed, canonical):
     """Spellings of the same unit resolve to its one canonical row."""
-    assert find_unit(typed) == Unit.objects.get(name=canonical)
+    assert find_unit(typed, owner=None) == Unit.objects.get(name=canonical)
 
 
 @pytest.mark.django_db
@@ -134,7 +134,7 @@ def test_find_unit_resolves_case_plurals_and_aliases(typed, canonical):
 def test_find_unit_misses_unknown_text(typed):
     """A typo or a word that is not a unit resolves to nothing, and nothing is created."""
     before = Unit.objects.count()
-    assert find_unit(typed) is None
+    assert find_unit(typed, owner=None) is None
     assert Unit.objects.count() == before
 
 
@@ -142,13 +142,13 @@ def test_find_unit_misses_unknown_text(typed):
 def test_find_unit_uses_an_alias_staff_added():
     """An alias added in admin resolves from then on."""
     UnitAlias.objects.create(alias_name="tbso", unit=Unit.objects.get(name="tbsp"))
-    assert find_unit("Tbso") == Unit.objects.get(name="tbsp")
+    assert find_unit("Tbso", owner=None) == Unit.objects.get(name="tbsp")
 
 
 @pytest.mark.django_db
-def test_unit_names_lists_canonical_names_for_the_editor():
+def test_unit_names_lists_canonical_names_for_the_editor(user):
     """The editor suggests canonical names only, sorted ignoring case."""
-    names = unit_names()
+    names = unit_names(owner=user)
     assert "tbsp" in names
     assert "tablespoon" not in names
     assert names == sorted(names, key=str.lower)
@@ -274,14 +274,12 @@ def test_editor_clears_the_unit_when_left_blank(auth_client, garlic_row):
 
 
 @pytest.mark.django_db
-def test_editor_refuses_an_unknown_unit_and_writes_nothing(auth_client, garlic_row):
-    """An unknown unit is an error on the field, not a new unit."""
+def test_editor_refuses_a_bad_row_and_writes_no_unit(auth_client, garlic_row):
+    """A row the form refuses makes no unit, even an unknown one (#154)."""
     recipe, row = garlic_row
     before = Unit.objects.count()
-    response = _save(auth_client, recipe, row, "tbso", quantity="5")
-    content = response.content.decode()
-    assert "<form" in content
-    assert "is not a unit" in content
+    response = _save(auth_client, recipe, row, "tbso", quantity="-5")
+    assert "<form" in response.content.decode()
     row.refresh_from_db()
     assert row.quantity == 2
     assert Unit.objects.count() == before
