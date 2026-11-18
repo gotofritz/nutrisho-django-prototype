@@ -55,7 +55,7 @@ CREATE TABLE "recipes_tag" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "ow
 CREATE INDEX "recipes_tag_owner_id_f48c41f7" ON "recipes_tag" ("owner_id");
 CREATE UNIQUE INDEX "tag_ci_unique" ON "recipes_tag" ((LOWER("tag"))) WHERE "owner_id" IS NULL;
 CREATE UNIQUE INDEX "tag_ci_unique_per_owner" ON "recipes_tag" ((LOWER("tag")), "owner_id");
-CREATE TABLE "recipes_tag_recipe" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "tag_id" integer NOT NULL REFERENCES "recipes_tag" ("id") DEFERRABLE INITIALLY DEFERRED, "recipe_id" integer NOT NULL REFERENCES "recipes_recipe" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "recipes_tag_recipe" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "tag_id" bigint NOT NULL REFERENCES "recipes_tag" ("id") DEFERRABLE INITIALLY DEFERRED, "recipe_id" bigint NOT NULL REFERENCES "recipes_recipe" ("id") DEFERRABLE INITIALLY DEFERRED);
 CREATE INDEX "recipes_tag_recipe_recipe_id_b4820a65" ON "recipes_tag_recipe" ("recipe_id");
 CREATE INDEX "recipes_tag_recipe_tag_id_ef49d1f8" ON "recipes_tag_recipe" ("tag_id");
 CREATE UNIQUE INDEX "recipes_tag_recipe_tag_id_recipe_id_2ef3b99f_uniq" ON "recipes_tag_recipe" ("tag_id", "recipe_id");
