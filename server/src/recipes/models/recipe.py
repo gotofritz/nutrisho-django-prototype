@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -46,7 +48,9 @@ class Recipe(models.Model):
     read `Recipe.objects.live()`; the name rule covers live recipes only.
     """
 
-    id = models.AutoField(primary_key=True)
+    # A UUID made by whoever creates the recipe, so a client such as the clipper
+    # can name one before it saves (#156). Version 7, so the id sorts by age.
+    id = models.UUIDField(primary_key=True, default=uuid.uuid7, editable=False)
     recipe_name = models.CharField("Recipe main name", max_length=200)
     short_description = models.TextField(
         "A short blurb about the recipe", max_length=PROSE_MAX_LENGTH, blank=True, default=""

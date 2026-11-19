@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 done (#154)
+## Status: In progress, M1 and M2 done (#154, #156)
 
 ## What we are building
 
@@ -99,53 +99,20 @@ extension PR is done only after a pass by hand in a real Firefox:
 anklipper's first such pass found three bugs its fakes had missed. The PR
 that finishes a milestone marks it done here.
 
-### M1 · server · Units become a shared vocabulary
+### ✅ M1 · server · Units become a shared vocabulary
 
 **Done** (#154).
 
 Today units are one global list that only staff add to: an unknown unit is
 an error in the editor, and an import keeps it as text in `legacy_unit`.
 
-- `Unit.owner`, blank for a global unit. Names are unique ignoring case
-  within the global list and within each user's own, as for `Ingredient`.
-- `find_unit` takes the owner and sees the global list plus their own, the
-  global unit winning. A new `resolve_unit` makes a private unit on a miss,
-  and the editor and the import use it.
-- Size words and amount phrases (`small`, `to taste`) never become units:
-  the editor keeps its error naming the field they belong in.
-- A private unit has no dimension until staff make it global, by clearing
-  its owner in admin. Aliases stay global.
-- Update `units.md`, `shared-vocabularies.md` and the unit rule in
-  `AGENTS.md`.
+### ✅ M2 · server · Recipes get UUID keys
 
-### M2 · server · Recipes get UUID keys
-
-- `Recipe.id` becomes `UUIDField(primary_key=True, default=uuid.uuid7,
-  editable=False)`. With it change the 41 routes that carry
-  `<int:recipe_id>`, `delete_recipe --id` and the API reply's `id`. Steps,
-  groups and rows keep their numbers.
-- **The migration Django writes is not enough.** It copies each id as its
-  decimal text, applies without complaint, and then no recipe loads. The
-  same migration needs one more step, run on `recipes_recipe.id` and on
-  `recipe_id` in `recipes_step`, `recipes_ingredientgroup` and
-  `recipes_tag_recipe`:
-
-  ```sql
-  UPDATE <table> SET <column> = printf('%032x', CAST(<column> AS INTEGER))
-  WHERE length(<column>) < 32;
-  ```
-
-- Recipe 10 becomes `00000000-0000-0000-0000-00000000000a`, and new ids are
-  version 7, so ordering by id is still ordering by age, which the export,
-  search and the trash rely on.
-- It needs a reverse step: two older migration tests travel back through it
-  with rows in place.
-- Old numbered addresses (`/recipes/10/`) stop working. The rule is fixed,
-  so a redirect is easy if bookmarks matter.
-- **Done when** a migration test shows that a database with steps, groups,
-  tags and a trashed recipe exports the same before and after; `make e2e`
-  passes; and, after `make backup`, a copy of the real database has been
-  migrated and its export compared. Only then the real one.
+Done (#156). `Recipe.id` is a version 7 UUID and the recipe routes take
+`<uuid:recipe_id>`; migration 0033 rewrites the old ids as hex (recipe 10
+becomes `...00000000000a`) and numbers them again going back. Old numbered
+addresses are gone. Still to do by hand before deploying: `make backup`,
+migrate a copy of the real database, compare its export, then the real one.
 
 ### M3 · server · A save can name its recipe's id
 

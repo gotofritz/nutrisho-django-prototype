@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
@@ -61,7 +63,7 @@ def _is_panel_request(request: AuthedRequest) -> bool:
 
 @vary_on_headers("HX-Request", "HX-Boosted")
 @require_http_methods(["GET", "POST"])
-def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_metadata_edit(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Edit recipe metadata."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     form = RecipeMetadataForm(instance=recipe, owner=recipe.owner)
@@ -89,7 +91,7 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: int) -> HttpResponse
 
 
 @require_GET
-def recipe_delete_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_delete_panel(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Show the delete confirmation panel."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     return render(
@@ -100,7 +102,7 @@ def recipe_delete_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 
 @require_POST
-def recipe_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_delete(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Move a recipe to the trash; the next page offers Undo (#75)."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     trash_recipe(recipe)
@@ -118,7 +120,7 @@ def recipe_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
     return redirect("/recipes/")
 
 
-def _next_recipe_url(deleted_id: int, user) -> str:
+def _next_recipe_url(deleted_id: UUID, user) -> str:
     qs = Recipe.objects.live().filter(owner=user)
     nxt = qs.filter(id__gt=deleted_id).order_by("id").first()
     if nxt:
@@ -130,14 +132,14 @@ def _next_recipe_url(deleted_id: int, user) -> str:
 
 
 @require_POST
-def recipe_duplicate(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_duplicate(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Duplicate a recipe."""
     original = owned_recipe(request=request, recipe_id=recipe_id)
     return _redirect_to(request, duplicate_recipe(original))
 
 
 @require_GET
-def recipe_scale_panel(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_scale_panel(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Show the scale panel, starting from the page's serving count."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     return _scale_panel(request, recipe, servings=parse_servings(request.GET.get("servings")))
@@ -165,7 +167,7 @@ def _scale_panel(
 
 
 @require_POST
-def recipe_scale_copy(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_scale_copy(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Save the recipe scaled to `servings` as a new recipe; the original is untouched."""
     original = owned_recipe(request=request, recipe_id=recipe_id)
     servings = parse_servings(request.POST.get("servings"))

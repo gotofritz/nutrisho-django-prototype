@@ -146,11 +146,11 @@ To go back: stop the app, revert the settings (otherwise the next connection
 switches to WAL again), and run `sqlite3 db.sqlite3 "PRAGMA journal_mode=DELETE;"`,
 which folds the `-wal` file back into `db.sqlite3` and removes it.
 
-To delete recipes by ID:
+To delete recipes by ID, the UUID in the recipe's address:
 
 ```bash
-make manage ARGS="delete_recipe --id 42"
-make manage ARGS="delete_recipe --id 42 43 44"
+make manage ARGS="delete_recipe --id 019a1f05-bfc7-7525-ab12-7cb6b341f8b6"
+make manage ARGS="delete_recipe --id <uuid> <uuid> <uuid>"
 ```
 
 ## Backing up

@@ -1,5 +1,7 @@
 """Tests for recipes views."""
 
+import uuid
+
 import pytest
 from django.test import Client
 
@@ -56,6 +58,15 @@ def test_recipe_view_404_on_missing(auth_client, db):
     """Recipe view 404 on missing."""
     response = auth_client.get("/recipes/99999/")
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_recipe_view_is_addressed_by_uuid_not_number(auth_client, user):
+    """A recipe's address carries its UUID; the old numbered one is gone (#156)."""
+    recipe = Recipe.objects.create(pk=uuid.UUID(int=10), recipe_name="Ten", owner=user)
+    assert recipe.get_absolute_url() == "/recipes/00000000-0000-0000-0000-00000000000a/"
+    assert auth_client.get(recipe.get_absolute_url()).status_code == 200
+    assert auth_client.get("/recipes/10/").status_code == 404
 
 
 @pytest.mark.django_db

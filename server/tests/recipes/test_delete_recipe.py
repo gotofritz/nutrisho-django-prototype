@@ -1,5 +1,6 @@
 """Tests for delete_recipe management command."""
 
+import uuid
 from io import StringIO
 
 import pytest
@@ -31,7 +32,7 @@ def test_delete_recipe_reports_recipe_count_not_cascade(user):
 def test_delete_recipe_no_match_warns(user):
     """Non-existent ID prints warning, no crash."""
     out = StringIO()
-    call_command("delete_recipe", ids=[99999], stdout=out)
+    call_command("delete_recipe", ids=[uuid.uuid7()], stdout=out)
     assert "No recipes" in out.getvalue()
 
 
@@ -46,3 +47,15 @@ def test_delete_recipe_multiple_ids(user):
 
     assert "2 recipe" in out.getvalue()
     assert not Recipe.objects.filter(pk__in=[r1.pk, r2.pk]).exists()
+
+
+@pytest.mark.django_db
+def test_delete_recipe_takes_uuids_on_the_command_line(user):
+    """--id parses the recipe's UUID as it is shown in its address (#156)."""
+    recipe = Recipe.objects.create(recipe_name="By UUID", owner=user)
+
+    out = StringIO()
+    call_command("delete_recipe", "--id", str(recipe.pk), stdout=out)
+
+    assert "1 recipe" in out.getvalue()
+    assert not Recipe.objects.filter(pk=recipe.pk).exists()

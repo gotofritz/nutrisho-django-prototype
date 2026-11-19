@@ -2,7 +2,7 @@
 
 ## Key Models
 
-- `Recipe` — core entity, owns name, description, cuisine, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`); `plain_name` / `plain_description` are the tag-free name and description `save()` keeps current, for search and the per-owner name rule; `source_instance` (labelled Source) is free text, a book and page or a web address, and the recipe page links it only when it is a whole http(s) URL (`web_url` filter)
+- `Recipe` — core entity, keyed by a version 7 UUID (#156) so a client such as the clipper can name a recipe before it saves; steps, groups and rows keep integer ids. Owns name, description, cuisine, owner, servings (author's intended serving count; mandatory, NOT NULL, defaults to 1, constrained to `>= 1`); `plain_name` / `plain_description` are the tag-free name and description `save()` keeps current, for search and the per-owner name rule; `source_instance` (labelled Source) is free text, a book and page or a web address, and the recipe page links it only when it is a whole http(s) URL (`web_url` filter)
 - `Ingredient`, `IngredientGroup`, `IngredientInRecipe` — ingredient hierarchy; `IngredientInRecipe.quantity` is stored as-is from source data (not normalized to per-serving). `Ingredient.owner` is NULL for the global list or the user a row is private to, and `ingredient_name` is unique case-insensitively among global rows and within each owner's private rows; `Ingredient.plural_name` is an optional display-only override for the pluralisation rule (blank derives it); `IngredientAlias` maps a case-insensitively unique `alias_name` to a global `canonical` ingredient (`CASCADE`), input-only; `IngredientInRecipe.ingredient` and `.substitute` are both `PROTECT`, and the optional substitute shows as `or X` after the name; `IngredientInRecipe.unit` is a `PROTECT` foreign key to `Unit` (canonical name, optional `plural_name`, `dimension` mass/volume/count, blank on a user's private unit; `Unit.owner` NULL for the global list, as for ingredients), with `UnitAlias` for input-only spellings and `legacy_unit` holding free text from before #67 (see `units.md`)
 - `Recipe.deleted_at` is set while a recipe is in the trash (#75); see below
 - `ApiToken` — a user's key for the JSON endpoint, stored as its SHA-256 digest; made by `create_api_token`, revoked in admin; see `import-export.md`
@@ -12,6 +12,7 @@
 - `Cuisine`, `Tag` — lookup/classification models; `Cuisine` is a node of the cuisine tree (`parent`, at most three levels), its name unique case-insensitively among its siblings; `Tag.owner` is NULL for a global tag or the user it is private to
 - `Ingredient.family` and `.dietary_constraint` are staff data, set in the ingredient clean-up tool; the recipe page does not show them yet, and nothing rolls them up into a recipe-level label or filter
 - Collections are plural (#79): `recipe.steps`, `recipe.ingredient_groups`, `group.items` (its `IngredientInRecipe` rows), `recipe.tags` and `tag.recipes`. The tag-recipe table is still `recipes_tag_recipe`, pinned with `db_table`, so the rename ran no SQL. A test calling a data migration from before 0028 passes it `pre_rename_apps` (`tests/recipes/conftest.py`), where `Tag.recipe` still has its old name
+- Recipe ids became UUIDs in migration 0033 (#156). Django's `AlterField` copies an integer id into the new column as its decimal text, which no UUID matches, so the migration rewrites `recipes_recipe.id` and every `recipe_id` (steps, groups, `recipes_tag_recipe`) as 32-digit hex: recipe 10 became `00000000-0000-0000-0000-00000000000a`. Numbers sort as their hex does and new ids are version 7, so ordering by id is still ordering by age (export, search, trash). Going back, numbered recipes get their numbers again and newer ones the numbers after them, oldest first. Old numbered addresses (`/recipes/10/`) are gone; a redirect would only need that rule. `pre_rename_apps` lays 0033 over its 0027 models, so they read today's ids
 - Dropped as unused in migration 0027 (#65): the `Source` model and `Recipe.source` (a recipe's source is `source_instance`), `Step.duration` and `Step.extra_info`. No code path ever wrote them; the migration stops, naming the column, if a database holds data in any of them
 
 Empty text fields (`short_description`, `group_name`, `legacy_unit`,
@@ -35,7 +36,8 @@ while the app writes (WAL lets those writes carry on).
 `create_api_token <username> [--name ...]` makes an API token and prints its key
 once (#78).
 
-`delete_recipe --id <N>` removes recipes by primary key, trashed or not, for good.
+`delete_recipe --id <uuid>` removes recipes by primary key, as shown in the
+recipe's address, trashed or not, for good.
 
 `normalise_units` lists the legacy free-text units and what each becomes;
 `--apply` moves them onto the unit vocabulary (see `units.md`).

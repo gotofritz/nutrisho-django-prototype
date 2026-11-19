@@ -1,6 +1,7 @@
 """Access helpers for views; login itself is enforced by `HtmxLoginRequiredMiddleware`."""
 
 from functools import wraps
+from uuid import UUID
 
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
@@ -10,7 +11,7 @@ from recipes.models import Recipe
 from recipes.views._types import AuthedRequest
 
 
-def owned_recipe(request: AuthedRequest, recipe_id: int) -> Recipe:
+def owned_recipe(request: AuthedRequest, recipe_id: UUID) -> Recipe:
     """Return the signed-in user's recipe, or 404 when it is missing or someone else's.
 
     404 rather than 403, so a recipe id never reveals that another user has it.
@@ -19,7 +20,7 @@ def owned_recipe(request: AuthedRequest, recipe_id: int) -> Recipe:
     return get_object_or_404(Recipe.objects.live(), id=recipe_id, owner=request.user)
 
 
-def trashed_recipe(request: AuthedRequest, recipe_id: int) -> Recipe:
+def trashed_recipe(request: AuthedRequest, recipe_id: UUID) -> Recipe:
     """Return the signed-in user's recipe from the trash, or 404, as `owned_recipe`."""
     return get_object_or_404(Recipe.objects.trashed(), id=recipe_id, owner=request.user)
 

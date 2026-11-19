@@ -83,6 +83,10 @@ Easy to break, and not obvious from any one file:
   `reading`, so a display partial renders editable unless told otherwise.
 - Load a recipe with `owned_recipe(request=..., recipe_id=...)` and its child
   rows through it. Never look a recipe up by id alone.
+- A recipe's id is a version 7 UUID (#156), its routes take `<uuid:recipe_id>`,
+  and ordering by id is ordering by age; steps, groups and rows keep integers.
+  A test that calls an old data migration's function passes it
+  `pre_rename_apps`, whose models carry those keys.
 - Deleting a recipe moves it to the trash (`Recipe.deleted_at`, #75). Anything
   a user sees reads `Recipe.objects.live()` (`owned_recipe` does); only the trash
   page, `restore` and `purge` read `trashed()`. A bulk write by cuisine or

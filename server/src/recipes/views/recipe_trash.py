@@ -1,5 +1,7 @@
 """The trash: deleted recipes, restored with Undo or from the list, or deleted for good (#75)."""
 
+from uuid import UUID
+
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -31,7 +33,7 @@ def trash(request: AuthedRequest) -> HttpResponse:
 
 
 @require_POST
-def recipe_restore(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_restore(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Take a recipe out of the trash and open it; the toast's Undo posts here."""
     recipe = restore_recipe(trashed_recipe(request=request, recipe_id=recipe_id))
     messages.success(request, f"Restored “{recipe.plain_name}”.")
@@ -39,7 +41,7 @@ def recipe_restore(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 
 @require_POST
-def recipe_purge(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_purge(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Delete a trashed recipe for good and go back to the trash."""
     recipe = trashed_recipe(request=request, recipe_id=recipe_id)
     name = recipe.plain_name

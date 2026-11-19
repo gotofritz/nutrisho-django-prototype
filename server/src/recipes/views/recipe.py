@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from django.contrib.auth.models import AbstractBaseUser
 from django.db.models import Prefetch
 from django.db.models.functions import Lower
@@ -15,7 +17,7 @@ from recipes.views._types import AuthedRequest
 from recipes.views.home import PAGE_SIZE
 
 
-def _get_recipe_nav(recipe_id: int, user: AbstractBaseUser, search: RecipeSearch) -> dict:
+def _get_recipe_nav(recipe_id: UUID, user: AbstractBaseUser, search: RecipeSearch) -> dict:
     """Prev/next through the list the user came from, wrapping at both ends (#32).
 
     The list is `search`'s results, in the order the home page shows them; a
@@ -36,7 +38,7 @@ def _get_recipe_nav(recipe_id: int, user: AbstractBaseUser, search: RecipeSearch
 
 
 @vary_on_headers("HX-Request")
-def recipe(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Show a recipe, to read unless ?edit=1 asks to edit it (#58).
 
     Read mode leaves every editing control out of the sheet, so a tap while

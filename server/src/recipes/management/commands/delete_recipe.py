@@ -1,5 +1,7 @@
 """Delete recipes by ID."""
 
+import uuid
+
 from django.core.management.base import BaseCommand
 
 from recipes.models.recipe import Recipe
@@ -13,10 +15,10 @@ class Command(BaseCommand):
         parser.add_argument(
             "--id",
             nargs="+",
-            type=int,
+            type=uuid.UUID,
             dest="ids",
             required=True,
-            help="Recipe ID(s) to delete",
+            help="Recipe ID(s) to delete, as shown in the recipe's address",
         )
 
     def handle(self, *args, **options):
@@ -26,6 +28,12 @@ class Command(BaseCommand):
         count = qs.count()
         if count:
             qs.delete()
-            self.stdout.write(self.style.SUCCESS(f"Deleted {count} recipe(s) for id(s): {ids}"))
+            self.stdout.write(
+                self.style.SUCCESS(f"Deleted {count} recipe(s) for id(s): {_shown(ids)}")
+            )
         else:
-            self.stdout.write(self.style.WARNING(f"No recipes found for id(s): {ids}"))
+            self.stdout.write(self.style.WARNING(f"No recipes found for id(s): {_shown(ids)}"))
+
+
+def _shown(ids: list[uuid.UUID]) -> str:
+    return ", ".join(str(i) for i in ids)

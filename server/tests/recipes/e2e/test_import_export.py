@@ -29,5 +29,5 @@ def test_export_then_import_from_the_page(signed_in: Page, user, make_recipe):
 
     expect(signed_in.get_by_role("heading", name="Imported 1 recipe")).to_be_visible()
     signed_in.get_by_role("link", name="Soup Imported").click()
-    expect(signed_in).to_have_url(re.compile(r"/recipes/\d+/$"))
+    expect(signed_in).to_have_url(re.compile(r"/recipes/[0-9a-f-]{36}/$"))
     assert Recipe.objects.filter(owner=user).count() == 2
