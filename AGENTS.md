@@ -49,8 +49,8 @@ Paths in this section are relative to `server/`.
 
 Multi-user Django recipe manager, prototype quality. One app, `recipes`, under
 `src/`; server-rendered templates with HTMX partial swaps (django-htmx), no
-REST API apart from one token-authenticated JSON endpoint for the recipe
-clipper (`views/api.py`); plain CSS with no build step; SQLite in WAL mode
+REST API apart from two token-authenticated JSON endpoints for the recipe
+clipper (`views/api.py`: save recipes, load the lists); plain CSS with no build step; SQLite in WAL mode
 with IMMEDIATE transactions, and no other database. Auth is Django's `User`; the owner
 superuser comes from `make bootstrap`, never from credentials in the repo. The
 debug toolbar is a dev-group package, mounted only when installed.
@@ -133,8 +133,10 @@ Easy to break, and not obvious from any one file:
 - A new column on any of those or on `Ingredient` must be exported
   (`services/recipe_export.py`) and read back (`services/recipe_document.py`),
   or `tests/recipes/test_recipe_export.py` fails: an export must round-trip.
-- The JSON endpoint is signed in by an API token only, never the session, which
-  is what makes its `@csrf_exempt` safe.
+- The JSON endpoints are signed in by an API token only, never the session,
+  which is what makes the save's `@csrf_exempt` safe. A change to what they
+  send changes an example in `tests/api_examples/`, which the extension's tests
+  read too.
 
 ### Feature notes
 

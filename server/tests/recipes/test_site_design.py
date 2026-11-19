@@ -133,7 +133,7 @@ def test_login_page_has_no_site_header(client: Client):
 
 @pytest.mark.django_db
 def test_contents_line_shows_cuisine_servings_and_blurb(auth_client: Client, user: User):
-    """Each entry names its kitchen and servings, with the blurb beneath."""
+    """Each entry names its cuisine and servings, with the blurb beneath."""
     Recipe.objects.create(
         recipe_name="Baba ganoush",
         owner=user,

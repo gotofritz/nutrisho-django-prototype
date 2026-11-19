@@ -1,0 +1,77 @@
+{
+  "description": "A save naming the id of another user's recipe: refused, without saying whose.",
+  "request": {
+    "method": "POST",
+    "path": "/recipes/api/recipes/?id=01a1f5b5-dbe2-704a-b591-7ffbcff6762e",
+    "headers": {
+      "Authorization": "Bearer nsh_example-key-for-the-api-examples",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "format": "nutrisho",
+      "version": 1,
+      "recipes": [
+        {
+          "recipe_name": "Pasta alla Norma",
+          "short_description": "",
+          "servings": 4,
+          "source_instance": "https://example.com/norma",
+          "cuisine": "med.italy",
+          "tags": [
+            "dinner"
+          ],
+          "steps": [
+            {
+              "step_title": "",
+              "step_text": "Fry the aubergine."
+            },
+            {
+              "step_title": "",
+              "step_text": "Toss with the pasta."
+            }
+          ],
+          "ingredient_groups": [
+            {
+              "group_name": "",
+              "items": [
+                {
+                  "ingredient": "aubergines",
+                  "substitute": "",
+                  "quantity": "2",
+                  "unit": "",
+                  "legacy_unit": "",
+                  "preparation": "cubed",
+                  "note": ""
+                },
+                {
+                  "ingredient": "rigatoni",
+                  "substitute": "",
+                  "quantity": "400",
+                  "unit": "g",
+                  "legacy_unit": "",
+                  "preparation": "",
+                  "note": ""
+                },
+                {
+                  "ingredient": "basil",
+                  "substitute": "",
+                  "quantity": null,
+                  "unit": "handful",
+                  "legacy_unit": "",
+                  "preparation": "",
+                  "note": "torn"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 409,
+    "body": {
+      "error": "That id is taken: make a new one for this recipe."
+    }
+  }
+}

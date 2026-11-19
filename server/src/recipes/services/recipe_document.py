@@ -88,6 +88,25 @@ _PREPARATION_MAX_LENGTH = _max_length(IngredientInRecipe, "preparation")
 _NOTE_MAX_LENGTH = _max_length(IngredientInRecipe, "note")
 # Not a column: a dotted path of up to three cuisine names, looked up, never stored.
 _CUISINE_PATH_MAX_LENGTH = 3 * _max_length(Cuisine, "cuisine") + 2
+# The length each text field of a recipe in a document may have, by its key: what
+# the reader below refuses past, and what the clipper loads to flag a field
+# before it saves (#160). `tags` is the length of each tag.
+FIELD_LENGTHS: dict[str, int] = {
+    "recipe_name": _NAME_MAX_LENGTH,
+    "short_description": PROSE_MAX_LENGTH,
+    "source_instance": _SOURCE_MAX_LENGTH,
+    "cuisine": _CUISINE_PATH_MAX_LENGTH,
+    "tags": _TAG_MAX_LENGTH,
+    "step_title": _STEP_TITLE_MAX_LENGTH,
+    "step_text": PROSE_MAX_LENGTH,
+    "group_name": _GROUP_NAME_MAX_LENGTH,
+    "ingredient": _INGREDIENT_MAX_LENGTH,
+    "substitute": _INGREDIENT_MAX_LENGTH,
+    "unit": _UNIT_MAX_LENGTH,
+    "legacy_unit": _UNIT_MAX_LENGTH,
+    "preparation": _PREPARATION_MAX_LENGTH,
+    "note": _NOTE_MAX_LENGTH,
+}
 _QUANTITY_LIMIT = Decimal(100000)  # IngredientInRecipe.quantity: 7 digits, 2 decimals
 _CENT = Decimal("0.01")
 _FAMILIES = {code for code, _ in Ingredient.GROUP_CHOICES}
@@ -301,24 +320,30 @@ def _read_nutrisho(data: dict) -> ImportBatch:
 
 def _read_recipe(recipe: _Reader) -> RecipeDraft:
     return RecipeDraft(
-        recipe_name=recipe.text("recipe_name", max_length=_NAME_MAX_LENGTH, required=True),
-        short_description=recipe.text("short_description", max_length=PROSE_MAX_LENGTH),
+        recipe_name=recipe.text(
+            "recipe_name", max_length=FIELD_LENGTHS["recipe_name"], required=True
+        ),
+        short_description=recipe.text(
+            "short_description", max_length=FIELD_LENGTHS["short_description"]
+        ),
         servings=recipe.servings("servings"),
-        source_instance=recipe.text("source_instance", max_length=_SOURCE_MAX_LENGTH),
-        cuisine=recipe.text("cuisine", max_length=_CUISINE_PATH_MAX_LENGTH),
-        tags=recipe.texts("tags", max_length=_TAG_MAX_LENGTH),
+        source_instance=recipe.text("source_instance", max_length=FIELD_LENGTHS["source_instance"]),
+        cuisine=recipe.text("cuisine", max_length=FIELD_LENGTHS["cuisine"]),
+        tags=recipe.texts("tags", max_length=FIELD_LENGTHS["tags"]),
         created_date=recipe.when("created_date"),
         deleted_at=recipe.when("deleted_at"),
         steps=tuple(
             StepDraft(
-                step_title=step.text("step_title", max_length=_STEP_TITLE_MAX_LENGTH),
-                step_text=step.text("step_text", max_length=PROSE_MAX_LENGTH, required=True),
+                step_title=step.text("step_title", max_length=FIELD_LENGTHS["step_title"]),
+                step_text=step.text(
+                    "step_text", max_length=FIELD_LENGTHS["step_text"], required=True
+                ),
             )
             for step in recipe.objects("steps")
         ),
         ingredient_groups=tuple(
             GroupDraft(
-                group_name=group.text("group_name", max_length=_GROUP_NAME_MAX_LENGTH),
+                group_name=group.text("group_name", max_length=FIELD_LENGTHS["group_name"]),
                 items=tuple(_read_row(row) for row in group.objects("items")),
             )
             for group in recipe.objects("ingredient_groups")
@@ -328,13 +353,13 @@ def _read_recipe(recipe: _Reader) -> RecipeDraft:
 
 def _read_row(row: _Reader) -> RowDraft:
     return RowDraft(
-        ingredient=row.text("ingredient", max_length=_INGREDIENT_MAX_LENGTH, required=True),
-        substitute=row.text("substitute", max_length=_INGREDIENT_MAX_LENGTH),
+        ingredient=row.text("ingredient", max_length=FIELD_LENGTHS["ingredient"], required=True),
+        substitute=row.text("substitute", max_length=FIELD_LENGTHS["substitute"]),
         quantity=row.quantity("quantity"),
-        unit=row.text("unit", max_length=_UNIT_MAX_LENGTH),
-        legacy_unit=row.text("legacy_unit", max_length=_UNIT_MAX_LENGTH),
-        preparation=row.text("preparation", max_length=_PREPARATION_MAX_LENGTH),
-        note=row.text("note", max_length=_NOTE_MAX_LENGTH),
+        unit=row.text("unit", max_length=FIELD_LENGTHS["unit"]),
+        legacy_unit=row.text("legacy_unit", max_length=FIELD_LENGTHS["legacy_unit"]),
+        preparation=row.text("preparation", max_length=FIELD_LENGTHS["preparation"]),
+        note=row.text("note", max_length=FIELD_LENGTHS["note"]),
     )
 
 

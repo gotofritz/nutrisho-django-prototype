@@ -1,0 +1,84 @@
+{
+  "description": "The lists the clipper loads when its sidebar opens, for the user `cook`, whose library is small: two global ingredients and a private one, two global units and a private one, two cuisines, a global tag and a private one.",
+  "request": {
+    "method": "GET",
+    "path": "/recipes/api/vocabulary/",
+    "headers": {
+      "Authorization": "Bearer nsh_example-key-for-the-api-examples"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "user": "cook",
+      "ingredients": [
+        {
+          "name": "aubergine",
+          "spellings": [
+            "aubergines",
+            "eggplant",
+            "eggplants"
+          ]
+        },
+        {
+          "name": "basil",
+          "spellings": [
+            "basils"
+          ]
+        },
+        {
+          "name": "lemon",
+          "spellings": [
+            "lemons"
+          ]
+        }
+      ],
+      "units": [
+        {
+          "name": "g",
+          "spellings": [
+            "gram",
+            "grams"
+          ]
+        },
+        {
+          "name": "punnet",
+          "spellings": [
+            "punnets"
+          ]
+        },
+        {
+          "name": "tbsp",
+          "spellings": [
+            "tablespoon",
+            "tablespoons"
+          ]
+        }
+      ],
+      "cuisines": [
+        "med",
+        "med.italy"
+      ],
+      "tags": [
+        "dinner",
+        "favourite"
+      ],
+      "limits": {
+        "recipe_name": 200,
+        "short_description": 4000,
+        "source_instance": 200,
+        "cuisine": 602,
+        "tags": 64,
+        "step_title": 128,
+        "step_text": 4000,
+        "group_name": 64,
+        "ingredient": 128,
+        "substitute": 128,
+        "unit": 32,
+        "legacy_unit": 32,
+        "preparation": 128,
+        "note": 128
+      }
+    }
+  }
+}

@@ -93,17 +93,19 @@ quantity, two words before one, an `of` after it dropped), then the name;
 after the first comma comes the preparation, brackets are a note, and a size
 or an amount phrase moves as the editor would ask (`unit_words.py`).
 
-## The endpoint and API tokens
+## The endpoints and API tokens
 
-`views/api.py` is the app's one JSON endpoint and its one view outside the
-session login. A browser extension's requests do not come from a page of this
-site, so a session cookie plus CSRF token does not fit them; instead the client
-sends `Authorization: Bearer <key>`:
+`views/api.py` holds the app's two JSON endpoints, its only views outside the
+session login: `POST /recipes/api/recipes/` saves recipes, and
+`GET /recipes/api/vocabulary/` answers with the lists the clipper loads (#160).
+A browser extension's requests do not come from a page of this site, so a
+session cookie plus CSRF token does not fit them; instead the client sends
+`Authorization: Bearer <key>`:
 
-- The view is `@login_not_required` (it is in `PUBLIC_ROUTES`) and
-  `@csrf_exempt`. It never looks at the session: a forged cross-site post
-  carries the victim's cookie but not their key, so skipping CSRF is safe only
-  because of that.
+- Both views are `@login_not_required` (they are in `PUBLIC_ROUTES`), and the
+  save is `@csrf_exempt`. Neither looks at the session: a forged cross-site
+  post carries the victim's cookie but not their key, so skipping CSRF is safe
+  only because of that.
 - 201 answers `{"recipes": [{"id", "name", "url", "renamed", "in_trash"}],
   "warnings": [...]}`, each `id` the recipe's UUID as text (#156); 400, 401
   (with `WWW-Authenticate: Bearer`), 405, 409 and 413 answer
@@ -117,6 +119,22 @@ sends `Authorization: Bearer <key>`:
   with that recipe in the same shape. Another user's id is a 409 that names
   nobody. The check and the write share one transaction, whose IMMEDIATE lock
   keeps two saves of one draft from both writing.
+- The vocabulary (`services/vocabulary.py`) answers `{"user", "ingredients",
+  "units", "cuisines", "tags", "limits"}` for the key's user. An ingredient or
+  unit is `{"name", "spellings"}`: the canonical name and every other spelling
+  the server accepts for it (its plural, its aliases and their plurals), each
+  listed under the row `name_resolution` resolves it to, so the clipper looks
+  names up and never inflects one. Lookups ignore case, and a unit's also
+  ignore a trailing full stop. Ingredients, units and tags are the global ones
+  plus the user's own, a name in both listed once as the global row; cuisines
+  are dotted paths; `limits` is `recipe_document.FIELD_LENGTHS`, the length
+  the reader allows each text field of a saved recipe (`tags`: each tag). One
+  query per section, so its cost does not grow with the library. A new kind of
+  data is a new section, not a new endpoint.
+- `tests/api_examples/` holds one example of each request and reply, replayed
+  by `tests/recipes/test_api_examples.py` against a small fixed library and
+  matched exactly. The extension's tests read the same files, so a change to a
+  reply shows up on both sides.
 - `ApiToken` (`models/api_token.py`) stores only the SHA-256 digest of a key;
   the key is `nsh_` plus 43 random characters, shown once. A user may hold
   several; an inactive user's keys stop working, and `last_used_at` is noted on
