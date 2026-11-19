@@ -12,9 +12,15 @@ A recipe whose name the owner already uses is imported as "<name> Imported"
 (" Imported 2", …), so importing never loses either recipe. Each recipe is
 written in its own transaction, so a large import does not hold the write lock
 for its whole length.
+
+A client that made its recipe's id itself (#158) passes it as `recipe_id`, for
+a batch of one recipe. If the owner already has a recipe with that id, live or
+in the trash, nothing is written and the result is that recipe, so a save sent
+twice makes one recipe. Another user's id raises `RecipeIdTakenError`.
 """
 
 from dataclasses import dataclass, field
+from uuid import UUID
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import transaction
@@ -29,7 +35,13 @@ from recipes.models import (
     Unit,
 )
 from recipes.services.name_resolution import find_cuisine, resolve_ingredient, resolve_unit
-from recipes.services.recipe_document import ImportBatch, IngredientDraft, RecipeDraft, RowDraft
+from recipes.services.recipe_document import (
+    ImportBatch,
+    ImportFormatError,
+    IngredientDraft,
+    RecipeDraft,
+    RowDraft,
+)
 from recipes.services.recipe_metadata import set_tags
 from recipes.utils.plain_text import plain_text
 from recipes.utils.sequencing import number_in_order
@@ -37,12 +49,21 @@ from recipes.utils.sequencing import number_in_order
 _NAME_MAX = 200  # Recipe.recipe_name max_length
 
 
+class RecipeIdTakenError(Exception):
+    """The id a save named belongs to another user's recipe."""
+
+
 @dataclass(frozen=True)
 class ImportedRecipe:
-    """A recipe an import wrote, and the name it asked for when that was taken."""
+    """A recipe an import wrote, and the name it asked for when that was taken.
+
+    `existed` is set when the import named the id of a recipe the owner already
+    had: nothing was written, and `recipe` is that one.
+    """
 
     recipe: Recipe
     requested_name: str = ""
+    existed: bool = False
 
     @property
     def renamed(self) -> bool:
@@ -58,13 +79,34 @@ class ImportResult:
     warnings: list[str] = field(default_factory=list)
 
 
-def import_recipes(*, owner: AbstractBaseUser, batch: ImportBatch) -> ImportResult:
-    """Write every recipe in `batch` as `owner`'s, in order."""
+def import_recipes(
+    *, owner: AbstractBaseUser, batch: ImportBatch, recipe_id: UUID | None = None
+) -> ImportResult:
+    """Write every recipe in `batch` as `owner`'s, in order; the one recipe under `recipe_id`."""
+    if recipe_id is not None and len(batch.recipes) != 1:
+        msg = f"An id names one recipe, and this body holds {len(batch.recipes)}."
+        raise ImportFormatError(msg)
     writer = _Writer(owner=owner, ingredients=batch.ingredients)
     for draft in batch.recipes:
+        # The id check and the write share this transaction, whose IMMEDIATE
+        # lock keeps a second save of the same draft from writing in between.
         with transaction.atomic():
-            writer.result.recipes.append(writer.write(draft))
+            existing = _existing(owner=owner, recipe_id=recipe_id)
+            if existing is not None:
+                writer.result.recipes.append(ImportedRecipe(recipe=existing, existed=True))
+            else:
+                writer.result.recipes.append(writer.write(draft, recipe_id=recipe_id))
     return writer.result
+
+
+def _existing(*, owner: AbstractBaseUser, recipe_id: UUID | None) -> Recipe | None:
+    """The owner's recipe with `recipe_id`, live or trashed; refused when it is someone else's."""
+    if recipe_id is None:
+        return None
+    existing = Recipe.objects.filter(pk=recipe_id).first()
+    if existing is not None and existing.owner_id != owner.pk:
+        raise RecipeIdTakenError
+    return existing
 
 
 class _Writer:
@@ -78,7 +120,7 @@ class _Writer:
         self._units: dict[str, Unit | None] = {}
         self._cuisines: dict[str, Cuisine | None] = {}
 
-    def write(self, draft: RecipeDraft) -> ImportedRecipe:
+    def write(self, draft: RecipeDraft, *, recipe_id: UUID | None = None) -> ImportedRecipe:
         label = plain_text(draft.recipe_name)
         recipe = Recipe(
             recipe_name=draft.recipe_name,
@@ -88,6 +130,8 @@ class _Writer:
             cuisine=self._cuisine(draft.cuisine, label=label),
             owner=self._owner,
             deleted_at=draft.deleted_at,
+            # Left out, the id is a new one (#158).
+            **({"id": recipe_id} if recipe_id is not None else {}),
         )
         imported = _save_with_free_name(recipe)
         if draft.created_date is not None:
