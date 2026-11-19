@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M3 done (#154, #156, #158)
+## Status: In progress, M1 to M4 done (#154, #156, #158, #160)
 
 ## What we are building
 
@@ -120,23 +120,13 @@ recipe per body) creates the recipe under that id. The same id again writes
 nothing and answers 200 with the recipe, live or trashed; another user's id
 is a 409 that names nobody.
 
-### M4 · server · The lists the clipper loads
+### ✅ M4 · server · The lists the clipper loads
 
-- `GET /recipes/api/vocabulary/` answers with what the key's user can see,
-  in named sections: `ingredients` and `units` (each entry the canonical
-  name with every other spelling the server accepts for it: its plural, its
-  aliases and their plurals), `cuisines` (dotted paths), `tags`, `limits`
-  (the length each field of a save may have) and the user's name. The
-  number of queries must not grow with the library.
-- The extension only looks names up in these. It never inflects one itself,
-  so the two cannot disagree about a plural.
-- A later kind of data, such as nutrition, is a new section, not a new
-  endpoint.
-- One example of each request and reply of the API is kept as a JSON file
-  with the server's tests, checked against what the views send. The
-  extension's tests read the same files (M6).
-- `AGENTS.md` and `import-export.md` say the app has one JSON endpoint:
-  update both.
+Done (#160). `GET /recipes/api/vocabulary/` answers with the key's user's
+`ingredients` and `units` (each with every spelling the server accepts),
+`cuisines`, `tags`, `limits` and name, in a fixed number of queries. One
+example of each API request and reply lives in `server/tests/api_examples/`,
+checked against the views; the extension's tests read the same files.
 
 ### M5 · extension · Set-up: the project and its quality gates
 

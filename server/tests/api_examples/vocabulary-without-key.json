@@ -1,0 +1,17 @@
+{
+  "description": "Any request without a valid API key.",
+  "request": {
+    "method": "GET",
+    "path": "/recipes/api/vocabulary/",
+    "headers": {}
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "WWW-Authenticate": "Bearer realm=\"nutrisho\""
+    },
+    "body": {
+      "error": "Send a valid API token as “Authorization: Bearer <token>”."
+    }
+  }
+}

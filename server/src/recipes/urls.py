@@ -41,6 +41,7 @@ urlpatterns = [
     path("import/", recipe_transfer.recipe_import, name="import"),
     # For the recipe clipper: token-authenticated JSON, not a page (#78).
     path("api/recipes/", api.api_recipes, name="api_recipes"),
+    path("api/vocabulary/", api.api_vocabulary, name="api_vocabulary"),
     # Shared-ingredient clean-up tool (Miller columns). The `manage/` prefix keeps
     # these clear of the per-recipe `<recipe_id>/ingredients/...` inline-edit routes.
     path(

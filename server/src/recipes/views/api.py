@@ -1,7 +1,9 @@
-"""The JSON endpoint the recipe clipper submits recipes to (#78).
+"""The JSON endpoints the recipe clipper uses (#78, #160).
 
-The rest of the app is server-rendered pages behind a session login. This is
-the exception, for a client that is not a browser page: the extension's
+`api_recipes` saves recipes; `api_vocabulary` answers with the lists the
+clipper checks a draft's names against. The rest of the app is server-rendered
+pages behind a session login. These are the exception, for a client that is
+not a browser page: the extension's
 service worker, or a script. It is signed in by an API token sent as
 `Authorization: Bearer <key>` (`services/api_tokens.py`), never by the session
 cookie, so it can skip CSRF: a page that makes a browser post here carries no
@@ -12,20 +14,33 @@ in JSON throughout, never with a redirect to the login page.
 from uuid import UUID
 
 from django.contrib.auth.decorators import login_not_required
+from django.contrib.auth.models import AbstractBaseUser
 from django.core.exceptions import RequestDataTooBig
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 
 from recipes.services.api_tokens import bearer_key, user_for_key
 from recipes.services.recipe_document import ImportFormatError, parse_json
 from recipes.services.recipe_import import RecipeIdTakenError, import_recipes
+from recipes.services.vocabulary import vocabulary
 
 _UNAUTHORISED = "Send a valid API token as “Authorization: Bearer <token>”."
 _BAD_ID = "“id” must be a version 7 UUID."
 # Says nothing of whose recipe holds the id, or whether it is live.
 _ID_TAKEN = "That id is taken: make a new one for this recipe."
 _UUID_VERSION = 7  # sorts by age, which the export, search and the trash rely on (#156)
+
+
+def _key_user(request: HttpRequest) -> AbstractBaseUser | None:
+    """The user whose API key the request carries; never the session's."""
+    return user_for_key(bearer_key(request.headers.get("Authorization", "")))
+
+
+def _unauthorised() -> JsonResponse:
+    response = _error(_UNAUTHORISED, status=401)
+    response["WWW-Authenticate"] = 'Bearer realm="nutrisho"'
+    return response
 
 
 def _recipe_id(raw: str) -> UUID | None:
@@ -57,11 +72,9 @@ def api_recipes(request: HttpRequest) -> JsonResponse:
     be read, 401 that the token is missing or wrong, 413 that the body is too
     large.
     """
-    user = user_for_key(bearer_key(request.headers.get("Authorization", "")))
+    user = _key_user(request)
     if user is None:
-        response = _error(_UNAUTHORISED, status=401)
-        response["WWW-Authenticate"] = 'Bearer realm="nutrisho"'
-        return response
+        return _unauthorised()
     recipe_id = None
     if "id" in request.GET:
         recipe_id = _recipe_id(request.GET["id"])
@@ -88,3 +101,17 @@ def api_recipes(request: HttpRequest) -> JsonResponse:
     ]
     status = 200 if all(imported.existed for imported in result.recipes) else 201
     return JsonResponse({"recipes": recipes, "warnings": result.warnings}, status=status)
+
+
+@login_not_required
+@require_GET
+def api_vocabulary(request: HttpRequest) -> JsonResponse:
+    """The names the key's user can use in a recipe, and the length each field may have.
+
+    The clipper loads this each time its sidebar opens (`services/vocabulary.py`);
+    401 without a valid key.
+    """
+    user = _key_user(request)
+    if user is None:
+        return _unauthorised()
+    return JsonResponse(vocabulary(owner=user))
