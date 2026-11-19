@@ -105,9 +105,18 @@ sends `Authorization: Bearer <key>`:
   carries the victim's cookie but not their key, so skipping CSRF is safe only
   because of that.
 - 201 answers `{"recipes": [{"id", "name", "url", "renamed", "in_trash"}],
-  "warnings": [...]}`, each `id` the recipe's UUID as text (#156); 400, 401 (with `WWW-Authenticate: Bearer`), 405 and 413
-  answer `{"error": "..."}`. The body limit is Django's
-  `DATA_UPLOAD_MAX_MEMORY_SIZE` (2.5 MB).
+  "warnings": [...]}`, each `id` the recipe's UUID as text (#156); 400, 401
+  (with `WWW-Authenticate: Bearer`), 405, 409 and 413 answer
+  `{"error": "..."}`. The body limit is Django's `DATA_UPLOAD_MAX_MEMORY_SIZE`
+  (2.5 MB).
+- `?id=<uuid>` (#158) names the id of the body's one recipe, made by the
+  client when its draft starts, so a save sent twice makes one recipe. It must
+  be a version 7 UUID, so ordering by id stays ordering by age, and the body
+  must hold one recipe; otherwise 400. If the key's user already has a recipe
+  with that id, live or in the trash, nothing is written and a 200 answers
+  with that recipe in the same shape. Another user's id is a 409 that names
+  nobody. The check and the write share one transaction, whose IMMEDIATE lock
+  keeps two saves of one draft from both writing.
 - `ApiToken` (`models/api_token.py`) stores only the SHA-256 digest of a key;
   the key is `nsh_` plus 43 random characters, shown once. A user may hold
   several; an inactive user's keys stop working, and `last_used_at` is noted on

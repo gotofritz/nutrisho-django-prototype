@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 and M2 done (#154, #156)
+## Status: In progress, M1 to M3 done (#154, #156, #158)
 
 ## What we are building
 
@@ -101,10 +101,9 @@ that finishes a milestone marks it done here.
 
 ### ✅ M1 · server · Units become a shared vocabulary
 
-**Done** (#154).
-
-Today units are one global list that only staff add to: an unknown unit is
-an error in the editor, and an import keeps it as text in `legacy_unit`.
+Done (#154). Units are global (staff-curated) plus each user's own;
+`resolve_unit` makes a private unit on a miss, and size words and amount
+phrases never become units.
 
 ### ✅ M2 · server · Recipes get UUID keys
 
@@ -114,13 +113,12 @@ becomes `...00000000000a`) and numbers them again going back. Old numbered
 addresses are gone. Still to do by hand before deploying: `make backup`,
 migrate a copy of the real database, compare its export, then the real one.
 
-### M3 · server · A save can name its recipe's id
+### ✅ M3 · server · A save can name its recipe's id
 
-- `POST /recipes/api/recipes/?id=<uuid>`, for a body that holds one recipe,
-  creates the recipe under that id.
-- If the key's user already has a recipe with that id, live or in the
-  trash, nothing is written and the reply is that recipe. Someone else's id
-  is refused, without saying whose.
+Done (#158). `POST /recipes/api/recipes/?id=<uuid>` (a version 7 UUID, one
+recipe per body) creates the recipe under that id. The same id again writes
+nothing and answers 200 with the recipe, live or trashed; another user's id
+is a 409 that names nobody.
 
 ### M4 · server · The lists the clipper loads
 
