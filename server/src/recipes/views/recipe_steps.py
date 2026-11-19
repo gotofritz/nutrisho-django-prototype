@@ -1,4 +1,5 @@
 from typing import Literal
+from uuid import UUID
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
@@ -24,7 +25,7 @@ _STEPS_BLOCK = "recipes/partials/_steps_block.html"
 
 
 @require_GET
-def recipe_step_display(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
+def recipe_step_display(request: AuthedRequest, recipe_id: UUID, step_id: int) -> HttpResponse:
     """Show a step."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
@@ -36,7 +37,7 @@ def recipe_step_display(request: AuthedRequest, recipe_id: int, step_id: int) ->
 
 
 @require_GET
-def recipe_step_edit(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
+def recipe_step_edit(request: AuthedRequest, recipe_id: UUID, step_id: int) -> HttpResponse:
     """Show the step edit form."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
@@ -49,7 +50,7 @@ def recipe_step_edit(request: AuthedRequest, recipe_id: int, step_id: int) -> Ht
 
 
 @require_POST
-def recipe_step_save(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
+def recipe_step_save(request: AuthedRequest, recipe_id: UUID, step_id: int) -> HttpResponse:
     """Save a step."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
@@ -73,7 +74,7 @@ def recipe_step_save(request: AuthedRequest, recipe_id: int, step_id: int) -> Ht
 
 
 @require_POST
-def recipe_step_delete(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
+def recipe_step_delete(request: AuthedRequest, recipe_id: UUID, step_id: int) -> HttpResponse:
     """Delete a step."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)
@@ -83,7 +84,7 @@ def recipe_step_delete(request: AuthedRequest, recipe_id: int, step_id: int) -> 
 
 @require_POST
 def recipe_step_move(
-    request: AuthedRequest, recipe_id: int, step_id: int, direction: Literal["up", "down"]
+    request: AuthedRequest, recipe_id: UUID, step_id: int, direction: Literal["up", "down"]
 ) -> HttpResponse:
     """Move a step up or down."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
@@ -95,7 +96,7 @@ def recipe_step_move(
 
 
 @require_POST
-def recipe_step_add(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_step_add(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Render a blank step form; no row is created until create succeeds."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     return render(
@@ -106,7 +107,7 @@ def recipe_step_add(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 
 @require_POST
-def recipe_step_create(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_step_create(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Create a step."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     form = StepForm(data=request.POST)
@@ -144,7 +145,7 @@ def _selected_step_ids(request: AuthedRequest) -> list[int] | None:
 
 
 @require_POST
-def recipe_steps_bulk_delete(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_steps_bulk_delete(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Delete every checked step."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step_ids = _selected_step_ids(request)
@@ -160,7 +161,7 @@ def recipe_steps_bulk_delete(request: AuthedRequest, recipe_id: int) -> HttpResp
 
 
 @require_POST
-def recipe_steps_merge(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def recipe_steps_merge(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Append the checked steps to the highest one up the page (see `merge_steps`)."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step_ids = _selected_step_ids(request)
@@ -174,7 +175,7 @@ def recipe_steps_merge(request: AuthedRequest, recipe_id: int) -> HttpResponse:
 
 
 @require_POST
-def recipe_step_split(request: AuthedRequest, recipe_id: int, step_id: int) -> HttpResponse:
+def recipe_step_split(request: AuthedRequest, recipe_id: UUID, step_id: int) -> HttpResponse:
     """Split the step being edited in two at the cursor, ``split_at`` (see `split_step`)."""
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
     step = get_object_or_404(Step, id=step_id, recipe=recipe)

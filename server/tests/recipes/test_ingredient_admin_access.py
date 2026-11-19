@@ -5,6 +5,8 @@ the tool reaches recipes the acting user does not own. Any signed-in user who is
 not staff gets a 403 on every route, and a mutating route writes nothing.
 """
 
+import uuid
+
 import pytest
 
 from recipes.models import Ingredient
@@ -45,7 +47,7 @@ def pair(make_ingredient, make_recipe, add_ingredient, user):
     return onion, onions
 
 
-def _read_routes(recipe_id: int) -> list[str]:
+def _read_routes(recipe_id: uuid.UUID) -> list[str]:
     return [
         MANAGE,
         MANAGE + "search/",
@@ -67,7 +69,7 @@ def _read_routes(recipe_id: int) -> list[str]:
 def test_every_read_route_is_forbidden_to_non_staff(other_client, pair, htmx):
     """GET routes answer 403 to a signed-in user who is not staff."""
     onion, onions = pair
-    recipe_id = onion.pk  # any int; the guard runs before the lookup
+    recipe_id = uuid.uuid7()  # any id; the guard runs before the lookup
     headers = {"HTTP_HX_REQUEST": "true"} if htmx else {}
     for url in _read_routes(recipe_id):
         response = other_client.get(url, {"ingredient_ids": [onion.pk, onions.pk]}, **headers)

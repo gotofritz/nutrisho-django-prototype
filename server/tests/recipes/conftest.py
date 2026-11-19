@@ -89,19 +89,21 @@ def without_ci_name_constraint(db):
 
 @pytest.fixture
 def pre_rename_apps(db):
-    """The models as of migration 0027: today's schema, `Tag.recipe` not yet `recipes`.
+    """The models as of migration 0027, `Tag.recipe` not yet `recipes`, with UUID recipe keys.
 
     Tests that call an older data migration's function on the current database
     pass it these, as the migration itself would, instead of the live models.
     Migrating back to that migration is not an option: the seeded cuisine tree
-    cannot be reversed past 0020.
+    cannot be reversed past 0020. The recipe keys of 0033 (#156) are laid over
+    them, so the models read today's recipe ids.
     """
     from django.db import connection
     from django.db.migrations.loader import MigrationLoader
 
-    state = MigrationLoader(connection).project_state(
-        ("recipes", "0027_drop_unused_source_and_step_fields")
-    )
+    loader = MigrationLoader(connection)
+    state = loader.project_state(("recipes", "0027_drop_unused_source_and_step_fields"))
+    for operation in loader.get_migration("recipes", "0033_recipe_uuid_keys").operations:
+        operation.state_forwards("recipes", state)
     return state.apps
 
 

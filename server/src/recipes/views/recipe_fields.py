@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
@@ -16,7 +18,7 @@ def _require_editable_field(field_name: str) -> None:
 
 
 @require_GET
-def recipe_field_display(request: AuthedRequest, recipe_id: int, field_name: str) -> HttpResponse:
+def recipe_field_display(request: AuthedRequest, recipe_id: UUID, field_name: str) -> HttpResponse:
     """Show a field."""
     _require_editable_field(field_name)
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
@@ -32,7 +34,7 @@ def recipe_field_display(request: AuthedRequest, recipe_id: int, field_name: str
 
 
 @require_GET
-def recipe_field_edit(request: AuthedRequest, recipe_id: int, field_name: str) -> HttpResponse:
+def recipe_field_edit(request: AuthedRequest, recipe_id: UUID, field_name: str) -> HttpResponse:
     """Show the field edit form."""
     _require_editable_field(field_name)
     recipe = owned_recipe(request=request, recipe_id=recipe_id)
@@ -45,7 +47,7 @@ def recipe_field_edit(request: AuthedRequest, recipe_id: int, field_name: str) -
 
 
 @require_POST
-def recipe_field_save(request: AuthedRequest, recipe_id: int, field_name: str) -> HttpResponse:
+def recipe_field_save(request: AuthedRequest, recipe_id: UUID, field_name: str) -> HttpResponse:
     """Save a field."""
     _require_editable_field(field_name)
     recipe = owned_recipe(request=request, recipe_id=recipe_id)

@@ -7,6 +7,7 @@ re-rendered partial, so there is no client-side store.
 """
 
 from typing import NamedTuple, TypedDict, Unpack, cast
+from uuid import UUID
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.core.exceptions import ValidationError
@@ -445,7 +446,7 @@ def ingredient_manage_recipes(request: AuthedRequest) -> HttpResponse:
 
 
 @require_GET
-def ingredient_manage_preview(request: AuthedRequest, recipe_id: int) -> HttpResponse:
+def ingredient_manage_preview(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     """Column 4: inert, owner-scoped render of one recipe.
 
     Deliberately not a stripped-down `partials/_recipe_content.html`: that

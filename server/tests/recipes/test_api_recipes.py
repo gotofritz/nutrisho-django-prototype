@@ -53,7 +53,7 @@ def test_submit_json_ld(user, key):
     assert response.json() == {
         "recipes": [
             {
-                "id": recipe.pk,
+                "id": str(recipe.pk),
                 "name": "Pancakes",
                 "url": f"http://testserver/recipes/{recipe.pk}/",
                 "renamed": False,

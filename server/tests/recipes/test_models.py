@@ -1,5 +1,7 @@
 """Tests for recipes models."""
 
+import uuid
+
 import django.db
 import pytest
 from django.db import models
@@ -236,3 +238,13 @@ def test_reverse_accessors_are_plural(user, make_recipe, make_ingredient, add_in
     assert list(row.ingredient_group.items.all()) == [row]
     assert list(recipe.tags.all()) == [tag]
     assert list(tag.recipes.all()) == [recipe]
+
+
+@pytest.mark.django_db
+def test_a_recipe_is_keyed_by_a_version_7_uuid(user):
+    """A recipe's id is a UUID made when it is created, so a client can make one too (#156)."""
+    first = Recipe.objects.create(recipe_name="First", owner=user)
+    second = Recipe.objects.create(recipe_name="Second", owner=user)
+    assert isinstance(first.pk, uuid.UUID)
+    assert first.pk.version == 7
+    assert list(Recipe.objects.order_by("id")) == [first, second]

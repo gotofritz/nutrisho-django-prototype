@@ -105,7 +105,7 @@ sends `Authorization: Bearer <key>`:
   carries the victim's cookie but not their key, so skipping CSRF is safe only
   because of that.
 - 201 answers `{"recipes": [{"id", "name", "url", "renamed", "in_trash"}],
-  "warnings": [...]}`; 400, 401 (with `WWW-Authenticate: Bearer`), 405 and 413
+  "warnings": [...]}`, each `id` the recipe's UUID as text (#156); 400, 401 (with `WWW-Authenticate: Bearer`), 405 and 413
   answer `{"error": "..."}`. The body limit is Django's
   `DATA_UPLOAD_MAX_MEMORY_SIZE` (2.5 MB).
 - `ApiToken` (`models/api_token.py`) stores only the SHA-256 digest of a key;
