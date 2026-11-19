@@ -12,7 +12,7 @@
 Search (#32). Typing or picking a filter swaps #search-results only and pushes
 the URL, the active-search pattern of the ingredient tool; Enter submits the
 form as a plain (boosted) GET, so it works without htmx too. The filters read
-as one sentence: "looking in everything, from any kitchen, tagged anything".
+as one sentence: "looking in everything, from any cuisine, tagged anything".
 {% endcomment %}
 <form role="search" method="get" action="{% url 'recipes:home' %}" id="recipe-search" class="recipe-search no-print">
   <label for="search-q" class="visually-hidden">Search</label>
@@ -55,7 +55,7 @@ as one sentence: "looking in everything, from any kitchen, tagged anything".
       hx-push-url="true"
       hx-include="closest form"
     >
-      <option value="">any kitchen</option>
+      <option value="">any cuisine</option>
       {% for cuisine in cuisines %}<option value="{{ cuisine.pk }}"{% if cuisine.pk == search.cuisine_id %} selected{% endif %}>{{ cuisine.path }}</option>{% endfor %}
     </select>{% endif %}{% if tags %},
     <label for="search-tag">tagged</label>
