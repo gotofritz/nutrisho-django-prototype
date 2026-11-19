@@ -2,8 +2,8 @@
 #
 # One Makefile serves both parts (#145). The server targets keep their plain
 # names and run inside server/, so a path in ARGS is relative to server/
-# (`make test` also accepts `server/tests/...`). Extension targets will take an
-# `ext-` prefix once extension/ holds code.
+# (`make test` also accepts `server/tests/...`). The extension's targets take an
+# `ext-` prefix and run inside extension/, with pnpm; `make qa` never needs Node.
 #
 # A target shows up in `make help` when its rule line ends in `## description`.
 # Variables can be set on the command line, e.g. `make dev PORT=9000` or
@@ -17,15 +17,19 @@ export DJANGO_SETTINGS_MODULE ?= nutrisho.settings.dev
 
 PORT ?= 8987
 ARGS ?=
+BROWSER ?= firefox
 SCHEMA ?= server/docs/schema.sql
 
 # Prefix for every server command: it runs in server/, beside its pyproject.toml.
 IN_SERVER := cd server &&
+# Prefix for every extension command: it runs in extension/, beside its package.json.
+IN_EXT := cd extension &&
 # ARGS for pytest, with a leading `server/` dropped from paths given from the root.
 TEST_ARGS = $(patsubst server/%,%,$(ARGS))
 
-.PHONY: help audit backup bootstrap check-migrations coverage coverage-badge dev e2e lint lint-fix manage \
-	migrate qa release schema seed test test-cov test-hooks typecheck
+.PHONY: help audit backup bootstrap check-migrations coverage coverage-badge dev e2e ext-build ext-dev \
+	ext-install ext-qa ext-test lint lint-fix manage migrate qa release schema seed test test-cov test-hooks \
+	typecheck
 
 help: ## List the available targets
 	@echo "Usage: make <target> [VAR=value]"
@@ -78,6 +82,29 @@ dev: ## Run the dev server on PORT (default 8987)
 e2e: ## Run the browser smoke tests in Chromium (pass extra pytest args as ARGS="...")
 	$(IN_SERVER) DJANGO_SETTINGS_MODULE=nutrisho.settings.test uv run pytest --tb=short -m e2e $(TEST_ARGS)
 
+# The extension (#162). Node and pnpm versions are pinned in extension/.nvmrc
+# and extension/package.json.
+ext-build: ## Build the extension for Firefox and Chrome into extension/.output/
+	$(IN_EXT) pnpm build
+	$(IN_EXT) pnpm build:chrome
+
+ext-dev: ## Run the extension in a fresh browser profile, reloading on change (BROWSER=firefox or chrome)
+	$(IN_EXT) pnpm $(if $(filter chrome,$(BROWSER)),dev:chrome,dev)
+
+ext-install: ## Install the extension's dependencies from extension/pnpm-lock.yaml
+	$(IN_EXT) pnpm install --frozen-lockfile
+
+ext-qa: ## Run the extension's checks: formatting, lint, types, tests, and a build for each browser
+	$(IN_EXT) pnpm format:check
+	$(IN_EXT) pnpm lint
+	$(IN_EXT) pnpm check
+	$(IN_EXT) pnpm test
+	$(IN_EXT) pnpm build
+	$(IN_EXT) pnpm build:chrome
+
+ext-test: ## Run the extension's tests (pass a path or other vitest args as ARGS="...")
+	$(IN_EXT) pnpm test $(ARGS)
+
 lint: ## Run ruff (non-mutating)
 	$(IN_SERVER) uv run ruff check src/ tests/
 	$(IN_SERVER) uv run ruff format --check src/ tests/
@@ -122,8 +149,9 @@ test: ## Run tests, without coverage (pass a path or other pytest args as ARGS="
 test-cov: ## Run tests with coverage, failing under 95%, and write htmlcov/ (pass extra pytest args as ARGS="...")
 	$(IN_SERVER) DJANGO_SETTINGS_MODULE=nutrisho.settings.test uv run pytest --tb=short --cov=src --cov-report=html:htmlcov --cov-fail-under=95 $(TEST_ARGS)
 
-test-hooks: ## Run the regression tests for the opt-in caveman hooks in .claude/hooks (not part of qa)
+test-hooks: ## Run the regression tests for the Claude Code hooks in .claude/hooks (not part of qa)
 	bash .claude/hooks/test-caveman-patterns.sh
+	bash .claude/hooks/test-check-tdd.sh
 
 typecheck: ## Run ty for static type checking
 	$(IN_SERVER) uv run ty check src tests

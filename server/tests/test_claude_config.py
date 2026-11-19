@@ -63,6 +63,16 @@ def test_branch_hook_does_not_block_non_interactive_runs():
     assert "non-interactive" in group["hooks"][0]["command"]
 
 
+def test_agents_cannot_write_extension_code_before_its_test():
+    """Anklipper's TDD hook checks every Write and Edit; it gates only `extension/` (#162)."""
+    (group,) = SETTINGS["hooks"]["PreToolUse"]
+
+    assert group["matcher"] == "Write|Edit"
+    assert [hook["command"] for hook in group["hooks"]] == [
+        'bash "$CLAUDE_PROJECT_DIR"/.claude/hooks/check-tdd.sh'
+    ]
+
+
 def test_hook_scripts_run_through_the_project_dir():
     """Hooks run by absolute path, so they work when the shell is in `src/` or `tests/`."""
     commands = [*hook_commands(SETTINGS), SETTINGS["statusLine"]["command"]]
@@ -86,6 +96,9 @@ def test_hook_scripts_run_through_the_project_dir():
         "Bash(git status *)",
         "Bash(git diff *)",
         "Bash(git log *)",
+        "Bash(make ext-qa)",
+        "Bash(make ext-test)",
+        "Bash(make ext-test *)",
     ],
 )
 def test_mandated_commands_are_allowed_without_a_prompt(rule: str):

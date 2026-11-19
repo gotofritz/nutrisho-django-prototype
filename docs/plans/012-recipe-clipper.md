@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M4 done (#154, #156, #158, #160)
+## Status: In progress, M1 to M5 done (#154, #156, #158, #160, #162)
 
 ## What we are building
 
@@ -128,40 +128,16 @@ Done (#160). `GET /recipes/api/vocabulary/` answers with the key's user's
 example of each API request and reply lives in `server/tests/api_examples/`,
 checked against the views; the extension's tests read the same files.
 
-### M5 · extension · Set-up: the project and its quality gates
+### ✅ M5 · extension · Set-up: the project and its quality gates
 
-No feature: an extension that builds, loads in Firefox with an empty
-sidebar, and cannot be merged red.
-
-- Anklipper's toolchain files at their pinned versions: `package.json`,
-  `wxt.config.ts`, `vitest.config.ts`, `tsconfig.json`, `eslint.config.js`,
-  `.nvmrc`.
-- The gates: Prettier, ESLint (with anklipper's rule that keeps browser APIs
-  and Svelte out of the domain code), `svelte-check` and `tsc`, Vitest, and
-  a build for Firefox and for Chrome. `make ext-qa` runs them all;
-  `ext-install`, `ext-dev`, `ext-test` and `ext-build` sit beside it.
-  `make qa` stays free of Node.
-- The same gates as pre-commit hooks for files under `extension/`, and
-  anklipper's TDD hook for agents (`.claude/hooks/check-tdd.sh`: no source
-  module without a test), scoped to `extension/`.
-- `.github/workflows/extension.yml`, run for changes to `extension/**`, its
-  own file, the `Makefile`, the hook config and M4's JSON files.
-- **Required checks.** A workflow skipped by its path filter never reports.
-  So if `main` requires the server's `qa`, a PR that touches only
-  `extension/` waits for it for ever (#145). If it does, move the path test
-  from the workflows' triggers to a condition on their jobs: a job skipped
-  by its own condition counts as passed.
-- The server's tests police this PR: `tests/test_workflows.py` (every
-  workflow's actions pinned to a commit, a timeout on every job, a read-only
-  token; its ban on pnpm is narrowed to the server's workflows),
-  `tests/test_makefile.py` (every target listed), `tests/test_dependabot.py`
-  (an `npm` entry for `/extension` once `package.json` exists) and
-  `tests/test_documentation.py` (no `pnpm install` in the developer guide's
-  first-time setup).
-- How to run it goes in `extension/README.md`, and an `extension/` section
-  in `AGENTS.md` covers boundaries, permissions, privacy and TDD.
-- **Done when** `make ext-qa` is green locally and in CI, a deliberate
-  failure turns CI red, and a PR that touches only `extension/` can merge.
+Done (#162). `extension/` is a WXT, Svelte 5 and TypeScript project at
+anklipper's pinned versions; it builds for Firefox and Chrome and opens an
+empty sidebar. `make ext-qa` (Prettier, ESLint with the ports rule,
+`svelte-check` and `tsc`, Vitest, both builds) runs in the git hooks and in
+`extension.yml`, and anklipper's TDD hook guards `extension/` for agents.
+Every workflow now always runs, and a first `changes` job skips the checks a
+change does not concern, so a required check never waits on an
+extension-only PR.
 
 ### M6 · extension · Set-up: the shell
 

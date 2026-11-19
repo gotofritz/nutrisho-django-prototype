@@ -12,6 +12,9 @@
       "Bash(make test-cov)",
       "Bash(make test-cov *)",
       "Bash(make check-migrations)",
+      "Bash(make ext-qa)",
+      "Bash(make ext-test)",
+      "Bash(make ext-test *)",
       "Bash(uv run pytest *)",
       "Bash(uv run ruff *)",
       "Bash(uv run ty *)",
@@ -50,6 +53,17 @@
           {
             "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/caveman-mode-tracker.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-tdd.sh"
           }
         ]
       }

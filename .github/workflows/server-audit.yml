@@ -2,14 +2,13 @@ name: Server audit
 
 # Checks the server's locked Python dependencies against known advisories.
 # Runs weekly as well as on changes, so a new advisory against an unchanged
-# lockfile still turns the build red. Extension-only changes skip it (#145).
+# lockfile still turns the build red. Extension-only changes skip it (#145),
+# through the `changes` job, so the workflow still reports.
 on:
   push:
     branches: ["main"]
-    paths-ignore: ["extension/**"]
   pull_request:
     branches: ["**"]
-    paths-ignore: ["extension/**"]
   schedule:
     - cron: "17 6 * * 1" # Mondays 06:17 UTC
   workflow_dispatch:
@@ -22,7 +21,27 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  # Decides whether the checks below run; see .github/scripts/touches.sh.
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      server: ${{ steps.diff.outputs.server }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Does it touch the server?
+        id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: bash .github/scripts/touches.sh server -v '^extension/' >> "$GITHUB_OUTPUT"
+
   audit:
+    needs: changes
+    if: needs.changes.outputs.server == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

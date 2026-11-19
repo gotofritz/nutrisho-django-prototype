@@ -60,6 +60,20 @@ repos:
         language: system
         pass_filenames: false
         types: [python]
+      # The extension's checks, once per commit that touches extension/ (#162).
+      - id: ext-qa
+        name: ext-qa
+        entry: make ext-qa
+        require_serial: true
+        language: system
+        pass_filenames: false
+        files: ^extension/
+      - id: tdd-hook-tests
+        name: TDD hook tests
+        entry: bash .claude/hooks/test-check-tdd.sh
+        language: system
+        pass_filenames: false
+        files: ^\.claude/hooks/(test-)?check-tdd\.sh$
   - repo: https://github.com/pappasam/toml-sort
     rev: v0.25.0
     hooks:

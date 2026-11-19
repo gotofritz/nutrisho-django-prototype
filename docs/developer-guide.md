@@ -5,22 +5,25 @@ The repository holds two parts (#145):
 - `server/` — the Django app, a self-contained uv project with its own
   `pyproject.toml`, `uv.lock`, `CHANGELOG.md` and docs. Everything in this guide
   is about the server unless it says otherwise.
-- `extension/` — the browser extension that will clip recipes into Nutrisho.
-  It has no code yet; [its README](../extension/README.md) sets out how it
-  will fit in.
+- `extension/` — the browser extension that clips recipes into Nutrisho, a
+  WXT, Svelte and TypeScript project with its own `package.json` and lockfile.
+  [Its README](../extension/README.md) says how to run it.
 
 One top-level `Makefile` drives both, and you run it from the repository root.
 The server targets keep their plain names (`make qa`, `make test`) and run
 inside `server/`, so a path in `ARGS` is relative to `server/`
 (`make test` also accepts `server/tests/...`). Run any other uv command in
-`server/`, or as `uv run --directory server ...`. Extension targets will take
-an `ext-` prefix.
+`server/`, or as `uv run --directory server ...`. Extension targets take an
+`ext-` prefix and run inside `extension/`.
 
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) — Python dependency manager
 - [GNU Make](https://www.gnu.org/software/make/) — task runner (`make help` lists every target; preinstalled on macOS and most Linux distributions)
-- [jq](https://jqlang.org/) — JSON CLI tool, used by the caveman hooks (see [Claude Code](#claude-code))
+- [jq](https://jqlang.org/) — JSON CLI tool, used by the Claude Code hooks (see [Claude Code](#claude-code))
+- For the extension only: Node and pnpm, at the versions in `extension/.nvmrc`
+  and `packageManager` in `extension/package.json` (see
+  [its README](../extension/README.md))
 
 ## First-time setup
 
@@ -229,6 +232,17 @@ They need a browser, installed once with `uv run --directory server playwright i
 so plain pytest, `make test` and `make qa` skip them. Add `ARGS="--headed"` to
 watch them, or `ARGS="--tracing retain-on-failure"` for a trace of a failure.
 
+The extension has its own checks, which need Node and pnpm:
+
+```bash
+make ext-install             # dependencies from extension/pnpm-lock.yaml
+make ext-qa                  # Prettier, ESLint, svelte-check and tsc, Vitest, Firefox and Chrome builds
+make ext-test                # Vitest alone; ARGS="src/sidebar" narrows it
+```
+
+The pre-commit hooks run `make ext-qa` on a commit that touches
+`extension/`, so commit there only with Node and pnpm installed.
+
 `make audit` needs the network, so it is not part of `make qa`. It runs
 `pip-audit` over `uv export --all-groups` and fails on any advisory. CI runs it in
 the `Server audit` workflow on every PR, on pushes to `main`, and every Monday, so a
@@ -236,14 +250,22 @@ new advisory against an unchanged lockfile still shows up.
 
 ## CI
 
-Each part has its own workflows, filtered by path, so a change to one part
-does not run the other's checks. The server workflows (`server.yml` and
-`server-audit.yml`) skip a change that touches only `extension/**`; anything
-else, workflows and docs included, runs them, because the server's tests check
-those files. The extension's workflow will run only for `extension/**`.
-Path filters have one catch: a required status check from one part never
-reports on a PR that touches only the other, so review the branch protection
-rules when the extension workflow lands.
+Each part has its own workflows, and a change to one part does not run the
+other's checks. The server workflows (`server.yml` and `server-audit.yml`)
+skip a change that touches only `extension/`; anything else, workflows and
+docs included, runs them, because the server's tests check those files. The
+`Extension` workflow (`extension.yml`) runs for `extension/`, its own file,
+`.github/scripts/`, the `Makefile`, `.pre-commit-config.yaml` and
+`server/tests/api_examples/`, which the extension's tests read. It installs
+with `make ext-install` and runs `make ext-qa`.
+
+The skipping happens inside each workflow, not in its triggers. A first
+`changes` job runs `.github/scripts/touches.sh` over the files the PR or push
+changed, and the other jobs run only when it says so. A job skipped by its own
+condition counts as passed, so any of them can be a required check; a whole
+workflow skipped by a path filter never reports, and a required check from it
+would wait for ever. A run with nothing to compare with (a schedule, a manual
+run, a new branch) runs everything.
 
 The `Server` workflow (`.github/workflows/server.yml`) installs from the lockfile
 (`uv sync --locked` in `server/`), so a `uv.lock` that is out of date with
@@ -312,8 +334,8 @@ and `CHANGELOG.md` in step, and `server/tests/test_releases.py` checks they agre
 
 Dependabot (`.github/dependabot.yml`) has one entry per ecosystem and
 directory: uv in `/server` and GitHub Actions in `/` weekly, and pre-commit
-hook revs in `/` monthly. The extension gets an npm entry for `/extension`
-with its first `package.json`. Minor and patch bumps arrive grouped into one PR per ecosystem; a
+hook revs in `/` monthly, and npm in `/extension` weekly, with its commits
+scoped `chore(ext)`. Minor and patch bumps arrive grouped into one PR per ecosystem; a
 major bump gets its own PR. Review them like any other PR: CI must be green,
 and a `uv.lock` change that touches Django follows the
 [version policy](#django-version-policy) below.
@@ -398,7 +420,10 @@ server/                # the Django app, its own uv project
   docs/
     features/          # one note per feature area: design and pitfalls
     schema.sql         # current DB schema (generated by backup_db)
-extension/             # the recipe clipper, not started
+extension/             # the recipe clipper, its own pnpm project (see its README)
+.github/
+  workflows/           # server.yml, server-audit.yml, extension.yml, pr-title.yml
+  scripts/touches.sh   # which checks a change concerns
 docs/
   developer-guide.md   # this file
   plans/               # active work plans
@@ -410,14 +435,17 @@ docs/
 
 `.claude/settings.json` holds a permission allowlist for the `make`, `uv run`
 (from `server/`) and read-only `git` commands AGENTS.md asks for, and a `startup` hook that
-reminds the assistant to confirm the branch. Project skills live in
+reminds the assistant to confirm the branch. A `PreToolUse` hook,
+`.claude/hooks/check-tdd.sh` (from anklipper), stops the assistant writing a
+TypeScript or Svelte module under `extension/` before a test of the same stem
+exists. Project skills live in
 `.claude/skills/<name>/SKILL.md`; `tdd` is the one AGENTS.md mandates.
 
 It also turns on caveman mode (terse replies, a status-line badge) for every
 session, re-injecting its rules after each compaction. The hooks need `jq`
 and keep their state in `~/.claude/.caveman-active`; "stop caveman" or
-`/caveman off` turns it off for a session. `make test-hooks` runs their
-regression tests; it is not part of `make qa`. Put personal overrides in the
+`/caveman off` turns it off for a session. `make test-hooks` runs the
+hooks' regression tests; it is not part of `make qa`. Put personal overrides in the
 git-ignored `.claude/settings.local.json`.
 
 ## Architecture notes
@@ -435,4 +463,4 @@ TDD: red → green → refactor. See [AGENTS.md](../AGENTS.md) for the full requ
 Branch names, commit messages and PR titles follow
 [AGENTS.md](../AGENTS.md#branches): branches are `[<issue>-]<type>-<slug>`
 (`24-feature-pluralise`), commits and PR titles are Conventional Commits.
-Run `make qa` before opening a PR.
+Run `make qa` before opening a PR, and `make ext-qa` too when it touches `extension/`.

@@ -1,0 +1,8 @@
+.output/
+.wxt/
+coverage/
+node_modules/
+pnpm-lock.yaml
+
+# markdownlint-style prose: Prettier's reflow is not wanted in the docs.
+*.md

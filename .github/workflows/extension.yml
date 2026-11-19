@@ -1,0 +1,67 @@
+name: Extension
+
+# The recipe clipper under extension/ (#162). Its checks run for changes to
+# extension/, this workflow and the script that gates it, the Makefile, the
+# git hooks and the server's API examples, which the extension's tests read.
+# The `changes` job decides, rather than a path filter here, so the workflow
+# always reports and its checks can be required.
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+# Actions are pinned to commit SHAs; Dependabot updates the SHA and the
+# version comment together.
+jobs:
+  # Decides whether the checks below run; see .github/scripts/touches.sh.
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      extension: ${{ steps.diff.outputs.extension }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Does it touch the extension?
+        id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: bash .github/scripts/touches.sh extension '^(extension/|\.github/workflows/extension\.yml$|\.github/scripts/|Makefile$|\.pre-commit-config\.yaml$|server/tests/api_examples/)' >> "$GITHUB_OUTPUT"
+
+  ext-qa:
+    needs: changes
+    if: needs.changes.outputs.extension == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The version is packageManager in extension/package.json.
+      - name: Install pnpm
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          package_json_file: extension/package.json
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: extension/.nvmrc
+          cache: pnpm
+          cache-dependency-path: extension/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: make ext-install
+
+      - name: Run QA
+        run: make ext-qa
