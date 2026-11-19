@@ -1,6 +1,9 @@
 """Tests for the GitHub Actions workflows: token scope, pinning and run limits."""
 
+import os
 import re
+import shutil
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -92,10 +95,16 @@ def test_uv_version_is_pinned(path: Path):
         assert EXACT_VERSION.match(step["with"]["version"])
 
 
-@workflow_files
-def test_no_workflow_sets_up_node(path: Path):
-    """The app has no Node toolchain since Tailwind went, so no job installs pnpm."""
+EXTENSION_WORKFLOW = ROOT / ".github/workflows/extension.yml"
+
+
+@pytest.mark.parametrize(
+    "path", [p for p in WORKFLOWS if p != EXTENSION_WORKFLOW], ids=lambda path: path.name
+)
+def test_only_the_extension_workflow_sets_up_node(path: Path):
+    """The server has no Node toolchain since Tailwind went, so only the extension's jobs use pnpm."""
     assert not steps_using(load(path), "pnpm/action-setup")
+    assert not steps_using(load(path), "actions/setup-node")
     assert "pnpm" not in run_lines(load(path))
 
 
@@ -126,11 +135,145 @@ SERVER_WORKFLOWS = [
 ]
 
 
-@pytest.mark.parametrize("path", SERVER_WORKFLOWS, ids=lambda path: path.name)
-def test_server_workflows_skip_extension_only_changes(path: Path):
-    """A change under `extension/` alone never runs the server's checks (#145)."""
+GATED_WORKFLOWS = [*SERVER_WORKFLOWS, EXTENSION_WORKFLOW]
+
+
+@pytest.mark.parametrize("path", GATED_WORKFLOWS, ids=lambda path: path.name)
+def test_every_push_and_pull_request_runs_the_workflow(path: Path):
+    """No path filter on the triggers, so the workflow always reports (#145).
+
+    A workflow a path filter skips never reports, and a required check would wait
+    for it for ever. Each job decides for itself instead.
+    """
     for event in ("push", "pull_request"):
-        assert "extension/**" in triggers(path)[event]["paths-ignore"]
+        assert not {"paths", "paths-ignore"} & set(triggers(path)[event] or {})
+
+
+@pytest.mark.parametrize("path", GATED_WORKFLOWS, ids=lambda path: path.name)
+def test_every_job_waits_for_the_changes_job(path: Path):
+    """The checks run only when `changes` says so; a job skipped by its condition counts as passed."""
+    jobs = load(path)["jobs"]
+    (output,) = jobs["changes"]["outputs"]
+
+    for name, job in jobs.items():
+        if name == "changes":
+            continue
+        if job["needs"] == "changes":
+            assert job["if"] == f"needs.changes.outputs.{output} == 'true'", name
+        else:
+            # The badge and release jobs follow qa, and qa follows changes.
+            assert jobs[job["needs"]]["needs"] == "changes", name
+
+
+def changes_step(path: Path) -> dict[str, Any]:
+    """The step of a workflow's `changes` job that decides whether the checks run."""
+    (step,) = [s for s in load(path)["jobs"]["changes"]["steps"] if s.get("id") == "diff"]
+    return step
+
+
+def git(repo: Path, *args: str) -> str:
+    """Run git in `repo` as a throwaway committer and return its output."""
+    return subprocess.run(
+        ["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", *args],
+        cwd=repo,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+
+
+def decide(path: Path, changed: list[str], tmp_path: Path, *, base: str | None = "parent") -> str:
+    """What the `changes` job of workflow `path` answers for a commit that touches `changed`.
+
+    `base` is the commit before the change; None is a run with no base (a schedule, a
+    manual run), and any other text is a commit the clone does not have (a force push).
+    """
+    repo = tmp_path / "repo"
+    (repo / ".github" / "scripts").mkdir(parents=True)
+    shutil.copy(SCRIPTS / "touches.sh", repo / ".github" / "scripts" / "touches.sh")
+    git(repo, "init", "--quiet")
+    git(repo, "add", ".")
+    git(repo, "commit", "--quiet", "-m", "base")
+    parent = git(repo, "rev-parse", "HEAD")
+    for name in changed:
+        (repo / name).parent.mkdir(parents=True, exist_ok=True)
+        with (repo / name).open("a") as file:  # appended, so the script itself still runs
+            file.write("\n# changed\n")
+    git(repo, "add", ".")
+    git(repo, "commit", "--quiet", "-m", "change")
+
+    output = tmp_path / "output"
+    output.write_text("")
+    env = {
+        "PATH": os.environ["PATH"],
+        "GITHUB_OUTPUT": str(output),
+        "GITHUB_SHA": git(repo, "rev-parse", "HEAD"),
+        "BASE": {"parent": parent, None: ""}.get(base, base or ""),
+    }
+    subprocess.run(["bash", "-c", changes_step(path)["run"]], cwd=repo, env=env, check=True)
+    ((key, value),) = [line.split("=", 1) for line in output.read_text().splitlines()]
+    (name,) = load(path)["jobs"]["changes"]["outputs"]
+    assert key == name
+    return value
+
+
+SCRIPTS = ROOT / ".github" / "scripts"
+SERVER = ROOT / ".github/workflows/server.yml"
+AUDIT = ROOT / ".github/workflows/server-audit.yml"
+
+
+@pytest.mark.parametrize(
+    ("path", "changed", "runs"),
+    [
+        (SERVER, ["extension/src/clip.ts"], "false"),
+        (SERVER, ["extension/package.json", "extension/README.md"], "false"),
+        (SERVER, ["server/src/recipes/models.py"], "true"),
+        (SERVER, ["extension/src/clip.ts", "AGENTS.md"], "true"),
+        (SERVER, [".github/workflows/extension.yml"], "true"),
+        (AUDIT, ["extension/src/clip.ts"], "false"),
+        (AUDIT, ["server/uv.lock"], "true"),
+        (EXTENSION_WORKFLOW, ["server/src/recipes/models.py"], "false"),
+        (EXTENSION_WORKFLOW, ["docs/plans/012-recipe-clipper.md"], "false"),
+        (EXTENSION_WORKFLOW, ["extension/src/clip.ts"], "true"),
+        (EXTENSION_WORKFLOW, [".github/workflows/extension.yml"], "true"),
+        (EXTENSION_WORKFLOW, [".github/scripts/touches.sh"], "true"),
+        (EXTENSION_WORKFLOW, ["Makefile"], "true"),
+        (EXTENSION_WORKFLOW, [".pre-commit-config.yaml"], "true"),
+        (EXTENSION_WORKFLOW, ["server/tests/api_examples/save.json"], "true"),
+    ],
+    ids=lambda value: value.name if isinstance(value, Path) else None,
+)
+def test_the_checks_run_for_the_files_they_cover(
+    path: Path, changed: list[str], runs: str, tmp_path: Path
+):
+    """Each part's checks run for the files they concern (#145).
+
+    The server skips extension-only changes; the extension runs for its own files,
+    its workflow, the Makefile, the hooks and the API examples its tests read.
+    """
+    assert decide(path, changed, tmp_path) == runs
+
+
+@pytest.mark.parametrize("path", GATED_WORKFLOWS, ids=lambda path: path.name)
+@pytest.mark.parametrize("base", [None, "0" * 40], ids=["no base", "unknown base"])
+def test_everything_runs_when_there_is_nothing_to_compare_with(
+    path: Path, base: str | None, tmp_path: Path
+):
+    """A schedule, a manual run, a new branch or a force push runs every check."""
+    assert decide(path, ["nothing/in/particular.txt"], tmp_path, base=base) == "true"
+
+
+@pytest.mark.parametrize("path", GATED_WORKFLOWS, ids=lambda path: path.name)
+def test_the_changes_job_compares_with_the_base_of_the_pull_request_or_push(path: Path):
+    """The whole history is fetched, so the base commit is there to diff against."""
+    job = load(path)["jobs"]["changes"]
+    (checkout,) = steps_using({"jobs": {"changes": job}}, "actions/checkout")
+
+    assert checkout["with"]["fetch-depth"] == 0
+    assert checkout["with"]["persist-credentials"] is False
+    assert changes_step(path)["env"]["BASE"] == (
+        "${{ github.event.pull_request.base.sha || github.event.before }}"
+    )
 
 
 def test_the_audit_still_runs_weekly():
@@ -269,3 +412,33 @@ def test_ci_keeps_screenshots_of_failed_browser_tests():
     assert "--screenshot only-on-failure" in run_lines(job)
     assert upload["if"] == "failure()"
     assert upload["with"]["path"] == "server/test-results/"
+
+
+def extension_job() -> dict[str, Any]:
+    """`extension.yml` cut down to its checks job."""
+    return {"jobs": {"ext-qa": load(EXTENSION_WORKFLOW)["jobs"]["ext-qa"]}}
+
+
+def test_each_check_has_a_name_of_its_own():
+    """A required check is named by its job, so the extension's is not a second `qa`."""
+    names = [name for path in WORKFLOWS for name in load(path)["jobs"] if name != "changes"]
+
+    assert len(names) == len(set(names))
+
+
+def test_the_extension_checks_run_through_make():
+    """CI installs from the lockfile and runs the same `make ext-qa` as a developer does."""
+    runs = [step.get("run", "") for step in steps(extension_job())]
+
+    assert runs.index("make ext-install") < runs.index("make ext-qa")
+
+
+def test_the_extension_uses_the_node_and_pnpm_it_pins():
+    """Node comes from `extension/.nvmrc` and pnpm from `packageManager` in its package.json."""
+    job = extension_job()
+    (pnpm,) = steps_using(job, "pnpm/action-setup")
+    (node,) = steps_using(job, "actions/setup-node")
+
+    assert pnpm["with"] == {"package_json_file": "extension/package.json"}
+    assert node["with"]["node-version-file"] == "extension/.nvmrc"
+    assert node["with"]["cache-dependency-path"] == "extension/pnpm-lock.yaml"

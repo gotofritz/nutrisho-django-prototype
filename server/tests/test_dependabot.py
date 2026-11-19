@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]  # the repository; the server is ROOT
 CONFIG = ROOT / ".github" / "dependabot.yml"
 
 
-@pytest.mark.parametrize("ecosystem", ["uv", "github-actions", "pre-commit"])
+@pytest.mark.parametrize("ecosystem", ["uv", "github-actions", "pre-commit", "npm"])
 def test_every_ecosystem_gets_updates(ecosystem: str):
     """Each ecosystem the project depends on has a Dependabot update entry."""
     entries = re.findall(r"package-ecosystem:\s*([\w-]+)", CONFIG.read_text())
@@ -20,10 +20,10 @@ def test_every_ecosystem_gets_updates(ecosystem: str):
 
 @pytest.mark.parametrize(
     ("ecosystem", "directory"),
-    [("uv", "/server"), ("github-actions", "/"), ("pre-commit", "/")],
+    [("uv", "/server"), ("github-actions", "/"), ("pre-commit", "/"), ("npm", "/extension")],
 )
 def test_each_ecosystem_is_watched_where_its_files_live(ecosystem: str, directory: str):
-    """The server's lockfile is under `server/`; workflows and hooks are repo-wide (#145)."""
+    """Each part's lockfile is under its directory; workflows and hooks are repo-wide (#145)."""
     entries = yaml.safe_load(CONFIG.read_text())["updates"]
 
     assert {"package-ecosystem": ecosystem, "directory": directory}.items() <= next(
@@ -36,3 +36,11 @@ def test_no_npm_updates_until_the_extension_has_a_package_json():
     has_npm = "package-ecosystem: npm" in CONFIG.read_text()
 
     assert has_npm == (ROOT / "extension" / "package.json").exists()
+
+
+def test_extension_updates_are_scoped_ext():
+    """`chore(ext): ...`, so the server's changelog can tell them apart, as for any extension commit."""
+    entries = yaml.safe_load(CONFIG.read_text())["updates"]
+    (npm,) = [entry for entry in entries if entry["package-ecosystem"] == "npm"]
+
+    assert npm["commit-message"] == {"prefix": "chore(ext)"}

@@ -19,6 +19,11 @@ TASKS = (
     "coverage-badge",
     "dev",
     "e2e",
+    "ext-build",
+    "ext-dev",
+    "ext-install",
+    "ext-qa",
+    "ext-test",
     "help",
     "lint",
     "lint-fix",
@@ -347,9 +352,64 @@ def test_qa_leaves_the_assistant_hooks_out():
 
 
 @needs_make
-def test_test_hooks_runs_the_caveman_pattern_tests():
-    """`make test-hooks` still runs the hook regressions on demand."""
-    assert "test-caveman-patterns.sh" in run_make("--dry-run", "test-hooks")
+def test_test_hooks_runs_the_hook_tests():
+    """`make test-hooks` runs the caveman and TDD hook regressions on demand."""
+    output = run_make("--dry-run", "test-hooks")
+
+    assert "test-caveman-patterns.sh" in output
+    assert "test-check-tdd.sh" in output
+
+
+EXTENSION_TARGETS = ["ext-install", "ext-dev", "ext-test", "ext-build", "ext-qa"]
+
+
+@needs_make
+@pytest.mark.parametrize("target", EXTENSION_TARGETS)
+def test_extension_targets_run_inside_the_extension_directory(target: str):
+    """The extension is its own pnpm project, so every `ext-` command runs in `extension/`."""
+    commands = [line for line in run_make("--dry-run", target).splitlines() if "pnpm" in line]
+
+    assert commands
+    for command in commands:
+        assert command.startswith("cd extension && pnpm "), command
+
+
+@needs_make
+def test_ext_install_installs_from_the_lockfile():
+    """A stale pnpm-lock.yaml fails the install instead of being rewritten."""
+    assert "pnpm install --frozen-lockfile" in run_make("--dry-run", "ext-install")
+
+
+@needs_make
+def test_ext_qa_runs_every_gate_and_builds_for_both_browsers():
+    """Formatting, lint, types, tests, then a Firefox and a Chrome build, in that order."""
+    output = run_make("--dry-run", "ext-qa")
+    steps = [
+        "pnpm format:check",
+        "pnpm lint",
+        "pnpm check",
+        "pnpm test",
+        "pnpm build\n",
+        "pnpm build:chrome",
+    ]
+
+    positions = [output.index(step) for step in steps]
+    assert positions == sorted(positions)
+
+
+@needs_make
+def test_ext_test_passes_args_to_vitest():
+    """`make ext-test ARGS=...` narrows the run, as `make test` does for pytest."""
+    output = run_make("--dry-run", "ext-test", "ARGS=src/sidebar")
+
+    assert "pnpm test src/sidebar" in output
+
+
+@needs_make
+def test_ext_dev_runs_firefox_unless_told_otherwise():
+    """`make ext-dev` opens Firefox; `BROWSER=chrome` opens Chrome."""
+    assert "pnpm dev\n" in run_make("--dry-run", "ext-dev")
+    assert "pnpm dev:chrome" in run_make("--dry-run", "ext-dev", "BROWSER=chrome")
 
 
 @needs_make

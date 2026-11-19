@@ -20,17 +20,22 @@ Two parts, released and checked separately (#145):
 - `server/` — the Django app: a self-contained uv project with its own
   `pyproject.toml`, `uv.lock`, `CHANGELOG.md`, `docs/features/` and
   `docs/schema.sql`
-- `extension/` — the recipe clipper browser extension; no code yet, see
-  `extension/README.md`. Don't add extension code outside it
+- `extension/` — the recipe clipper browser extension: a WXT, Svelte and
+  TypeScript project with its own `package.json`, `pnpm-lock.yaml` and
+  `README.md`. Don't add extension code outside it; see [Extension](#extension)
 
 The top-level `Makefile` serves both. Server targets keep their plain names
 (`make qa`, `make test`) and run inside `server/`, so a path in `ARGS` is
 relative to `server/` (`make test` also accepts `server/tests/...`). Run any
 other uv command in `server/`, or as `uv run --directory server <cmd>`.
-Extension targets will be prefixed `ext-`.
+Extension targets are prefixed `ext-` and run inside `extension/`; `make qa`
+never needs Node.
 
-Workflows are per part and path-filtered: the server's skip changes under
-`extension/**` alone. Release tags are `server-v<version>` and
+Workflows are per part. Each always runs and reports, and its `changes` job
+(`.github/scripts/touches.sh`) skips the checks a change does not concern: the
+server's skip changes under `extension/` alone. Never put a path filter on a
+workflow's triggers: a skipped workflow never reports, and a required check
+would wait for it for ever. Release tags are `server-v<version>` and
 `ext-v<version>`. Repo-wide files (`.github/`, `.claude/`, `AGENTS.md`,
 `.pre-commit-config.yaml`, `docs/`) stay at the root.
 
@@ -341,6 +346,46 @@ Use what Django already provides before adding a dependency:
 - Browser smoke tests live in `tests/recipes/e2e/` (`pytest-playwright`),
   marked so that plain pytest and `make qa` skip them; run them with
   `make e2e` when changing `app.js`, htmx attributes or a template's flow
+
+## Extension
+
+Paths in this section are relative to `extension/`. The plan is
+`docs/plans/012-recipe-clipper.md`; [anklipper](https://github.com/gotofritz/anklipper)
+is the reference for patterns, since the extension starts as a cut-down copy.
+
+- **Stack**: WXT, Svelte 5, strict TypeScript, Vitest and pnpm, pinned in
+  `package.json`, `pnpm-lock.yaml` and `.nvmrc`. Install with
+  `make ext-install`, which refuses a stale lockfile.
+- **Checks**: `make ext-qa` runs Prettier, ESLint, `svelte-check` and `tsc`,
+  Vitest, and a Firefox and a Chrome build. `make ext-test ARGS="<path>"` is
+  the fast loop. Pre-commit runs `make ext-qa` on any commit that touches
+  `extension/`, and CI runs it in `.github/workflows/extension.yml`.
+- **Boundaries**: ports and adapters. The draft and its rules are pure
+  TypeScript under `src/core/`, `src/manifest/`, `src/messaging/` and
+  `src/nutrisho/`, and ESLint refuses `wxt/browser`, `webextension-polyfill`,
+  `svelte` or a `.svelte` file there. `browser.*` is reached only in
+  `src/platform/`; Svelte lives in components; `src/entrypoints/` only mounts
+  and wires. Every port has an in-memory fake, which the tests run against.
+- **The server**: only the two endpoints in `server/src/recipes/views/api.py`,
+  with a bearer key, from the extension's own pages, never a content script.
+  `server/tests/api_examples/` holds every request and reply; the extension's
+  tests read the same files, so a change on either side fails the other's
+  tests.
+- **Permissions**: at most `activeTab`, `scripting`, `storage`,
+  `contextMenus`, the sidebar, and the server's address as an optional host
+  permission asked for when it is saved. Never `<all_urls>`. A new one is
+  justified in the plan first.
+- **Privacy**: only the draft leaves the browser, only to the user's own
+  server, and only when the user saves. The API key lives in
+  `storage.local`, never synced, logged or shown again. Nothing from a page
+  is logged.
+- **TDD**: as for the server. `.claude/hooks/check-tdd.sh` stops an agent
+  writing a TypeScript or Svelte module under `extension/` that no test of the
+  same stem covers; config, types, barrels and entrypoints are exempt.
+  `SKIP_TDD_HOOK=1` bypasses it, only for generated code or config, and only
+  after asking.
+- **Manual pass**: from M6, an extension PR is done only after a pass by hand
+  in a real Firefox (`make ext-dev`).
 
 ## Environment
 

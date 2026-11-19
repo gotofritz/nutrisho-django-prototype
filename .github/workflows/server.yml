@@ -1,16 +1,14 @@
 name: Server
 
 # The Django app under server/ (#145). A change under extension/ alone skips
-# it; everything else, workflows and docs included, runs it, because the
-# server's tests check them. The extension gets its own workflow, filtered to
-# extension/**, with its first code.
+# its checks; everything else, workflows and docs included, runs them, because
+# the server's tests check them. The `changes` job decides, rather than a path
+# filter here, so the workflow always reports and its checks can be required.
 on:
   push:
     branches: ["main"]
-    paths-ignore: ["extension/**"]
   pull_request:
     branches: ["**"]
-    paths-ignore: ["extension/**"]
 
 # Read-only token by default; only the badge and release jobs widen it.
 permissions:
@@ -25,7 +23,27 @@ concurrency:
 # Actions are pinned to commit SHAs; Dependabot updates the SHA and the
 # version comment together.
 jobs:
+  # Decides whether the checks below run; see .github/scripts/touches.sh.
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      server: ${{ steps.diff.outputs.server }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Does it touch the server?
+        id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: bash .github/scripts/touches.sh server -v '^extension/' >> "$GITHUB_OUTPUT"
+
   qa:
+    needs: changes
+    if: needs.changes.outputs.server == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -64,6 +82,8 @@ jobs:
   # Browser smoke tests (#63): Chromium drives the app through pytest-playwright.
   # The browser is the one the locked Playwright release pins.
   e2e:
+    needs: changes
+    if: needs.changes.outputs.server == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

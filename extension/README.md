@@ -1,43 +1,71 @@
 # Nutrisho clipper
 
-A browser extension that clips recipes from web pages into Nutrisho. It is not
-written yet: this directory holds its place in the repository (#145).
+A browser extension that will clip recipes from web pages into Nutrisho. It
+does nothing useful yet: today it builds, loads in Firefox or Chrome, and opens
+an empty sidebar. Recipes come in later milestones of
+[plan 012](../docs/plans/012-recipe-clipper.md).
 
-## Plan
+## Running it
 
-The design, the stack and the milestones are in
-[`docs/plans/012-recipe-clipper.md`](../docs/plans/012-recipe-clipper.md). In
-short: WXT, Svelte and TypeScript, as in
-[anklipper](https://github.com/gotofritz/anklipper); a sidebar where text
-selected on the page is clipped into a draft recipe, checked against the
-library's ingredients, units and cuisines, edited as on the site and saved;
-and, later, the storybook look. Server preparation comes first, then the
-extension's quality gates, then a clipper that can be used, and everything
-after it adds to one that works. What stays as below:
+You need Node and pnpm at the versions in [`.nvmrc`](.nvmrc) and
+`packageManager` in [`package.json`](package.json). With
+[corepack](https://nodejs.org/api/corepack.html), `corepack enable` gives you
+the right pnpm. Run everything from the repository root:
 
-- **Server side**: the clipper saves through `POST /recipes/api/recipes/` with
-  `Authorization: Bearer <key>`, from its own pages and never from a content
-  script. The server already takes a schema.org Recipe or a Nutrisho document
-  there (#78); see `server/docs/features/import-export.md`. The plan lists the
-  endpoints still to add.
-- **Tooling**: Node and pnpm with [WXT](https://wxt.dev) (which drives
-  [web-ext](https://github.com/mozilla/web-ext)), its own `package.json` and
-  lockfile here, independent of the server's uv project.
-- **Make targets**: in the top-level `Makefile`, prefixed `ext-` (`ext-dev`,
-  `ext-test`, `ext-qa`, `ext-build`), so the server's plain `make test` and
-  `make qa` stay as they are.
-- **CI**: `.github/workflows/extension.yml`, run for changes under
-  `extension/**`, its own workflow file and the files its tests read. It
-  comes with the extension's first pull request (the plan's M5). The server
-  workflows already skip extension-only changes.
-- **Dependabot**: an `npm` entry for `/extension`, added with the first
-  `package.json`.
-- **Releases**: tagged `ext-v<version>`, with a changelog here. Server releases
-  are tagged `server-v<version>`, and the server's commitizen config ignores
-  `ext-v*` tags. Scope extension commits `ext`, e.g. `feat(ext): ...`.
-- **Publishing**: the release workflow builds the extension, has Mozilla sign
-  it and attaches the signed file to the GitHub release. Whether it is listed
-  on a store is an open question in the plan, and the Chrome Web Store waits
-  for the first Firefox release. The publishing job runs in a
-  `store-publishing` GitHub environment with a required reviewer, which holds
-  the store credentials as environment secrets.
+```bash
+make ext-install              # dependencies, from pnpm-lock.yaml
+make ext-dev                  # Firefox, in a fresh profile, reloading on change
+make ext-dev BROWSER=chrome   # the same in Chrome
+make ext-test                 # the tests; ARGS="src/sidebar" narrows them
+make ext-qa                   # every check CI runs
+make ext-build                # .output/firefox-mv3/ and .output/chrome-mv3/
+```
+
+`make ext-dev` opens the browser for you. To load a build into your own
+Firefox, open `about:debugging`, choose *This Firefox*, then *Load Temporary
+Add-on*, and pick `.output/firefox-mv3/manifest.json`. Open the sidebar from
+the *View* menu, under *Sidebar*.
+
+## Checks
+
+`make ext-qa` runs Prettier, ESLint, `svelte-check` and `tsc`, Vitest, and a
+build for each browser. The same command runs in the git hooks, on any commit
+that touches this directory, and in CI
+([`extension.yml`](../.github/workflows/extension.yml)). `make qa`, the
+server's gate, never needs Node.
+
+Vitest runs two projects: plain TypeScript tests in Node, and component tests
+(`*.svelte.test.ts`, `*.dom.test.ts`) in jsdom. The tests in
+`tests/manifest/` build the extension for each browser and read the manifest
+that comes out.
+
+## Layout
+
+```
+src/
+  entrypoints/sidepanel/   # the sidebar page: mounts the app, nothing else
+  sidebar/                 # the sidebar's Svelte components
+tests/
+  manifest/                # the built manifest, per browser
+  setup/                   # Vitest setup: fake browser APIs, Testing Library
+wxt.config.ts              # WXT: source directory, Svelte, manifest fields
+vitest.config.ts           # the two test projects
+eslint.config.js           # includes the rule that keeps browser APIs and Svelte out of domain code
+```
+
+The rules for the code (boundaries, permissions, privacy, tests first) are in
+the Extension section of [`AGENTS.md`](../AGENTS.md#extension).
+
+## How it fits with the server
+
+- The clipper talks to two endpoints, `POST /recipes/api/recipes/` and
+  `GET /recipes/api/vocabulary/`, with `Authorization: Bearer <key>`, from its
+  own pages and never from a content script. One example of each request and
+  reply is in [`server/tests/api_examples/`](../server/tests/api_examples/);
+  the server's tests check them against its views, and the extension's tests
+  will read the same files.
+- Commits that touch only the extension are scoped `ext` (`feat(ext): ...`).
+- Releases will be tagged `ext-v<version>`, separate from the server's
+  `server-v<version>`. The release workflow will build the extension, have
+  Mozilla sign it and attach the signed file to the GitHub release. Whether it
+  is listed on a store is an open question in the plan.
