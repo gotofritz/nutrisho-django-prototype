@@ -26,7 +26,9 @@ The other `ext-` targets run `make ext-install` first when `node_modules` is
 missing or older than `pnpm-lock.yaml` or `package.json`, so a fresh checkout
 or a pull that changed the dependencies needs no separate step.
 
-`make ext-dev` opens the browser for you. To load a build into your own
+`make ext-dev` opens the browser for you, through
+[web-ext](https://github.com/mozilla/web-ext), in a profile of its own kept
+in `.wxt/firefox-data/`, so the settings you save there survive a restart. To load a build into your own
 Firefox, open `about:debugging`, choose *This Firefox*, then *Load Temporary
 Add-on*, and pick `.output/firefox-mv3/manifest.json`. Open the sidebar from
 the *View* menu, under *Sidebar*.
