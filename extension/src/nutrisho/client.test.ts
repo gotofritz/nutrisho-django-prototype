@@ -6,7 +6,11 @@ import {
   type ApiExample,
 } from "../../tests/support/api-examples";
 
+import { EMPTY_ROW } from "@/core/ingredient-line";
+import { startDraft, type RecipeDraft } from "@/core/recipe-draft";
+
 import {
+  SAVE_PATH,
   VOCABULARY_PATH,
   createNutrishoClient,
   type FetchLike,
@@ -191,5 +195,139 @@ describe("a server that does not answer properly", () => {
     const lists = await client(fetch).vocabulary();
 
     expect(!lists.ok && lists.error.kind).toBe("malformed-response");
+  });
+});
+
+/** The recipe every save example sends. */
+const NORMA: RecipeDraft = {
+  ...startDraft({
+    id: "01a1f5b5-dbe2-704a-b591-7ffbcff6762e",
+    title: "Pasta alla Norma",
+    url: "https://example.com/norma",
+    now: "2026-11-20T09:00:00.000Z",
+  }),
+  servings: "4",
+  cuisine: "med.italy",
+  tags: ["dinner"],
+  steps: ["Fry the aubergine.", "Toss with the pasta."],
+  rows: [
+    {
+      ...EMPTY_ROW,
+      quantity: "2",
+      ingredient: "aubergines",
+      preparation: "cubed",
+    },
+    { ...EMPTY_ROW, quantity: "400", unit: "g", ingredient: "rigatoni" },
+    { ...EMPTY_ROW, unit: "handful", ingredient: "basil", note: "torn" },
+  ],
+};
+
+describe("the save", () => {
+  const example = apiExample("save.json");
+
+  it("sends the request the server's example shows", async () => {
+    const fetch = replying(example);
+
+    await client(fetch).saveRecipe(NORMA);
+
+    const { url, init } = sent(fetch);
+    const headers = new Headers(init.headers);
+    expect(init.method).toBe("POST");
+    expect(url).toBe(`${SERVER}${example.request.path}`);
+    expect(headers.get("Authorization")).toBe(
+      example.request.headers.Authorization,
+    );
+    expect(headers.get("Content-Type")).toBe(
+      example.request.headers["Content-Type"],
+    );
+    expect(JSON.parse(String(init.body))).toEqual(example.request.body);
+    expect(init.credentials).toBe("omit");
+  });
+
+  it("answers with where the new recipe is, to open in edit mode", async () => {
+    expect(await client(replying(example)).saveRecipe(NORMA)).toEqual({
+      ok: true,
+      value: {
+        openUrl: `${SERVER}/recipes/01a1f5b5-dbe2-704a-b591-7ffbcff6762e/?edit=1`,
+        name: "Pasta alla Norma",
+        created: true,
+        renamed: false,
+        inTrash: false,
+        warnings: [],
+      },
+    });
+  });
+
+  it("says nothing was written when the server already had the recipe", async () => {
+    const saved = await client(
+      replying(apiExample("save-again.json")),
+    ).saveRecipe(NORMA);
+
+    expect(saved.ok && saved.value.created).toBe(false);
+  });
+
+  it("passes the server's warnings on", async () => {
+    const warned = {
+      ...example,
+      response: {
+        ...example.response,
+        body: {
+          ...(example.response.body as object),
+          warnings: ["handful is now one of your own units."],
+        },
+      },
+    };
+
+    const saved = await client(replying(warned)).saveRecipe(NORMA);
+
+    expect(saved.ok && saved.value.warnings).toEqual([
+      "handful is now one of your own units.",
+    ]);
+  });
+
+  it.each(["save-refused.json", "save-id-taken.json"])(
+    "is refused, in the server's own words, as %s shows",
+    async (name) => {
+      const refusal = apiExample(name);
+
+      expect(await client(replying(refusal)).saveRecipe(NORMA)).toEqual({
+        ok: false,
+        error: {
+          kind: "refused",
+          status: refusal.response.status,
+          message: (refusal.response.body as { error: string }).error,
+        },
+      });
+    },
+  );
+
+  it("is malformed when a success does not name the recipe", async () => {
+    const fetch = vi.fn<FetchLike>(
+      async () =>
+        new Response(JSON.stringify({ recipes: [] }), { status: 201 }),
+    );
+
+    const saved = await client(fetch).saveRecipe(NORMA);
+
+    expect(!saved.ok && saved.error.kind).toBe("malformed-response");
+  });
+
+  it("asks for a key before sending anything", async () => {
+    const fetch = replying(example);
+
+    const saved = await client(fetch, { apiKey: "" }).saveRecipe(NORMA);
+
+    expect(!saved.ok && saved.error.kind).toBe("no-key");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it.each(
+    apiExampleNames()
+      .map((name) => [name, apiExample(name)] as const)
+      .filter(([, it]) => it.request.path.startsWith(SAVE_PATH)),
+  )("handles every reply the server's examples show: %s", async (_, it) => {
+    const saved = await client(replying(it)).saveRecipe(NORMA);
+
+    expect(saved.ok).toBe(it.response.status < 300);
   });
 });

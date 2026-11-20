@@ -1,9 +1,10 @@
 import type { NutrishoError } from "@/core/ports/types";
 
 /**
- * What the sidebar says when the lists will not load (plan 012, M6), in the
- * user's words rather than the client's. M11 says failures properly; this is
- * enough to tell the causes apart, since each has a different fix.
+ * What the sidebar says when the lists will not load or a save fails (plan
+ * 012, M6 and M7), in the user's words rather than the client's. M11 says
+ * failures properly; this is enough to tell the causes apart, since each has
+ * a different fix.
  */
 export interface Problem {
   /** What went wrong. */
@@ -14,7 +15,17 @@ export interface Problem {
   readonly fix: "settings" | "retry";
 }
 
+/** The lists would not load. */
 export function listsProblem(error: NutrishoError): Problem {
+  return problem(error, "send the lists");
+}
+
+/** The recipe was not saved. */
+export function saveProblem(error: NutrishoError): Problem {
+  return problem(error, "save the recipe");
+}
+
+function problem(error: NutrishoError, task: string): Problem {
   switch (error.kind) {
     case "no-key":
       return {
@@ -48,9 +59,15 @@ export function listsProblem(error: NutrishoError): Problem {
         action: "Try again in a moment.",
         fix: "retry",
       };
+    case "refused":
+      return {
+        cause: `Your Nutrisho did not ${task}: ${error.message}`,
+        action: "Change what it names, then try again.",
+        fix: "retry",
+      };
     case "server-error":
       return {
-        cause: `Your Nutrisho could not send the lists: ${error.message}`,
+        cause: `Your Nutrisho could not ${task}: ${error.message}`,
         action: "Try again, and look at the server's log if it happens again.",
         fix: "retry",
       };

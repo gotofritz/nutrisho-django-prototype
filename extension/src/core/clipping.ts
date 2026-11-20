@@ -2,8 +2,8 @@ import type { CaptureWarning, PageCapture } from "./capture";
 
 /**
  * What a capture leaves for the sidebar (plan 012, M6): the selected text and
- * the page it came from. Nothing is a recipe yet; M7 turns a clipping into a
- * draft.
+ * the page it came from. The text goes to the sidebar's clipboard, and a
+ * clipping from a page with no draft starts one (M7).
  *
  * Stored rather than sent: the background is unloaded when idle and the
  * sidebar may not be open yet, so the capture writes it to extension storage

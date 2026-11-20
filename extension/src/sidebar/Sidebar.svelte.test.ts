@@ -1,10 +1,16 @@
-import { fireEvent, render, screen } from "@testing-library/svelte";
+import { fireEvent, render, screen, within } from "@testing-library/svelte";
 import { describe, expect, it, vi } from "vitest";
 
 import { clippingFrom, type Clipping } from "@/core/clipping";
+import { EMPTY_DRAFTS, afterClip, type Drafts } from "@/core/drafts";
 import { createFakeClippingStore } from "@/core/ports/fakes/fake-clipping-store";
+import { createFakeDraftStore } from "@/core/ports/fakes/fake-draft-store";
 import { createFakeNutrishoClient } from "@/core/ports/fakes/fake-nutrisho-client";
-import type { ClippingStore, NutrishoClient } from "@/core/ports/types";
+import type {
+  ClippingStore,
+  DraftStore,
+  NutrishoClient,
+} from "@/core/ports/types";
 import { err, ok } from "@/core/result";
 import { parseVocabulary } from "@/core/vocabulary";
 
@@ -29,14 +35,18 @@ const COOKS_LISTS = parseVocabulary(
 function renderSidebar(
   overrides: {
     clippings?: ClippingStore;
+    drafts?: DraftStore;
     client?: NutrishoClient;
     openSettings?: () => void;
   } = {},
 ) {
   let changed: (() => void) | undefined;
   const client = overrides.client ?? createFakeNutrishoClient();
+  let made = 0;
   const props = {
     clippings: overrides.clippings ?? createFakeClippingStore(),
+    drafts: overrides.drafts ?? createFakeDraftStore(),
+    newId: () => `draft-${(made += 1)}`,
     subscribe: (listener: () => void) => {
       changed = listener;
       return () => {};
@@ -69,14 +79,12 @@ describe("the clipping", () => {
     expect(screen.getByText(/Alt\+Shift\+N/)).toBeVisible();
   });
 
-  it("shows the clipped text a line at a time, and where it came from", async () => {
+  it("puts the clipped text in the clipboard, and says where it came from", async () => {
     renderSidebar({ clippings: createFakeClippingStore(CLIPPING) });
 
-    const lines = await screen.findAllByRole("listitem");
-    expect(lines.map((line) => line.textContent)).toEqual([
-      "2 aubergines",
-      "1 tbsp olive oil",
-    ]);
+    expect(
+      await screen.findByRole("textbox", { name: "Clipboard" }),
+    ).toHaveValue("2 aubergines\n1 tbsp olive oil");
     expect(
       screen.getByRole("link", { name: "Melanzane — Example" }),
     ).toHaveAttribute("href", "https://example.test/melanzane");
@@ -91,7 +99,9 @@ describe("the clipping", () => {
     await clippings.save(CLIPPING);
     changed();
 
-    expect(await screen.findByText("1 tbsp olive oil")).toBeVisible();
+    expect(
+      await screen.findByRole("textbox", { name: "Clipboard" }),
+    ).toHaveValue("2 aubergines\n1 tbsp olive oil");
   });
 
   it("says what could not be read off the page", async () => {
@@ -160,7 +170,10 @@ describe("the lists", () => {
   });
 
   it("says it is loading while it waits", async () => {
-    const client: NutrishoClient = { vocabulary: () => new Promise(() => {}) };
+    const client: NutrishoClient = {
+      ...createFakeNutrishoClient(),
+      vocabulary: () => new Promise(() => {}),
+    };
 
     renderSidebar({ client });
 
@@ -186,5 +199,254 @@ describe("the lists", () => {
         "Lists loaded for cook: 1 ingredient, 0 units, 1 cuisine, 0 tags.",
       ),
     ).toBeVisible();
+  });
+});
+
+const RAGU = clippingFrom(
+  {
+    text: "Brown the meat.",
+    title: "Ragù",
+    url: "https://example.test/ragu",
+    warnings: [],
+  },
+  new Date("2026-11-20T09:40:00Z"),
+);
+
+/** The drafts a clipping of the melanzane page leaves. */
+function clipped(): Drafts {
+  return afterClip(EMPTY_DRAFTS, CLIPPING, () => "draft-0");
+}
+
+async function nameField() {
+  return screen.findByRole("textbox", { name: "Name" });
+}
+
+describe("the draft", () => {
+  it("starts when something is clipped, named after the page, and is kept", async () => {
+    const drafts = createFakeDraftStore();
+    renderSidebar({ clippings: createFakeClippingStore(CLIPPING), drafts });
+
+    expect(await nameField()).toHaveValue("Melanzane — Example");
+    const stored = await drafts.load();
+    expect(stored.ok && stored.value.drafts.map((draft) => draft.id)).toEqual([
+      "draft-1",
+    ]);
+  });
+
+  it("is there again when the sidebar opens again", async () => {
+    renderSidebar({
+      clippings: createFakeClippingStore(CLIPPING),
+      drafts: createFakeDraftStore(clipped()),
+    });
+
+    expect(await nameField()).toHaveValue("Melanzane — Example");
+  });
+
+  it("scans the lines sent to the ingredients against the lists", async () => {
+    renderSidebar({
+      clippings: createFakeClippingStore(CLIPPING),
+      client: answering(COOKS_LISTS),
+    });
+    await screen.findByText(/Lists loaded for cook/);
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Add to ingredients" }),
+    );
+
+    const first = await screen.findByRole("group", { name: "Row 1" });
+    expect(
+      within(first).getByRole("textbox", { name: "Quantity" }),
+    ).toHaveValue("2");
+    expect(
+      within(first).getByRole("textbox", { name: "Ingredient" }),
+    ).toHaveValue("aubergine");
+    const second = screen.getByRole("group", { name: "Row 2" });
+    expect(within(second).getByRole("textbox", { name: "Rest" })).toHaveValue(
+      "1 tbsp olive oil",
+    );
+  });
+
+  it("keeps an edit", async () => {
+    const drafts = createFakeDraftStore(clipped());
+    renderSidebar({ clippings: createFakeClippingStore(CLIPPING), drafts });
+
+    await fireEvent.input(await nameField(), {
+      target: { value: "Melanzane" },
+    });
+
+    const stored = await drafts.load();
+    expect(stored.ok && stored.value.drafts[0]?.name).toBe("Melanzane");
+  });
+
+  // Typed or pasted text is treated the same as clipped text (D3).
+  it("starts from typed text when nothing was clipped", async () => {
+    renderSidebar();
+    const clipboard = await screen.findByRole("textbox", { name: "Clipboard" });
+
+    await fireEvent.input(clipboard, { target: { value: "Lemon posset" } });
+    await fireEvent.click(screen.getByRole("button", { name: "Replace name" }));
+
+    expect(await nameField()).toHaveValue("Lemon posset");
+  });
+
+  it("says when the drafts could not be kept", async () => {
+    const drafts = createFakeDraftStore();
+    drafts.failWith({ kind: "write-failed", message: "storage is full" });
+
+    renderSidebar({ clippings: createFakeClippingStore(CLIPPING), drafts });
+
+    expect(await screen.findByText(/storage is full/)).toBeVisible();
+  });
+});
+
+describe("more than one draft", () => {
+  it("starts a new one for another page, and lists the earlier one", async () => {
+    const clippings = createFakeClippingStore(CLIPPING);
+    const { changed } = renderSidebar({
+      clippings,
+      drafts: createFakeDraftStore(clipped()),
+    });
+    await nameField();
+
+    await clippings.save(RAGU);
+    changed();
+
+    expect(await nameField()).toHaveValue("Ragù");
+    const list = screen.getByRole("combobox", { name: "Draft" });
+    expect(
+      within(list)
+        .getAllByRole("option")
+        .map((option) => option.textContent),
+    ).toEqual(["Melanzane — Example", "Ragù"]);
+
+    await fireEvent.change(list, { target: { value: "draft-0" } });
+    expect(await nameField()).toHaveValue("Melanzane — Example");
+  });
+
+  it("discards the one on show", async () => {
+    const drafts = createFakeDraftStore(clipped());
+    renderSidebar({ clippings: createFakeClippingStore(CLIPPING), drafts });
+    await nameField();
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Discard this draft" }),
+    );
+
+    expect(screen.queryByRole("textbox", { name: "Name" })).toBeNull();
+    const stored = await drafts.load();
+    expect(stored.ok && stored.value.drafts).toEqual([]);
+  });
+});
+
+describe("the save", () => {
+  async function ready(client = createFakeNutrishoClient()) {
+    const drafts = createFakeDraftStore(clipped());
+    renderSidebar({
+      clippings: createFakeClippingStore(CLIPPING),
+      drafts,
+      client,
+    });
+    await nameField();
+    return { client, drafts };
+  }
+
+  it("sends the draft, and offers to open the recipe", async () => {
+    const { client } = await ready();
+
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(
+      await screen.findByText("Saved as Melanzane — Example."),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("link", { name: "Open in Nutrisho" }),
+    ).toHaveAttribute("href", "http://localhost:8987/recipes/draft-0/?edit=1");
+    expect(client.sent.map((draft) => draft.id)).toEqual(["draft-0"]);
+  });
+
+  it("says nothing changed when the server already had it", async () => {
+    const client = createFakeNutrishoClient();
+    client.answerSave(
+      ok({
+        openUrl: "http://localhost:8987/recipes/draft-0/?edit=1",
+        name: "Melanzane — Example",
+        created: false,
+        renamed: false,
+        inTrash: false,
+        warnings: [],
+      }),
+    );
+    await ready(client);
+
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(
+      await screen.findByText(/Already saved, so nothing changed/),
+    ).toBeVisible();
+  });
+
+  it("passes on the server's warnings", async () => {
+    const client = createFakeNutrishoClient();
+    client.answerSave(
+      ok({
+        openUrl: "http://localhost:8987/recipes/draft-0/?edit=1",
+        name: "Melanzane — Example (2)",
+        created: true,
+        renamed: true,
+        inTrash: false,
+        warnings: ["handful is now one of your own units."],
+      }),
+    );
+    await ready(client);
+
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(
+      await screen.findByText("handful is now one of your own units."),
+    ).toBeVisible();
+    expect(screen.getByText(/name was taken/)).toBeVisible();
+  });
+
+  it("shows what stops a save, and sends nothing", async () => {
+    const { client } = await ready();
+    await fireEvent.input(await nameField(), { target: { value: " " } });
+
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText("The recipe needs a name.")).toBeVisible();
+    expect(await nameField()).toBeInvalid();
+    expect(client.sent).toEqual([]);
+  });
+
+  it("shows the server's refusal as it came", async () => {
+    const client = createFakeNutrishoClient();
+    client.answerSave(
+      err({
+        kind: "refused",
+        status: 400,
+        message:
+          "document.recipes[0].steps[0].step_text must be at most 4000 characters.",
+      }),
+    );
+    await ready(client);
+
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(
+      await screen.findByText(
+        "Your Nutrisho did not save the recipe: document.recipes[0].steps[0].step_text must be at most 4000 characters.",
+      ),
+    ).toBeVisible();
+  });
+
+  it("is kept with the draft, so it still shows when the sidebar opens again", async () => {
+    const { drafts } = await ready();
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByRole("link", { name: "Open in Nutrisho" });
+
+    const stored = await drafts.load();
+    expect(stored.ok && stored.value.saved["draft-0"]?.openUrl).toBe(
+      "http://localhost:8987/recipes/draft-0/?edit=1",
+    );
   });
 });

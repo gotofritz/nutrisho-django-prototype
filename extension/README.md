@@ -1,9 +1,9 @@
 # Nutrisho clipper
 
-A browser extension that will clip recipes from web pages into Nutrisho. It
-cannot save a recipe yet: today it puts the text you select into its sidebar
-and loads your lists (ingredients, units, cuisines, tags) from your Nutrisho.
-Recipes come in later milestones of
+A browser extension that clips recipes from web pages into Nutrisho. You
+select text on a recipe page, send it to the recipe's name, blurb,
+ingredients or steps, check what it made of each ingredient line, and save.
+Cuisines, tags, groups and the look come in later milestones of
 [plan 012](../docs/plans/012-recipe-clipper.md).
 
 ## Running it
@@ -48,12 +48,26 @@ the *View* menu, under *Sidebar*.
    `localhost` and `127.0.0.1` are allowed for now.
 3. Select text on a page and clip it: *Clip into Nutrisho* in the right-click
    menu, <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd>, or the toolbar button.
-   The sidebar opens with the text, and says whose lists it loaded or what
-   went wrong.
+   The sidebar opens with the text in its clipboard, a new recipe named after
+   the page, and a line saying whose lists it loaded.
+4. Send the clipboard, or the part of it you select, to the name, blurb,
+   ingredients or steps, with *Add* (after what is there) or *Replace*. You can
+   also type or paste into the clipboard. Each ingredient line becomes a row:
+   the ingredient is the longest name from your lists in the line, the unit a
+   name from your lists just before it, and the quantity a number just before
+   that. Every other word stays in *Rest*, which is saved in the row's note.
+   A name your lists do not have is marked *new*, and saving makes it one of
+   your own.
+5. *Save* sends the recipe to your Nutrisho and offers *Open in Nutrisho*.
+   Saving the same recipe again changes nothing.
+
+Recipes not yet saved stay in the sidebar, even after it closes. Clipping
+from another page starts another recipe; pick between them under *Draft*, and
+*Discard this draft* to drop one.
 
 The key is kept in the browser's local storage, never synced, and the
 settings page never shows it again. Only the server's address you saved is
-ever contacted.
+ever contacted, and only the recipe you save is sent to it.
 
 ## Checks
 

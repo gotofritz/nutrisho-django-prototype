@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { uuidV7 } from "@/core/uuid7";
   import { createNutrishoClient } from "@/nutrisho/client";
   import {
     createStoredClipping,
     watchClipping,
   } from "@/platform/clipping-store";
+  import { createStoredDrafts } from "@/platform/draft-store";
   import { createOptionsPage } from "@/platform/options";
   import { createPermissions, hostPermissionFor } from "@/platform/permissions";
   import {
@@ -33,6 +35,8 @@
 
 <Sidebar
   clippings={createStoredClipping(storage)}
+  drafts={createStoredDrafts(storage)}
+  newId={() => uuidV7(Date.now(), crypto.getRandomValues(new Uint8Array(10)))}
   subscribe={(onChange) => watchClipping(storage, onChange)}
   {client}
   openSettings={() => void options.open()}

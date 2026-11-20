@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M6 done (#154, #156, #158, #160, #162, #166)
+## Status: In progress, M1 to M7 done (#154, #156, #158, #160, #162, #166, #168)
 
 ## What we are building
 
@@ -150,44 +150,19 @@ lists, tested against M4's JSON files, and the sidebar shows the clipping and
 whose lists loaded or what went wrong. No Chrome `key`; the gecko id is
 pinned.
 
-### M7 · extension · A clipper that can be used
+### ✅ M7 · extension · A clipper that can be used
 
-- `RecipeDraft`, pure and written test-first: the id (a version 7 UUID,
-  made when the draft starts), the name (from the page's title), the source
-  (the page's address), blurb, servings, ingredient rows and steps, with
-  *Add to* and *Replace* for name, blurb, ingredients and steps.
-- **Scanning a line.** Each line sent to the ingredients becomes a row. The
-  scan fills a field only when it is sure, and leaves every other word, in
-  order, in *rest*:
-  - the ingredient is the longest name from the loaded list that the line
-    holds, stored in its canonical spelling;
-  - the unit is a name from the loaded list directly before the ingredient;
-  - the quantity is a number directly before the unit, or before the
-    ingredient when there is no unit.
-
-  | Line | Quantity | Unit | Ingredient | Rest |
-  |------|----------|------|------------|------|
-  | `Juice of 1 lemon` | 1 | | lemon | Juice of |
-  | `1 (14-ounce) can diced tomatoes` | | | diced tomato | 1 (14-ounce) can |
-  | `A fresh basket of boletus` | | | | A fresh basket of boletus |
-
-  These are its first tests, with `lemon` and `diced tomato` in the list
-  and `boletus` not. Lines it gets wrong join them as they turn up.
-- Every field of a row can be edited. An ingredient or unit that is not in
-  the lists is marked *new*, and the save makes it the user's own. A row
-  with no ingredient stops the save. What is left in *rest* is saved in the
-  row's note.
-- Steps: one for each line or paragraph of the text, each editable.
-- Drafts are kept in the extension's storage, so one survives the sidebar
-  closing. A capture from another page starts a new draft, and the earlier
-  ones stay listed until they are saved or discarded.
-- *Save* posts the draft as a Nutrisho document to
-  `POST /recipes/api/recipes/?id=<draft id>`, then shows *Open in Nutrisho*
-  (`/recipes/<id>/?edit=1`) with the server's warnings, or the server's
-  refusal as it came.
-- **Done when** a recipe clipped from a real page opens on the dev server
-  with its rows as the sidebar showed them, and saving it twice makes one
-  recipe.
+Done (#168). A clipping fills the sidebar's clipboard and starts a draft
+named after the page, with a version 7 UUID; a clipping from another page
+starts another, and unsaved drafts stay in storage until saved or discarded.
+*Add* and *Replace* send the clipboard, or its selected part, to the name,
+blurb, ingredients or steps. Each ingredient line is scanned against the
+lists (longest ingredient, a unit just before it, a number just before that),
+the rest kept in *rest* and saved in the note, and unknown names marked
+*new*. *Save* checks the name, servings, quantities and that every row has an
+ingredient, posts the draft as a Nutrisho document, and shows *Open in
+Nutrisho*, the server's warnings, or its refusal as it came. The draft and the
+save are tested against the server's API examples.
 
 ### M8 · extension · Names from the lists
 
