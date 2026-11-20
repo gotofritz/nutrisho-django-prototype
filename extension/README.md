@@ -22,6 +22,10 @@ make ext-qa                   # every check CI runs
 make ext-build                # .output/firefox-mv3/ and .output/chrome-mv3/
 ```
 
+The other `ext-` targets run `make ext-install` first when `node_modules` is
+missing or older than `pnpm-lock.yaml` or `package.json`, so a fresh checkout
+or a pull that changed the dependencies needs no separate step.
+
 `make ext-dev` opens the browser for you. To load a build into your own
 Firefox, open `about:debugging`, choose *This Firefox*, then *Load Temporary
 Add-on*, and pick `.output/firefox-mv3/manifest.json`. Open the sidebar from
