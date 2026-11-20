@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M5 done (#154, #156, #158, #160, #162)
+## Status: In progress, M1 to M6 done (#154, #156, #158, #160, #162, #166)
 
 ## What we are building
 
@@ -139,33 +139,16 @@ Every workflow now always runs, and a first `changes` job skips the checks a
 change does not concern, so a required check never waits on an
 extension-only PR.
 
-### M6 · extension · Set-up: the shell
+### ✅ M6 · extension · Set-up: the shell
 
-Anklipper's plumbing with its tests, without its Anki half. Selected text
-reaches the sidebar and the lists load; nothing is a recipe yet.
-
-- Copied and adapted: `platform/`, the typed messages, the capture chain
-  (menu or shortcut, read the selection with a line per list item or
-  paragraph, store it, open the sidebar), the settings store and options
-  page, and the manifest test that pins the permissions (D14). Folders as
-  in anklipper's `src/`, with `nutrisho/` for the server's client where
-  `anki/` was.
-- New: the toolbar button, which opens the sidebar and clips the selection
-  if there is one. `NutrishoClient` (port, `fetch` adapter, fake) with the
-  lists call, its tests reading M4's JSON files. The options page takes the
-  server's address (`make dev`'s `http://localhost:8987` to start with) and
-  the API key, and asks for the host permission when saved. The sidebar
-  shows the captured text, and either whose lists it loaded or what went
-  wrong.
-- The host permission is asked for without the port: MDN says Firefox's
-  match patterns take none, so anklipper's `hostPermissionFor`, which keeps
-  it, changes. Confirm it in the pass by hand.
-- Drop anklipper's Chrome `key`, which exists for AnkiConnect's allowlist.
-  Keep the pinned gecko id.
-- **Done when**, in a real Firefox, text selected on a page shows in the
-  sidebar by menu, shortcut and button, and the lists load from the dev
-  server with a key from
-  `make manage ARGS="create_api_token <username> --name clipper"`.
+Done (#166). Anklipper's plumbing, without its Anki half: the context menu,
+Alt+Shift+N and a new toolbar button read the selection (a line per list
+item or paragraph), store it as a clipping and open the sidebar. The options
+page takes the server's address (loopback only) and an API key, and asks for
+the host permission, without a port, when saved. `NutrishoClient` loads the
+lists, tested against M4's JSON files, and the sidebar shows the clipping and
+whose lists loaded or what went wrong. No Chrome `key`; the gecko id is
+pinned.
 
 ### M7 · extension · A clipper that can be used
 
