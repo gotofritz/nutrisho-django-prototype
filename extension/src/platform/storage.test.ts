@@ -34,6 +34,30 @@ describe("storage", () => {
   });
 });
 
+// The clipping and the drafts are page content, worth keeping while the
+// browser runs and no longer: a new browser session starts with none (M7).
+describe("session storage", () => {
+  it("writes where the browser keeps it for this session only", async () => {
+    await createStorage("session").set("drafts", { drafts: [] });
+
+    await expect(browser.storage.session.get("drafts")).resolves.toEqual({
+      drafts: { drafts: [] },
+    });
+    await expect(browser.storage.local.get("drafts")).resolves.toEqual({});
+  });
+
+  it("is told only about writes to its own area", async () => {
+    const changed = vi.fn();
+    createStorage("session").onChanged("clipping", changed);
+
+    await createStorage("local").set("clipping", { text: "basil" });
+    expect(changed).not.toHaveBeenCalled();
+
+    await createStorage("session").set("clipping", { text: "basil" });
+    expect(changed).toHaveBeenCalledTimes(1);
+  });
+});
+
 // The sidebar has to notice a clipping written by a gesture while it was
 // already open: it persists per window on Firefox, so that is the common case
 // after the first clip.

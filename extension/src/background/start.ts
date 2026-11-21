@@ -1,3 +1,4 @@
+import type { ClipTarget } from "@/core/clipping";
 import type { ClippingStore } from "@/core/ports/types";
 import { CAPTURE_COMMAND, CAPTURE_TITLE } from "@/manifest/manifest";
 import { createMessenger } from "@/messaging/messenger";
@@ -12,8 +13,19 @@ import type { SidebarPort } from "@/platform/sidebar";
 import type { CaptureReport, CaptureTrigger } from "./capture";
 import { captureFromGesture, describeCapture } from "./capture";
 
-/** The menu entry's id. */
+/** The menu entry's id; its submenu entries are this plus their target. */
 export const CAPTURE_MENU_ITEM = CAPTURE_COMMAND;
+
+/** The submenu, in order: where the text goes, as well as to the clipboard. */
+const SUBMENU: readonly { target: ClipTarget; title: string }[] = [
+  { target: "name", title: "Title" },
+  { target: "blurb", title: "Blurb" },
+  { target: "group", title: "Ingredient group" },
+  { target: "steps", title: "Steps" },
+  { target: "clipboard", title: "Clipboard" },
+];
+
+const menuItem = (target: ClipTarget) => `${CAPTURE_MENU_ITEM}-${target}`;
 
 export interface BackgroundDeps {
   readonly messaging: RuntimeMessagingPort;
@@ -64,8 +76,11 @@ export function startBackground(deps: BackgroundDeps): () => void {
   // Not awaited: each handler has to reach `sidebar.open` inside the
   // gesture's own task, and none of these APIs waits for the promise.
   const stopClicks = deps.menus.onClicked((click) => {
-    if (click.menuItemId !== CAPTURE_MENU_ITEM) return;
-    void capture(click);
+    const entry = SUBMENU.find(
+      ({ target }) => menuItem(target) === click.menuItemId,
+    );
+    if (entry === undefined) return;
+    void capture({ ...click, target: entry.target });
   });
 
   const stopCommands = deps.commands.onCommand((invocation) => {
@@ -100,4 +115,12 @@ async function registerMenu(deps: BackgroundDeps): Promise<void> {
     title: CAPTURE_TITLE,
     contexts: ["selection"],
   });
+  for (const { target, title } of SUBMENU) {
+    await deps.menus.create({
+      id: menuItem(target),
+      parentId: CAPTURE_MENU_ITEM,
+      title,
+      contexts: ["selection"],
+    });
+  }
 }

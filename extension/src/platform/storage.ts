@@ -19,27 +19,34 @@ export interface StoragePort {
   onChanged(key: string, listener: () => void): () => void;
 }
 
-export function createStorage(): StoragePort {
+/**
+ * `local` keeps a value until it is removed: the settings. `session` keeps it
+ * while the browser runs, so a new browser session starts without the last
+ * one's clipping and drafts, which are page content (M7). Neither is synced.
+ */
+export type StorageArea = "local" | "session";
+
+export function createStorage(area: StorageArea = "local"): StoragePort {
+  const store = () => browser.storage[area];
   return {
     async get<T>(key: string): Promise<T | undefined> {
-      const stored = await browser.storage.local.get(key);
+      const stored = await store().get(key);
       return stored[key] as T | undefined;
     },
 
     async set<T>(key: string, value: T): Promise<void> {
-      await browser.storage.local.set({ [key]: value });
+      await store().set({ [key]: value });
     },
 
     async remove(key: string): Promise<void> {
-      await browser.storage.local.remove(key);
+      await store().remove(key);
     },
 
     onChanged(key: string, listener: () => void): () => void {
-      // `storage.onChanged` with an area check rather than
-      // `storage.local.onChanged`: both browsers have the former, and only
-      // the local area is written here.
+      // `storage.onChanged` with an area check rather than the area's own
+      // `onChanged`: both browsers have the former.
       const wrapped = (changes: Record<string, unknown>, areaName: string) => {
-        if (areaName === "local" && key in changes) listener();
+        if (areaName === area && key in changes) listener();
       };
       browser.storage.onChanged.addListener(wrapped);
       return () => browser.storage.onChanged.removeListener(wrapped);

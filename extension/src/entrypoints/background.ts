@@ -21,7 +21,8 @@ export default defineBackground(() => {
     action: createAction(),
     scripting: createScripting(),
     sidebar: createBrowserSidebar(),
-    clippings: createStoredClipping(createStorage()),
+    // Session storage: a new browser session starts without the last clipping.
+    clippings: createStoredClipping(createStorage("session")),
     // What each capture did, in development only. The report carries kinds
     // and our own messages, never the page's text or address (D15), and the
     // DEV guard keeps it out of a release regardless.

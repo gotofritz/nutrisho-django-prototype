@@ -37,6 +37,22 @@ describe("context menus", () => {
     });
   });
 
+  it("puts an item in a submenu under its parent", async () => {
+    await createContextMenus().create({
+      id: "clip-recipe-steps",
+      parentId: "clip-recipe",
+      title: "Steps",
+      contexts: ["selection"],
+    });
+
+    expect(browser.contextMenus.create).toHaveBeenCalledWith({
+      id: "clip-recipe-steps",
+      parentId: "clip-recipe",
+      title: "Steps",
+      contexts: ["selection"],
+    });
+  });
+
   // The background is unloaded when idle and re-registers its menus on the
   // next start; without this the user collects duplicates.
   it("removes every item", async () => {

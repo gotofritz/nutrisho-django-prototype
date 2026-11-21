@@ -4,7 +4,7 @@ import type {
   PageCapture,
 } from "@/core/capture";
 import { warn } from "@/core/capture";
-import { clippingFrom, type Clipping } from "@/core/clipping";
+import { clippingFrom, type ClipTarget, type Clipping } from "@/core/clipping";
 import type { ClippingStore } from "@/core/ports/types";
 import { err, ok, type Result } from "@/core/result";
 import type { Messenger } from "@/messaging/messenger";
@@ -27,6 +27,8 @@ export interface CaptureTrigger {
    */
   readonly selectionText?: string;
   readonly pageUrl?: string;
+  /** Where the text goes; the clipboard only, unless the submenu said. */
+  readonly target?: ClipTarget;
 }
 
 /**
@@ -203,7 +205,11 @@ async function finish(
   // The background is unloaded when idle, so the clipping is durable from
   // the moment it exists, and the sidebar reads it back out rather than being
   // handed it.
-  const clipping = clippingFrom(filled, (deps.now ?? (() => new Date()))());
+  const clipping = clippingFrom(
+    filled,
+    (deps.now ?? (() => new Date()))(),
+    trigger.target ?? "clipboard",
+  );
   const saved = await deps.clippings.save(clipping);
   if (!saved.ok) {
     return err({

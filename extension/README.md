@@ -1,9 +1,9 @@
 # Nutrisho clipper
 
-A browser extension that will clip recipes from web pages into Nutrisho. It
-cannot save a recipe yet: today it puts the text you select into its sidebar
-and loads your lists (ingredients, units, cuisines, tags) from your Nutrisho.
-Recipes come in later milestones of
+A browser extension that clips recipes from web pages into Nutrisho. You
+select text on a recipe page, send it to the recipe's title, blurb,
+ingredients or steps, check what it made of each ingredient line, and save.
+Cuisines, tags and the look come in later milestones of
 [plan 012](../docs/plans/012-recipe-clipper.md).
 
 ## Running it
@@ -46,14 +46,38 @@ the *View* menu, under *Sidebar*.
    *Preferences* in `about:addons`), enter the server's address and the key,
    and save. The browser asks once for permission to reach that address. Only
    `localhost` and `127.0.0.1` are allowed for now.
-3. Select text on a page and clip it: *Clip into Nutrisho* in the right-click
-   menu, <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd>, or the toolbar button.
-   The sidebar opens with the text, and says whose lists it loaded or what
-   went wrong.
+3. Select text on a page, right-click, and choose where it goes under *Clip
+   into Nutrisho*: *Title* (replaces the recipe's name), *Blurb*,
+   *Ingredient group*, *Steps* (each adds to what is there) or *Clipboard*.
+   The sidebar opens with a new recipe named after the page, and the text is
+   also in the clipboard at the bottom. <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd>
+   and the toolbar button clip to the clipboard only.
+4. Each ingredient line becomes a row: the ingredient is the longest name
+   from your lists in the line, the unit a name from your lists just before
+   it (`600ml` counts), and the quantity a number just before that, or else
+   the nearest number before it (`2 large eggs`). An amount
+   with its unit can also stand a few words earlier: in `190g plain flour`,
+   *plain* stays in *Rest*. A line with no name from your lists still keeps
+   the amount and unit it starts with (`90ml dark maple syrup`). Every other word stays in *Rest*, commas
+   included, which is saved in the row's note. A line that starts with a
+   comma (`, cubed`) belongs to the line before. A name your
+   lists do not have is marked *new*, and saving makes it one of your own.
+   When nothing in a group's first line is known, it becomes the group's name
+   (`For the sauce:`). Each group and each row has ▲ to fold it to one
+   line, which saves scrolling, and × to delete it. Each step has a title as well as its text.
+5. From the clipboard, send all of it, or the part you select, to any part
+   of the recipe with *Add* or *Replace*. You can also type or paste into it.
+6. *Save* sends the recipe to your Nutrisho and offers *Open in Nutrisho*.
+   Saving the same recipe again changes nothing.
+
+Recipes not yet saved stay in the sidebar after it closes, until the browser
+is restarted: a new browser session starts empty. Clipping from another page
+starts another recipe; pick between them under *Draft*, *Discard this draft*
+to drop one, or *Clear all* at the top to start again.
 
 The key is kept in the browser's local storage, never synced, and the
 settings page never shows it again. Only the server's address you saved is
-ever contacted.
+ever contacted, and only the recipe you save is sent to it.
 
 ## Checks
 

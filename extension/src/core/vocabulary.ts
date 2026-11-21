@@ -93,3 +93,20 @@ export function parseVocabulary(
   }
   return ok({ user, ingredients, units, cuisines, tags, limits });
 }
+
+function lookedUp(name: string): string {
+  return name.trim().replace(/\.$/, "").toLowerCase();
+}
+
+/**
+ * Whether `terms` hold `name` by any spelling. Lookups ignore case, and a
+ * trailing full stop as the server ignores it for units (`tbsp.`).
+ */
+export function knows(terms: readonly Term[], name: string): boolean {
+  const wanted = lookedUp(name);
+  return terms.some((term) =>
+    [term.name, ...term.spellings].some(
+      (spelling) => lookedUp(spelling) === wanted,
+    ),
+  );
+}
