@@ -1,6 +1,12 @@
 import { scanLine, type IngredientRow } from "./ingredient-line";
 import type { Vocabulary } from "./vocabulary";
 
+/** One step of the method, under an optional title, as on the site. */
+export interface Step {
+  readonly title: string;
+  readonly text: string;
+}
+
 /**
  * The recipe being clipped (plan 012, M7): pure data, and the rules for
  * changing it. The sidebar edits it; the server receives it as a Nutrisho
@@ -23,7 +29,7 @@ export interface RecipeDraft {
   /** Picked in M8. */
   readonly tags: readonly string[];
   readonly groups: readonly IngredientGroup[];
-  readonly steps: readonly string[];
+  readonly steps: readonly Step[];
   /** ISO 8601. */
   readonly startedAt: string;
 }
@@ -85,7 +91,14 @@ export function isRecipeDraft(value: unknown): value is RecipeDraft {
       .every(text) &&
     Array.isArray(draft.tags) &&
     Array.isArray(draft.groups) &&
-    Array.isArray(draft.steps)
+    Array.isArray(draft.steps) &&
+    draft.steps.every(
+      (step: unknown) =>
+        typeof step === "object" &&
+        step !== null &&
+        text((step as Step).title) &&
+        text((step as Step).text),
+    )
   );
 }
 
@@ -158,7 +171,7 @@ function send(
       return { ...draft, groups: keep ? [...draft.groups, group] : [group] };
     }
     case "steps": {
-      const steps = lines(text);
+      const steps = lines(text).map((line) => ({ title: "", text: line }));
       return { ...draft, steps: keep ? [...draft.steps, ...steps] : steps };
     }
   }
@@ -221,11 +234,29 @@ export function updateGroupName(
 export function updateStep(
   draft: RecipeDraft,
   index: number,
-  text: string,
+  patch: Partial<Step>,
 ): RecipeDraft {
   return {
     ...draft,
-    steps: draft.steps.map((step, at) => (at === index ? text : step)),
+    steps: draft.steps.map((step, at) =>
+      at === index ? { ...step, ...patch } : step,
+    ),
+  };
+}
+
+/** Takes one row out of a group; the group stays, even when it is left empty. */
+export function removeRow(
+  draft: RecipeDraft,
+  groupIndex: number,
+  rowIndex: number,
+): RecipeDraft {
+  return {
+    ...draft,
+    groups: draft.groups.map((group, at) =>
+      at === groupIndex
+        ? { ...group, rows: group.rows.filter((_, row) => row !== rowIndex) }
+        : group,
+    ),
   };
 }
 
@@ -325,7 +356,10 @@ export function toDocument(draft: RecipeDraft): unknown {
         source_instance: draft.source,
         cuisine: draft.cuisine,
         tags: [...draft.tags],
-        steps: draft.steps.map((step) => ({ step_title: "", step_text: step })),
+        steps: draft.steps.map((step) => ({
+          step_title: step.title,
+          step_text: step.text,
+        })),
         ingredient_groups: draft.groups
           .filter((group) => group.rows.length > 0 || group.name.trim() !== "")
           .map((group) => ({

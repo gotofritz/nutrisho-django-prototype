@@ -175,7 +175,10 @@ describe("a clipping sent somewhere", () => {
       LISTS,
     );
 
-    expect(currentDraft(twice)?.steps).toEqual(["Fry.", "Toss."]);
+    expect(currentDraft(twice)?.steps.map((step) => step.text)).toEqual([
+      "Fry.",
+      "Toss.",
+    ]);
     expect(
       currentDraft(
         afterClip(EMPTY_DRAFTS, sent("blurb", "Sicilian."), ids("a"), LISTS),

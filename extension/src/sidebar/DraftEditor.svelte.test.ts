@@ -30,7 +30,10 @@ const DRAFT: RecipeDraft = {
     },
     { name: "For the syrup", rows: [{ ...EMPTY_ROW, ingredient: "lemon" }] },
   ],
-  steps: ["Zest the lemons.", "Bake."],
+  steps: [
+    { title: "The lemons", text: "Zest the lemons." },
+    { title: "", text: "Bake." },
+  ],
 };
 
 function renderEditor(draft: RecipeDraft = DRAFT, issues = []) {
@@ -134,6 +137,58 @@ describe("the ingredient rows", () => {
     ).toHaveAccessibleDescription("new: saving makes it one of your own");
   });
 
+  it("deletes a row", async () => {
+    const { changed } = renderEditor();
+
+    await fireEvent.click(
+      within(row(1)).getByRole("button", { name: "Delete row 1" }),
+    );
+
+    expect(changed()?.groups[0]?.rows).toEqual([DRAFT.groups[0]?.rows[1]]);
+  });
+
+  // A row has seven fields, so a long list means a lot of scrolling.
+  it("collapses a row to one line, and opens it again", async () => {
+    renderEditor();
+
+    const collapse = within(row(1)).getByRole("button", {
+      name: "Collapse row 1",
+    });
+    expect(collapse).toHaveAttribute("aria-expanded", "true");
+    expect(collapse).toHaveTextContent("▲");
+    await fireEvent.click(collapse);
+
+    expect(within(row(1)).queryByRole("textbox")).toBeNull();
+    expect(within(row(1)).getByText("2 lemon · Juice of")).toBeVisible();
+    expect(collapse).toHaveAttribute("aria-expanded", "false");
+    expect(collapse).toHaveTextContent("▼");
+    expect(within(row(2)).getAllByRole("textbox")).toHaveLength(7);
+
+    await fireEvent.click(collapse);
+    expect(within(row(1)).getAllByRole("textbox")).toHaveLength(7);
+  });
+
+  it("keeps a row collapsed when the one before it is deleted", async () => {
+    const onChange = vi.fn<(draft: RecipeDraft) => void>();
+    const { rerender } = render(DraftEditor, {
+      draft: DRAFT,
+      vocabulary: LISTS,
+      issues: [],
+      onChange,
+    });
+
+    await fireEvent.click(
+      within(row(2)).getByRole("button", { name: "Collapse row 2" }),
+    );
+    await fireEvent.click(
+      within(row(1)).getByRole("button", { name: "Delete row 1" }),
+    );
+    await rerender({ draft: onChange.mock.lastCall![0] });
+
+    expect(within(row(1)).queryByRole("textbox")).toBeNull();
+    expect(within(row(1)).getByText("1 handful boletus")).toBeVisible();
+  });
+
   it("says there are none yet", () => {
     renderEditor({ ...DRAFT, groups: [] });
 
@@ -153,9 +208,23 @@ describe("the steps", () => {
     });
 
     expect(changed()?.steps).toEqual([
-      "Zest the lemons.",
-      "Bake for 30 minutes.",
+      DRAFT.steps[0],
+      { title: "", text: "Bake for 30 minutes." },
     ]);
+  });
+
+  it("shows each step's title, and edits one", async () => {
+    const { changed } = renderEditor();
+
+    expect(screen.getByRole("textbox", { name: "Step 1 title" })).toHaveValue(
+      "The lemons",
+    );
+    await fireEvent.input(
+      screen.getByRole("textbox", { name: "Step 2 title" }),
+      { target: { value: "Baking" } },
+    );
+
+    expect(changed()?.steps[1]).toEqual({ title: "Baking", text: "Bake." });
   });
 });
 

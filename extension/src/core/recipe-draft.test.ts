@@ -8,6 +8,7 @@ import {
   checkDraft,
   groupFrom,
   isRecipeDraft,
+  removeRow,
   replace,
   savePath,
   startDraft,
@@ -60,6 +61,7 @@ describe("a new draft", () => {
   it("is told from anything else that is stored", () => {
     expect(isRecipeDraft(draft())).toBe(true);
     expect(isRecipeDraft({ ...draft(), groups: "no" })).toBe(false);
+    expect(isRecipeDraft({ ...draft(), steps: ["Fry."] })).toBe(false);
     expect(isRecipeDraft(null)).toBe(false);
   });
 });
@@ -174,9 +176,14 @@ describe("Add to and Replace", () => {
       LISTS,
     );
 
-    expect(once.steps).toEqual(["Fry the aubergine.", "Toss with the pasta."]);
+    expect(once.steps).toEqual([
+      { title: "", text: "Fry the aubergine." },
+      { title: "", text: "Toss with the pasta." },
+    ]);
     expect(addTo(once, "steps", "Serve.", LISTS).steps).toHaveLength(3);
-    expect(replace(once, "steps", "Serve.", LISTS).steps).toEqual(["Serve."]);
+    expect(replace(once, "steps", "Serve.", LISTS).steps).toEqual([
+      { title: "", text: "Serve." },
+    ]);
   });
 
   it("leaves the draft as it was when the text is blank", () => {
@@ -214,13 +221,26 @@ describe("editing", () => {
     );
   });
 
-  it("changes one step", () => {
+  it("changes one step, its title or its text", () => {
     const before = addTo(draft(), "steps", "Fry.\nToss.", LISTS);
+    const after = updateStep(before, 0, { text: "Fry well." });
 
-    expect(updateStep(before, 0, "Fry well.").steps).toEqual([
-      "Fry well.",
-      "Toss.",
+    expect(after.steps).toEqual([
+      { title: "", text: "Fry well." },
+      { title: "", text: "Toss." },
     ]);
+    expect(updateStep(after, 1, { title: "To serve" }).steps[1]).toEqual({
+      title: "To serve",
+      text: "Toss.",
+    });
+  });
+
+  it("removes one row, and keeps its group", () => {
+    const after = removeRow(two, 0, 0);
+
+    expect(after.groups[0]!.rows).toEqual([two.groups[0]!.rows[1]]);
+    expect(after.groups[1]).toBe(two.groups[1]);
+    expect(removeRow(after, 0, 0).groups[0]!.rows).toEqual([]);
   });
 
   it("changes the name, blurb, servings and source", () => {
@@ -311,7 +331,10 @@ describe("the save", () => {
     servings: "4",
     cuisine: "med.italy",
     tags: ["dinner"],
-    steps: ["Fry the aubergine.", "Toss with the pasta."],
+    steps: [
+      { title: "", text: "Fry the aubergine." },
+      { title: "", text: "Toss with the pasta." },
+    ],
     groups: [
       {
         name: "",
@@ -335,6 +358,15 @@ describe("the save", () => {
 
   it("sends the document the server's example shows", () => {
     expect(toDocument(norma)).toEqual(example.request.body);
+  });
+
+  it("sends each step under its title", () => {
+    const titled = updateStep(norma, 0, { title: "The aubergine" });
+
+    expect((toDocument(titled) as DocumentShape).recipes[0]!.steps[0]).toEqual({
+      step_title: "The aubergine",
+      step_text: "Fry the aubergine.",
+    });
   });
 
   it("sends each group under its name", () => {
@@ -390,5 +422,6 @@ interface DocumentShape {
       group_name: string;
       items: Record<string, unknown>[];
     }[];
+    steps: { step_title: string; step_text: string }[];
   }[];
 }

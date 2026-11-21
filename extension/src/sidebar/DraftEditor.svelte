@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { SvelteSet } from "svelte/reactivity";
+
   import type { IngredientRow } from "@/core/ingredient-line";
   import {
+    removeRow,
     updateGroupName,
     updateRow,
     updateStep,
@@ -56,6 +59,33 @@
       value.trim() !== "" &&
       !knows(terms(vocabulary), value)
     );
+  }
+
+  /** The rows shown as one line, as `group-row`; not kept with the draft. */
+  const collapsed = new SvelteSet<string>();
+
+  function toggle(key: string) {
+    if (!collapsed.delete(key)) collapsed.add(key);
+  }
+
+  /** Delete a row; the collapsed rows after it move up with it. */
+  function remove(groupIndex: number, rowIndex: number) {
+    const kept = [...collapsed].flatMap((key) => {
+      const [group, row] = key.split("-").map(Number) as [number, number];
+      if (group !== groupIndex || row < rowIndex) return [key];
+      return row === rowIndex ? [] : [`${group}-${row - 1}`];
+    });
+    collapsed.clear();
+    for (const key of kept) collapsed.add(key);
+    onChange(removeRow(draft, groupIndex, rowIndex));
+  }
+
+  /** A collapsed row, on one line: `2 lemon · Juice of`. */
+  function summary(row: IngredientRow): string {
+    const named = [row.quantity, row.unit, row.ingredient]
+      .filter((part) => part.trim() !== "")
+      .join(" ");
+    return [named, row.rest].filter((part) => part.trim() !== "").join(" · ");
   }
 
   function valueOf(event: Event): string {
@@ -128,9 +158,29 @@
         />
       </label>
       {#each group.rows as row, index (index)}
+        {@const key = `${groupIndex}-${index}`}
+        {@const shut = collapsed.has(key)}
         <fieldset class="row">
           <legend>Row {index + 1}</legend>
-          {#each ROW_FIELDS as { field, label } (field)}
+          <div class="tools">
+            <button
+              type="button"
+              class="icon"
+              aria-label="Collapse row {index + 1}"
+              aria-expanded={!shut}
+              onclick={() => toggle(key)}>{shut ? "▼" : "▲"}</button
+            >
+            <button
+              type="button"
+              class="icon"
+              aria-label="Delete row {index + 1}"
+              onclick={() => remove(groupIndex, index)}>×</button
+            >
+          </div>
+          {#if shut}
+            <p class="summary">{summary(row)}</p>
+          {/if}
+          {#each shut ? [] : ROW_FIELDS as { field, label } (field)}
             {@const mark = `group-${groupIndex}-row-${index}-${field}-new`}
             <label>
               {label}
@@ -168,12 +218,21 @@
   <ol class="steps">
     {#each draft.steps as step, index (index)}
       <li>
+        <input
+          type="text"
+          placeholder="Title"
+          aria-label="Step {index + 1} title"
+          value={step.title}
+          oninput={(event) =>
+            onChange(updateStep(draft, index, { title: valueOf(event) }))}
+        />
         <textarea
           rows="2"
           aria-label="Step {index + 1}"
-          value={step}
+          value={step.text}
           oninput={(event) =>
-            onChange(updateStep(draft, index, valueOf(event)))}></textarea>
+            onChange(updateStep(draft, index, { text: valueOf(event) }))}
+        ></textarea>
       </li>
     {/each}
   </ol>
@@ -209,10 +268,37 @@
   }
 
   .row {
+    position: relative;
     grid-template-columns: 1fr;
     border: 1px solid GrayText;
     border-radius: 0.25rem;
     padding: 0.5rem;
+  }
+
+  /* On the row's top border, opposite its legend. */
+  .tools {
+    position: absolute;
+    top: -0.875rem;
+    right: 0.5rem;
+    display: flex;
+    gap: 0.25rem;
+    background: Canvas;
+  }
+
+  .icon {
+    min-width: 1.5rem;
+    padding: 0 0.25rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .summary {
+    font-size: 0.875rem;
+  }
+
+  .steps li {
+    display: grid;
+    gap: 0.25rem;
   }
 
   .new {

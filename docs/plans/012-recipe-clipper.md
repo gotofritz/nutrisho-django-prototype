@@ -173,7 +173,8 @@ earlier, a number just before that or else the nearest one before it, `600ml` re
 the ingredient is unknown), the rest kept in
 *rest* with its commas and saved in the note, and
 unknown names marked *new*; a group's first line is its name when nothing
-in it is known (D7). *Save* checks the name, servings, quantities and that every row has an
+in it is known (D7); a row folds to one line or is deleted, and a step has a
+title. *Save* checks the name, servings, quantities and that every row has an
 ingredient, posts the draft as a Nutrisho document, and shows *Open in
 Nutrisho*, the server's warnings, or its refusal as it came. The draft and the
 save are tested against the server's API examples.
@@ -192,8 +193,8 @@ save are tested against the server's API examples.
 
 - A line inside a group can be made a group name, splitting it (D7: M7
   already names a group from its first line).
-- Step titles. Rows and steps can be reordered and deleted, and a row moved
-  to another group.
+- Rows and steps can be reordered, steps deleted, and a row moved to another
+  group. (Step titles, and folding and deleting a row, came early, in M7.)
 - Text too long for its field is flagged at the field before the save, from
   the `limits` loaded with the lists (D12).
 

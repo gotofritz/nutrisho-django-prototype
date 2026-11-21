@@ -209,7 +209,10 @@ const NORMA: RecipeDraft = {
   servings: "4",
   cuisine: "med.italy",
   tags: ["dinner"],
-  steps: ["Fry the aubergine.", "Toss with the pasta."],
+  steps: [
+    { title: "", text: "Fry the aubergine." },
+    { title: "", text: "Toss with the pasta." },
+  ],
   groups: [
     {
       name: "",
