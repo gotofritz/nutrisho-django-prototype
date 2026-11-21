@@ -34,12 +34,13 @@ describe("the plan's first lines", () => {
     });
   });
 
+  // The plan left the 1 in rest; with no better candidate it is the quantity.
   it("reads `1 (14-ounce) can diced tomatoes`", () => {
     expect(scanned("1 (14-ounce) can diced tomatoes", plan)).toEqual({
-      quantity: "",
+      quantity: "1",
       unit: "",
       ingredient: "diced tomato",
-      rest: "1 (14-ounce) can",
+      rest: "(14-ounce) can",
     });
   });
 
@@ -139,12 +140,12 @@ describe("the unit", () => {
     });
   });
 
-  it("is taken without an amount only directly before the ingredient", () => {
+  it("keeps the nearest amount before it, when the amount is apart", () => {
     expect(scanned("2 heaped tbsp sugar", vocabulary)).toEqual({
-      quantity: "",
+      quantity: "2",
       unit: "tbsp",
       ingredient: "sugar",
-      rest: "2 heaped",
+      rest: "heaped",
     });
   });
 
@@ -177,6 +178,23 @@ describe("the quantity", () => {
       unit: "cup",
       ingredient: "flour",
       rest: "",
+    });
+  });
+
+  // `2 large eggs`: with no unit, the nearest amount before the ingredient.
+  it("is the nearest amount before the ingredient, when words stand between", () => {
+    expect(scanned("2 large juicy lemon", vocabulary)).toEqual({
+      quantity: "2",
+      unit: "",
+      ingredient: "lemon",
+      rest: "large juicy",
+    });
+  });
+
+  it("is not an amount after the ingredient", () => {
+    expect(scanned("lemon, 2 of them", vocabulary)).toMatchObject({
+      quantity: "",
+      rest: "2 of them",
     });
   });
 

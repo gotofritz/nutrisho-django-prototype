@@ -142,11 +142,17 @@ function decimalText([numerator, denominator]: Fraction): string | undefined {
   return fraction === "" ? String(whole) : `${whole}.${fraction}`;
 }
 
+interface Quantity {
+  readonly start: number;
+  readonly end: number;
+  readonly text: string;
+}
+
 /** The amount written just before `end`, with a whole number in front of a fraction. */
 function quantityEndingAt(
   words: readonly string[],
   end: number,
-): { start: number; text: string } | undefined {
+): Quantity | undefined {
   const last = end > 0 ? amount(words[end - 1]!) : undefined;
   if (last === undefined) return undefined;
 
@@ -159,7 +165,7 @@ function quantityEndingAt(
     start -= 1;
   }
   const text = decimalText(value);
-  return text === undefined ? undefined : { start, text };
+  return text === undefined ? undefined : { start, end, text };
 }
 
 const GLUED = new RegExp(
@@ -207,11 +213,23 @@ function amountWithUnit(
   words: readonly string[],
   limit: number,
   units: readonly Term[],
-): { quantity: { start: number; text: string }; unit: Found } | undefined {
+): { quantity: Quantity; unit: Found } | undefined {
   for (let end = limit - 1; end > 0; end -= 1) {
     const unit = nameStartingAt(words, end, limit, units);
     const quantity = unit && quantityEndingAt(words, end);
     if (unit && quantity) return { quantity, unit };
+  }
+  return undefined;
+}
+
+/** With no better candidate, the amount nearest before `limit` (`2 large eggs`). */
+function nearestQuantity(
+  words: readonly string[],
+  limit: number,
+): Quantity | undefined {
+  for (let end = limit - 1; end > 0; end -= 1) {
+    const quantity = quantityEndingAt(words, end);
+    if (quantity !== undefined) return quantity;
   }
   return undefined;
 }
@@ -252,7 +270,8 @@ function restOf(
  * - the unit is a name from the loaded list directly before the ingredient,
  *   or straight after an amount before it (`190g plain flour`);
  * - the quantity is a number directly before the unit, or before the
- *   ingredient when there is no unit.
+ *   ingredient when there is no unit; failing that, the nearest number
+ *   before them (`2 large eggs`).
  */
 export function scanLine(line: string, vocabulary: Vocabulary): IngredientRow {
   const written = line.trim().split(/\s+/).filter(Boolean);
@@ -265,7 +284,7 @@ export function scanLine(line: string, vocabulary: Vocabulary): IngredientRow {
 
   const ingredient = longestName(words, vocabulary.ingredients);
   let unit: Found | undefined;
-  let quantity: { start: number; text: string } | undefined;
+  let quantity: Quantity | undefined;
   if (ingredient !== undefined) {
     take(ingredient.start, ingredient.end);
     unit = nameEndingAt(words, ingredient.start, vocabulary.units);
@@ -275,9 +294,9 @@ export function scanLine(line: string, vocabulary: Vocabulary): IngredientRow {
         ? amountWithUnit(words, ingredient.start, vocabulary.units)
         : undefined;
     if (apart !== undefined) ({ quantity, unit } = apart);
+    quantity ??= nearestQuantity(words, (unit ?? ingredient).start);
     if (unit !== undefined) take(unit.start, unit.end);
-    if (quantity !== undefined)
-      take(quantity.start, unit?.start ?? ingredient.start);
+    if (quantity !== undefined) take(quantity.start, quantity.end);
   }
 
   return {
