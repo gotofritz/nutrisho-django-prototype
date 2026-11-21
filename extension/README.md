@@ -63,8 +63,8 @@ the *View* menu, under *Sidebar*.
    comma (`, cubed`) belongs to the line before. A name your
    lists do not have is marked *new*, and saving makes it one of your own.
    When nothing in a group's first line is known, it becomes the group's name
-   (`For the sauce:`). Each row has ▲ to fold it to one line, which saves
-   scrolling, and × to delete it. Each step has a title as well as its text.
+   (`For the sauce:`). Each group and each row has ▲ to fold it to one
+   line, which saves scrolling, and × to delete it. Each step has a title as well as its text.
 5. From the clipboard, send all of it, or the part you select, to any part
    of the recipe with *Add* or *Replace*. You can also type or paste into it.
 6. *Save* sends the recipe to your Nutrisho and offers *Open in Nutrisho*.

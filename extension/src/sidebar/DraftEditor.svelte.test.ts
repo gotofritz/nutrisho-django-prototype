@@ -86,6 +86,62 @@ describe("the ingredient groups", () => {
   });
 });
 
+describe("a whole group", () => {
+  const group = (number: number) =>
+    screen.getByRole("region", { name: `Group ${number}` });
+
+  it("is deleted, rows and all", async () => {
+    const { changed } = renderEditor();
+
+    await fireEvent.click(
+      within(group(1)).getByRole("button", { name: "Delete group 1" }),
+    );
+
+    expect(changed()?.groups).toEqual([DRAFT.groups[1]]);
+  });
+
+  it("collapses to its name and how many rows it holds, and opens again", async () => {
+    renderEditor();
+
+    const collapse = within(group(2)).getByRole("button", {
+      name: "Collapse group 2",
+    });
+    await fireEvent.click(collapse);
+
+    expect(within(group(2)).queryByRole("textbox")).toBeNull();
+    expect(within(group(2)).queryByRole("group")).toBeNull();
+    expect(within(group(2)).getByText("For the syrup · 1 row")).toBeVisible();
+    expect(collapse).toHaveAttribute("aria-expanded", "false");
+    expect(collapse).toHaveTextContent("▼");
+    expect(within(group(1)).getAllByRole("group")).toHaveLength(2);
+
+    await fireEvent.click(collapse);
+    expect(
+      within(group(2)).getByRole("textbox", { name: "Group name" }),
+    ).toBeVisible();
+  });
+
+  it("keeps a group collapsed when the one before it is deleted", async () => {
+    const onChange = vi.fn<(draft: RecipeDraft) => void>();
+    const { rerender } = render(DraftEditor, {
+      draft: DRAFT,
+      vocabulary: LISTS,
+      issues: [],
+      onChange,
+    });
+
+    await fireEvent.click(
+      within(group(2)).getByRole("button", { name: "Collapse group 2" }),
+    );
+    await fireEvent.click(
+      within(group(1)).getByRole("button", { name: "Delete group 1" }),
+    );
+    await rerender({ draft: onChange.mock.lastCall![0] });
+
+    expect(within(group(1)).getByText("For the syrup · 1 row")).toBeVisible();
+  });
+});
+
 describe("the ingredient rows", () => {
   it("shows each row's fields, rest included", () => {
     renderEditor();

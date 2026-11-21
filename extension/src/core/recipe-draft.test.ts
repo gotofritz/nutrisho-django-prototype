@@ -8,6 +8,7 @@ import {
   checkDraft,
   groupFrom,
   isRecipeDraft,
+  removeGroup,
   removeRow,
   replace,
   savePath,
@@ -233,6 +234,10 @@ describe("editing", () => {
       title: "To serve",
       text: "Toss.",
     });
+  });
+
+  it("removes one group, rows and all", () => {
+    expect(removeGroup(two, 0).groups).toEqual([two.groups[1]]);
   });
 
   it("removes one row, and keeps its group", () => {

@@ -244,6 +244,17 @@ export function updateStep(
   };
 }
 
+/** Takes one group out, rows and all. */
+export function removeGroup(
+  draft: RecipeDraft,
+  groupIndex: number,
+): RecipeDraft {
+  return {
+    ...draft,
+    groups: draft.groups.filter((_, at) => at !== groupIndex),
+  };
+}
+
 /** Takes one row out of a group; the group stays, even when it is left empty. */
 export function removeRow(
   draft: RecipeDraft,

@@ -3,6 +3,7 @@
 
   import type { IngredientRow } from "@/core/ingredient-line";
   import {
+    removeGroup,
     removeRow,
     updateGroupName,
     updateRow,
@@ -80,6 +81,39 @@
     onChange(removeRow(draft, groupIndex, rowIndex));
   }
 
+  /** The groups shown as one line, by index; not kept with the draft. */
+  const shutGroups = new SvelteSet<number>();
+
+  function toggleGroup(groupIndex: number) {
+    if (!shutGroups.delete(groupIndex)) shutGroups.add(groupIndex);
+  }
+
+  /** Delete a group; the collapsed groups and rows after it move up with it. */
+  function removeWholeGroup(groupIndex: number) {
+    const groups = [...shutGroups].flatMap((at) =>
+      at < groupIndex ? [at] : at === groupIndex ? [] : [at - 1],
+    );
+    shutGroups.clear();
+    for (const at of groups) shutGroups.add(at);
+
+    const rows = [...collapsed].flatMap((key) => {
+      const [group, row] = key.split("-").map(Number) as [number, number];
+      if (group < groupIndex) return [key];
+      return group === groupIndex ? [] : [`${group - 1}-${row}`];
+    });
+    collapsed.clear();
+    for (const key of rows) collapsed.add(key);
+
+    onChange(removeGroup(draft, groupIndex));
+  }
+
+  /** A collapsed group, on one line: `For the syrup · 3 rows`. */
+  function groupSummary(group: RecipeDraft["groups"][number]): string {
+    const count = group.rows.length;
+    const name = group.name.trim() || "Unnamed group";
+    return `${name} · ${count} ${count === 1 ? "row" : "rows"}`;
+  }
+
   /** A collapsed row, on one line: `2 lemon · Juice of`. */
   function summary(row: IngredientRow): string {
     const named = [row.quantity, row.unit, row.ingredient]
@@ -147,17 +181,40 @@
     </p>
   {/if}
   {#each draft.groups as group, groupIndex (groupIndex)}
+    {@const groupShut = shutGroups.has(groupIndex)}
     <section class="group" aria-label="Group {groupIndex + 1}">
-      <label>
-        Group name
-        <input
-          type="text"
-          value={group.name}
-          oninput={(event) =>
-            onChange(updateGroupName(draft, groupIndex, valueOf(event)))}
-        />
-      </label>
-      {#each group.rows as row, index (index)}
+      <div class="group-head">
+        {#if groupShut}
+          <p class="summary">{groupSummary(group)}</p>
+        {:else}
+          <label>
+            Group name
+            <input
+              type="text"
+              value={group.name}
+              oninput={(event) =>
+                onChange(updateGroupName(draft, groupIndex, valueOf(event)))}
+            />
+          </label>
+        {/if}
+        <div class="group-tools">
+          <button
+            type="button"
+            class="icon"
+            aria-label="Collapse group {groupIndex + 1}"
+            aria-expanded={!groupShut}
+            onclick={() => toggleGroup(groupIndex)}
+            >{groupShut ? "▼" : "▲"}</button
+          >
+          <button
+            type="button"
+            class="icon"
+            aria-label="Delete group {groupIndex + 1}"
+            onclick={() => removeWholeGroup(groupIndex)}>×</button
+          >
+        </div>
+      </div>
+      {#each groupShut ? [] : group.rows as row, index (index)}
         {@const key = `${groupIndex}-${index}`}
         {@const shut = collapsed.has(key)}
         <fieldset class="row">
@@ -283,6 +340,26 @@
     display: flex;
     gap: 0.25rem;
     background: Canvas;
+  }
+
+  .group {
+    padding-left: 0.5rem;
+    border-left: 3px solid GrayText;
+  }
+
+  .group-head {
+    display: flex;
+    align-items: end;
+    gap: 0.5rem;
+  }
+
+  .group-head > :first-child {
+    flex: 1;
+  }
+
+  .group-tools {
+    display: flex;
+    gap: 0.25rem;
   }
 
   .icon {
