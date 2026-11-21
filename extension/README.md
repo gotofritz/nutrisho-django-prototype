@@ -54,8 +54,11 @@ the *View* menu, under *Sidebar*.
    and the toolbar button clip to the clipboard only.
 4. Each ingredient line becomes a row: the ingredient is the longest name
    from your lists in the line, the unit a name from your lists just before
-   it (`600ml` counts), and the quantity a number just before that. Every
-   other word stays in *Rest*, which is saved in the row's note. A name your
+   it (`600ml` counts), and the quantity a number just before that. An amount
+   with its unit can also stand a few words earlier: in `190g plain flour`,
+   *plain* stays in *Rest*. Every other word stays in *Rest*, commas
+   included, which is saved in the row's note. A line that starts with a
+   comma (`, cubed`) belongs to the line before. A name your
    lists do not have is marked *new*, and saving makes it one of your own.
    When nothing in a group's first line is known, it becomes the group's name
    (`For the sauce:`).

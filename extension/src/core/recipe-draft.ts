@@ -96,6 +96,16 @@ function lines(text: string): string[] {
     .filter((line) => line !== "");
 }
 
+/** A line that starts with a comma (`, cubed`) carries on the line before. */
+function continued(split: readonly string[]): string[] {
+  return split.reduce<string[]>((joined, line) => {
+    const before = joined.length - 1;
+    if (before >= 0 && /^[,;]/.test(line)) joined[before] += line;
+    else joined.push(line);
+    return joined;
+  }, []);
+}
+
 function oneLine(text: string): string {
   return lines(text).join(" ");
 }
@@ -109,7 +119,7 @@ export function groupFrom(
   text: string,
   vocabulary: Vocabulary,
 ): IngredientGroup {
-  const rows = lines(text).map((line) => scanLine(line, vocabulary));
+  const rows = continued(lines(text)).map((line) => scanLine(line, vocabulary));
   const [first, ...rest] = rows;
   if (first !== undefined && rest.length > 0 && first.ingredient === "") {
     return { name: first.rest.replace(/:$/, "").trim(), rows: rest };

@@ -120,12 +120,31 @@ describe("the unit", () => {
     });
   });
 
-  it("is not taken when a word stands between it and the ingredient", () => {
+  // `190g plain flour`: the words between an amount with its unit and the
+  // ingredient describe it, and stay in rest.
+  it("may stand apart from the ingredient, straight after its amount", () => {
     expect(scanned("400 g of rigatoni", vocabulary)).toEqual({
-      quantity: "",
-      unit: "",
+      quantity: "400",
+      unit: "g",
       ingredient: "rigatoni",
-      rest: "400 g of",
+      rest: "of",
+    });
+  });
+
+  it("is taken with the amount nearest the ingredient", () => {
+    expect(scanned("2 tbsp or 30 g sifted flour", vocabulary)).toMatchObject({
+      quantity: "30",
+      unit: "g",
+      rest: "2 tbsp or sifted",
+    });
+  });
+
+  it("is taken without an amount only directly before the ingredient", () => {
+    expect(scanned("2 heaped tbsp sugar", vocabulary)).toEqual({
+      quantity: "",
+      unit: "tbsp",
+      ingredient: "sugar",
+      rest: "2 heaped",
     });
   });
 
@@ -189,6 +208,22 @@ describe("a scanned row", () => {
     });
   });
 
+  it("keeps the commas of the words it takes in rest", () => {
+    const vocabulary = lists([term("flour"), term("butter")], [term("g")]);
+
+    expect(
+      scanned("190g plain flour, plus extra for dusting", vocabulary),
+    ).toEqual({
+      quantity: "190",
+      unit: "g",
+      ingredient: "flour",
+      rest: "plain, plus extra for dusting",
+    });
+    expect(scanned("110g cold unsalted butter, cubed", vocabulary).rest).toBe(
+      "cold unsalted, cubed",
+    );
+  });
+
   it("keeps the words of rest as they were written", () => {
     expect(scanned("  Juice  of 1 lemon ", lists([term("lemon")])).rest).toBe(
       "Juice of",
@@ -235,6 +270,12 @@ describe("an amount written against its unit", () => {
       ingredient,
       rest: "",
     });
+  });
+
+  it("keeps the word whole in rest when it is not taken", () => {
+    expect(scanned("100g of something", vocabulary).rest).toBe(
+      "100g of something",
+    );
   });
 
   it("keeps the word whole in rest when what follows the number is not a unit", () => {

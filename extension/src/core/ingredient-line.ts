@@ -167,15 +167,80 @@ const GLUED = new RegExp(
   "u",
 );
 
+/** A scanned word, and the written word it came from. */
+interface Piece {
+  readonly text: string;
+  readonly from: number;
+}
+
 /** `600ml` is two words, an amount and a unit, when the letters are a unit in the list. */
-function unglued(words: readonly string[], units: readonly Term[]): string[] {
+function unglued(written: readonly string[], units: readonly Term[]): Piece[] {
   const { names } = index(units);
-  return words.flatMap((word) => {
+  return written.flatMap((word, from) => {
     const glued = GLUED.exec(word);
     return glued && names.has(normalise(glued[2]!))
-      ? [glued[1]!, glued[2]!]
-      : [word];
+      ? [
+          { text: glued[1]!, from },
+          { text: glued[2]!, from },
+        ]
+      : [{ text: word, from }];
   });
+}
+
+/** The longest name in `terms` that starts at `start` and ends by `limit`. */
+function nameStartingAt(
+  words: readonly string[],
+  start: number,
+  limit: number,
+  terms: readonly Term[],
+): Found | undefined {
+  const { names, longest } = index(terms);
+  for (let length = Math.min(longest, limit - start); length > 0; length -= 1) {
+    const name = names.get(phrase(words.slice(start, start + length)));
+    if (name !== undefined) return { start, end: start + length, name };
+  }
+  return undefined;
+}
+
+/** An amount with a unit straight after it, the nearest to `limit` that ends by it. */
+function amountWithUnit(
+  words: readonly string[],
+  limit: number,
+  units: readonly Term[],
+): { quantity: { start: number; text: string }; unit: Found } | undefined {
+  for (let end = limit - 1; end > 0; end -= 1) {
+    const unit = nameStartingAt(words, end, limit, units);
+    const quantity = unit && quantityEndingAt(words, end);
+    if (unit && quantity) return { quantity, unit };
+  }
+  return undefined;
+}
+
+/** What a written word ends with that rest keeps when the word is taken. */
+const KEPT_PUNCTUATION = /[,;:]+$/;
+
+/**
+ * The words the scan did not take, as written: an amount against its unit
+ * stays one word, and the comma after a word it took stays too.
+ */
+function restOf(
+  written: readonly string[],
+  pieces: readonly Piece[],
+  used: ReadonlySet<number>,
+): string {
+  let rest = "";
+  pieces.forEach((piece, at) => {
+    const last = pieces[at + 1]?.from !== piece.from;
+    if (used.has(at)) {
+      const kept = last ? KEPT_PUNCTUATION.exec(written[piece.from]!) : null;
+      if (kept && rest !== "") rest += kept[0];
+      return;
+    }
+    const sameWord = at > 0 && pieces[at - 1]!.from === piece.from;
+    const joined = sameWord && !used.has(at - 1);
+    rest += rest === "" || joined ? piece.text : ` ${piece.text}`;
+  });
+  return rest;
 }
 
 /**
@@ -184,15 +249,15 @@ function unglued(words: readonly string[], units: readonly Term[]): string[] {
  *
  * - the ingredient is the longest name from the loaded list the line holds,
  *   in its canonical spelling;
- * - the unit is a name from the loaded list directly before the ingredient;
+ * - the unit is a name from the loaded list directly before the ingredient,
+ *   or straight after an amount before it (`190g plain flour`);
  * - the quantity is a number directly before the unit, or before the
  *   ingredient when there is no unit.
  */
 export function scanLine(line: string, vocabulary: Vocabulary): IngredientRow {
-  const words = unglued(
-    line.trim().split(/\s+/).filter(Boolean),
-    vocabulary.units,
-  );
+  const written = line.trim().split(/\s+/).filter(Boolean);
+  const pieces = unglued(written, vocabulary.units);
+  const words = pieces.map((piece) => piece.text);
   const used = new Set<number>();
   const take = (start: number, end: number) => {
     for (let at = start; at < end; at += 1) used.add(at);
@@ -204,10 +269,15 @@ export function scanLine(line: string, vocabulary: Vocabulary): IngredientRow {
   if (ingredient !== undefined) {
     take(ingredient.start, ingredient.end);
     unit = nameEndingAt(words, ingredient.start, vocabulary.units);
-    if (unit !== undefined) take(unit.start, unit.end);
     quantity = quantityEndingAt(words, (unit ?? ingredient).start);
+    const apart =
+      quantity === undefined
+        ? amountWithUnit(words, ingredient.start, vocabulary.units)
+        : undefined;
+    if (apart !== undefined) ({ quantity, unit } = apart);
+    if (unit !== undefined) take(unit.start, unit.end);
     if (quantity !== undefined)
-      take(quantity.start, (unit ?? ingredient).start);
+      take(quantity.start, unit?.start ?? ingredient.start);
   }
 
   return {
@@ -215,6 +285,6 @@ export function scanLine(line: string, vocabulary: Vocabulary): IngredientRow {
     quantity: quantity?.text ?? "",
     unit: unit?.name ?? "",
     ingredient: ingredient?.name ?? "",
-    rest: words.filter((_, at) => !used.has(at)).join(" "),
+    rest: restOf(written, pieces, used),
   };
 }

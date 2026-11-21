@@ -94,6 +94,14 @@ describe("an ingredient group from text", () => {
     });
   });
 
+  // Some sites put `, cubed` in an element of its own, so it is copied as a
+  // line of its own.
+  it("joins a line that starts with a comma to the line before", () => {
+    expect(groupFrom("1 lemon\n, zested", LISTS).rows).toEqual([
+      { ...EMPTY_ROW, quantity: "1", ingredient: "lemon", rest: "zested" },
+    ]);
+  });
+
   it("names nothing when the first line holds an ingredient", () => {
     expect(groupFrom("1 lemon\nFor the syrup:", LISTS).name).toBe("");
   });
