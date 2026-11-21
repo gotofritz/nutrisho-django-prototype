@@ -18,6 +18,9 @@
   // A shell: it builds the adapters and hands them to the sidebar, which is
   // where the tested behaviour is.
   const storage = createStorage();
+  // The clipping and the drafts are page content: kept while the browser
+  // runs, gone in a new browser session. The settings stay in `storage.local`.
+  const session = createStorage("session");
   const permissions = createPermissions();
   const options = createOptionsPage();
   const settings = createStoredSettings(storage);
@@ -34,10 +37,10 @@
 </script>
 
 <Sidebar
-  clippings={createStoredClipping(storage)}
-  drafts={createStoredDrafts(storage)}
+  clippings={createStoredClipping(session)}
+  drafts={createStoredDrafts(session)}
   newId={() => uuidV7(Date.now(), crypto.getRandomValues(new Uint8Array(10)))}
-  subscribe={(onChange) => watchClipping(storage, onChange)}
+  subscribe={(onChange) => watchClipping(session, onChange)}
   {client}
   openSettings={() => void options.open()}
 />

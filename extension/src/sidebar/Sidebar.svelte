@@ -147,6 +147,18 @@
     );
   }
 
+  /** Start again: no clipping, an empty clipboard, no drafts. The settings stay. */
+  async function clearAll() {
+    clipboard = "";
+    issues = [];
+    saveFailure = undefined;
+    await keep(EMPTY_DRAFTS);
+    const cleared = await clippings.clear();
+    if (cleared.ok) clipping = { ok: true, value: undefined };
+    else
+      storeProblem = `The clipping could not be cleared: ${cleared.error.message}`;
+  }
+
   async function save() {
     const sending = draft;
     if (sending === undefined) return;
@@ -171,7 +183,10 @@
 </script>
 
 <main>
-  <h1>Nutrisho clipper</h1>
+  <header>
+    <h1>Nutrisho clipper</h1>
+    <button type="button" onclick={() => void clearAll()}>Clear all</button>
+  </header>
 
   <section aria-labelledby="clipping-heading">
     <h2 id="clipping-heading">Clipboard</h2>
@@ -340,6 +355,13 @@
 
   section {
     display: grid;
+    gap: 0.5rem;
+  }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
     gap: 0.5rem;
   }
 

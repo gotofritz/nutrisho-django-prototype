@@ -450,3 +450,37 @@ describe("the save", () => {
     );
   });
 });
+
+describe("Clear all", () => {
+  it("empties the clipboard and drops every draft and the clipping", async () => {
+    const clippings = createFakeClippingStore(CLIPPING);
+    const drafts = createFakeDraftStore(
+      afterClip(clipped(), RAGU, () => "draft-ragu"),
+    );
+    const { changed } = renderSidebar({ clippings, drafts });
+    await nameField();
+
+    await fireEvent.click(screen.getByRole("button", { name: "Clear all" }));
+    changed();
+
+    expect(await screen.findByText("Nothing clipped yet.")).toBeVisible();
+    expect(screen.getByRole("textbox", { name: "Clipboard" })).toHaveValue("");
+    expect(screen.queryByRole("textbox", { name: "Name" })).toBeNull();
+    const stored = await drafts.load();
+    expect(stored.ok && stored.value.drafts).toEqual([]);
+    const clipping = await clippings.load();
+    expect(clipping.ok && clipping.value).toBeUndefined();
+  });
+
+  it("sits at the top, before the clipboard", async () => {
+    renderSidebar({ clippings: createFakeClippingStore(CLIPPING) });
+    await nameField();
+
+    const clear = screen.getByRole("button", { name: "Clear all" });
+    const clipboard = screen.getByRole("textbox", { name: "Clipboard" });
+    expect(
+      clear.compareDocumentPosition(clipboard) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+});

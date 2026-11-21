@@ -61,9 +61,10 @@ the *View* menu, under *Sidebar*.
 5. *Save* sends the recipe to your Nutrisho and offers *Open in Nutrisho*.
    Saving the same recipe again changes nothing.
 
-Recipes not yet saved stay in the sidebar, even after it closes. Clipping
-from another page starts another recipe; pick between them under *Draft*, and
-*Discard this draft* to drop one.
+Recipes not yet saved stay in the sidebar after it closes, until the browser
+is restarted: a new browser session starts empty. Clipping from another page
+starts another recipe; pick between them under *Draft*, *Discard this draft*
+to drop one, or *Clear all* at the top to start again.
 
 The key is kept in the browser's local storage, never synced, and the
 settings page never shows it again. Only the server's address you saved is

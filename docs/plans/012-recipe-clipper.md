@@ -154,7 +154,9 @@ pinned.
 
 Done (#168). A clipping fills the sidebar's clipboard and starts a draft
 named after the page, with a version 7 UUID; a clipping from another page
-starts another, and unsaved drafts stay in storage until saved or discarded.
+starts another. Unsaved drafts and the clipping are kept in session storage,
+so they survive the sidebar closing and a new browser session starts empty;
+*Clear all* drops them.
 *Add* and *Replace* send the clipboard, or its selected part, to the name,
 blurb, ingredients or steps. Each ingredient line is scanned against the
 lists (longest ingredient, a unit just before it, a number just before that),

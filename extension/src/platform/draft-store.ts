@@ -6,8 +6,8 @@ import type { StoragePort } from "./storage";
 
 /**
  * `DraftStore` over extension storage (plan 012, M7), so a draft survives the
- * sidebar closing. `storage.local`, like everything here: a draft is page
- * content, and is never synced.
+ * sidebar closing. The sidebar hands it session storage: a draft is page
+ * content, kept while the browser runs and never synced.
  */
 export const DRAFTS_KEY = "drafts";
 
