@@ -121,7 +121,9 @@ export function groupFrom(
 ): IngredientGroup {
   const rows = continued(lines(text)).map((line) => scanLine(line, vocabulary));
   const [first, ...rest] = rows;
-  if (first !== undefined && rest.length > 0 && first.ingredient === "") {
+  const nothingKnown =
+    first !== undefined && first.ingredient === "" && first.quantity === "";
+  if (nothingKnown && rest.length > 0) {
     return { name: first.rest.replace(/:$/, "").trim(), rows: rest };
   }
   return { name: "", rows };

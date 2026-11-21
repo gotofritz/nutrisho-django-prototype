@@ -94,7 +94,12 @@ describe("the ingredient", () => {
 describe("the unit", () => {
   const vocabulary = lists(
     [term("rigatoni"), term("sugar"), term("flour")],
-    [term("g", "gram", "grams"), term("tbsp", "tablespoon"), term("fl oz")],
+    [
+      term("g", "gram", "grams"),
+      term("tbsp", "tablespoon"),
+      term("fl oz"),
+      term("ml"),
+    ],
   );
 
   it("is a name from the list directly before the ingredient", () => {
@@ -149,10 +154,32 @@ describe("the unit", () => {
     });
   });
 
-  it("is not taken without an ingredient", () => {
-    expect(scanned("400 g of something", vocabulary)).toMatchObject({
+  // `90ml dark maple syrup`: an ingredient the lists do not have yet.
+  it("is taken with its amount at the start of a line without an ingredient", () => {
+    expect(
+      scanned("90ml dark maple syrup, plus extra to finish", vocabulary),
+    ).toEqual({
+      quantity: "90",
+      unit: "ml",
+      ingredient: "",
+      rest: "dark maple syrup, plus extra to finish",
+    });
+  });
+
+  it("leaves the amount that starts a line without an ingredient on its own", () => {
+    expect(scanned("3 duck eggs", vocabulary)).toEqual({
+      quantity: "3",
       unit: "",
-      rest: "400 g of something",
+      ingredient: "",
+      rest: "duck eggs",
+    });
+  });
+
+  it("is not taken elsewhere in a line without an ingredient", () => {
+    expect(scanned("about 400 g of something", vocabulary)).toMatchObject({
+      quantity: "",
+      unit: "",
+      rest: "about 400 g of something",
     });
   });
 });
@@ -291,8 +318,8 @@ describe("an amount written against its unit", () => {
   });
 
   it("keeps the word whole in rest when it is not taken", () => {
-    expect(scanned("100g of something", vocabulary).rest).toBe(
-      "100g of something",
+    expect(scanned("about 100g of something", vocabulary).rest).toBe(
+      "about 100g of something",
     );
   });
 

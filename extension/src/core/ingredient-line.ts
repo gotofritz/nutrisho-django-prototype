@@ -271,7 +271,9 @@ function restOf(
  *   or straight after an amount before it (`190g plain flour`);
  * - the quantity is a number directly before the unit, or before the
  *   ingredient when there is no unit; failing that, the nearest number
- *   before them (`2 large eggs`).
+ *   before them (`2 large eggs`);
+ * - with no ingredient, an amount that starts the line, and a unit straight
+ *   after it, are still taken (`90ml dark maple syrup`).
  */
 export function scanLine(line: string, vocabulary: Vocabulary): IngredientRow {
   const written = line.trim().split(/\s+/).filter(Boolean);
@@ -297,6 +299,20 @@ export function scanLine(line: string, vocabulary: Vocabulary): IngredientRow {
     quantity ??= nearestQuantity(words, (unit ?? ingredient).start);
     if (unit !== undefined) take(unit.start, unit.end);
     if (quantity !== undefined) take(quantity.start, quantity.end);
+  } else {
+    // `90ml dark maple syrup`: an ingredient the lists do not have yet.
+    quantity = [2, 1]
+      .map((end) => quantityEndingAt(words, end))
+      .find((found) => found?.start === 0);
+    if (quantity !== undefined) {
+      unit = nameStartingAt(
+        words,
+        quantity.end,
+        words.length,
+        vocabulary.units,
+      );
+      take(quantity.start, unit?.end ?? quantity.end);
+    }
   }
 
   return {

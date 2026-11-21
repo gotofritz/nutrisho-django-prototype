@@ -260,9 +260,16 @@ describe("the draft", () => {
     expect(
       within(first).getByRole("textbox", { name: "Ingredient" }),
     ).toHaveValue("aubergine");
+    // Olive oil is not in the lists, but the amount and unit it starts with are.
     const second = screen.getByRole("group", { name: "Row 2" });
+    expect(
+      within(second).getByRole("textbox", { name: "Quantity" }),
+    ).toHaveValue("1");
+    expect(within(second).getByRole("textbox", { name: "Unit" })).toHaveValue(
+      "tbsp",
+    );
     expect(within(second).getByRole("textbox", { name: "Rest" })).toHaveValue(
-      "1 tbsp olive oil",
+      "olive oil",
     );
   });
 

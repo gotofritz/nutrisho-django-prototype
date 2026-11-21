@@ -72,7 +72,7 @@ describe("an ingredient group from text", () => {
       name: "",
       rows: [
         { ...EMPTY_ROW, quantity: "2", ingredient: "aubergine" },
-        { ...EMPTY_ROW, rest: "400 grams rigatoni" },
+        { ...EMPTY_ROW, quantity: "400", unit: "g", rest: "rigatoni" },
       ],
     });
   });
@@ -100,6 +100,29 @@ describe("an ingredient group from text", () => {
     expect(groupFrom("1 lemon\n, zested", LISTS).rows).toEqual([
       { ...EMPTY_ROW, quantity: "1", ingredient: "lemon", rest: "zested" },
     ]);
+  });
+
+  it("keeps the amounts of ingredients the lists do not have", () => {
+    const custard = groupFrom(
+      "For the custard\n\n90ml dark maple syrup, plus extra to finish\n\n6 egg yolks\n40g sugar",
+      { ...LISTS, units: [...LISTS.units, { name: "ml", spellings: [] }] },
+    );
+
+    expect(custard.name).toBe("For the custard");
+    expect(custard.rows).toEqual([
+      {
+        ...EMPTY_ROW,
+        quantity: "90",
+        unit: "ml",
+        rest: "dark maple syrup, plus extra to finish",
+      },
+      { ...EMPTY_ROW, quantity: "6", rest: "egg yolks" },
+      { ...EMPTY_ROW, quantity: "40", unit: "g", ingredient: "sugar" },
+    ]);
+  });
+
+  it("names nothing when the first line starts with an amount", () => {
+    expect(groupFrom("90 g maple syrup\n1 lemon", LISTS).name).toBe("");
   });
 
   it("names nothing when the first line holds an ingredient", () => {

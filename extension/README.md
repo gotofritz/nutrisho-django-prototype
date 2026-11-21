@@ -57,7 +57,8 @@ the *View* menu, under *Sidebar*.
    it (`600ml` counts), and the quantity a number just before that, or else
    the nearest number before it (`2 large eggs`). An amount
    with its unit can also stand a few words earlier: in `190g plain flour`,
-   *plain* stays in *Rest*. Every other word stays in *Rest*, commas
+   *plain* stays in *Rest*. A line with no name from your lists still keeps
+   the amount and unit it starts with (`90ml dark maple syrup`). Every other word stays in *Rest*, commas
    included, which is saved in the row's note. A line that starts with a
    comma (`, cubed`) belongs to the line before. A name your
    lists do not have is marked *new*, and saving makes it one of your own.

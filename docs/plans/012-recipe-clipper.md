@@ -169,7 +169,8 @@ each part (D3). Unsaved drafts and the clipping are kept in session storage,
 so they survive the sidebar closing and a new browser session starts empty;
 *Clear all* drops them. Each ingredient line is scanned against the lists
 (longest ingredient, a unit just before it or an amount and unit a few words
-earlier, a number just before that or else the nearest one before it, `600ml` read as `600 ml`), the rest kept in
+earlier, a number just before that or else the nearest one before it, `600ml` read as `600 ml`, an amount and unit starting a line kept even when
+the ingredient is unknown), the rest kept in
 *rest* with its commas and saved in the note, and
 unknown names marked *new*; a group's first line is its name when nothing
 in it is known (D7). *Save* checks the name, servings, quantities and that every row has an
