@@ -33,6 +33,23 @@ describe("createFakeDraftStore", () => {
     expect(store.saves).toBe(1);
   });
 
+  // Browser storage keeps a structured clone, which refuses a Proxy, such as
+  // Svelte's reactive state. The fake does the same, so the sidebar's tests
+  // catch a draft that would not store.
+  it("stores a copy, and refuses what browser storage cannot clone", async () => {
+    const store = createFakeDraftStore();
+
+    await store.save(DRAFTS);
+    const loaded = await store.load();
+    expect(loaded.ok && loaded.value).not.toBe(DRAFTS);
+
+    const refused = await store.save(new Proxy(DRAFTS, {}));
+    expect(!refused.ok && refused.error).toEqual({
+      kind: "write-failed",
+      message: expect.stringMatching(/could not be cloned/),
+    });
+  });
+
   it("can start with drafts", async () => {
     expect(await createFakeDraftStore(DRAFTS).load()).toEqual(ok(DRAFTS));
   });

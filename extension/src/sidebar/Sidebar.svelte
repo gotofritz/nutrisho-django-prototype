@@ -62,7 +62,9 @@
     undefined,
   );
   let lists = $state<Result<Vocabulary, NutrishoError> | undefined>(undefined);
-  let drafts = $state<Drafts>(EMPTY_DRAFTS);
+  // Raw, not deeply reactive: the drafts are replaced whole on every change,
+  // and browser storage refuses to clone the Proxy a deep `$state` makes.
+  let drafts = $state.raw<Drafts>(EMPTY_DRAFTS);
   let storeProblem = $state<string | undefined>(undefined);
   let clipboard = $state("");
   let issues = $state<readonly DraftIssue[]>([]);

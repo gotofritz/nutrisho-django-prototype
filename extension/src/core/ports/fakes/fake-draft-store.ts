@@ -31,7 +31,15 @@ export function createFakeDraftStore(
 
     async save(drafts: Drafts): Promise<Result<void, StoreError>> {
       if (failure !== undefined) return err(failure);
-      stored = drafts;
+      // Browser storage keeps a structured clone, and refuses a Proxy.
+      try {
+        stored = structuredClone(drafts);
+      } catch (cause) {
+        return err({
+          kind: "write-failed",
+          message: cause instanceof Error ? cause.message : String(cause),
+        });
+      }
       saves += 1;
       return ok(undefined);
     },
