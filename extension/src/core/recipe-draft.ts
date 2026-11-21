@@ -22,17 +22,23 @@ export interface RecipeDraft {
   readonly cuisine: string;
   /** Picked in M8. */
   readonly tags: readonly string[];
-  readonly rows: readonly IngredientRow[];
+  readonly groups: readonly IngredientGroup[];
   readonly steps: readonly string[];
   /** ISO 8601. */
   readonly startedAt: string;
 }
 
+/** Ingredient rows under one heading, which may be blank (D7). */
+export interface IngredientGroup {
+  readonly name: string;
+  readonly rows: readonly IngredientRow[];
+}
+
 /** Where captured text can go (D3). */
-export type DraftTarget = "name" | "blurb" | "ingredients" | "steps";
+export type DraftTarget = "name" | "blurb" | "group" | "steps";
 
 export interface DraftIssue {
-  /** `name`, `servings`, or `rows.<index>.<field>`. */
+  /** `name`, `servings`, or `groups.<index>.rows.<index>.<field>`. */
   readonly field: string;
   readonly message: string;
 }
@@ -61,7 +67,7 @@ export function startDraft({
     source: url,
     cuisine: "",
     tags: [],
-    rows: [],
+    groups: [],
     steps: [],
     startedAt: now,
   };
@@ -78,7 +84,7 @@ export function isRecipeDraft(value: unknown): value is RecipeDraft {
       .concat([draft.cuisine, draft.startedAt])
       .every(text) &&
     Array.isArray(draft.tags) &&
-    Array.isArray(draft.rows) &&
+    Array.isArray(draft.groups) &&
     Array.isArray(draft.steps)
   );
 }
@@ -92,6 +98,23 @@ function lines(text: string): string[] {
 
 function oneLine(text: string): string {
   return lines(text).join(" ");
+}
+
+/**
+ * One ingredient group from text: a row for each line, scanned against the
+ * lists. When nothing in the first line is known and more lines follow, it is
+ * taken for the group's name (`For the syrup:`), without its colon.
+ */
+export function groupFrom(
+  text: string,
+  vocabulary: Vocabulary,
+): IngredientGroup {
+  const rows = lines(text).map((line) => scanLine(line, vocabulary));
+  const [first, ...rest] = rows;
+  if (first !== undefined && rest.length > 0 && first.ingredient === "") {
+    return { name: first.rest.replace(/:$/, "").trim(), rows: rest };
+  }
+  return { name: "", rows };
 }
 
 function joined(before: string, after: string, separator: string): string {
@@ -118,9 +141,9 @@ function send(
         ...draft,
         blurb: keep ? joined(draft.blurb, text.trim(), "\n\n") : text.trim(),
       };
-    case "ingredients": {
-      const rows = lines(text).map((line) => scanLine(line, vocabulary));
-      return { ...draft, rows: keep ? [...draft.rows, ...rows] : rows };
+    case "group": {
+      const group = groupFrom(text, vocabulary);
+      return { ...draft, groups: keep ? [...draft.groups, group] : [group] };
     }
     case "steps": {
       const steps = lines(text);
@@ -151,13 +174,34 @@ export function replace(
 
 export function updateRow(
   draft: RecipeDraft,
-  index: number,
+  groupIndex: number,
+  rowIndex: number,
   patch: Partial<IngredientRow>,
 ): RecipeDraft {
   return {
     ...draft,
-    rows: draft.rows.map((row, at) =>
-      at === index ? { ...row, ...patch } : row,
+    groups: draft.groups.map((group, at) =>
+      at === groupIndex
+        ? {
+            ...group,
+            rows: group.rows.map((row, place) =>
+              place === rowIndex ? { ...row, ...patch } : row,
+            ),
+          }
+        : group,
+    ),
+  };
+}
+
+export function updateGroupName(
+  draft: RecipeDraft,
+  groupIndex: number,
+  name: string,
+): RecipeDraft {
+  return {
+    ...draft,
+    groups: draft.groups.map((group, at) =>
+      at === groupIndex ? { ...group, name } : group,
     ),
   };
 }
@@ -211,19 +255,27 @@ export function checkDraft(draft: RecipeDraft): DraftIssue[] {
       message: `Servings must be a whole number from 1 to ${MAX_SERVINGS}.`,
     });
   }
-  draft.rows.forEach((row, index) => {
-    if (quantityIssue(row.quantity)) {
-      issues.push({
-        field: `rows.${index}.quantity`,
-        message: `The quantity in row ${index + 1} is not a number the recipe can hold, such as 2, 1.5 or 0.25.`,
-      });
-    }
-    if (row.ingredient.trim() === "") {
-      issues.push({
-        field: `rows.${index}.ingredient`,
-        message: `Row ${index + 1} has no ingredient.`,
-      });
-    }
+  draft.groups.forEach((group, groupIndex) => {
+    // With one group a row's number is enough; with more, the group is named.
+    const of =
+      draft.groups.length > 1
+        ? ` of ${group.name.trim() || `group ${groupIndex + 1}`}`
+        : "";
+    group.rows.forEach((row, index) => {
+      const at = `groups.${groupIndex}.rows.${index}`;
+      if (quantityIssue(row.quantity)) {
+        issues.push({
+          field: `${at}.quantity`,
+          message: `The quantity in row ${index + 1}${of} is not a number the recipe can hold, such as 2, 1.5 or 0.25.`,
+        });
+      }
+      if (row.ingredient.trim() === "") {
+        issues.push({
+          field: `${at}.ingredient`,
+          message: `Row ${index + 1}${of} has no ingredient.`,
+        });
+      }
+    });
   });
   return issues;
 }
@@ -262,10 +314,12 @@ export function toDocument(draft: RecipeDraft): unknown {
         cuisine: draft.cuisine,
         tags: [...draft.tags],
         steps: draft.steps.map((step) => ({ step_title: "", step_text: step })),
-        ingredient_groups:
-          draft.rows.length === 0
-            ? []
-            : [{ group_name: "", items: draft.rows.map(documentRow) }],
+        ingredient_groups: draft.groups
+          .filter((group) => group.rows.length > 0 || group.name.trim() !== "")
+          .map((group) => ({
+            group_name: group.name.trim(),
+            items: group.rows.map(documentRow),
+          })),
       },
     ],
   };

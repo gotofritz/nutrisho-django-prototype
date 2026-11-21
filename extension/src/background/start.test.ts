@@ -13,6 +13,9 @@ import { createFakeRuntimeMessaging } from "@/platform/fakes/fake-runtime-messag
 import type { CaptureReport } from "./capture";
 import { CAPTURE_MENU_ITEM, startBackground } from "./start";
 
+/** The submenu entry that sends the text to the ingredients. */
+const GROUP_ITEM = `${CAPTURE_MENU_ITEM}-group`;
+
 const CAPTURE: PageCapture = {
   text: "2 aubergines\n1 tbsp olive oil",
   title: "Melanzane — Example",
@@ -69,6 +72,11 @@ async function clipped(deps: ReturnType<typeof harness>["deps"]) {
   return stored.ok ? stored.value?.text : undefined;
 }
 
+async function target(deps: ReturnType<typeof harness>["deps"]) {
+  const stored = await deps.clippings.load();
+  return stored.ok ? stored.value?.target : undefined;
+}
+
 describe("background", () => {
   it("answers a ping once it has started", async () => {
     const { transport, deps } = harness();
@@ -88,33 +96,50 @@ describe("background", () => {
     expect(reply.ok === false && reply.error.kind).toBe("no-receiver");
   });
 
-  // Shown only on a selection: there is nothing to clip without one.
-  it("registers one menu entry, on selections only", async () => {
+  // Shown only on a selection: there is nothing to clip without one. The
+  // submenu says where the text goes, as well as to the clipboard.
+  it("registers a submenu, on selections only", async () => {
     const { deps, menus } = harness();
 
     startBackground(deps);
-    await vi.waitFor(() => expect(menus.created).toHaveLength(1));
+    await vi.waitFor(() => expect(menus.created).toHaveLength(6));
 
     expect(menus.removeAll).toHaveBeenCalled();
-    expect(menus.created[0]).toEqual({
-      id: CAPTURE_MENU_ITEM,
-      title: "Clip into Nutrisho",
-      contexts: ["selection"],
-    });
+    expect(menus.created).toEqual([
+      {
+        id: CAPTURE_MENU_ITEM,
+        title: "Clip into Nutrisho",
+        contexts: ["selection"],
+      },
+      ...[
+        ["name", "Title"],
+        ["blurb", "Blurb"],
+        ["group", "Ingredient group"],
+        ["steps", "Steps"],
+        ["clipboard", "Clipboard"],
+      ].map(([to, title]) => ({
+        id: `${CAPTURE_MENU_ITEM}-${to}`,
+        parentId: CAPTURE_MENU_ITEM,
+        title,
+        contexts: ["selection"],
+      })),
+    ]);
   });
 
-  it("clips when its own menu entry is clicked", async () => {
-    const { deps, clicks } = harness();
-    startBackground(deps);
+  it.each(["name", "blurb", "group", "steps", "clipboard"])(
+    "clips to %s from its submenu entry",
+    async (to) => {
+      const { deps, clicks } = harness();
+      startBackground(deps);
 
-    clicks.forEach((click) =>
-      click({ menuItemId: CAPTURE_MENU_ITEM, tabId: 7 }),
-    );
+      clicks.forEach((click) =>
+        click({ menuItemId: `${CAPTURE_MENU_ITEM}-${to}`, tabId: 7 }),
+      );
 
-    await vi.waitFor(async () =>
-      expect(await clipped(deps)).toBe(CAPTURE.text),
-    );
-  });
+      await vi.waitFor(async () => expect(await target(deps)).toBe(to));
+      expect(await clipped(deps)).toBe(CAPTURE.text);
+    },
+  );
 
   it("ignores a click on somebody else's menu entry", async () => {
     const { deps, clicks } = harness();
@@ -137,6 +162,7 @@ describe("background", () => {
     await vi.waitFor(async () =>
       expect(await clipped(deps)).toBe(CAPTURE.text),
     );
+    expect(await target(deps)).toBe("clipboard");
   });
 
   it("ignores somebody else's shortcut", () => {
@@ -159,6 +185,7 @@ describe("background", () => {
     await vi.waitFor(async () =>
       expect(await clipped(deps)).toBe(CAPTURE.text),
     );
+    expect(await target(deps)).toBe("clipboard");
   });
 
   // Both browsers require `sidebar.open` inside the gesture's own task. The
@@ -171,9 +198,7 @@ describe("background", () => {
       startBackground(deps);
 
       if (gesture === "menu") {
-        clicks.forEach((click) =>
-          click({ menuItemId: CAPTURE_MENU_ITEM, tabId: 7 }),
-        );
+        clicks.forEach((click) => click({ menuItemId: GROUP_ITEM, tabId: 7 }));
       } else if (gesture === "shortcut") {
         commands.forEach((command) =>
           command({ command: CAPTURE_COMMAND, tabId: 7 }),
@@ -214,5 +239,6 @@ describe("reporting what a capture did", () => {
     await vi.waitFor(async () =>
       expect(await clipped(deps)).toBe(CAPTURE.text),
     );
+    expect(await target(deps)).toBe("clipboard");
   });
 });

@@ -36,8 +36,9 @@
   import { listsProblem, saveProblem, type Problem } from "./error-copy";
 
   /**
-   * The sidebar (plan 012, M7): the clipboard, the draft it fills, and the
-   * save. Handed the ports, never a `browser.*` API, so its tests run against
+   * The sidebar (plan 012, M7): the draft, the save, and the clipboard below
+   * them. The right-click submenu sends text to a part of the draft as well
+   * as to the clipboard. Handed the ports, never a `browser.*` API, so its tests run against
    * the fakes.
    */
   const {
@@ -91,12 +92,14 @@
     clipping = await clippings.load();
     if (clipping.ok && clipping.value !== undefined) {
       clipboard = clipping.value.text;
-      await keep(afterClip(drafts, clipping.value, newId));
+      await keep(afterClip(drafts, clipping.value, newId, vocabulary));
     }
   }
 
+  // The lists come before the clipping, so lines sent from the submenu are
+  // scanned against them.
   async function start() {
-    const stored = await draftStore.load();
+    const [stored] = await Promise.all([draftStore.load(), loadLists()]);
     if (stored.ok) drafts = stored.value;
     else
       storeProblem = `Your drafts could not be read: ${stored.error.message}`;
@@ -110,10 +113,7 @@
 
   // The lists load each time the sidebar opens (D4).
   $effect(() => {
-    untrack(() => {
-      void start();
-      void loadLists();
-    });
+    untrack(() => void start());
     return subscribe(() => void loadClipping());
   });
 
@@ -190,34 +190,46 @@
     <button type="button" onclick={() => void clearAll()}>Clear all</button>
   </header>
 
-  <section aria-labelledby="clipping-heading">
-    <h2 id="clipping-heading">Clipboard</h2>
-    {#if clipping === undefined}
-      <p class="quiet">Loading…</p>
-    {:else if !clipping.ok}
-      <p class="problem" role="alert">
-        The last clipping could not be read: {clipping.error.message}
+  <section aria-labelledby="lists-heading">
+    <h2 id="lists-heading">Your lists</h2>
+    {#if lists === undefined}
+      <p class="quiet">Loading your lists…</p>
+    {:else if lists.ok}
+      <p>
+        Lists loaded for {lists.value.user}: {count(
+          lists.value.ingredients.length,
+          "ingredient",
+          "ingredients",
+        )}, {count(lists.value.units.length, "unit", "units")}, {count(
+          lists.value.cuisines.length,
+          "cuisine",
+          "cuisines",
+        )}, {count(lists.value.tags.length, "tag", "tags")}.
       </p>
-    {:else if clipping.value === undefined}
+    {:else if problem !== undefined}
+      <div class="problem" role="alert">
+        <p>{problem.cause}</p>
+        <p>{problem.action}</p>
+      </div>
+      {#if problem.fix === "settings"}
+        <button type="button" onclick={openSettings}>Open settings</button>
+      {:else}
+        <button type="button" onclick={() => void loadLists()}>Try again</button
+        >
+      {/if}
+    {/if}
+  </section>
+  {#if clipping !== undefined && clipping.ok && clipping.value === undefined && draft === undefined}
+    <div class="hint">
       <p>Nothing clipped yet.</p>
       <p class="quiet">
         Select text on a page, then choose <em>Clip into Nutrisho</em> from the right-click
-        menu, press Alt+Shift+N, or click the toolbar button. Or type or paste into
-        the clipboard.
+        menu and where the text goes: the title, the blurb, an ingredient group, the
+        steps, or the clipboard. Alt+Shift+N and the toolbar button send it to the
+        clipboard.
       </p>
-    {:else}
-      <p class="source">
-        From
-        <a href={clipping.value.url} target="_blank" rel="noreferrer"
-          >{clipping.value.title || clipping.value.url}</a
-        >
-      </p>
-      {#each clipping.value.warnings as warning (warning.kind)}
-        <p class="problem">{warning.message}</p>
-      {/each}
-    {/if}
-    <Clipboard bind:text={clipboard} onSend={send} />
-  </section>
+    </div>
+  {/if}
 
   {#if storeProblem !== undefined}
     <p class="problem" role="alert">{storeProblem}</p>
@@ -300,34 +312,26 @@
     </section>
   {/if}
 
-  <section aria-labelledby="lists-heading">
-    <h2 id="lists-heading">Your lists</h2>
-    {#if lists === undefined}
-      <p class="quiet">Loading your lists…</p>
-    {:else if lists.ok}
-      <p>
-        Lists loaded for {lists.value.user}: {count(
-          lists.value.ingredients.length,
-          "ingredient",
-          "ingredients",
-        )}, {count(lists.value.units.length, "unit", "units")}, {count(
-          lists.value.cuisines.length,
-          "cuisine",
-          "cuisines",
-        )}, {count(lists.value.tags.length, "tag", "tags")}.
+  <section aria-labelledby="clipping-heading">
+    <h2 id="clipping-heading">Clipboard</h2>
+    {#if clipping === undefined}
+      <p class="quiet">Loading…</p>
+    {:else if !clipping.ok}
+      <p class="problem" role="alert">
+        The last clipping could not be read: {clipping.error.message}
       </p>
-    {:else if problem !== undefined}
-      <div class="problem" role="alert">
-        <p>{problem.cause}</p>
-        <p>{problem.action}</p>
-      </div>
-      {#if problem.fix === "settings"}
-        <button type="button" onclick={openSettings}>Open settings</button>
-      {:else}
-        <button type="button" onclick={() => void loadLists()}>Try again</button
+    {:else if clipping.value !== undefined}
+      <p class="source">
+        From
+        <a href={clipping.value.url} target="_blank" rel="noreferrer"
+          >{clipping.value.title || clipping.value.url}</a
         >
-      {/if}
+      </p>
+      {#each clipping.value.warnings as warning (warning.kind)}
+        <p class="problem">{warning.message}</p>
+      {/each}
     {/if}
+    <Clipboard bind:text={clipboard} onSend={send} />
   </section>
 </main>
 

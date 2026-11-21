@@ -1,3 +1,4 @@
+import { EMPTY_VOCABULARY } from "@/core/vocabulary";
 import { describe, expect, it } from "vitest";
 
 import { clippingFrom } from "@/core/clipping";
@@ -18,6 +19,7 @@ const DRAFTS = afterClip(
     new Date("2026-11-20T09:30:00Z"),
   ),
   () => "01a1f5b5-dbe2-704a-b591-7ffbcff6762e",
+  EMPTY_VOCABULARY,
 );
 
 describe("the stored drafts", () => {

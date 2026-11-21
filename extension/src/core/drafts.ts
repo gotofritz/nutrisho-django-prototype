@@ -1,5 +1,12 @@
 import type { Clipping } from "./clipping";
-import { isRecipeDraft, startDraft, type RecipeDraft } from "./recipe-draft";
+import {
+  addTo,
+  isRecipeDraft,
+  replace,
+  startDraft,
+  type RecipeDraft,
+} from "./recipe-draft";
+import type { Vocabulary } from "./vocabulary";
 
 /**
  * Every draft the sidebar holds (plan 012, M7). Kept in extension storage, so
@@ -41,15 +48,31 @@ export function currentDraft(drafts: Drafts): RecipeDraft | undefined {
 /**
  * A clipping arrived. From the page of a draft already held, that draft is
  * shown; from any other page a new draft starts, and the saved ones are
- * dropped. The text itself goes to the clipboard, not the draft (D3).
+ * dropped. The text goes to the clipboard, and to the part of the draft the
+ * submenu named: the title replaces the name, the rest add to what is there.
  */
 export function afterClip(
   drafts: Drafts,
   clipping: Clipping,
   newId: () => string,
+  vocabulary: Vocabulary,
 ): Drafts {
   if (drafts.lastClip === clipping.clippedAt) return drafts;
 
+  const shown = landIn(drafts, clipping, newId);
+  const { target } = clipping;
+  const draft = currentDraft(shown);
+  if (target === "clipboard" || draft === undefined) return shown;
+  const send = target === "name" ? replace : addTo;
+  return withDraft(shown, send(draft, target, clipping.text, vocabulary));
+}
+
+/** The drafts with the one the clipping belongs to on show, new if need be. */
+function landIn(
+  drafts: Drafts,
+  clipping: Clipping,
+  newId: () => string,
+): Drafts {
   const unsaved = drafts.drafts.filter((draft) => !(draft.id in drafts.saved));
   const held = unsaved.find((draft) => draft.source === clipping.url);
   const shown = currentDraft(drafts);

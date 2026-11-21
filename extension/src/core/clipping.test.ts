@@ -20,7 +20,14 @@ describe("clippingFrom", () => {
       url: "https://example.test/melanzane",
       clippedAt: "2026-11-20T09:30:00.000Z",
       warnings: [{ kind: "selection-truncated", message: "cut" }],
+      target: "clipboard",
     });
+  });
+
+  // The right-click submenu names where the text goes; the shortcut and the
+  // toolbar button send it to the clipboard only.
+  it("keeps where the text was sent", () => {
+    expect(clippingFrom(CAPTURE, new Date(), "group").target).toBe("group");
   });
 
   it("is a plain value that survives extension storage", () => {
@@ -45,6 +52,17 @@ describe("isClipping", () => {
     [
       "warnings that are not a list",
       { text: "", title: "", url: "", clippedAt: "", warnings: "none" },
+    ],
+    [
+      "a target it does not know",
+      {
+        text: "",
+        title: "",
+        url: "",
+        clippedAt: "",
+        warnings: [],
+        target: "ingredients",
+      },
     ],
   ])("refuses %s", (_, value) => {
     expect(isClipping(value)).toBe(false);

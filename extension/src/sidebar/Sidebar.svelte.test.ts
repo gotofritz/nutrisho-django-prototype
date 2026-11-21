@@ -12,7 +12,7 @@ import type {
   NutrishoClient,
 } from "@/core/ports/types";
 import { err, ok } from "@/core/result";
-import { parseVocabulary } from "@/core/vocabulary";
+import { EMPTY_VOCABULARY, parseVocabulary } from "@/core/vocabulary";
 
 import { apiExample } from "../../tests/support/api-examples";
 
@@ -83,11 +83,11 @@ describe("the clipping", () => {
     renderSidebar({ clippings: createFakeClippingStore(CLIPPING) });
 
     expect(
-      await screen.findByRole("textbox", { name: "Clipboard" }),
-    ).toHaveValue("2 aubergines\n1 tbsp olive oil");
-    expect(
-      screen.getByRole("link", { name: "Melanzane — Example" }),
+      await screen.findByRole("link", { name: "Melanzane — Example" }),
     ).toHaveAttribute("href", "https://example.test/melanzane");
+    expect(screen.getByRole("textbox", { name: "Clipboard" })).toHaveValue(
+      "2 aubergines\n1 tbsp olive oil",
+    );
   });
 
   // The sidebar is usually open already when the next capture happens.
@@ -214,7 +214,7 @@ const RAGU = clippingFrom(
 
 /** The drafts a clipping of the melanzane page leaves. */
 function clipped(): Drafts {
-  return afterClip(EMPTY_DRAFTS, CLIPPING, () => "draft-0");
+  return afterClip(EMPTY_DRAFTS, CLIPPING, () => "draft-0", EMPTY_VOCABULARY);
 }
 
 async function nameField() {
@@ -250,7 +250,7 @@ describe("the draft", () => {
     await screen.findByText(/Lists loaded for cook/);
 
     await fireEvent.click(
-      screen.getByRole("button", { name: "Add to ingredients" }),
+      screen.getByRole("button", { name: "Add to ingredient groups" }),
     );
 
     const first = await screen.findByRole("group", { name: "Row 1" });
@@ -264,6 +264,34 @@ describe("the draft", () => {
     expect(within(second).getByRole("textbox", { name: "Rest" })).toHaveValue(
       "1 tbsp olive oil",
     );
+  });
+
+  // The right-click submenu sends the text on as well as to the clipboard.
+  // The lists load first, so the lines are scanned against them.
+  it("puts a clipping sent to the ingredients in a group, scanned against the lists", async () => {
+    renderSidebar({
+      clippings: createFakeClippingStore({ ...CLIPPING, target: "group" }),
+      client: answering(COOKS_LISTS),
+    });
+
+    const first = await screen.findByRole("group", { name: "Row 1" });
+    expect(
+      within(first).getByRole("textbox", { name: "Ingredient" }),
+    ).toHaveValue("aubergine");
+    expect(screen.getByRole("textbox", { name: "Clipboard" })).toHaveValue(
+      CLIPPING.text,
+    );
+  });
+
+  it("keeps the clipboard below the recipe", async () => {
+    renderSidebar({ clippings: createFakeClippingStore(CLIPPING) });
+
+    const name = await nameField();
+    const clipboard = screen.getByRole("textbox", { name: "Clipboard" });
+    expect(
+      name.compareDocumentPosition(clipboard) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   it("keeps an edit", async () => {
@@ -455,7 +483,7 @@ describe("Clear all", () => {
   it("empties the clipboard and drops every draft and the clipping", async () => {
     const clippings = createFakeClippingStore(CLIPPING);
     const drafts = createFakeDraftStore(
-      afterClip(clipped(), RAGU, () => "draft-ragu"),
+      afterClip(clipped(), RAGU, () => "draft-ragu", EMPTY_VOCABULARY),
     );
     const { changed } = renderSidebar({ clippings, drafts });
     await nameField();

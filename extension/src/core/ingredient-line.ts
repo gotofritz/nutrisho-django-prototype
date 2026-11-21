@@ -162,6 +162,22 @@ function quantityEndingAt(
   return text === undefined ? undefined : { start, text };
 }
 
+const GLUED = new RegExp(
+  `^(\\d+(?:[.,]\\d+)?|\\d+\\/\\d+|\\d*[${Object.keys(VULGAR).join("")}])(\\p{L}[\\p{L}.]*)$`,
+  "u",
+);
+
+/** `600ml` is two words, an amount and a unit, when the letters are a unit in the list. */
+function unglued(words: readonly string[], units: readonly Term[]): string[] {
+  const { names } = index(units);
+  return words.flatMap((word) => {
+    const glued = GLUED.exec(word);
+    return glued && names.has(normalise(glued[2]!))
+      ? [glued[1]!, glued[2]!]
+      : [word];
+  });
+}
+
 /**
  * Scan one line into a row (plan 012, M7). A field is filled only when the
  * scan is sure, and every other word stays, in order, in `rest`:
@@ -173,7 +189,10 @@ function quantityEndingAt(
  *   ingredient when there is no unit.
  */
 export function scanLine(line: string, vocabulary: Vocabulary): IngredientRow {
-  const words = line.trim().split(/\s+/).filter(Boolean);
+  const words = unglued(
+    line.trim().split(/\s+/).filter(Boolean),
+    vocabulary.units,
+  );
   const used = new Set<number>();
   const take = (start: number, end: number) => {
     for (let at = start; at < end; at += 1) used.add(at);

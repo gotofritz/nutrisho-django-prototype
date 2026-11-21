@@ -1,3 +1,4 @@
+import { EMPTY_VOCABULARY } from "../../vocabulary";
 import { describe, expect, it } from "vitest";
 
 import { EMPTY_DRAFTS, afterClip } from "../../drafts";
@@ -17,6 +18,7 @@ const DRAFTS = afterClip(
     new Date("2026-11-20T09:30:00Z"),
   ),
   () => "draft-1",
+  EMPTY_VOCABULARY,
 );
 
 describe("createFakeDraftStore", () => {

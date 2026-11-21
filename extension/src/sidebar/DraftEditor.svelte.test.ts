@@ -20,9 +20,15 @@ const DRAFT: RecipeDraft = {
     url: "https://example.test/tart",
     now: "2026-11-20T09:30:00.000Z",
   }),
-  rows: [
-    { ...EMPTY_ROW, quantity: "2", ingredient: "lemon", rest: "Juice of" },
-    { ...EMPTY_ROW, quantity: "1", unit: "handful", ingredient: "boletus" },
+  groups: [
+    {
+      name: "",
+      rows: [
+        { ...EMPTY_ROW, quantity: "2", ingredient: "lemon", rest: "Juice of" },
+        { ...EMPTY_ROW, quantity: "1", unit: "handful", ingredient: "boletus" },
+      ],
+    },
+    { name: "For the syrup", rows: [{ ...EMPTY_ROW, ingredient: "lemon" }] },
   ],
   steps: ["Zest the lemons.", "Bake."],
 };
@@ -56,11 +62,32 @@ describe("the recipe's details", () => {
   });
 });
 
+/** A row of the first group, as the user finds it. */
+function row(number: number, group = 1) {
+  return within(
+    screen.getByRole("region", { name: `Group ${group}` }),
+  ).getByRole("group", { name: `Row ${number}` });
+}
+
+describe("the ingredient groups", () => {
+  it("shows each group's name, and edits it", async () => {
+    const { changed } = renderEditor();
+
+    const second = screen.getByRole("region", { name: "Group 2" });
+    const name = within(second).getByRole("textbox", { name: "Group name" });
+    expect(name).toHaveValue("For the syrup");
+
+    await fireEvent.input(name, { target: { value: "Syrup" } });
+    expect(changed()?.groups[1]?.name).toBe("Syrup");
+    expect(changed()?.groups[0]).toBe(DRAFT.groups[0]);
+  });
+});
+
 describe("the ingredient rows", () => {
   it("shows each row's fields, rest included", () => {
     renderEditor();
 
-    const first = screen.getByRole("group", { name: "Row 1" });
+    const first = row(1);
     expect(
       within(first).getByRole("textbox", { name: "Quantity" }),
     ).toHaveValue("2");
@@ -80,7 +107,7 @@ describe("the ingredient rows", () => {
   it("edits any field of a row", async () => {
     const { changed } = renderEditor();
 
-    const second = screen.getByRole("group", { name: "Row 2" });
+    const second = row(2);
     await fireEvent.input(
       within(second).getByRole("textbox", { name: "Preparation" }),
       {
@@ -88,18 +115,18 @@ describe("the ingredient rows", () => {
       },
     );
 
-    expect(changed()?.rows[1]).toMatchObject({
+    expect(changed()?.groups[0]?.rows[1]).toMatchObject({
       ingredient: "boletus",
       preparation: "sliced",
     });
-    expect(changed()?.rows[0]).toBe(DRAFT.rows[0]);
+    expect(changed()?.groups[0]?.rows[0]).toBe(DRAFT.groups[0]?.rows[0]);
   });
 
   it("marks an ingredient or unit the lists do not hold as new", () => {
     renderEditor();
 
-    const first = screen.getByRole("group", { name: "Row 1" });
-    const second = screen.getByRole("group", { name: "Row 2" });
+    const first = row(1);
+    const second = row(2);
     expect(within(first).queryByText("new")).toBeNull();
     expect(within(second).getAllByText("new")).toHaveLength(2);
     expect(
@@ -108,7 +135,7 @@ describe("the ingredient rows", () => {
   });
 
   it("says there are none yet", () => {
-    renderEditor({ ...DRAFT, rows: [] });
+    renderEditor({ ...DRAFT, groups: [] });
 
     expect(screen.getByText(/No ingredients yet/)).toBeVisible();
   });
@@ -139,13 +166,16 @@ describe("what stops a save", () => {
       vocabulary: LISTS,
       issues: [
         { field: "name", message: "The recipe needs a name." },
-        { field: "rows.1.ingredient", message: "Row 2 has no ingredient." },
+        {
+          field: "groups.0.rows.1.ingredient",
+          message: "Row 2 has no ingredient.",
+        },
       ],
       onChange: vi.fn(),
     });
 
     expect(screen.getByRole("textbox", { name: "Name" })).toBeInvalid();
-    const second = screen.getByRole("group", { name: "Row 2" });
+    const second = row(2);
     expect(
       within(second).getByRole("textbox", { name: "Ingredient" }),
     ).toBeInvalid();

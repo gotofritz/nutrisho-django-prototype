@@ -6,11 +6,13 @@ import { EMPTY_ROW } from "./ingredient-line";
 import {
   addTo,
   checkDraft,
+  groupFrom,
   isRecipeDraft,
   replace,
   savePath,
   startDraft,
   toDocument,
+  updateGroupName,
   updateRow,
   updateStep,
   withDetails,
@@ -25,6 +27,7 @@ const LISTS: Vocabulary = {
   ingredients: [
     { name: "lemon", spellings: ["lemons"] },
     { name: "aubergine", spellings: ["aubergines"] },
+    { name: "sugar", spellings: [] },
   ],
   units: [{ name: "g", spellings: ["grams"] }],
 };
@@ -48,7 +51,7 @@ describe("a new draft", () => {
       source: "https://example.com/norma",
       cuisine: "",
       tags: [],
-      rows: [],
+      groups: [],
       steps: [],
       startedAt: "2026-11-20T09:30:00.000Z",
     });
@@ -56,8 +59,43 @@ describe("a new draft", () => {
 
   it("is told from anything else that is stored", () => {
     expect(isRecipeDraft(draft())).toBe(true);
-    expect(isRecipeDraft({ ...draft(), rows: "no" })).toBe(false);
+    expect(isRecipeDraft({ ...draft(), groups: "no" })).toBe(false);
     expect(isRecipeDraft(null)).toBe(false);
+  });
+});
+
+// Plan 012, D7: a line among the ingredients can be a group's name. The
+// first line of a group is taken for one when nothing in it is known.
+describe("an ingredient group from text", () => {
+  it("scans each line into a row, skipping blank ones", () => {
+    expect(groupFrom("2 aubergines\n\n400 grams rigatoni", LISTS)).toEqual({
+      name: "",
+      rows: [
+        { ...EMPTY_ROW, quantity: "2", ingredient: "aubergine" },
+        { ...EMPTY_ROW, rest: "400 grams rigatoni" },
+      ],
+    });
+  });
+
+  it("takes a first line it knows nothing in for the group's name", () => {
+    expect(groupFrom("For the syrup:\n100 g sugar\n1 lemon", LISTS)).toEqual({
+      name: "For the syrup",
+      rows: [
+        { ...EMPTY_ROW, quantity: "100", unit: "g", ingredient: "sugar" },
+        { ...EMPTY_ROW, quantity: "1", ingredient: "lemon" },
+      ],
+    });
+  });
+
+  it("keeps a lone line as a row, not a name", () => {
+    expect(groupFrom("A fresh basket of boletus", LISTS)).toEqual({
+      name: "",
+      rows: [{ ...EMPTY_ROW, rest: "A fresh basket of boletus" }],
+    });
+  });
+
+  it("names nothing when the first line holds an ingredient", () => {
+    expect(groupFrom("1 lemon\nFor the syrup:", LISTS).name).toBe("");
   });
 });
 
@@ -81,26 +119,19 @@ describe("Add to and Replace", () => {
     expect(replace(once, "blurb", "Quick.", LISTS).blurb).toBe("Quick.");
   });
 
-  it("scans each line sent to the ingredients into a row, skipping blank ones", () => {
-    const rows = addTo(
-      draft(),
-      "ingredients",
-      "2 aubergines\n\n400 grams rigatoni",
-      LISTS,
-    ).rows;
+  it("adds a group after the ones there, or replaces them all", () => {
+    const once = addTo(draft(), "group", "1 lemon", LISTS);
+    const twice = addTo(once, "group", "For the syrup:\n100 g sugar", LISTS);
 
-    expect(rows).toEqual([
-      { ...EMPTY_ROW, quantity: "2", ingredient: "aubergine" },
-      { ...EMPTY_ROW, rest: "400 grams rigatoni" },
+    expect(twice.groups.map((group) => group.name)).toEqual([
+      "",
+      "For the syrup",
     ]);
-  });
-
-  it("adds rows after the ones there, or replaces them all", () => {
-    const once = addTo(draft(), "ingredients", "1 lemon", LISTS);
-
-    expect(addTo(once, "ingredients", "2 lemons", LISTS).rows).toHaveLength(2);
-    expect(replace(once, "ingredients", "2 lemons", LISTS).rows).toEqual([
-      { ...EMPTY_ROW, quantity: "2", ingredient: "lemon" },
+    expect(replace(twice, "group", "2 lemons", LISTS).groups).toEqual([
+      {
+        name: "",
+        rows: [{ ...EMPTY_ROW, quantity: "2", ingredient: "lemon" }],
+      },
     ]);
   });
 
@@ -126,17 +157,30 @@ describe("Add to and Replace", () => {
 });
 
 describe("editing", () => {
-  it("changes one field of one row", () => {
-    const before = addTo(draft(), "ingredients", "1 lemon\n2 lemons", LISTS);
-    const after = updateRow(before, 1, { preparation: "zested", rest: "" });
+  const two = addTo(
+    addTo(draft(), "group", "1 lemon\n2 lemons", LISTS),
+    "group",
+    "Syrup:\n1 lemon",
+    LISTS,
+  );
 
-    expect(after.rows[0]).toBe(before.rows[0]);
-    expect(after.rows[1]).toEqual({
+  it("changes one field of one row", () => {
+    const after = updateRow(two, 0, 1, { preparation: "zested", rest: "" });
+
+    expect(after.groups[0]!.rows[0]).toBe(two.groups[0]!.rows[0]);
+    expect(after.groups[1]).toBe(two.groups[1]);
+    expect(after.groups[0]!.rows[1]).toEqual({
       ...EMPTY_ROW,
       quantity: "2",
       ingredient: "lemon",
       preparation: "zested",
     });
+  });
+
+  it("renames a group", () => {
+    expect(updateGroupName(two, 1, "For the syrup").groups[1]!.name).toBe(
+      "For the syrup",
+    );
   });
 
   it("changes one step", () => {
@@ -156,7 +200,7 @@ describe("editing", () => {
 });
 
 describe("what stops a save", () => {
-  const ready = withDetails(addTo(draft(), "ingredients", "1 lemon", LISTS), {
+  const ready = withDetails(addTo(draft(), "group", "1 lemon", LISTS), {
     servings: "4",
   });
 
@@ -172,20 +216,36 @@ describe("what stops a save", () => {
 
   it("is a row with no ingredient, by its number", () => {
     const issues = checkDraft(
-      addTo(ready, "ingredients", "a pinch of something", LISTS),
+      replace(ready, "group", "1 lemon\na pinch of something", LISTS),
     );
 
     expect(issues).toEqual([
-      { field: "rows.1.ingredient", message: "Row 2 has no ingredient." },
+      {
+        field: "groups.0.rows.1.ingredient",
+        message: "Row 2 has no ingredient.",
+      },
+    ]);
+  });
+
+  it("names the group too, when there is more than one", () => {
+    const issues = checkDraft(
+      addTo(ready, "group", "Syrup:\na pinch of something", LISTS),
+    );
+
+    expect(issues).toEqual([
+      {
+        field: "groups.1.rows.0.ingredient",
+        message: "Row 1 of Syrup has no ingredient.",
+      },
     ]);
   });
 
   it.each(["two", "1/2", "1.234", "100000", "-1"])(
     "is a quantity of %s",
     (quantity) => {
-      expect(checkDraft(updateRow(ready, 0, { quantity }))).toEqual([
+      expect(checkDraft(updateRow(ready, 0, 0, { quantity }))).toEqual([
         {
-          field: "rows.0.quantity",
+          field: "groups.0.rows.0.quantity",
           message:
             "The quantity in row 1 is not a number the recipe can hold, such as 2, 1.5 or 0.25.",
         },
@@ -194,7 +254,7 @@ describe("what stops a save", () => {
   );
 
   it.each(["", "2", "0.25", "1,5"])("is not a quantity of '%s'", (quantity) => {
-    expect(checkDraft(updateRow(ready, 0, { quantity }))).toEqual([]);
+    expect(checkDraft(updateRow(ready, 0, 0, { quantity }))).toEqual([]);
   });
 
   it.each(["0", "two", "1.5", "32768"])("is servings of %s", (servings) => {
@@ -221,15 +281,20 @@ describe("the save", () => {
     cuisine: "med.italy",
     tags: ["dinner"],
     steps: ["Fry the aubergine.", "Toss with the pasta."],
-    rows: [
+    groups: [
       {
-        ...EMPTY_ROW,
-        quantity: "2",
-        ingredient: "aubergines",
-        preparation: "cubed",
+        name: "",
+        rows: [
+          {
+            ...EMPTY_ROW,
+            quantity: "2",
+            ingredient: "aubergines",
+            preparation: "cubed",
+          },
+          { ...EMPTY_ROW, quantity: "400", unit: "g", ingredient: "rigatoni" },
+          { ...EMPTY_ROW, unit: "handful", ingredient: "basil", note: "torn" },
+        ],
       },
-      { ...EMPTY_ROW, quantity: "400", unit: "g", ingredient: "rigatoni" },
-      { ...EMPTY_ROW, unit: "handful", ingredient: "basil", note: "torn" },
     ],
   };
 
@@ -241,6 +306,16 @@ describe("the save", () => {
     expect(toDocument(norma)).toEqual(example.request.body);
   });
 
+  it("sends each group under its name", () => {
+    const two = addTo(norma, "group", "For the syrup:\n100 g sugar", LISTS);
+
+    expect(
+      (toDocument(two) as DocumentShape).recipes[0]!.ingredient_groups.map(
+        (group) => group.group_name,
+      ),
+    ).toEqual(["", "For the syrup"]);
+  });
+
   it("saves what is left in rest in the row's note", () => {
     const row = {
       ...EMPTY_ROW,
@@ -248,16 +323,24 @@ describe("the save", () => {
       note: "unwaxed",
       rest: "Juice of",
     };
-    const [group] = (toDocument({ ...norma, rows: [row] }) as DocumentShape)
-      .recipes[0]!.ingredient_groups;
+    const [group] = (
+      toDocument({
+        ...norma,
+        groups: [{ name: "", rows: [row] }],
+      }) as DocumentShape
+    ).recipes[0]!.ingredient_groups;
 
     expect(group!.items[0]).toMatchObject({ note: "unwaxed Juice of" });
   });
 
   it("sends a quantity with a decimal comma as the server reads it", () => {
     const row = { ...EMPTY_ROW, ingredient: "lemon", quantity: "1,5" };
-    const [group] = (toDocument({ ...norma, rows: [row] }) as DocumentShape)
-      .recipes[0]!.ingredient_groups;
+    const [group] = (
+      toDocument({
+        ...norma,
+        groups: [{ name: "", rows: [row] }],
+      }) as DocumentShape
+    ).recipes[0]!.ingredient_groups;
 
     expect(group!.items[0]).toMatchObject({ quantity: "1.5" });
   });
@@ -271,5 +354,10 @@ describe("the save", () => {
 });
 
 interface DocumentShape {
-  recipes: { ingredient_groups: { items: Record<string, unknown>[] }[] }[];
+  recipes: {
+    ingredient_groups: {
+      group_name: string;
+      items: Record<string, unknown>[];
+    }[];
+  }[];
 }

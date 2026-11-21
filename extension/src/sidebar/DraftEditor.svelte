@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { IngredientRow } from "@/core/ingredient-line";
   import {
+    updateGroupName,
     updateRow,
     updateStep,
     withDetails,
@@ -109,35 +110,55 @@
   </label>
 
   <h3>Ingredients</h3>
-  {#if draft.rows.length === 0}
+  {#if draft.groups.length === 0}
     <p class="quiet">
-      No ingredients yet: send lines to them from the clipboard.
+      No ingredients yet: clip them as an ingredient group, or send lines from
+      the clipboard.
     </p>
   {/if}
-  {#each draft.rows as row, index (index)}
-    <fieldset class="row">
-      <legend>Row {index + 1}</legend>
-      {#each ROW_FIELDS as { field, label } (field)}
-        {@const mark = `row-${index}-${field}-new`}
-        <label>
-          {label}
-          <input
-            type="text"
-            value={row[field]}
-            aria-invalid={invalid.has(`rows.${index}.${field}`)}
-            aria-describedby={isNew(field, row[field]) ? mark : undefined}
-            oninput={(event) =>
-              onChange(updateRow(draft, index, { [field]: valueOf(event) }))}
-          />
-        </label>
-        {#if isNew(field, row[field])}
-          <span class="new" id={mark}
-            >new<span class="hidden">: saving makes it one of your own</span
-            ></span
-          >
-        {/if}
+  {#each draft.groups as group, groupIndex (groupIndex)}
+    <section class="group" aria-label="Group {groupIndex + 1}">
+      <label>
+        Group name
+        <input
+          type="text"
+          value={group.name}
+          oninput={(event) =>
+            onChange(updateGroupName(draft, groupIndex, valueOf(event)))}
+        />
+      </label>
+      {#each group.rows as row, index (index)}
+        <fieldset class="row">
+          <legend>Row {index + 1}</legend>
+          {#each ROW_FIELDS as { field, label } (field)}
+            {@const mark = `group-${groupIndex}-row-${index}-${field}-new`}
+            <label>
+              {label}
+              <input
+                type="text"
+                value={row[field]}
+                aria-invalid={invalid.has(
+                  `groups.${groupIndex}.rows.${index}.${field}`,
+                )}
+                aria-describedby={isNew(field, row[field]) ? mark : undefined}
+                oninput={(event) =>
+                  onChange(
+                    updateRow(draft, groupIndex, index, {
+                      [field]: valueOf(event),
+                    }),
+                  )}
+              />
+            </label>
+            {#if isNew(field, row[field])}
+              <span class="new" id={mark}
+                >new<span class="hidden">: saving makes it one of your own</span
+                ></span
+              >
+            {/if}
+          {/each}
+        </fieldset>
       {/each}
-    </fieldset>
+    </section>
   {/each}
 
   <h3>Steps</h3>
@@ -160,6 +181,7 @@
 
 <style>
   .draft,
+  .group,
   .row {
     display: grid;
     gap: 0.5rem;

@@ -23,7 +23,7 @@
   const TARGETS: readonly { target: DraftTarget; label: string }[] = [
     { target: "name", label: "name" },
     { target: "blurb", label: "blurb" },
-    { target: "ingredients", label: "ingredients" },
+    { target: "group", label: "ingredient groups" },
     { target: "steps", label: "steps" },
   ];
 

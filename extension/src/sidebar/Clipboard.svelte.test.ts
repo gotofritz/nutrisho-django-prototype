@@ -23,8 +23,8 @@ describe("the clipboard", () => {
     ["Replace name", "name", "replace"],
     ["Add to blurb", "blurb", "add"],
     ["Replace blurb", "blurb", "replace"],
-    ["Add to ingredients", "ingredients", "add"],
-    ["Replace ingredients", "ingredients", "replace"],
+    ["Add to ingredient groups", "group", "add"],
+    ["Replace ingredient groups", "group", "replace"],
     ["Add to steps", "steps", "add"],
     ["Replace steps", "steps", "replace"],
   ])("sends all of it with %s", async (button, target, mode) => {
@@ -40,10 +40,10 @@ describe("the clipboard", () => {
     (box as HTMLTextAreaElement).setSelectionRange(0, 8);
 
     await fireEvent.click(
-      screen.getByRole("button", { name: "Add to ingredients" }),
+      screen.getByRole("button", { name: "Add to ingredient groups" }),
     );
 
-    expect(onSend).toHaveBeenCalledWith("ingredients", "add", "2 lemons");
+    expect(onSend).toHaveBeenCalledWith("group", "add", "2 lemons");
   });
 
   // Typed or pasted text is treated the same as clipped text (D3).

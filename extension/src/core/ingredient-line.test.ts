@@ -215,3 +215,33 @@ describe("a whole number before a fraction", () => {
     });
   });
 });
+
+// Some sites print an amount with no space before its unit.
+describe("an amount written against its unit", () => {
+  const vocabulary = lists(
+    [term("milk"), term("flour"), term("lemon", "lemons")],
+    [term("ml"), term("g", "gram", "grams")],
+  );
+
+  it.each([
+    ["600ml milk", "600", "ml", "milk"],
+    ["100g flour", "100", "g", "flour"],
+    ["1.5g flour", "1.5", "g", "flour"],
+    ["½g flour", "0.5", "g", "flour"],
+  ])("reads %s", (line, quantity, unit, ingredient) => {
+    expect(scanned(line, vocabulary)).toEqual({
+      quantity,
+      unit,
+      ingredient,
+      rest: "",
+    });
+  });
+
+  it("keeps the word whole in rest when what follows the number is not a unit", () => {
+    expect(scanned("2x lemons", vocabulary)).toMatchObject({
+      quantity: "",
+      ingredient: "lemon",
+      rest: "2x",
+    });
+  });
+});

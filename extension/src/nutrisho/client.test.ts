@@ -210,15 +210,20 @@ const NORMA: RecipeDraft = {
   cuisine: "med.italy",
   tags: ["dinner"],
   steps: ["Fry the aubergine.", "Toss with the pasta."],
-  rows: [
+  groups: [
     {
-      ...EMPTY_ROW,
-      quantity: "2",
-      ingredient: "aubergines",
-      preparation: "cubed",
+      name: "",
+      rows: [
+        {
+          ...EMPTY_ROW,
+          quantity: "2",
+          ingredient: "aubergines",
+          preparation: "cubed",
+        },
+        { ...EMPTY_ROW, quantity: "400", unit: "g", ingredient: "rigatoni" },
+        { ...EMPTY_ROW, unit: "handful", ingredient: "basil", note: "torn" },
+      ],
     },
-    { ...EMPTY_ROW, quantity: "400", unit: "g", ingredient: "rigatoni" },
-    { ...EMPTY_ROW, unit: "handful", ingredient: "basil", note: "torn" },
   ],
 };
 
