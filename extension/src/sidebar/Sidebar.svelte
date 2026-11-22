@@ -130,7 +130,7 @@
   });
 
   function edit(changed: RecipeDraft) {
-    if (issues.length > 0) issues = checkDraft(changed);
+    if (issues.length > 0) issues = checkDraft(changed, vocabulary.limits);
     void keep(withDraft(drafts, changed));
   }
 
@@ -177,7 +177,7 @@
     const sending = draft;
     if (sending === undefined) return;
     saveFailure = undefined;
-    issues = checkDraft(sending);
+    issues = checkDraft(sending, vocabulary.limits);
     if (issues.length > 0) {
       // One group is open at a time: open the one the first problem is in.
       const inGroup = issues

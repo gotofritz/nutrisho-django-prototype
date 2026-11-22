@@ -628,6 +628,24 @@ describe("the save", () => {
     expect(client.sent).toEqual([]);
   });
 
+  // M9 (D12): the server's limits, loaded with the lists, stop a save early.
+  it("refuses text too long for its field, and sends nothing", async () => {
+    const { client } = await ready(answering(COOKS_LISTS));
+    await screen.findByText(/Lists loaded for cook/);
+    await fireEvent.input(await nameField(), {
+      target: { value: "x".repeat(201) },
+    });
+
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(
+      await screen.findAllByText(
+        "The name is 1 character too long: it can have 200.",
+      ),
+    ).not.toHaveLength(0);
+    expect(client.sent).toEqual([]);
+  });
+
   it("shows the server's refusal as it came", async () => {
     const client = createFakeNutrishoClient();
     client.answerSave(

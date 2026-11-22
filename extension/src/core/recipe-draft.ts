@@ -308,6 +308,114 @@ export function addStep(
   return { ...draft, steps };
 }
 
+/** One place up (-1) or down (1); the first stays put going up, the last going down. */
+export function moveStep(
+  draft: RecipeDraft,
+  index: number,
+  by: -1 | 1,
+): RecipeDraft {
+  const to = index + by;
+  if (to < 0 || to >= draft.steps.length) return draft;
+  const steps = [...draft.steps];
+  [steps[index], steps[to]] = [steps[to]!, steps[index]!];
+  return { ...draft, steps };
+}
+
+/**
+ * One place up (-1) or down (1). A group's first row going up joins the end
+ * of the group before, and its last going down the start of the group after,
+ * which opens so the row stays in sight.
+ */
+export function moveRow(
+  draft: RecipeDraft,
+  groupIndex: number,
+  rowIndex: number,
+  by: -1 | 1,
+): RecipeDraft {
+  const rows = draft.groups[groupIndex]?.rows ?? [];
+  const row = rows[rowIndex];
+  if (row === undefined) return draft;
+  const to = rowIndex + by;
+  if (to >= 0 && to < rows.length) {
+    const moved = [...rows];
+    [moved[rowIndex], moved[to]] = [moved[to]!, row];
+    return withRows(draft, groupIndex, moved);
+  }
+  const target = groupIndex + by;
+  const into = draft.groups[target];
+  if (into === undefined) return draft;
+  const left = withRows(
+    draft,
+    groupIndex,
+    rows.filter((_, at) => at !== rowIndex),
+  );
+  const joined = by < 0 ? [...into.rows, row] : [row, ...into.rows];
+  return { ...withRows(left, target, joined), openGroup: target };
+}
+
+function withRows(
+  draft: RecipeDraft,
+  groupIndex: number,
+  rows: readonly IngredientRow[],
+): RecipeDraft {
+  return {
+    ...draft,
+    groups: draft.groups.map((group, at) =>
+      at === groupIndex ? { ...group, rows } : group,
+    ),
+  };
+}
+
+/** A row read as a heading: its parts in the order they usually come, less a closing colon. */
+function headingOf(row: IngredientRow): string {
+  return [
+    row.quantity,
+    row.unit,
+    row.rest,
+    row.ingredient,
+    row.substitute,
+    row.preparation,
+    row.note,
+  ]
+    .map((part) => part.trim())
+    .filter((part) => part !== "")
+    .join(" ")
+    .replace(/\s*:$/, "");
+}
+
+/**
+ * A heading caught inside a group (D7): the row becomes the name of a new
+ * group, after this one, holding the rows below it, and that group opens. The
+ * first row instead becomes this group's own name.
+ */
+export function splitGroupAt(
+  draft: RecipeDraft,
+  groupIndex: number,
+  rowIndex: number,
+): RecipeDraft {
+  const group = draft.groups[groupIndex];
+  const row = group?.rows[rowIndex];
+  if (group === undefined || row === undefined) return draft;
+  const name = headingOf(row);
+  const below = group.rows.slice(rowIndex + 1);
+  if (rowIndex === 0) {
+    return {
+      ...draft,
+      groups: draft.groups.map((at, index) =>
+        index === groupIndex ? { name, rows: below } : at,
+      ),
+    };
+  }
+  const groups = [...draft.groups];
+  groups.splice(
+    groupIndex,
+    1,
+    { ...group, rows: group.rows.slice(0, rowIndex) },
+    { name, rows: below },
+  );
+  return { ...draft, groups, openGroup: groupIndex + 1 };
+}
+
 /** Takes one step out. */
 export function removeStep(draft: RecipeDraft, index: number): RecipeDraft {
   return { ...draft, steps: draft.steps.filter((_, at) => at !== index) };
@@ -431,8 +539,87 @@ export function addRow(draft: RecipeDraft, groupIndex: number): RecipeDraft {
   };
 }
 
-export function checkDraft(draft: RecipeDraft): DraftIssue[] {
+/** Characters as the server counts them: code points, after trimming. */
+function length(text: string): number {
+  return [...text.trim()].length;
+}
+
+/**
+ * Text too long for its field (D12), in the order the fields are shown, by
+ * the server's own `limits`; a field with no limit loaded is not checked.
+ */
+export function lengthIssues(
+  draft: RecipeDraft,
+  limits: Readonly<Record<string, number>>,
+): DraftIssue[] {
   const issues: DraftIssue[] = [];
+  function check(field: string, key: string, what: string, text: string) {
+    const limit = limits[key];
+    const over = limit === undefined ? 0 : length(text) - limit;
+    if (over > 0) {
+      const characters = over === 1 ? "character" : "characters";
+      issues.push({
+        field,
+        message: `${what} is ${over} ${characters} too long: it can have ${limit}.`,
+      });
+    }
+  }
+  check("name", "recipe_name", "The name", draft.name);
+  check("blurb", "short_description", "The blurb", draft.blurb);
+  check("source", "source_instance", "The source", draft.source);
+  check("cuisine", "cuisine", "The cuisine", draft.cuisine);
+  for (const tag of tagNames(draft)) {
+    check("tags", "tags", `The tag “${tag}”`, tag);
+  }
+  draft.groups.forEach((group, groupIndex) => {
+    const at = `groups.${groupIndex}`;
+    const of =
+      draft.groups.length > 1
+        ? ` of ${group.name.trim() || `group ${groupIndex + 1}`}`
+        : "";
+    check(
+      `${at}.name`,
+      "group_name",
+      `The name of group ${groupIndex + 1}`,
+      group.name,
+    );
+    group.rows.forEach((row, index) => {
+      for (const field of ROW_TEXT) {
+        check(
+          `${at}.rows.${index}.${field}`,
+          field,
+          `The ${field} in row ${index + 1}${of}`,
+          row[field],
+        );
+      }
+    });
+  });
+  draft.steps.forEach((step, index) => {
+    check(
+      `steps.${index}.title`,
+      "step_title",
+      `The title of step ${index + 1}`,
+      step.title,
+    );
+    check(`steps.${index}.text`, "step_text", `Step ${index + 1}`, step.text);
+  });
+  return issues;
+}
+
+/** A row's fields that are sent as text, by the server's names for them. */
+const ROW_TEXT = [
+  "unit",
+  "ingredient",
+  "substitute",
+  "preparation",
+  "note",
+] as const;
+
+export function checkDraft(
+  draft: RecipeDraft,
+  limits: Readonly<Record<string, number>> = {},
+): DraftIssue[] {
+  const issues: DraftIssue[] = lengthIssues(draft, limits);
   if (draft.name.trim() === "") {
     issues.push({ field: "name", message: "The recipe needs a name." });
   }

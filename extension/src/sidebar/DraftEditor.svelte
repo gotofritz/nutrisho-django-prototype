@@ -8,9 +8,13 @@
     addGroup,
     addRow,
     addStep,
+    lengthIssues,
+    moveRow,
+    moveStep,
     removeGroup,
     removeRow,
     removeStep,
+    splitGroupAt,
     tagNames,
     tagsText,
     updateGroupName,
@@ -79,6 +83,33 @@
       !knowsCuisine(vocabulary.cuisines, draft.cuisine),
   );
 
+  /** What is too long, by field (D12): flagged as it is typed, not only on a save. */
+  const tooLong = $derived(
+    lengthIssues(draft, vocabulary.limits).reduce<
+      Readonly<Record<string, readonly string[]>>
+    >(
+      (byField, issue) => ({
+        ...byField,
+        [issue.field]: [...(byField[issue.field] ?? []), issue.message],
+      }),
+      {},
+    ),
+  );
+
+  /** The id of a field's too-long note, when it has one. */
+  function longId(field: string): string | undefined {
+    return field in tooLong ? `${field.replaceAll(".", "-")}-long` : undefined;
+  }
+
+  function describedBy(...ids: (string | undefined)[]): string | undefined {
+    const named = ids.filter((id) => id !== undefined);
+    return named.length > 0 ? named.join(" ") : undefined;
+  }
+
+  function flagged(field: string): boolean {
+    return invalid.has(field) || field in tooLong;
+  }
+
   const newTags = $derived(
     tagNames(draft).filter((tag) => !knowsTag(vocabulary.tags, tag)),
   );
@@ -101,16 +132,73 @@
     if (!collapsed.delete(key)) collapsed.add(key);
   }
 
-  /** Delete a row; the collapsed rows after it move up with it. */
-  function remove(groupIndex: number, rowIndex: number) {
+  /**
+   * Keep the collapsed rows on the rows they were, once rows have moved:
+   * `place` says where the row at (group, row) is now, or undefined if gone.
+   */
+  function rekey(
+    place: (group: number, row: number) => [number, number] | undefined,
+  ) {
     const kept = [...collapsed].flatMap((key) => {
       const [group, row] = key.split("-").map(Number) as [number, number];
-      if (group !== groupIndex || row < rowIndex) return [key];
-      return row === rowIndex ? [] : [`${group}-${row - 1}`];
+      const now = place(group, row);
+      return now === undefined ? [] : [`${now[0]}-${now[1]}`];
     });
     collapsed.clear();
     for (const key of kept) collapsed.add(key);
+  }
+
+  /** Delete a row; the collapsed rows after it move up with it. */
+  function remove(groupIndex: number, rowIndex: number) {
+    rekey((group, row) => {
+      if (group !== groupIndex || row < rowIndex) return [group, row];
+      return row === rowIndex ? undefined : [group, row - 1];
+    });
     onChange(removeRow(draft, groupIndex, rowIndex));
+  }
+
+  function canMoveRow(groupIndex: number, rowIndex: number, by: -1 | 1) {
+    return moveRow(draft, groupIndex, rowIndex, by) !== draft;
+  }
+
+  /** ↑ or ↓: within the group, or across into the group before or after. */
+  function move(groupIndex: number, rowIndex: number, by: -1 | 1) {
+    const rows = draft.groups[groupIndex]?.rows.length ?? 0;
+    const to = rowIndex + by;
+    if (to >= 0 && to < rows) {
+      rekey((group, row) => {
+        if (group !== groupIndex) return [group, row];
+        if (row === rowIndex) return [group, to];
+        return row === to ? [group, rowIndex] : [group, row];
+      });
+    } else if (by > 0) {
+      rekey((group, row) => {
+        if (group === groupIndex && row === rowIndex) return [group + 1, 0];
+        return group === groupIndex + 1 ? [group, row + 1] : [group, row];
+      });
+    } else {
+      const before = draft.groups[groupIndex - 1]?.rows.length ?? 0;
+      rekey((group, row) => {
+        if (group !== groupIndex) return [group, row];
+        return row === 0 ? [group - 1, before] : [group, row - 1];
+      });
+    }
+    onChange(moveRow(draft, groupIndex, rowIndex, by));
+  }
+
+  /** The row names a new group holding the rows below it. */
+  function split(groupIndex: number, rowIndex: number) {
+    rekey((group, row) => {
+      if (group < groupIndex || (group === groupIndex && row < rowIndex)) {
+        return [group, row];
+      }
+      if (group > groupIndex) return [rowIndex === 0 ? group : group + 1, row];
+      if (row === rowIndex) return undefined;
+      return rowIndex === 0
+        ? [group, row - 1]
+        : [group + 1, row - rowIndex - 1];
+    });
+    onChange(splitGroupAt(draft, groupIndex, rowIndex));
   }
 
   /** One group is open at a time, kept with the draft: ▲ closes it, ▼ opens another. */
@@ -121,14 +209,10 @@
 
   /** Delete a group; the collapsed rows of the groups after it move up with them. */
   function removeWholeGroup(groupIndex: number) {
-    const rows = [...collapsed].flatMap((key) => {
-      const [group, row] = key.split("-").map(Number) as [number, number];
-      if (group < groupIndex) return [key];
-      return group === groupIndex ? [] : [`${group - 1}-${row}`];
+    rekey((group, row) => {
+      if (group < groupIndex) return [group, row];
+      return group === groupIndex ? undefined : [group - 1, row];
     });
-    collapsed.clear();
-    for (const key of rows) collapsed.add(key);
-
     onChange(removeGroup(draft, groupIndex));
   }
 
@@ -163,6 +247,12 @@
   }
 </script>
 
+{#snippet longNote(field: string)}
+  {#if field in tooLong}
+    <span class="too-long" id={longId(field)}>{tooLong[field]?.join(" ")}</span>
+  {/if}
+{/snippet}
+
 <section class="draft" aria-labelledby="draft-heading">
   <h2 id="draft-heading">Recipe</h2>
 
@@ -171,11 +261,13 @@
     <input
       type="text"
       value={draft.name}
-      aria-invalid={invalid.has("name")}
+      aria-invalid={flagged("name")}
+      aria-describedby={longId("name")}
       oninput={(event) =>
         onChange(withDetails(draft, { name: valueOf(event) }))}
     />
   </label>
+  {@render longNote("name")}
 
   <label>
     Servings
@@ -194,9 +286,12 @@
     <textarea
       rows="3"
       value={draft.blurb}
+      aria-invalid={flagged("blurb")}
+      aria-describedby={longId("blurb")}
       oninput={(event) =>
         onChange(withDetails(draft, { blurb: valueOf(event) }))}></textarea>
   </label>
+  {@render longNote("blurb")}
 
   <div class="source">
     <label>
@@ -204,6 +299,8 @@
       <input
         type="url"
         value={draft.source}
+        aria-invalid={flagged("source")}
+        aria-describedby={longId("source")}
         oninput={(event) =>
           onChange(withDetails(draft, { source: valueOf(event) }))}
       />
@@ -219,6 +316,7 @@
       >
     {/if}
   </div>
+  {@render longNote("source")}
 
   <label>
     Cuisine
@@ -226,7 +324,11 @@
       type="text"
       list="cuisine-names"
       value={draft.cuisine}
-      aria-describedby={cuisineIsNew ? "cuisine-new" : undefined}
+      aria-invalid={flagged("cuisine")}
+      aria-describedby={describedBy(
+        cuisineIsNew ? "cuisine-new" : undefined,
+        longId("cuisine"),
+      )}
       oninput={(event) =>
         onChange(withDetails(draft, { cuisine: valueOf(event) }))}
     />
@@ -236,13 +338,18 @@
       >new<span class="hidden">: saving makes it one of your own</span></span
     >
   {/if}
+  {@render longNote("cuisine")}
 
   <label>
     Tags
     <input
       type="text"
       value={tagsText(draft)}
-      aria-describedby={newTags.length > 0 ? "tags-new" : undefined}
+      aria-invalid={flagged("tags")}
+      aria-describedby={describedBy(
+        newTags.length > 0 ? "tags-new" : undefined,
+        longId("tags"),
+      )}
       oninput={(event) => onChange(withTags(draft, valueOf(event)))}
     />
   </label>
@@ -253,6 +360,7 @@
       ></span
     >
   {/if}
+  {@render longNote("tags")}
 
   <datalist id="cuisine-names">
     {#each vocabulary.cuisines as path (path)}
@@ -289,6 +397,8 @@
             <input
               type="text"
               value={group.name}
+              aria-invalid={flagged(`groups.${groupIndex}.name`)}
+              aria-describedby={longId(`groups.${groupIndex}.name`)}
               oninput={(event) =>
                 onChange(updateGroupName(draft, groupIndex, valueOf(event)))}
             />
@@ -311,12 +421,38 @@
           >
         </div>
       </div>
+      {#if !groupShut}
+        {@render longNote(`groups.${groupIndex}.name`)}
+      {/if}
       {#each groupShut ? [] : group.rows as row, index (index)}
         {@const key = `${groupIndex}-${index}`}
         {@const shut = collapsed.has(key)}
         <fieldset class="row">
           <legend>Row {index + 1}</legend>
           <div class="tools">
+            <button
+              type="button"
+              class="icon"
+              aria-label="Move row {index + 1} up"
+              title="Move up"
+              disabled={!canMoveRow(groupIndex, index, -1)}
+              onclick={() => move(groupIndex, index, -1)}>↑</button
+            >
+            <button
+              type="button"
+              class="icon"
+              aria-label="Move row {index + 1} down"
+              title="Move down"
+              disabled={!canMoveRow(groupIndex, index, 1)}
+              onclick={() => move(groupIndex, index, 1)}>↓</button
+            >
+            <button
+              type="button"
+              class="icon"
+              aria-label="Start a new group named after row {index + 1}"
+              title="Start a new group named after this row"
+              onclick={() => split(groupIndex, index)}>¶</button
+            >
             <button
               type="button"
               class="icon"
@@ -336,16 +472,18 @@
           {/if}
           {#each shut ? [] : ROW_FIELDS as { field, label } (field)}
             {@const mark = `group-${groupIndex}-row-${index}-${field}-new`}
+            {@const at = `groups.${groupIndex}.rows.${index}.${field}`}
             <label>
               {label}
               <input
                 type="text"
                 list={SUGGESTED[field]}
                 value={row[field]}
-                aria-invalid={invalid.has(
-                  `groups.${groupIndex}.rows.${index}.${field}`,
+                aria-invalid={flagged(at)}
+                aria-describedby={describedBy(
+                  isNew(field, row[field]) ? mark : undefined,
+                  longId(at),
                 )}
-                aria-describedby={isNew(field, row[field]) ? mark : undefined}
                 oninput={(event) =>
                   onChange(
                     updateRow(draft, groupIndex, index, {
@@ -360,6 +498,7 @@
                 ></span
               >
             {/if}
+            {@render longNote(at)}
           {/each}
           {#if !shut}
             {@const restNote = `group-${groupIndex}-row-${index}-rest-note`}
@@ -425,9 +564,27 @@
             placeholder="Step {index + 1} title"
             aria-label="Step {index + 1} title"
             value={step.title}
+            aria-invalid={flagged(`steps.${index}.title`)}
+            aria-describedby={longId(`steps.${index}.title`)}
             oninput={(event) =>
               onChange(updateStep(draft, index, { title: valueOf(event) }))}
           />
+          <button
+            type="button"
+            class="icon"
+            aria-label="Move step {index + 1} up"
+            title="Move up"
+            disabled={index === 0}
+            onclick={() => onChange(moveStep(draft, index, -1))}>↑</button
+          >
+          <button
+            type="button"
+            class="icon"
+            aria-label="Move step {index + 1} down"
+            title="Move down"
+            disabled={index === draft.steps.length - 1}
+            onclick={() => onChange(moveStep(draft, index, 1))}>↓</button
+          >
           <button
             type="button"
             class="icon"
@@ -435,15 +592,19 @@
             onclick={() => onChange(removeStep(draft, index))}>×</button
           >
         </div>
+        {@render longNote(`steps.${index}.title`)}
         <textarea
           class="step-text"
           rows="2"
           aria-label="Step {index + 1}"
           use:fitText={step.text}
           value={step.text}
+          aria-invalid={flagged(`steps.${index}.text`)}
+          aria-describedby={longId(`steps.${index}.text`)}
           oninput={(event) =>
             onChange(updateStep(draft, index, { text: valueOf(event) }))}
         ></textarea>
+        {@render longNote(`steps.${index}.text`)}
         <button
           type="button"
           class="icon add"
@@ -623,6 +784,12 @@
     box-sizing: border-box;
     overflow: hidden;
     resize: none;
+  }
+
+  .too-long {
+    margin-top: -0.25rem;
+    color: #a40e26;
+    font-size: 0.75rem;
   }
 
   .quiet {

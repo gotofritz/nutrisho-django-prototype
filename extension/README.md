@@ -72,9 +72,14 @@ the *View* menu, under *Sidebar*.
    nothing in it is known or it starts with *For* (`For the sauce:`). One
    group is open at a time: ▼ opens another and ▲ closes it. Each row too
    has ▲ to fold it to one line, which saves scrolling, and each group and
-   row has × to delete it. + at the end of a group adds an ingredient, and +
+   row has × to delete it. ↑ and ↓ move a row; the first or last row of a
+   group moves on into the group before or after, which opens. ¶ turns a
+   row that is really a heading (`To serve`) into the name of a new group
+   holding the rows below it. + at the end of a group adds an ingredient, and +
    below the groups adds a group; a row left empty is not saved. Each step has a title as well as its text; + below a step adds
-   one after it, × deletes one, and an empty step is left out when you save.
+   one after it, ↑ and ↓ move it, × deletes it, and an empty step is left
+   out when you save. Text too long for its field is marked at the field as
+   you type, says by how much, and stops a save.
 5. Open *Clipboard* to send all of it, or the part you select, to any part
    of the recipe with *Add* or *Replace*. You can also type or paste into it.
    Below it, *Page HTML* shows the markup that was clipped, which helps
