@@ -8,6 +8,7 @@ import {
 import type { LogEntry } from "@/nutrisho/fetch-log";
 
 import AdvancedMode from "./AdvancedMode.svelte";
+import type { ModelCheck } from "./model-check";
 
 const KEY = "nsh_abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
 
@@ -16,6 +17,8 @@ function renderAdvanced(
     settings?: FakeSettingsStore;
     granted?: boolean;
     log?: readonly LogEntry[];
+    modelCheck?: ModelCheck;
+    checkModel?: boolean;
   } = {},
 ) {
   const settings =
@@ -28,13 +31,18 @@ function renderAdvanced(
     async () => options.granted ?? true,
   );
   const onServerChanged = vi.fn<() => void>();
+  const onCheckModel = vi.fn<() => void>();
   render(AdvancedMode, {
     settings,
     requestHostPermission,
     onServerChanged,
     log: options.log ?? [],
+    ...(options.checkModel === true ? { onCheckModel } : {}),
+    ...(options.modelCheck === undefined
+      ? {}
+      : { modelCheck: options.modelCheck }),
   });
-  return { settings, requestHostPermission, onServerChanged };
+  return { settings, requestHostPermission, onServerChanged, onCheckModel };
 }
 
 async function open() {
@@ -185,5 +193,61 @@ describe("Advanced Mode", () => {
     expect(screen.getByRole("log", { name: "Log" })).toHaveTextContent(
       "Nothing yet.",
     );
+  });
+
+  // #182: whether the model answers, before it is asked anything.
+  it("says nothing of a model while none is set up", async () => {
+    renderAdvanced();
+    await open();
+
+    expect(
+      screen.queryByRole("button", { name: "Check the model" }),
+    ).toBeNull();
+  });
+
+  it.each([
+    [{ kind: "checking" }, "Checking your model…"],
+    [
+      { kind: "answering", address: "http://localhost:8080" },
+      "Your model answers at http://localhost:8080.",
+    ],
+    [
+      {
+        kind: "problem",
+        address: "http://localhost:8080",
+        problem: {
+          cause: "Nothing answered at your model's address.",
+          action: "Start its server, or check the address, then try again.",
+          fix: "retry",
+        },
+      },
+      "Checked http://localhost:8080: Nothing answered at your model's address. Start its server, or check the address, then try again.",
+    ],
+  ] as const)(
+    "says how the model's check went: %j",
+    async (modelCheck, said) => {
+      renderAdvanced({ modelCheck, checkModel: true });
+      await open();
+
+      expect(
+        screen.getByText(said, {
+          normalizer: (text) => text.replace(/\s+/g, " ").trim(),
+        }),
+      ).toBeVisible();
+    },
+  );
+
+  it("checks the model again on request", async () => {
+    const { onCheckModel } = renderAdvanced({
+      modelCheck: { kind: "answering", address: "http://localhost:8080" },
+      checkModel: true,
+    });
+    await open();
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Check the model" }),
+    );
+
+    expect(onCheckModel).toHaveBeenCalledTimes(1);
   });
 });

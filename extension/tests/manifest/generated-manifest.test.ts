@@ -54,12 +54,14 @@ describe.each(["firefox", "chrome"])("the %s build", (browser) => {
   });
 
   // The server's address is asked for when it is saved, and only loopback
-  // and nutrisho.com can be asked for at all (M12, Advanced Mode).
-  it("offers loopback and nutrisho.com, and nothing else, as optional hosts", () => {
+  // and nutrisho.com can be asked for at all (M12, Advanced Mode), and
+  // Anthropic for the user's own model (M13).
+  it("offers loopback, nutrisho.com and Anthropic, and nothing else, as optional hosts", () => {
     expect(built[browser]!.optional_host_permissions).toEqual([
       "http://localhost/*",
       "http://127.0.0.1/*",
       "https://nutrisho.com/*",
+      "https://api.anthropic.com/*",
     ]);
   });
 

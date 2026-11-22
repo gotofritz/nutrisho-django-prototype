@@ -21,9 +21,13 @@ export const LOOPBACK_HOSTS = ["localhost", "127.0.0.1"] as const;
 
 export const REMOTE_HOST = "nutrisho.com";
 
+/** Where Anthropic's API is, for the user's own model (plan 012, M13). */
+export const MODEL_HOST = "api.anthropic.com";
+
 export const OPTIONAL_HOST_PERMISSIONS = [
   ...LOOPBACK_HOSTS.map((host) => `http://${host}/*`),
   `https://${REMOTE_HOST}/*`,
+  `https://${MODEL_HOST}/*`,
 ];
 
 /**

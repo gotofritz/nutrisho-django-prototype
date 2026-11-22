@@ -26,7 +26,7 @@ export const EMPTY_ROW: IngredientRow = {
 };
 
 /** IngredientInRecipe.quantity holds 7 digits, 2 of them decimals. */
-const QUANTITY_LIMIT = 100_000;
+export const QUANTITY_LIMIT = 100_000;
 
 const VULGAR: Readonly<Record<string, readonly [number, number]>> = {
   "½": [1, 2],

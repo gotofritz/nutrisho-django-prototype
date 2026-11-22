@@ -27,10 +27,22 @@ describe("the defaults", () => {
 describe("checkSettings", () => {
   it("accepts a loopback address and a key", () => {
     expect(
+      checkSettings({ serverUrl: "http://127.0.0.1:8987", apiKey: KEY }),
+    ).toEqual({
+      ok: true,
+      value: { serverUrl: "http://127.0.0.1:8987", apiKey: KEY },
+    });
+  });
+
+  // Seen by hand (#182): a server saved as localhost made the links to the
+  // site localhost too, where the user is not signed in; the picker shows
+  // 127.0.0.1, the address Django prints.
+  it("keeps localhost as 127.0.0.1", () => {
+    expect(
       checkSettings({ serverUrl: "http://localhost:8987", apiKey: KEY }),
     ).toEqual({
       ok: true,
-      value: { serverUrl: "http://localhost:8987", apiKey: KEY },
+      value: { serverUrl: "http://127.0.0.1:8987", apiKey: KEY },
     });
   });
 
@@ -140,7 +152,7 @@ describe("keysPageFor", () => {
   // #150: the server's page where a user makes their own key.
   it("is the API keys page on the server", () => {
     expect(keysPageFor("http://localhost:8987")).toBe(
-      "http://localhost:8987/recipes/keys/",
+      "http://127.0.0.1:8987/recipes/keys/",
     );
     expect(keysPageFor(" http://127.0.0.1:8000/ ")).toBe(
       "http://127.0.0.1:8000/recipes/keys/",
@@ -193,5 +205,15 @@ describe("the server picker", () => {
     ["https://nutrisho.com:8443", "nutrisho.com", "8443"],
   ])("reads %s back as %s port %j", (url, host, port) => {
     expect(serverParts(url)).toEqual({ host, port });
+  });
+});
+
+describe("readSettings, from before the picker", () => {
+  // #182: kept as localhost by an earlier clipper, and read as the picker shows it.
+  it("reads a server kept as localhost as 127.0.0.1", () => {
+    expect(
+      readSettings({ serverUrl: "http://localhost:8000", apiKey: KEY })
+        .serverUrl,
+    ).toBe("http://127.0.0.1:8000");
   });
 });

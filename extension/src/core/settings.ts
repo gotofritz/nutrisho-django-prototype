@@ -98,6 +98,9 @@ function checkServerUrl(input: string): Result<string, SettingsIssue> {
       issue("serverUrl", "not-http", "The address has to start with http://."),
     );
   }
+  // One name for this computer, the one Django prints: the site's links
+  // come back on the address asked, and the user is signed in on one only.
+  url.hostname = "127.0.0.1";
   return ok(url.origin);
 }
 

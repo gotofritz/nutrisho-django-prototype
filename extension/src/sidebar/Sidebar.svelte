@@ -12,9 +12,13 @@
     withDraft,
     type Drafts,
   } from "@/core/drafts";
+  import { describeSplit, lineOf, readModelAnswer } from "@/core/model-answer";
+  import { describeSteps, readStepsAnswer } from "@/core/model-steps";
   import type {
     ClippingStore,
     DraftStore,
+    LineModel,
+    ModelSettingsStore,
     NutrishoClient,
     NutrishoError,
     SettingsStore,
@@ -24,16 +28,24 @@
     checkDraft,
     explainRefusal,
     type DraftIssue,
+    withGroupRows,
+    withSteps,
     withOpenGroup,
     type RecipeDraft,
   } from "@/core/recipe-draft";
   import type { Result } from "@/core/result";
-  import { EMPTY_VOCABULARY, type Vocabulary } from "@/core/vocabulary";
+  import { EMPTY_VOCABULARY, knows, type Vocabulary } from "@/core/vocabulary";
   import type { LogEntry } from "@/nutrisho/fetch-log";
 
   import AdvancedMode from "./AdvancedMode.svelte";
   import DraftEditor from "./DraftEditor.svelte";
-  import { listsProblem, saveProblem, type Problem } from "./error-copy";
+  import type { ModelCheck } from "./model-check";
+  import {
+    listsProblem,
+    modelProblem,
+    saveProblem,
+    type Problem,
+  } from "./error-copy";
 
   /**
    * The sidebar (plan 012, M7): the draft, the save, and Advanced Mode below
@@ -52,6 +64,9 @@
     settings,
     requestHostPermission,
     log,
+    model,
+    modelSettings,
+    watchModelSettings = () => () => {},
   }: {
     clippings: ClippingStore;
     drafts: DraftStore;
@@ -69,6 +84,15 @@
     requestHostPermission: (pattern: string) => Promise<boolean>;
     /** What went to the server and back, shown in Advanced Mode. */
     log: readonly LogEntry[];
+    /** The user's own model, which splits a group's lines on request (M13). */
+    model: LineModel;
+    /** Whether one is set up: the built-in scan offers nothing to ask. */
+    modelSettings: ModelSettingsStore;
+    /**
+     * Called when the options page saves a model, often while the sidebar
+     * is open; returns the unsubscribe.
+     */
+    watchModelSettings?: (onChange: () => void) => () => void;
   } = $props();
 
   let clipping = $state<Result<Clipping | undefined, StoreError> | undefined>(
@@ -82,6 +106,26 @@
   let issues = $state<readonly DraftIssue[]>([]);
   let saving = $state(false);
   let saveFailure = $state<Problem | undefined>(undefined);
+  let modelOn = $state(false);
+  let modelAddress = $state("");
+  let modelCheck = $state<ModelCheck | undefined>(undefined);
+  let asking = $state(false);
+  /** What the model last changed, and how to take it back. */
+  let modelNote = $state.raw<
+    | {
+        readonly draftId: string;
+        readonly text: string;
+        /** "rows" or "steps", for the Undo button. */
+        readonly changed: string;
+        readonly undo: (onto: RecipeDraft) => RecipeDraft;
+      }
+    | undefined
+  >(undefined);
+  let modelFailure = $state<Problem | undefined>(undefined);
+  /** Which draft's group, or its steps, the model was last asked about. */
+  let modelAt = $state.raw<
+    { readonly draftId: string; readonly at: number | "steps" } | undefined
+  >(undefined);
 
   const draft = $derived(currentDraft(drafts));
   const saved = $derived(
@@ -112,6 +156,7 @@
     const [stored, fresh] = await Promise.all([
       draftStore.load(),
       isNewSession(),
+      loadModelOn(),
       loadLists(),
     ]);
     if (stored.ok) {
@@ -121,6 +166,29 @@
       storeProblem = `Your drafts could not be read: ${stored.error.message}`;
     await loadClipping();
   }
+
+  async function loadModelOn() {
+    const chosen = await modelSettings.load();
+    modelOn = chosen.ok && chosen.value.backend !== "built-in";
+    modelAddress = chosen.ok ? chosen.value.address : "";
+    if (modelOn) void checkModel();
+    else modelCheck = undefined;
+  }
+
+  /** Whether the model answers, so Advanced Mode can say (#182). */
+  async function checkModel() {
+    modelCheck = { kind: "checking" };
+    const checked = await model.check();
+    modelCheck = checked.ok
+      ? { kind: "answering", address: modelAddress }
+      : {
+          kind: "problem",
+          address: modelAddress,
+          problem: modelProblem(checked.error),
+        };
+  }
+
+  $effect(() => watchModelSettings(() => void loadModelOn()));
 
   async function loadLists() {
     lists = undefined;
@@ -174,6 +242,106 @@
     else await flag(sending, [refusal]);
   }
 
+  /**
+   * Send one group's lines to the user's own model, and take its rows where
+   * they pass the checks (M13). Empty rows are left out of the question.
+   */
+  async function askModel(groupIndex: number) {
+    const asked = draft;
+    const group = asked?.groups[groupIndex];
+    if (asked === undefined || group === undefined) return;
+    const before = group.rows;
+    const rows = before.filter((row) => lineOf(row) !== "");
+    const lines = rows.map(lineOf);
+    modelAt = { draftId: asked.id, at: groupIndex };
+    modelNote = undefined;
+    modelFailure = undefined;
+    asking = true;
+    const answer = await model.splitLines(lines);
+    asking = false;
+    if (!answer.ok) {
+      modelFailure = modelProblem(answer.error);
+      return;
+    }
+    // The user's units, once the lists are loaded: a model may take a word
+    // of the line for one (#182).
+    const units = vocabulary.units;
+    const read = readModelAnswer(
+      lines,
+      answer.value,
+      rows,
+      units.length === 0 ? undefined : (unit) => knows(units, unit),
+    );
+    if (!read.ok) {
+      modelFailure = {
+        cause: read.error,
+        action: "The rows are as they were. Try again, or edit them by hand.",
+        fix: "retry",
+      };
+      return;
+    }
+    const current = currentDraft(drafts) ?? asked;
+    await keep(
+      withDraft(drafts, withGroupRows(current, groupIndex, read.value.rows)),
+    );
+    modelNote = {
+      draftId: asked.id,
+      text: describeSplit(lines.length, read.value),
+      changed: "rows",
+      undo: (onto) => withGroupRows(onto, groupIndex, before),
+    };
+  }
+
+  /**
+   * Send the steps to the user's own model, to rewrite short, precise and
+   * colloquial (#181). A rewrite cannot be checked word for word, so it is
+   * taken whole when its shape is right, and Undo puts the steps back.
+   */
+  async function askModelSteps() {
+    const asked = draft;
+    if (asked === undefined) return;
+    const before = asked.steps;
+    const steps = before.filter(
+      (step) => step.title.trim() !== "" || step.text.trim() !== "",
+    );
+    if (steps.length === 0) return;
+    modelAt = { draftId: asked.id, at: "steps" };
+    modelNote = undefined;
+    modelFailure = undefined;
+    asking = true;
+    const answer = await model.rewriteSteps(steps);
+    asking = false;
+    if (!answer.ok) {
+      modelFailure = modelProblem(answer.error);
+      return;
+    }
+    const read = readStepsAnswer(answer.value);
+    if (!read.ok) {
+      modelFailure = {
+        cause: read.error,
+        action: "The steps are as they were. Try again, or edit them by hand.",
+        fix: "retry",
+      };
+      return;
+    }
+    const current = currentDraft(drafts) ?? asked;
+    await keep(withDraft(drafts, withSteps(current, read.value)));
+    modelNote = {
+      draftId: asked.id,
+      text: describeSteps(steps.length, read.value.length),
+      changed: "steps",
+      undo: (onto) => withSteps(onto, before),
+    };
+  }
+
+  async function undoModel() {
+    const note = modelNote;
+    const current = currentDraft(drafts);
+    modelNote = undefined;
+    if (note === undefined || current?.id !== note.draftId) return;
+    await keep(withDraft(drafts, note.undo(current)));
+  }
+
   /** Show what stops a save at its fields; true if anything does. */
   async function flag(
     sending: RecipeDraft,
@@ -203,6 +371,28 @@
     lists !== undefined && !lists.ok ? listsProblem(lists.error) : undefined,
   );
 </script>
+
+<!-- What the model is doing, or did: shown beside the button pressed. -->
+{#snippet modelFeedback()}
+  {#if asking}
+    <p class="quiet" role="status">Asking the model…</p>
+  {:else if modelFailure !== undefined}
+    <div class="problem" role="alert">
+      <p>{modelFailure.cause}</p>
+      <p>{modelFailure.action}</p>
+    </div>
+    {#if modelFailure.fix === "settings"}
+      <button type="button" onclick={openSettings}>Open settings</button>
+    {/if}
+  {:else if modelNote !== undefined}
+    <div class="model-note" role="status">
+      <p>{modelNote.text}</p>
+      <button type="button" onclick={() => void undoModel()}
+        >Undo the model's {modelNote.changed}</button
+      >
+    </div>
+  {/if}
+{/snippet}
 
 <main>
   <header>
@@ -267,7 +457,17 @@
   {/if}
 
   {#if draft !== undefined}
-    <DraftEditor {draft} {vocabulary} {issues} onChange={edit} />
+    <DraftEditor
+      {draft}
+      {vocabulary}
+      {issues}
+      onChange={edit}
+      onAskModel={modelOn ? (group) => void askModel(group) : undefined}
+      onAskModelSteps={modelOn ? () => void askModelSteps() : undefined}
+      {asking}
+      modelAt={modelAt?.draftId === draft.id ? modelAt.at : undefined}
+      {modelFeedback}
+    />
 
     <section aria-labelledby="save-heading" class="save">
       <h2 id="save-heading" class="hidden">Save</h2>
@@ -319,7 +519,7 @@
           type="button"
           class="primary"
           disabled={saving}
-          onclick={() => void save()}>{saving ? "Saving…" : "Save"}</button
+          onclick={() => void save()}>{saving ? "Clipping…" : "Clip"}</button
         >
         <button
           type="button"
@@ -355,6 +555,8 @@
       {requestHostPermission}
       onServerChanged={() => void loadLists()}
       {log}
+      {modelCheck}
+      onCheckModel={modelOn ? () => void checkModel() : undefined}
     />
   </section>
 </main>

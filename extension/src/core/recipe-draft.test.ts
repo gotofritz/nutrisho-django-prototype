@@ -22,6 +22,8 @@ import {
   savePath,
   splitGroupAt,
   startDraft,
+  withGroupRows,
+  withSteps,
   tagNames,
   tagsText,
   toDocument,
@@ -478,30 +480,23 @@ describe("what stops a save", () => {
     ]);
   });
 
-  it("is a row with no ingredient, by its number", () => {
-    const issues = checkDraft(
-      replace(ready, "group", "1 lemon\na pinch of something", LISTS),
-    );
-
-    expect(issues).toEqual([
-      {
-        field: "groups.0.rows.1.ingredient",
-        message: "Row 2 has no ingredient.",
-      },
-    ]);
+  // Seen by hand (#182): a row with no ingredient stopped the clip; it is
+  // left out instead, as an empty row is.
+  it("is not a row with no ingredient, which is left out", () => {
+    expect(
+      checkDraft(
+        replace(ready, "group", "1 lemon\na pinch of something", LISTS),
+      ),
+    ).toEqual([]);
+    expect(
+      checkDraft(addTo(ready, "group", "Syrup:\na pinch of something", LISTS)),
+    ).toEqual([]);
   });
 
-  it("names the group too, when there is more than one", () => {
-    const issues = checkDraft(
-      addTo(ready, "group", "Syrup:\na pinch of something", LISTS),
-    );
-
-    expect(issues).toEqual([
-      {
-        field: "groups.1.rows.0.ingredient",
-        message: "Row 1 of Syrup has no ingredient.",
-      },
-    ]);
+  it("is not the quantity of a row with no ingredient", () => {
+    expect(
+      checkDraft(updateRow(ready, 0, 0, { quantity: "two", ingredient: "" })),
+    ).toEqual([]);
   });
 
   it.each(["two", "1/2", "1.234", "100000", "-1"])(
@@ -881,6 +876,32 @@ describe("the save", () => {
     });
   });
 
+  it("leaves out a row with no ingredient, and a group left with none", () => {
+    const sparse = {
+      ...norma,
+      groups: [
+        {
+          name: "",
+          rows: [
+            { ...EMPTY_ROW, quantity: "2", rest: "a pinch of something" },
+            { ...EMPTY_ROW, ingredient: "lemon" },
+          ],
+        },
+        { name: "For the syrup", rows: [{ ...EMPTY_ROW, note: "to taste" }] },
+        { name: "To serve", rows: [EMPTY_ROW] },
+      ],
+    };
+
+    expect(
+      (toDocument(sparse) as DocumentShape).recipes[0]!.ingredient_groups,
+    ).toEqual([
+      {
+        group_name: "",
+        items: [expect.objectContaining({ ingredient: "lemon" })],
+      },
+    ]);
+  });
+
   it("sends each group under its name", () => {
     const two = addTo(norma, "group", "For the syrup:\n100 g sugar", LISTS);
 
@@ -1022,5 +1043,47 @@ describe("explainRefusal", () => {
     "document.version must be 1.",
   ])("is nothing for a message naming no field of the draft: %s", (message) => {
     expect(explainRefusal(sent, message)).toBeUndefined();
+  });
+});
+
+// Plan 012, M13 (#181): the model's rows replace a group's, and Undo puts
+// them back.
+describe("withGroupRows", () => {
+  it("replaces one group's rows and leaves the rest", () => {
+    const draft = {
+      ...startDraft({
+        id: "d",
+        title: "",
+        url: "",
+        now: "2026-11-22T04:50:00.000Z",
+      }),
+      groups: [
+        { name: "", rows: [EMPTY_ROW] },
+        { name: "Sauce", rows: [{ ...EMPTY_ROW, ingredient: "tomato" }] },
+      ],
+    };
+    const rows = [{ ...EMPTY_ROW, quantity: "2", ingredient: "eggs" }];
+
+    const changed = withGroupRows(draft, 1, rows);
+
+    expect(changed.groups[1]).toEqual({ name: "Sauce", rows });
+    expect(changed.groups[0]).toBe(draft.groups[0]);
+  });
+});
+
+// #181: the model's rewrite replaces the steps, and Undo puts them back.
+describe("withSteps", () => {
+  it("replaces the steps and leaves the rest", () => {
+    const draft = startDraft({
+      id: "d",
+      title: "Dal",
+      url: "",
+      now: "2026-11-22T04:50:00.000Z",
+    });
+    const steps = [{ title: "", text: "Fry the seeds" }];
+
+    const next = withSteps(draft, steps);
+
+    expect(next).toEqual({ ...draft, steps });
   });
 });

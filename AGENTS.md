@@ -372,13 +372,16 @@ is the reference for patterns, since the extension starts as a cut-down copy.
   tests read the same files, so a change on either side fails the other's
   tests.
 - **Permissions**: at most `activeTab`, `scripting`, `storage`,
-  `contextMenus`, the sidebar, and the server's address as an optional host
-  permission asked for when it is saved. Never `<all_urls>`. A new one is
-  justified in the plan first.
+  `contextMenus`, the sidebar, and as optional host permissions, asked for
+  when saved, the server's address and the user's own model's (loopback, or
+  `api.anthropic.com`). Never `<all_urls>`. A new one is justified in the
+  plan first.
 - **Privacy**: only the draft leaves the browser, only to the user's own
-  server, and only when the user saves. The API key lives in
-  `storage.local`, never synced, logged or shown again. Nothing from a page
-  is logged.
+  server, and only when the user saves; a group's lines, or the steps, go to
+  the user's own model only when they ask it (`src/models/`). Keys,
+  Nutrisho's and the model's, live in `storage.local`, never synced, logged
+  or shown again.
+  Nothing from a page is logged.
 - **TDD**: as for the server. `.claude/hooks/check-tdd.sh` stops an agent
   writing a TypeScript or Svelte module under `extension/` that no test of the
   same stem covers; config, types, barrels and entrypoints are exempt.

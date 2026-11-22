@@ -330,9 +330,9 @@ describe("the ingredient rows", () => {
     renderEditor();
 
     const first = row(1);
-    expect(
-      within(first).getByRole("textbox", { name: "Quantity" }),
-    ).toHaveValue("2");
+    expect(within(first).getByRole("textbox", { name: "Qty" })).toHaveValue(
+      "2",
+    );
     expect(
       within(first).getByRole("combobox", { name: "Ingredient" }),
     ).toHaveValue("lemon");
@@ -554,9 +554,7 @@ describe("what stops a save", () => {
     expect(
       within(second).getByRole("combobox", { name: "Ingredient" }),
     ).toBeInvalid();
-    expect(
-      within(second).getByRole("textbox", { name: "Quantity" }),
-    ).toBeValid();
+    expect(within(second).getByRole("textbox", { name: "Qty" })).toBeValid();
   });
 });
 

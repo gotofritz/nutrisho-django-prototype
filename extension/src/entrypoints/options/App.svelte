@@ -1,5 +1,7 @@
 <script lang="ts">
+  import ModelForm from "@/options/ModelForm.svelte";
   import SettingsForm from "@/options/SettingsForm.svelte";
+  import { createStoredModelSettings } from "@/platform/model-settings-store";
   import { createPermissions } from "@/platform/permissions";
   import { createStoredSettings } from "@/platform/settings-store";
   import { createStorage } from "@/platform/storage";
@@ -7,7 +9,9 @@
   // A shell, like the sidebar's: it builds the adapters and hands them to the
   // form, which is where the tested behaviour is.
   const permissions = createPermissions();
-  const settings = createStoredSettings(createStorage());
+  const storage = createStorage();
+  const settings = createStoredSettings(storage);
+  const model = createStoredModelSettings(storage);
 </script>
 
 <!--
@@ -16,6 +20,11 @@
 -->
 <SettingsForm
   {settings}
+  requestHostPermission={(pattern) =>
+    permissions.request({ origins: [pattern] })}
+/>
+<ModelForm
+  store={model}
   requestHostPermission={(pattern) =>
     permissions.request({ origins: [pattern] })}
 />

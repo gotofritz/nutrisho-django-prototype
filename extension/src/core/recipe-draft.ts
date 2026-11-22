@@ -513,9 +513,9 @@ function servingsIssue(servings: string): boolean {
  * everything again; these are the mistakes worth catching before a round
  * trip, each named by the field it is in.
  */
-/** Nothing typed in it, rest included. */
-function isBlank(row: IngredientRow): boolean {
-  return Object.values(row).every((field: string) => field.trim() === "");
+/** Whether a row goes into the clip: only one that names an ingredient. */
+function clipped(row: IngredientRow): boolean {
+  return row.ingredient.trim() !== "";
 }
 
 /** An empty group, with one empty row to type into. */
@@ -620,19 +620,14 @@ export function checkDraft(
         ? ` of ${group.name.trim() || `group ${groupIndex + 1}`}`
         : "";
     group.rows.forEach((row, index) => {
-      // An empty row is left out of the save, so nothing in it can stop one.
-      if (isBlank(row)) return;
+      // A row with no ingredient is left out of the clip (#182), so nothing
+      // in it can stop one.
+      if (!clipped(row)) return;
       const at = `groups.${groupIndex}.rows.${index}`;
       if (quantityIssue(row.quantity)) {
         issues.push({
           field: `${at}.quantity`,
           message: `The quantity in row ${index + 1}${of} is not a number the recipe can hold, such as 2, 1.5 or 0.25.`,
-        });
-      }
-      if (row.ingredient.trim() === "") {
-        issues.push({
-          field: `${at}.ingredient`,
-          message: `Row ${index + 1}${of} has no ingredient.`,
         });
       }
     });
@@ -718,13 +713,12 @@ function fieldAtPath(draft: RecipeDraft, path: string): string | undefined {
       path,
     );
   if (group === null) return undefined;
-  const groupIndex = kept(
-    draft.groups,
-    (g) => g.name.trim() !== "" || g.rows.some((row) => !isBlank(row)),
-  )[Number(group[1])];
+  const groupIndex = kept(draft.groups, (g) => g.rows.some(clipped))[
+    Number(group[1])
+  ];
   if (groupIndex === undefined) return undefined;
   if (group[2] === undefined) return `groups.${groupIndex}.name`;
-  const rowIndex = kept(draft.groups[groupIndex]!.rows, (row) => !isBlank(row))[
+  const rowIndex = kept(draft.groups[groupIndex]!.rows, clipped)[
     Number(group[2])
   ];
   if (rowIndex === undefined || !ROW_FIELDS.has(group[3]!)) return undefined;
@@ -775,14 +769,36 @@ export function toDocument(draft: RecipeDraft): unknown {
             step_text: step.text.trim(),
           }))
           .filter((step) => step.step_title !== "" || step.step_text !== ""),
-        // Empty rows are left out, then groups left with no rows and no name.
+        // Rows with no ingredient are left out, then groups left with none.
         ingredient_groups: draft.groups
           .map((group) => ({
             group_name: group.name.trim(),
-            items: group.rows.filter((row) => !isBlank(row)).map(documentRow),
+            items: group.rows.filter(clipped).map(documentRow),
           }))
-          .filter((group) => group.items.length > 0 || group.group_name !== ""),
+          .filter((group) => group.items.length > 0),
       },
     ],
   };
+}
+
+/** One group with other rows: the model's, or those before them (M13). */
+export function withGroupRows(
+  draft: RecipeDraft,
+  groupIndex: number,
+  rows: readonly IngredientRow[],
+): RecipeDraft {
+  return {
+    ...draft,
+    groups: draft.groups.map((group, at) =>
+      at === groupIndex ? { ...group, rows } : group,
+    ),
+  };
+}
+
+/** The draft with its steps replaced, as the model rewrote them (#181). */
+export function withSteps(
+  draft: RecipeDraft,
+  steps: readonly Step[],
+): RecipeDraft {
+  return { ...draft, steps };
 }

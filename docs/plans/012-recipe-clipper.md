@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M12 and M14 done (#154, #156, #158, #160, #162, #166, #168, #171, #173, #149, #177, #179, #150)
+## Status: In progress, M1 to M14 done (#154, #156, #158, #160, #162, #166, #168, #171, #173, #149, #177, #179, #181, #150)
 
 ## What we are building
 
@@ -91,9 +91,9 @@ Changing one means editing this list.
   release target after the first Firefox release.
 - **D19 Look.** The site's storybook look, from its own tokens and
   self-hosted fonts (M12).
-- **D20 Models.** Any model is the user's own: one on their machine, or
-  their own key for a hosted one. The project never runs or proxies one
-  (M13).
+- **D20 Models.** Any model is the user's own: MLX or llama.cpp on their
+  machine, or Anthropic with their own key, as timbuktu has them. The
+  project never runs or proxies one (M13).
 - **D21 Embedded recipe data.** Reading a page's schema.org data is a
   nice-to-have for the end, or for after the release (M16). The selection
   is the way in.
@@ -180,8 +180,8 @@ name when it has no amount and nothing in it is known or it starts with
 *For* (D7). Groups and rows fold to one line, are deleted, or are added with + (an
 empty row is left out of a save); a step has a
 title, + adds one and × deletes one, and an empty step is left out of a
-save. *Save* checks the name, servings, quantities and that every row has
-an ingredient, posts the draft as a Nutrisho document, and shows *Open in
+save. *Save* (*Clip* since #182) checks the name, servings and quantities,
+leaves out rows with no ingredient and groups left with none, posts the draft as a Nutrisho document, and shows *Open in
 Nutrisho*, the server's warnings, or its refusal as it came. The draft and the
 save are tested against the server's API examples.
 
@@ -236,13 +236,18 @@ reads; its fold, Advanced Mode, picks 127.0.0.1 or nutrisho.com (over https,
 a new optional host) and the port, and logs each request to the server and
 its reply, in monospace; of the lists, only a problem shows outside it.
 
-### M13 · extension · A model of the user's own
+### ✅ M13 · extension · A model of the user's own
 
-A second line scanner behind the same rows (D20); the loaded lists still say
-which names are known. It starts with a design note: what is sent and to
-whom, how the user turns it on, where its key lives (as D11), whether a
-provider or a local model accepts a request from an extension's origin, and
-what happens when the answer is not the shape asked for.
+Done (#181). *Ask the model* on a group sends its lines, and nothing else,
+to the user's own model: MLX or llama.cpp on their machine, behind the
+OpenAI-compatible API, or Anthropic with their own key, as timbuktu has
+them. Rows that do not keep to their lines keep the built-in scan; Undo puts
+the group back; a line not in English comes back in English. *Ask the model*
+by the steps rewrites them short and colloquial, a stage to a step, shown
+how by five of the person's own rewrites; Undo puts them back. Set up under
+*Ingredient lines* on the options page; keys are kept as D11's. The design
+note is
+[012-m13-model-line-scanner.md](012-m13-model-line-scanner.md).
 
 ### ✅ M14 · server · API keys on the Config page (#150)
 

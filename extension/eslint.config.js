@@ -37,13 +37,15 @@ export default ts.config(
   {
     // Ports and adapters (plan 012, D13): the draft and its rules are pure
     // TypeScript. `src/platform/` is the adapter layer and the only place
-    // `browser.*` is reached; `src/nutrisho/` is an adapter too, whose outside
-    // edge is `fetch`, with what it needs from the browser injected.
+    // `browser.*` is reached; `src/nutrisho/` and `src/models/` are adapters
+    // too, whose outside edge is `fetch`, with what they need from the
+    // browser injected.
     files: [
       "src/core/**/*.ts",
       "src/manifest/**/*.ts",
       "src/messaging/**/*.ts",
       "src/nutrisho/**/*.ts",
+      "src/models/**/*.ts",
     ],
     rules: {
       "no-restricted-imports": [
