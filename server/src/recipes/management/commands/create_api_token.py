@@ -13,6 +13,12 @@ class Command(BaseCommand):
         """Register command-line arguments."""
         parser.add_argument("username", help="The user the token signs in as")
         parser.add_argument("--name", default="", help="What the token is for, e.g. clipper")
+        parser.add_argument(
+            "--days",
+            type=int,
+            default=None,
+            help="Expire the token after this many days; it also expires when unused too long",
+        )
 
     def handle(self, *args, **options):
         """Make the token and print its key."""
@@ -20,6 +26,8 @@ class Command(BaseCommand):
         if user is None:
             msg = f"No user named “{options['username']}”."
             raise CommandError(msg)
-        _, key = create_token(user=user, name=options["name"])
+        token, key = create_token(user=user, name=options["name"], days=options["days"])
         self.stdout.write("Send this as “Authorization: Bearer <key>”. It is not shown again:")
         self.stdout.write(key)
+        if token.expires_at is not None:
+            self.stdout.write(f"It expires on {token.expires_at:%Y-%m-%d %H:%M} UTC.")

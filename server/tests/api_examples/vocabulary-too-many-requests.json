@@ -1,0 +1,17 @@
+{
+  "description": "Any request past the key's requests a minute: wait as long as Retry-After says, in seconds.",
+  "request": {
+    "method": "GET",
+    "path": "/recipes/api/vocabulary/",
+    "headers": {
+      "Authorization": "Bearer nsh_example-key-for-the-api-examples"
+    }
+  },
+  "response": {
+    "status": 429,
+    "body": {
+      "error": "Too many requests: wait a minute and try again.",
+      "code": "rate_limited"
+    }
+  }
+}

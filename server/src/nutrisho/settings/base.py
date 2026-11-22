@@ -121,6 +121,19 @@ LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/recipes/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
 
+# The JSON API the recipe clipper uses (#149, plan 012 M10). A key unused for
+# this many days expires (0 turns it off); one may also carry its own date.
+API_TOKEN_IDLE_DAYS = env.int("API_TOKEN_IDLE_DAYS", default=90)
+# Requests a minute from one key, and failed sign-ins a minute from one
+# address, before a 429. Counted in the cache, so per process.
+API_REQUESTS_PER_MINUTE = env.int("API_REQUESTS_PER_MINUTE", default=60)
+API_FAILED_KEYS_PER_MINUTE = env.int("API_FAILED_KEYS_PER_MINUTE", default=20)
+# What one save may bring. The clipper sends one recipe; a long one has some
+# 40 ingredient rows, each with at most an ingredient, a substitute and a unit
+# the user lacks, plus its tags and cuisine, so 150 new names fits it.
+API_MAX_RECIPES = env.int("API_MAX_RECIPES", default=20)
+API_MAX_NEW_NAMES = env.int("API_MAX_NEW_NAMES", default=150)
+
 # Everything goes to stderr, where journald (or the dev console) collects it.
 # Without this, DEBUG=False drops 500s, CSRF failures and django.security
 # events on the floor (issue #43). django.security never goes below WARNING,
