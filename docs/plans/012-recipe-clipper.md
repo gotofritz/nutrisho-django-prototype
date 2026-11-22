@@ -177,9 +177,11 @@ a few words earlier, and that amount or else the nearest one before it
 unit it starts with. Everything else stays in *rest*, a scratch pad that is
 never saved. Unknown names are marked *new*; a group's first line is its
 name when it has no amount and nothing in it is known or it starts with
-*For* (D7). Groups and rows fold to one line, are deleted, or are added with + (an
-empty row is left out of a save); a step has a
-title, + adds one and × deletes one, and an empty step is left out of a
+*For* (D7). Groups and rows fold to one line, are deleted, or are added (an
+empty row is left out of a save); since #184 a row, a step and the
+details under the name each show as one line until clicked, and one of them
+is open at a time. A step has a
+title, *+ step* adds one and × deletes one, and an empty step is left out of a
 save. *Save* (*Clip* since #182) checks the name, servings and quantities,
 leaves out rows with no ingredient and groups left with none, posts the draft as a Nutrisho document, and shows *Open in
 Nutrisho*, the server's warnings, or its refusal as it came. The draft and the

@@ -62,6 +62,20 @@ function renderEditor(draft: RecipeDraft = DRAFT, issues = []) {
   return { onChange, changed: () => onChange.mock.lastCall?.[0] };
 }
 
+/** Open the folded details under the name (#185), as the user taps them. */
+async function openDetails() {
+  await fireEvent.click(
+    screen.getByRole("button", { name: "Edit the details" }),
+  );
+}
+
+/** Open a folded step (#185), as the user taps its line. */
+async function openStep(number: number) {
+  await fireEvent.click(
+    screen.getByRole("button", { name: `Edit step ${number}` }),
+  );
+}
+
 describe("the recipe's details", () => {
   it("shows the name, blurb, servings and source, and edits each", async () => {
     const { changed } = renderEditor();
@@ -69,6 +83,7 @@ describe("the recipe's details", () => {
     expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue(
       "Lemon tart",
     );
+    await openDetails();
     expect(screen.getByRole("textbox", { name: "Source" })).toHaveValue(
       "https://example.test/tart",
     );
@@ -83,6 +98,71 @@ describe("the recipe's details", () => {
     });
     expect(changed()?.blurb).toBe("Sharp.");
   });
+
+  // #185: the details fold under the name, as a recipe's byline reads.
+  it("folds all but the name to one line and the blurb, and opens them", async () => {
+    renderEditor({
+      ...DRAFT,
+      servings: "4",
+      cuisine: "med.italy.sicily",
+      tags: ["dinner", " quick"],
+      blurb: "Sharp and sweet.",
+    });
+
+    expect(screen.getByRole("textbox", { name: "Name" })).toBeVisible();
+    expect(screen.queryByRole("textbox", { name: "Servings" })).toBeNull();
+    const line = screen.getByRole("button", { name: "Edit the details" });
+    expect(line).toHaveTextContent(
+      "Serves 4 · med.italy.sicily · dinner, quick · example.test",
+    );
+    expect(line).toHaveTextContent("Sharp and sweet.");
+    expect(line).toHaveAttribute("aria-expanded", "false");
+
+    await fireEvent.click(line);
+
+    expect(screen.getByRole("textbox", { name: "Servings" })).toHaveValue("4");
+    const fold = screen.getByRole("button", { name: "Fold the details" });
+    expect(fold).toHaveAttribute("aria-expanded", "true");
+    await fireEvent.click(fold);
+    expect(screen.queryByRole("textbox", { name: "Servings" })).toBeNull();
+  });
+
+  it("says when there are no details yet", () => {
+    renderEditor({ ...DRAFT, source: "" });
+
+    expect(
+      screen.getByRole("button", { name: "Edit the details" }),
+    ).toHaveTextContent("No servings, cuisine or tags yet");
+  });
+
+  it("opens the details when one stops a save", () => {
+    render(DraftEditor, {
+      draft: DRAFT,
+      vocabulary: LISTS,
+      issues: [{ field: "servings", message: "Servings must be a number." }],
+      onChange: vi.fn(),
+    });
+
+    expect(screen.getByRole("textbox", { name: "Servings" })).toBeInvalid();
+  });
+
+  it("marks a new tag or cuisine on the folded line", () => {
+    renderEditor({ ...DRAFT, tags: ["fika"] });
+
+    expect(
+      screen.getByRole("button", { name: "Edit the details" }),
+    ).toHaveTextContent("fika · example.test new");
+  });
+
+  it("folds an open row when the details open, one thing at a time", async () => {
+    renderEditor();
+    await edit(1);
+
+    await openDetails();
+
+    expect(within(row(1)).queryByRole("textbox")).toBeNull();
+    expect(screen.getByRole("textbox", { name: "Servings" })).toBeVisible();
+  });
 });
 
 /** A row of the first group, as the user finds it. */
@@ -92,9 +172,20 @@ function row(number: number, group = 1) {
   ).getByRole("group", { name: `Row ${number}` });
 }
 
+/** Open a folded row, as the user taps its line, and give it back. */
+async function edit(number: number, group = 1) {
+  await fireEvent.click(
+    within(row(number, group)).getByRole("button", {
+      name: `Edit row ${number}`,
+    }),
+  );
+  return row(number, group);
+}
+
 describe("the source", () => {
-  it("opens in a new tab of the browser", () => {
+  it("opens in a new tab of the browser", async () => {
     renderEditor();
+    await openDetails();
 
     const open = screen.getByRole("link", { name: "Open the source" });
     expect(open).toHaveAttribute("href", "https://example.test/tart");
@@ -123,10 +214,10 @@ function offered(input: HTMLElement): string[] {
 
 // M8: typing in a field offers the names in the loaded lists.
 describe("names from the lists", () => {
-  it("offers the ingredients for an ingredient or substitute, the units for a unit", () => {
+  it("offers the ingredients for an ingredient or substitute, the units for a unit", async () => {
     renderEditor();
 
-    const first = row(1);
+    const first = await edit(1);
     expect(
       offered(within(first).getByRole("combobox", { name: "Ingredient" })),
     ).toEqual(["lemon"]);
@@ -138,7 +229,7 @@ describe("names from the lists", () => {
     ).toEqual(["g"]);
   });
 
-  it("marks a substitute the lists do not hold as new", () => {
+  it("marks a substitute the lists do not hold as new", async () => {
     renderEditor({
       ...DRAFT,
       groups: [
@@ -150,7 +241,7 @@ describe("names from the lists", () => {
     });
 
     expect(
-      within(row(1)).getByRole("combobox", { name: "Substitute" }),
+      within(await edit(1)).getByRole("combobox", { name: "Substitute" }),
     ).toHaveAccessibleDescription("new: saving makes it one of your own");
   });
 });
@@ -158,6 +249,7 @@ describe("names from the lists", () => {
 describe("the cuisine", () => {
   it("offers the cuisine tree's paths, and edits the cuisine", async () => {
     const { changed } = renderEditor();
+    await openDetails();
 
     const cuisine = screen.getByRole("combobox", { name: "Cuisine" });
     expect(offered(cuisine)).toEqual(["med", "med.italy", "med.italy.sicily"]);
@@ -166,16 +258,18 @@ describe("the cuisine", () => {
     expect(changed()?.cuisine).toBe("sicily");
   });
 
-  it("marks a cuisine the tree does not hold as new", () => {
+  it("marks a cuisine the tree does not hold as new", async () => {
     renderEditor({ ...DRAFT, cuisine: "med.italy.marche" });
+    await openDetails();
 
     expect(
       screen.getByRole("combobox", { name: "Cuisine" }),
     ).toHaveAccessibleDescription("new: saving makes it one of your own");
   });
 
-  it("does not mark a cuisine the tree holds", () => {
+  it("does not mark a cuisine the tree holds", async () => {
     renderEditor({ ...DRAFT, cuisine: "Sicily" });
+    await openDetails();
 
     expect(
       screen.getByRole("combobox", { name: "Cuisine" }),
@@ -186,6 +280,7 @@ describe("the cuisine", () => {
 describe("the tags", () => {
   it("shows the tags comma-separated, and edits them as typed", async () => {
     const { changed } = renderEditor({ ...DRAFT, tags: ["dinner", " quick"] });
+    await openDetails();
 
     const tags = screen.getByRole("textbox", { name: "Tags" });
     expect(tags).toHaveValue("dinner, quick");
@@ -194,8 +289,9 @@ describe("the tags", () => {
     expect(changed()?.tags).toEqual(["dinner", " ice cream", " "]);
   });
 
-  it("names the tags the lists do not hold as new", () => {
+  it("names the tags the lists do not hold as new", async () => {
     renderEditor({ ...DRAFT, tags: ["Dinner", " ice cream", " fika"] });
+    await openDetails();
 
     expect(
       screen.getByRole("textbox", { name: "Tags" }),
@@ -204,8 +300,9 @@ describe("the tags", () => {
     );
   });
 
-  it("marks nothing when every tag is known", () => {
+  it("marks nothing when every tag is known", async () => {
     renderEditor({ ...DRAFT, tags: ["dinner", " quick"] });
+    await openDetails();
 
     expect(
       screen.getByRole("textbox", { name: "Tags" }),
@@ -326,10 +423,10 @@ describe("adding ingredients", () => {
 });
 
 describe("the ingredient rows", () => {
-  it("shows each row's fields, rest included", () => {
+  it("shows each row's fields, rest included", async () => {
     renderEditor();
 
-    const first = row(1);
+    const first = await edit(1);
     expect(within(first).getByRole("textbox", { name: "Qty" })).toHaveValue(
       "2",
     );
@@ -354,7 +451,7 @@ describe("the ingredient rows", () => {
   it("edits any field of a row", async () => {
     const { changed } = renderEditor();
 
-    const second = row(2);
+    const second = await edit(2);
     await fireEvent.input(
       within(second).getByRole("textbox", { name: "Preparation" }),
       {
@@ -369,12 +466,13 @@ describe("the ingredient rows", () => {
     expect(changed()?.groups[0]?.rows[0]).toBe(DRAFT.groups[0]?.rows[0]);
   });
 
-  it("marks an ingredient or unit the lists do not hold as new", () => {
+  it("marks an ingredient or unit the lists do not hold as new", async () => {
     renderEditor();
 
-    const first = row(1);
-    const second = row(2);
-    expect(within(first).queryByText("new")).toBeNull();
+    // Folded, a row with a new name says so on its line.
+    expect(within(row(1)).queryByText("new")).toBeNull();
+    expect(within(row(2)).getByText("new")).toBeVisible();
+    const second = await edit(2);
     expect(within(second).getAllByText("new")).toHaveLength(2);
     expect(
       within(second).getByRole("combobox", { name: "Ingredient" }),
@@ -384,6 +482,7 @@ describe("the ingredient rows", () => {
   it("deletes a row", async () => {
     const { changed } = renderEditor();
 
+    await edit(1);
     await fireEvent.click(
       within(row(1)).getByRole("button", { name: "Delete row 1" }),
     );
@@ -391,55 +490,82 @@ describe("the ingredient rows", () => {
     expect(changed()?.groups[0]?.rows).toEqual([DRAFT.groups[0]?.rows[1]]);
   });
 
-  // A row has seven fields, so a long list means a lot of scrolling.
-  it("collapses a row to one line, and opens it again", async () => {
+  // #184: a row has seven fields, so a long list meant a lot of scrolling.
+  // Each row reads as one line, as a recipe prints it, until it is opened.
+  it("shows each row as one line, and opens one to edit", async () => {
     renderEditor();
 
-    const collapse = within(row(1)).getByRole("button", {
-      name: "Collapse row 1",
-    });
-    expect(collapse).toHaveAttribute("aria-expanded", "true");
-    expect(collapse).toHaveTextContent("▲");
-    await fireEvent.click(collapse);
-
     expect(within(row(1)).queryByRole("textbox")).toBeNull();
     expect(within(row(1)).queryByRole("combobox")).toBeNull();
-    expect(within(row(1)).getByText("2 lemon · Juice of")).toBeVisible();
-    expect(collapse).toHaveAttribute("aria-expanded", "false");
-    expect(collapse).toHaveTextContent("▼");
-    // Quantity, preparation, note and rest; unit, ingredient and substitute.
-    expect(within(row(2)).getAllByRole("textbox")).toHaveLength(4);
-    expect(within(row(2)).getAllByRole("combobox")).toHaveLength(3);
+    const line = within(row(1)).getByRole("button", { name: "Edit row 1" });
+    expect(line).toHaveTextContent("2 lemon · Juice of");
+    expect(line).toHaveAttribute("aria-expanded", "false");
+    expect(
+      within(row(2)).getByRole("button", { name: "Edit row 2" }),
+    ).toHaveTextContent("1 handful boletus");
 
-    await fireEvent.click(collapse);
+    await fireEvent.click(line);
+
+    // Quantity, preparation, note and rest; unit, ingredient and substitute.
     expect(within(row(1)).getAllByRole("textbox")).toHaveLength(4);
+    expect(within(row(1)).getAllByRole("combobox")).toHaveLength(3);
+    const fold = within(row(1)).getByRole("button", { name: "Fold row 1" });
+    expect(fold).toHaveAttribute("aria-expanded", "true");
+
+    await fireEvent.click(fold);
+    expect(within(row(1)).queryByRole("textbox")).toBeNull();
   });
 
-  it("keeps a row collapsed when the one before it is deleted", async () => {
-    const onChange = vi.fn<(draft: RecipeDraft) => void>();
-    const { rerender } = render(DraftEditor, {
-      draft: DRAFT,
-      vocabulary: LISTS,
-      issues: [],
-      onChange,
-    });
+  it("opens one row at a time", async () => {
+    renderEditor();
 
-    await fireEvent.click(
-      within(row(2)).getByRole("button", { name: "Collapse row 2" }),
-    );
-    await fireEvent.click(
-      within(row(1)).getByRole("button", { name: "Delete row 1" }),
-    );
-    await rerender({ draft: onChange.mock.lastCall![0] });
+    await edit(1);
+    await edit(2);
 
     expect(within(row(1)).queryByRole("textbox")).toBeNull();
-    expect(within(row(1)).queryByRole("combobox")).toBeNull();
-    expect(within(row(1)).getByText("1 handful boletus")).toBeVisible();
+    expect(within(row(2)).getAllByRole("textbox")).toHaveLength(4);
+  });
+
+  it("calls an empty row empty", () => {
+    renderEditor({
+      ...DRAFT,
+      groups: [{ name: "", rows: [EMPTY_ROW] }],
+    });
+
+    expect(
+      within(row(1)).getByRole("button", { name: "Edit row 1" }),
+    ).toHaveTextContent("Empty row");
+  });
+
+  it("opens the row it adds", async () => {
+    renderLiveEditor();
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Add an ingredient to group 1" }),
+    );
+
+    expect(within(row(3)).getAllByRole("textbox")).toHaveLength(4);
+    expect(within(row(1)).queryByRole("textbox")).toBeNull();
+  });
+
+  it("keeps the open row open as it moves", async () => {
+    renderLiveEditor();
+
+    await edit(2);
+    await fireEvent.click(
+      within(row(2)).getByRole("button", { name: "Move row 2 up" }),
+    );
+
+    expect(
+      within(row(1)).getByRole("combobox", { name: "Ingredient" }),
+    ).toHaveValue("boletus");
+    expect(within(row(2)).queryByRole("textbox")).toBeNull();
   });
 
   // Rest is a scratch pad: what is wanted is moved to a field.
   it("says rest is not saved, and clears it", async () => {
     const { changed } = renderEditor();
+    await edit(1);
 
     const rest = within(row(1)).getByRole("textbox", { name: "Rest" });
     expect(rest).toHaveAccessibleDescription("Not saved");
@@ -464,9 +590,11 @@ describe("the steps", () => {
   it("shows each step, and edits one", async () => {
     const { changed } = renderEditor();
 
+    await openStep(1);
     expect(screen.getByRole("textbox", { name: "Step 1" })).toHaveValue(
       "Zest the lemons.",
     );
+    await openStep(2);
     await fireEvent.input(screen.getByRole("textbox", { name: "Step 2" }), {
       target: { value: "Bake for 30 minutes." },
     });
@@ -479,6 +607,7 @@ describe("the steps", () => {
 
   it("deletes a step", async () => {
     const { changed } = renderEditor();
+    await openStep(1);
 
     await fireEvent.click(
       screen.getByRole("button", { name: "Delete step 1" }),
@@ -499,6 +628,7 @@ describe("the steps", () => {
 
   it("adds a step after any step", async () => {
     const { changed } = renderEditor();
+    await openStep(1);
 
     await fireEvent.click(
       screen.getByRole("button", { name: "Add a step after step 1" }),
@@ -522,9 +652,11 @@ describe("the steps", () => {
   it("shows each step's title, and edits one", async () => {
     const { changed } = renderEditor();
 
+    await openStep(1);
     expect(screen.getByRole("textbox", { name: "Step 1 title" })).toHaveValue(
       "The lemons",
     );
+    await openStep(2);
     await fireEvent.input(
       screen.getByRole("textbox", { name: "Step 2 title" }),
       { target: { value: "Baking" } },
@@ -532,9 +664,76 @@ describe("the steps", () => {
 
     expect(changed()?.steps[1]).toEqual({ title: "Baking", text: "Bake." });
   });
+
+  // #185: steps fold to one line, as rows do.
+  it("shows each step as one line, and opens one to edit", async () => {
+    renderEditor();
+
+    expect(screen.queryByRole("textbox", { name: "Step 1" })).toBeNull();
+    const line = screen.getByRole("button", { name: "Edit step 1" });
+    expect(line).toHaveTextContent("1. The lemons: Zest the lemons.");
+    expect(line).toHaveAttribute("aria-expanded", "false");
+    expect(
+      screen.getByRole("button", { name: "Edit step 2" }),
+    ).toHaveTextContent("2. Bake.");
+    expect(screen.queryByRole("button", { name: "Delete step 1" })).toBeNull();
+
+    await fireEvent.click(line);
+
+    expect(screen.getByRole("textbox", { name: "Step 1" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Delete step 1" })).toBeVisible();
+    const fold = screen.getByRole("button", { name: "Fold step 1" });
+    expect(fold).toHaveAttribute("aria-expanded", "true");
+    await fireEvent.click(fold);
+    expect(screen.queryByRole("textbox", { name: "Step 1" })).toBeNull();
+  });
+
+  it("calls an empty step empty", () => {
+    renderEditor({ ...DRAFT, steps: [{ title: "", text: "" }] });
+
+    expect(
+      screen.getByRole("button", { name: "Edit step 1" }),
+    ).toHaveTextContent("1. Empty step");
+  });
+
+  it("folds an open row when a step opens, one thing at a time", async () => {
+    renderEditor();
+    await edit(1);
+
+    await openStep(2);
+
+    expect(within(row(1)).queryByRole("textbox")).toBeNull();
+    expect(screen.getByRole("textbox", { name: "Step 2" })).toBeVisible();
+  });
+
+  it("opens the step it adds", async () => {
+    renderLiveEditor();
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Add a step after step 2" }),
+    );
+
+    expect(screen.getByRole("textbox", { name: "Step 3" })).toBeVisible();
+    expect(screen.queryByRole("textbox", { name: "Step 2" })).toBeNull();
+  });
+
+  it("keeps the open step open as it moves", async () => {
+    renderLiveEditor();
+    await openStep(1);
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Move step 1 down" }),
+    );
+
+    expect(screen.getByRole("textbox", { name: "Step 2" })).toHaveValue(
+      "Zest the lemons.",
+    );
+    expect(screen.queryByRole("textbox", { name: "Step 1" })).toBeNull();
+  });
 });
 
 describe("what stops a save", () => {
+  // A row that stops a save is open, so its mark can be seen.
   it("marks the field each issue is in", () => {
     render(DraftEditor, {
       draft: DRAFT,
@@ -562,6 +761,7 @@ describe("what stops a save", () => {
 describe("moving rows and steps", () => {
   it("moves a row down, and up", async () => {
     const { changed } = renderLiveEditor();
+    await edit(1);
 
     await fireEvent.click(
       within(row(1)).getByRole("button", { name: "Move row 1 down" }),
@@ -579,6 +779,7 @@ describe("moving rows and steps", () => {
 
   it("moves a group's last row into the next group, which opens", async () => {
     const { changed } = renderLiveEditor();
+    await edit(2);
 
     await fireEvent.click(
       within(row(2)).getByRole("button", { name: "Move row 2 down" }),
@@ -590,8 +791,9 @@ describe("moving rows and steps", () => {
     ).toHaveValue("boletus");
   });
 
-  it("cannot move the very first row up, or the very last down", () => {
+  it("cannot move the very first row up, or the very last down", async () => {
     renderEditor(withOpenGroup(DRAFT, 1));
+    await edit(1, 2);
 
     expect(
       within(row(1, 2)).getByRole("button", { name: "Move row 1 down" }),
@@ -601,24 +803,9 @@ describe("moving rows and steps", () => {
     ).toBeEnabled();
   });
 
-  it("keeps a collapsed row collapsed as it moves", async () => {
-    renderLiveEditor();
-
-    await fireEvent.click(
-      within(row(1)).getByRole("button", { name: "Collapse row 1" }),
-    );
-    await fireEvent.click(
-      within(row(1)).getByRole("button", { name: "Move row 1 down" }),
-    );
-
-    expect(within(row(2)).getByText("2 lemon · Juice of")).toBeVisible();
-    expect(
-      within(row(1)).getByRole("combobox", { name: "Ingredient" }),
-    ).toHaveValue("boletus");
-  });
-
   it("moves a step down, and up", async () => {
     const { changed } = renderLiveEditor();
+    await openStep(1);
 
     await fireEvent.click(
       screen.getByRole("button", { name: "Move step 1 down" }),
@@ -631,12 +818,14 @@ describe("moving rows and steps", () => {
     expect(changed()?.steps).toEqual(DRAFT.steps);
   });
 
-  it("cannot move the first step up, or the last down", () => {
+  it("cannot move the first step up, or the last down", async () => {
     renderEditor();
 
+    await openStep(1);
     expect(
       screen.getByRole("button", { name: "Move step 1 up" }),
     ).toBeDisabled();
+    await openStep(2);
     expect(
       screen.getByRole("button", { name: "Move step 2 down" }),
     ).toBeDisabled();
@@ -660,6 +849,7 @@ describe("splitting a group", () => {
       ],
     });
 
+    await edit(2);
     await fireEvent.click(
       within(row(2)).getByRole("button", {
         name: "Start a new group named after row 2",

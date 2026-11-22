@@ -267,6 +267,14 @@ function clipped(): Drafts {
   return afterClip(EMPTY_DRAFTS, CLIPPING, () => "draft-0", EMPTY_VOCABULARY);
 }
 
+// Rows start folded to one line (#184); a row's fields show once opened.
+async function openRow(n: number) {
+  await fireEvent.click(
+    await screen.findByRole("button", { name: `Edit row ${n}` }),
+  );
+  return screen.getByRole("group", { name: `Row ${n}` });
+}
+
 async function nameField() {
   return screen.findByRole("textbox", { name: "Name" });
 }
@@ -299,7 +307,8 @@ describe("the draft", () => {
       client: answering(COOKS_LISTS),
     });
 
-    const first = await screen.findByRole("group", { name: "Row 1" });
+    await screen.findByRole("group", { name: "Row 1" });
+    const first = await openRow(1);
     expect(within(first).getByRole("textbox", { name: "Qty" })).toHaveValue(
       "2",
     );
@@ -307,7 +316,7 @@ describe("the draft", () => {
       within(first).getByRole("combobox", { name: "Ingredient" }),
     ).toHaveValue("aubergine");
     // Olive oil is not in the lists, but the amount and unit it starts with are.
-    const second = screen.getByRole("group", { name: "Row 2" });
+    const second = await openRow(2);
     expect(within(second).getByRole("textbox", { name: "Qty" })).toHaveValue(
       "1",
     );
@@ -370,6 +379,9 @@ describe("the draft", () => {
 
     expect(await screen.findByRole("group", { name: "Row 1" })).toBeVisible();
     expect(await nameField()).toHaveValue("My melanzane");
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Edit the details" }),
+    );
     expect(screen.getByRole("textbox", { name: "Blurb" })).toHaveValue(
       "Smoky.",
     );
@@ -778,10 +790,6 @@ describe("asking the model", () => {
     return model;
   }
 
-  function row(n: number) {
-    return screen.getByRole("group", { name: `Row ${n}` });
-  }
-
   async function ask() {
     await fireEvent.click(
       await screen.findByRole("button", {
@@ -864,10 +872,11 @@ describe("asking the model", () => {
     expect(model.sent).toHaveLength(1);
     expect(model.sent[0]).toHaveLength(2);
     expect(model.sent[0]?.[1]).toContain("olive oil");
+    const second = await openRow(2);
     expect(
-      within(row(2)).getByRole("combobox", { name: "Ingredient" }),
+      within(second).getByRole("combobox", { name: "Ingredient" }),
     ).toHaveValue("olive oil");
-    expect(within(row(2)).getByRole("textbox", { name: "Rest" })).toHaveValue(
+    expect(within(second).getByRole("textbox", { name: "Rest" })).toHaveValue(
       "",
     );
   });
@@ -883,9 +892,9 @@ describe("asking the model", () => {
       screen.getByRole("button", { name: "Undo the model's rows" }),
     );
 
-    expect(within(row(2)).getByRole("textbox", { name: "Rest" })).toHaveValue(
-      "olive oil",
-    );
+    expect(
+      within(await openRow(2)).getByRole("textbox", { name: "Rest" }),
+    ).toHaveValue("olive oil");
     expect(screen.queryByText("The model split 2 lines.")).toBeNull();
   });
 
@@ -908,9 +917,9 @@ describe("asking the model", () => {
         "The model split 2 lines; 1 of its rows did not match its line, so that row is as it was.",
       ),
     ).toBeVisible();
-    expect(within(row(2)).getByRole("textbox", { name: "Rest" })).toHaveValue(
-      "olive oil",
-    );
+    expect(
+      within(await openRow(2)).getByRole("textbox", { name: "Rest" }),
+    ).toHaveValue("olive oil");
   });
 
   it("keeps the scan of a row whose unit is not one of the user's", async () => {
@@ -969,9 +978,9 @@ describe("asking the model", () => {
     expect(
       await screen.findByText("Nothing answered at your model's address."),
     ).toBeVisible();
-    expect(within(row(2)).getByRole("textbox", { name: "Rest" })).toHaveValue(
-      "olive oil",
-    );
+    expect(
+      within(await openRow(2)).getByRole("textbox", { name: "Rest" }),
+    ).toHaveValue("olive oil");
   });
 
   it("refuses an answer that does not fit the lines", async () => {
@@ -1055,8 +1064,13 @@ describe("asking the model about the steps", () => {
       model,
       modelSettings: createFakeModelSettingsStore(defaultsFor("anthropic")),
     });
-    await screen.findByRole("textbox", { name: "Step 1" });
+    await screen.findByRole("button", { name: "Edit step 1" });
     return model;
+  }
+
+  /** A folded step's text (#185), less the number its line starts with. */
+  function stepText(line: HTMLElement): string {
+    return (line.textContent ?? "").replace(/^\s*\d+\.\s*/, "").trim();
   }
 
   async function ask() {
@@ -1071,7 +1085,7 @@ describe("asking the model about the steps", () => {
     renderSidebar({
       clippings: createFakeClippingStore({ ...CLIPPING, target: "steps" }),
     });
-    await screen.findByRole("textbox", { name: "Step 1" });
+    await screen.findByRole("button", { name: "Edit step 1" });
 
     expect(screen.queryByRole("button", { name: /Ask the model/ })).toBeNull();
   });
@@ -1081,8 +1095,8 @@ describe("asking the model about the steps", () => {
     model.answer(ok(REWRITE));
     await stepped(model);
     const sent = screen
-      .getAllByRole("textbox", { name: /^Step \d+$/ })
-      .map((box) => (box as HTMLTextAreaElement).value);
+      .getAllByRole("button", { name: /^Edit step \d+$/ })
+      .map(stepText);
 
     await ask();
 
@@ -1093,7 +1107,7 @@ describe("asking the model about the steps", () => {
     ).toBeVisible();
     expect(model.stepsSent[0]?.map((step) => step.text)).toEqual(sent);
     expect(model.sent).toEqual([]);
-    expect(screen.getByRole("textbox", { name: "Step 3" })).toHaveValue(
+    expect(stepText(screen.getByRole("button", { name: "Edit step 3" }))).toBe(
       "Season",
     );
   });
@@ -1107,7 +1121,7 @@ describe("asking the model about the steps", () => {
 
     const note = await screen.findByText(/The model rewrote/);
     const heading = screen.getByRole("heading", { name: "Steps" });
-    const first = screen.getByRole("textbox", { name: "Step 1" });
+    const first = screen.getByRole("button", { name: "Edit step 1" });
     expect(
       heading.compareDocumentPosition(note) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
@@ -1120,9 +1134,9 @@ describe("asking the model about the steps", () => {
     const model = createFakeLineModel();
     model.answer(ok(REWRITE));
     await stepped(model);
-    const before = (
-      screen.getByRole("textbox", { name: "Step 1" }) as HTMLTextAreaElement
-    ).value;
+    const before = stepText(
+      screen.getByRole("button", { name: "Edit step 1" }),
+    );
     await ask();
     await screen.findByText(/The model rewrote/);
 
@@ -1130,7 +1144,9 @@ describe("asking the model about the steps", () => {
       screen.getByRole("button", { name: "Undo the model's steps" }),
     );
 
-    expect(screen.getByRole("textbox", { name: "Step 1" })).toHaveValue(before);
+    expect(stepText(screen.getByRole("button", { name: "Edit step 1" }))).toBe(
+      before,
+    );
     expect(screen.queryByText(/The model rewrote/)).toBeNull();
   });
 
@@ -1138,15 +1154,17 @@ describe("asking the model about the steps", () => {
     const model = createFakeLineModel();
     model.answer(ok({ steps: [] }));
     await stepped(model);
-    const before = (
-      screen.getByRole("textbox", { name: "Step 1" }) as HTMLTextAreaElement
-    ).value;
+    const before = stepText(
+      screen.getByRole("button", { name: "Edit step 1" }),
+    );
 
     await ask();
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "The model answered no steps.",
     );
-    expect(screen.getByRole("textbox", { name: "Step 1" })).toHaveValue(before);
+    expect(stepText(screen.getByRole("button", { name: "Edit step 1" }))).toBe(
+      before,
+    );
   });
 });
