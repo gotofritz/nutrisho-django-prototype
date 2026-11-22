@@ -98,5 +98,5 @@ Give it an `alt` that describes the drawing, and its `width` and `height`.
 
 `print.css` hides every `no-print` element and the margin, drops the sheet's
 shadow and prints the sheet on white. A printed recipe looks as it did before
-the redesign. A printed page is as narrow as a phone, so the phone layout is
+the redesign, less its cuisine and source, which are for the screen. A printed page is as narrow as a phone, so the phone layout is
 `@media screen` only.

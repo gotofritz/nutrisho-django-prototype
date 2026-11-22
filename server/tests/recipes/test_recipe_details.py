@@ -81,6 +81,14 @@ def test_only_http_urls_become_links(auth_client, recipe, source):
 
 
 @pytest.mark.django_db
+def test_the_source_is_left_off_a_printed_page(auth_client, recipe):
+    """Where a recipe came from is for the screen; a printout is for cooking."""
+    recipe.source_instance = "https://example.com/caponata"
+    recipe.save()
+    assert 'class="recipe-source no-print"' in _page(auth_client, recipe)
+
+
+@pytest.mark.django_db
 def test_no_source_line_without_a_source(auth_client, recipe):
     """Blank source, nothing shown."""
     assert "recipe-source" not in _page(auth_client, recipe)
