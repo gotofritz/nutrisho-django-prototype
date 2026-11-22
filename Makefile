@@ -84,17 +84,28 @@ e2e: ## Run the browser smoke tests in Chromium (pass extra pytest args as ARGS=
 
 # The extension (#162). Node and pnpm versions are pinned in extension/.nvmrc
 # and extension/package.json.
-ext-build: ## Build the extension for Firefox and Chrome into extension/.output/
+#
+# pnpm writes node_modules/.modules.yaml on every install, so it stands for
+# "installed": the targets below install first when it is missing (a fresh
+# checkout) or older than the lockfile or package.json (a pull that changed
+# them). It is touched after, because a no-op install may leave it alone.
+EXT_INSTALL := $(IN_EXT) pnpm install --frozen-lockfile && touch node_modules/.modules.yaml
+EXT_INSTALLED := extension/node_modules/.modules.yaml
+
+$(EXT_INSTALLED): extension/pnpm-lock.yaml extension/package.json
+	$(EXT_INSTALL)
+
+ext-build: $(EXT_INSTALLED) ## Build the extension for Firefox and Chrome into extension/.output/
 	$(IN_EXT) pnpm build
 	$(IN_EXT) pnpm build:chrome
 
-ext-dev: ## Run the extension in a fresh browser profile, reloading on change (BROWSER=firefox or chrome)
+ext-dev: $(EXT_INSTALLED) ## Run the extension in a fresh browser profile, reloading on change (BROWSER=firefox or chrome)
 	$(IN_EXT) pnpm $(if $(filter chrome,$(BROWSER)),dev:chrome,dev)
 
 ext-install: ## Install the extension's dependencies from extension/pnpm-lock.yaml
-	$(IN_EXT) pnpm install --frozen-lockfile
+	$(EXT_INSTALL)
 
-ext-qa: ## Run the extension's checks: formatting, lint, types, tests, and a build for each browser
+ext-qa: $(EXT_INSTALLED) ## Run the extension's checks: formatting, lint, types, tests, and a build for each browser
 	$(IN_EXT) pnpm format:check
 	$(IN_EXT) pnpm lint
 	$(IN_EXT) pnpm check
@@ -102,7 +113,7 @@ ext-qa: ## Run the extension's checks: formatting, lint, types, tests, and a bui
 	$(IN_EXT) pnpm build
 	$(IN_EXT) pnpm build:chrome
 
-ext-test: ## Run the extension's tests (pass a path or other vitest args as ARGS="...")
+ext-test: $(EXT_INSTALLED) ## Run the extension's tests (pass a path or other vitest args as ARGS="...")
 	$(IN_EXT) pnpm test $(ARGS)
 
 lint: ## Run ruff (non-mutating)

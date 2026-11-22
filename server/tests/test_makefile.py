@@ -375,6 +375,17 @@ def test_extension_targets_run_inside_the_extension_directory(target: str):
 
 
 @needs_make
+@pytest.mark.parametrize("target", ["ext-dev", "ext-test", "ext-build", "ext-qa"])
+def test_extension_targets_install_first_when_the_lockfile_is_newer(target: str):
+    """A fresh checkout, or a lockfile changed by a pull, installs before it runs."""
+    # `-W` makes make treat the lockfile as just changed, as on a fresh clone.
+    output = run_make("--dry-run", "-W", "extension/pnpm-lock.yaml", target)
+    commands = [line for line in output.splitlines() if "pnpm" in line]
+
+    assert "pnpm install --frozen-lockfile" in commands[0], commands
+
+
+@needs_make
 def test_ext_install_installs_from_the_lockfile():
     """A stale pnpm-lock.yaml fails the install instead of being rewritten."""
     assert "pnpm install --frozen-lockfile" in run_make("--dry-run", "ext-install")

@@ -240,6 +240,9 @@ make ext-qa                  # Prettier, ESLint, svelte-check and tsc, Vitest, F
 make ext-test                # Vitest alone; ARGS="src/sidebar" narrows it
 ```
 
+The other `ext-` targets install first when the dependencies are missing or
+older than the lockfile.
+
 The pre-commit hooks run `make ext-qa` on a commit that touches
 `extension/`, so commit there only with Node and pnpm installed.
 

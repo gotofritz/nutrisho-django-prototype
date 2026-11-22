@@ -1,0 +1,490 @@
+import { EMPTY_ROW, scanLine, type IngredientRow } from "./ingredient-line";
+import type { Vocabulary } from "./vocabulary";
+
+/** One step of the method, under an optional title, as on the site. */
+export interface Step {
+  readonly title: string;
+  readonly text: string;
+}
+
+/**
+ * The recipe being clipped (plan 012, M7): pure data, and the rules for
+ * changing it. The sidebar edits it; the server receives it as a Nutrisho
+ * document (`server/docs/features/import-export.md`).
+ *
+ * Every field is text as typed, servings and quantities included, so what
+ * the user sees is what is stored; `checkDraft` says what stops a save.
+ */
+export interface RecipeDraft {
+  /** A version 7 UUID, made when the draft starts, so a save sent twice makes one recipe (D8). */
+  readonly id: string;
+  readonly name: string;
+  readonly blurb: string;
+  /** Blank means the server's default, 1. */
+  readonly servings: string;
+  /** Where the recipe came from: the page it was clipped from, until edited. */
+  readonly source: string;
+  /**
+   * The page it was clipped from, which clips from that page are matched on;
+   * not shown, so editing the source does not part a draft from its page.
+   * Absent from drafts stored before it was kept, which use the source.
+   */
+  readonly clippedFrom?: string;
+  /** A dotted path through the cuisine tree; picked in M8. */
+  readonly cuisine: string;
+  /** Picked in M8. */
+  readonly tags: readonly string[];
+  readonly groups: readonly IngredientGroup[];
+  /** The one ingredient group shown open, by index; none when absent. */
+  readonly openGroup?: number;
+  readonly steps: readonly Step[];
+  /** ISO 8601. */
+  readonly startedAt: string;
+}
+
+/** Ingredient rows under one heading, which may be blank (D7). */
+export interface IngredientGroup {
+  readonly name: string;
+  readonly rows: readonly IngredientRow[];
+}
+
+/** Where captured text can go (D3). */
+/**
+ * Where text goes: `group` starts a new ingredient group, `ingredient` adds
+ * rows to the open one (or starts one when none is open).
+ */
+export type DraftTarget = "name" | "blurb" | "group" | "ingredient" | "steps";
+
+export interface DraftIssue {
+  /** `name`, `servings`, or `groups.<index>.rows.<index>.<field>`. */
+  readonly field: string;
+  readonly message: string;
+}
+
+/** Recipe.servings is a PositiveSmallIntegerField. */
+const MAX_SERVINGS = 32_767;
+/** IngredientInRecipe.quantity holds 7 digits, 2 of them decimals. */
+const QUANTITY = /^\d{1,5}([.,]\d{1,2})?$/;
+
+export function startDraft({
+  id,
+  title,
+  url,
+  now,
+}: {
+  id: string;
+  title: string;
+  url: string;
+  now: string;
+}): RecipeDraft {
+  return {
+    id,
+    name: title.trim(),
+    blurb: "",
+    servings: "",
+    source: url,
+    clippedFrom: url,
+    cuisine: "",
+    tags: [],
+    groups: [],
+    steps: [],
+    startedAt: now,
+  };
+}
+
+/** Enough of a shape check to tell a draft from whatever else is stored. */
+export function isRecipeDraft(value: unknown): value is RecipeDraft {
+  if (typeof value !== "object" || value === null) return false;
+  const draft = value as Partial<Record<keyof RecipeDraft, unknown>>;
+  const text = (field: unknown) => typeof field === "string";
+
+  return (
+    [draft.id, draft.name, draft.blurb, draft.servings, draft.source]
+      .concat([draft.cuisine, draft.startedAt])
+      .every(text) &&
+    Array.isArray(draft.tags) &&
+    Array.isArray(draft.groups) &&
+    (draft.openGroup === undefined || typeof draft.openGroup === "number") &&
+    Array.isArray(draft.steps) &&
+    draft.steps.every(
+      (step: unknown) =>
+        typeof step === "object" &&
+        step !== null &&
+        text((step as Step).title) &&
+        text((step as Step).text),
+    )
+  );
+}
+
+function lines(text: string): string[] {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line !== "");
+}
+
+/**
+ * A line carries on the line before when it starts with a comma (`, cubed`)
+ * or a bracket (`(about 2 tsp)`), or the line before ends with a comma.
+ */
+function continued(split: readonly string[]): string[] {
+  return split.reduce<string[]>((joined, line) => {
+    const before = joined.length - 1;
+    if (before < 0) joined.push(line);
+    else if (/^[,;]/.test(line)) joined[before] += line;
+    else if (/^\(/.test(line) || /,$/.test(joined[before]!)) {
+      joined[before] += ` ${line}`;
+    } else joined.push(line);
+    return joined;
+  }, []);
+}
+
+function oneLine(text: string): string {
+  return lines(text).join(" ");
+}
+
+/** The lines of a block of ingredients, a line carried on joined to its own. */
+function ingredientLines(text: string): string[] {
+  return continued(lines(text).filter((line) => /[\p{L}\p{N}]/u.test(line)));
+}
+
+/** Ingredient lines as rows, with no group name taken from them. */
+function rowsFrom(text: string, vocabulary: Vocabulary): IngredientRow[] {
+  return ingredientLines(text).map((line) => scanLine(line, vocabulary));
+}
+
+/**
+ * One ingredient group from text: a row for each line, scanned against the
+ * lists. When nothing in the first line is known and more lines follow, it is
+ * taken for the group's name (`For the syrup:`), without its colon.
+ */
+export function groupFrom(
+  text: string,
+  vocabulary: Vocabulary,
+): IngredientGroup {
+  const split = ingredientLines(text);
+  const rows = split.map((line) => scanLine(line, vocabulary));
+  const [first, ...rest] = rows;
+  const [firstLine = ""] = split;
+  const named =
+    first !== undefined &&
+    first.quantity === "" &&
+    (first.ingredient === "" || /^for\b|:$/i.test(firstLine));
+  if (named && rest.length > 0) {
+    return { name: firstLine.replace(/:$/, "").trim(), rows: rest };
+  }
+  return { name: "", rows };
+}
+
+function joined(before: string, after: string, separator: string): string {
+  return before === "" ? after : `${before}${separator}${after}`;
+}
+
+function send(
+  draft: RecipeDraft,
+  target: DraftTarget,
+  text: string,
+  vocabulary: Vocabulary,
+  keep: boolean,
+): RecipeDraft {
+  if (text.trim() === "") return draft;
+
+  switch (target) {
+    case "name":
+      return {
+        ...draft,
+        name: keep ? joined(draft.name, oneLine(text), " ") : oneLine(text),
+      };
+    case "blurb":
+      return {
+        ...draft,
+        blurb: keep ? joined(draft.blurb, text.trim(), "\n\n") : text.trim(),
+      };
+    case "group": {
+      const group = groupFrom(text, vocabulary);
+      const groups = keep ? [...draft.groups, group] : [group];
+      return { ...draft, groups, openGroup: groups.length - 1 };
+    }
+    case "ingredient": {
+      const open = draft.openGroup;
+      const group = open === undefined ? undefined : draft.groups[open];
+      if (open === undefined || group === undefined) {
+        return send(draft, "group", text, vocabulary, true);
+      }
+      const rows = rowsFrom(text, vocabulary);
+      return {
+        ...draft,
+        groups: draft.groups.map((held, at) =>
+          at === open
+            ? { ...held, rows: keep ? [...held.rows, ...rows] : rows }
+            : held,
+        ),
+      };
+    }
+    case "steps": {
+      const steps = lines(text).map((line) => ({ title: "", text: line }));
+      return { ...draft, steps: keep ? [...draft.steps, ...steps] : steps };
+    }
+  }
+}
+
+/** *Add to*: the text goes after what the target holds. */
+export function addTo(
+  draft: RecipeDraft,
+  target: DraftTarget,
+  text: string,
+  vocabulary: Vocabulary,
+): RecipeDraft {
+  return send(draft, target, text, vocabulary, true);
+}
+
+/** *Replace*: the text takes the place of what the target holds. */
+export function replace(
+  draft: RecipeDraft,
+  target: DraftTarget,
+  text: string,
+  vocabulary: Vocabulary,
+): RecipeDraft {
+  return send(draft, target, text, vocabulary, false);
+}
+
+export function updateRow(
+  draft: RecipeDraft,
+  groupIndex: number,
+  rowIndex: number,
+  patch: Partial<IngredientRow>,
+): RecipeDraft {
+  return {
+    ...draft,
+    groups: draft.groups.map((group, at) =>
+      at === groupIndex
+        ? {
+            ...group,
+            rows: group.rows.map((row, place) =>
+              place === rowIndex ? { ...row, ...patch } : row,
+            ),
+          }
+        : group,
+    ),
+  };
+}
+
+export function updateGroupName(
+  draft: RecipeDraft,
+  groupIndex: number,
+  name: string,
+): RecipeDraft {
+  return {
+    ...draft,
+    groups: draft.groups.map((group, at) =>
+      at === groupIndex ? { ...group, name } : group,
+    ),
+  };
+}
+
+export function updateStep(
+  draft: RecipeDraft,
+  index: number,
+  patch: Partial<Step>,
+): RecipeDraft {
+  return {
+    ...draft,
+    steps: draft.steps.map((step, at) =>
+      at === index ? { ...step, ...patch } : step,
+    ),
+  };
+}
+
+/** An empty step at the end, to type into. */
+export function addStep(draft: RecipeDraft): RecipeDraft {
+  return { ...draft, steps: [...draft.steps, { title: "", text: "" }] };
+}
+
+/** Takes one step out. */
+export function removeStep(draft: RecipeDraft, index: number): RecipeDraft {
+  return { ...draft, steps: draft.steps.filter((_, at) => at !== index) };
+}
+
+/** Takes one group out, rows and all. */
+export function removeGroup(
+  draft: RecipeDraft,
+  groupIndex: number,
+): RecipeDraft {
+  const open = draft.openGroup;
+  const groups = draft.groups.filter((_, at) => at !== groupIndex);
+  const openGroup =
+    open === undefined || open === groupIndex
+      ? undefined
+      : open > groupIndex
+        ? open - 1
+        : open;
+  return { ...draft, groups, openGroup };
+}
+
+/** Open one ingredient group, closing the others; or close them all. */
+export function withOpenGroup(
+  draft: RecipeDraft,
+  groupIndex: number | undefined,
+): RecipeDraft {
+  return { ...draft, openGroup: groupIndex };
+}
+
+/** Takes one row out of a group; the group stays, even when it is left empty. */
+export function removeRow(
+  draft: RecipeDraft,
+  groupIndex: number,
+  rowIndex: number,
+): RecipeDraft {
+  return {
+    ...draft,
+    groups: draft.groups.map((group, at) =>
+      at === groupIndex
+        ? { ...group, rows: group.rows.filter((_, row) => row !== rowIndex) }
+        : group,
+    ),
+  };
+}
+
+export function withDetails(
+  draft: RecipeDraft,
+  patch: Partial<Pick<RecipeDraft, "name" | "blurb" | "servings" | "source">>,
+): RecipeDraft {
+  return { ...draft, ...patch };
+}
+
+function quantityIssue(quantity: string): boolean {
+  const written = quantity.trim();
+  return written !== "" && !QUANTITY.test(written);
+}
+
+function servingsIssue(servings: string): boolean {
+  const written = servings.trim();
+  if (written === "") return false;
+  return (
+    !/^\d+$/.test(written) ||
+    Number(written) < 1 ||
+    Number(written) > MAX_SERVINGS
+  );
+}
+
+/**
+ * What stops a save, in the order the fields are shown. The server checks
+ * everything again; these are the mistakes worth catching before a round
+ * trip, each named by the field it is in.
+ */
+/** Nothing typed in it, rest included. */
+function isBlank(row: IngredientRow): boolean {
+  return Object.values(row).every((field: string) => field.trim() === "");
+}
+
+/** An empty group, with one empty row to type into. */
+export function addGroup(draft: RecipeDraft): RecipeDraft {
+  return {
+    ...draft,
+    groups: [...draft.groups, { name: "", rows: [{ ...EMPTY_ROW }] }],
+    openGroup: draft.groups.length,
+  };
+}
+
+/** An empty row at the end of one group. */
+export function addRow(draft: RecipeDraft, groupIndex: number): RecipeDraft {
+  return {
+    ...draft,
+    groups: draft.groups.map((group, at) =>
+      at === groupIndex
+        ? { ...group, rows: [...group.rows, EMPTY_ROW] }
+        : group,
+    ),
+  };
+}
+
+export function checkDraft(draft: RecipeDraft): DraftIssue[] {
+  const issues: DraftIssue[] = [];
+  if (draft.name.trim() === "") {
+    issues.push({ field: "name", message: "The recipe needs a name." });
+  }
+  if (servingsIssue(draft.servings)) {
+    issues.push({
+      field: "servings",
+      message: `Servings must be a whole number from 1 to ${MAX_SERVINGS}.`,
+    });
+  }
+  draft.groups.forEach((group, groupIndex) => {
+    // With one group a row's number is enough; with more, the group is named.
+    const of =
+      draft.groups.length > 1
+        ? ` of ${group.name.trim() || `group ${groupIndex + 1}`}`
+        : "";
+    group.rows.forEach((row, index) => {
+      // An empty row is left out of the save, so nothing in it can stop one.
+      if (isBlank(row)) return;
+      const at = `groups.${groupIndex}.rows.${index}`;
+      if (quantityIssue(row.quantity)) {
+        issues.push({
+          field: `${at}.quantity`,
+          message: `The quantity in row ${index + 1}${of} is not a number the recipe can hold, such as 2, 1.5 or 0.25.`,
+        });
+      }
+      if (row.ingredient.trim() === "") {
+        issues.push({
+          field: `${at}.ingredient`,
+          message: `Row ${index + 1}${of} has no ingredient.`,
+        });
+      }
+    });
+  });
+  return issues;
+}
+
+/** `POST` here; the id makes a second save of one draft answer with the first's recipe. */
+export function savePath(draft: RecipeDraft): string {
+  return `/recipes/api/recipes/?id=${draft.id}`;
+}
+
+function documentRow(row: IngredientRow) {
+  const quantity = row.quantity.trim().replace(",", ".");
+  return {
+    ingredient: row.ingredient.trim(),
+    substitute: row.substitute.trim(),
+    quantity: quantity === "" ? null : quantity,
+    unit: row.unit.trim(),
+    legacy_unit: "",
+    preparation: row.preparation.trim(),
+    // The scan's leftovers are kept, never dropped (M7).
+    // Rest is the row's scratch pad, and is never sent.
+    note: row.note.trim(),
+  };
+}
+
+/** The draft as a Nutrisho document of one recipe, as the save endpoint reads it. */
+export function toDocument(draft: RecipeDraft): unknown {
+  const servings = draft.servings.trim();
+  return {
+    format: "nutrisho",
+    version: 1,
+    recipes: [
+      {
+        recipe_name: draft.name.trim(),
+        short_description: draft.blurb.trim(),
+        ...(servings === "" ? {} : { servings: Number(servings) }),
+        source_instance: draft.source,
+        cuisine: draft.cuisine,
+        tags: [...draft.tags],
+        // An empty step is left out, wherever it is.
+        steps: draft.steps
+          .map((step) => ({
+            step_title: step.title.trim(),
+            step_text: step.text.trim(),
+          }))
+          .filter((step) => step.step_title !== "" || step.step_text !== ""),
+        // Empty rows are left out, then groups left with no rows and no name.
+        ingredient_groups: draft.groups
+          .map((group) => ({
+            group_name: group.name.trim(),
+            items: group.rows.filter((row) => !isBlank(row)).map(documentRow),
+          }))
+          .filter((group) => group.items.length > 0 || group.group_name !== ""),
+      },
+    ],
+  };
+}
