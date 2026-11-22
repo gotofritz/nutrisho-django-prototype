@@ -157,8 +157,8 @@ describe("a clipping", () => {
   });
 });
 
-// The right-click submenu sends the text on as well as to the clipboard:
-// the title replaces the name, the rest add to what is there.
+// The text goes to the part of the draft the submenu named: the title
+// replaces the name, the rest add to what is there.
 describe("a clipping sent somewhere", () => {
   function sent(target: Clipping["target"], text: string): Clipping {
     return clippingFrom(
@@ -239,21 +239,6 @@ describe("a clipping sent somewhere", () => {
 
     expect(currentDraft(more)?.groups).toHaveLength(1);
     expect(currentDraft(more)?.groups[0]?.rows).toHaveLength(2);
-  });
-
-  it("leaves the draft alone when sent to the clipboard only", () => {
-    const drafts = afterClip(
-      EMPTY_DRAFTS,
-      sent("clipboard", "2 lemons"),
-      ids("a"),
-      LISTS,
-    );
-
-    expect(currentDraft(drafts)).toMatchObject({
-      name: "Norma",
-      groups: [],
-      steps: [],
-    });
   });
 });
 

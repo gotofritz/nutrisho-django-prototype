@@ -48,8 +48,8 @@ export function currentDraft(drafts: Drafts): RecipeDraft | undefined {
 /**
  * A clipping arrived. From the page of a draft already held, that draft is
  * shown; from any other page a new draft starts, and the saved ones are
- * dropped. The text goes to the clipboard, and to the part of the draft the
- * submenu named: the title replaces the name, the rest add to what is there.
+ * dropped. The text goes to the part of the draft it was sent to: the title
+ * replaces the name, the rest add to what is there.
  */
 export function afterClip(
   drafts: Drafts,
@@ -62,7 +62,7 @@ export function afterClip(
   const shown = landIn(drafts, clipping, newId);
   const { target } = clipping;
   const draft = currentDraft(shown);
-  if (target === "clipboard" || draft === undefined) return shown;
+  if (draft === undefined) return shown;
   const send = target === "name" ? replace : addTo;
   return withDraft(shown, send(draft, target, clipping.text, vocabulary));
 }

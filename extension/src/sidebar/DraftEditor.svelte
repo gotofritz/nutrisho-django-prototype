@@ -627,6 +627,7 @@
 </section>
 
 <style>
+  /* The site's look is global (styles/clipper.css); this is layout only. */
   .draft,
   .group,
   .row {
@@ -634,14 +635,8 @@
     gap: 0.5rem;
   }
 
-  h2,
-  h3,
-  p {
-    margin: 0;
-  }
-
-  h3 {
-    font-size: 0.9375rem;
+  .draft {
+    gap: 1rem;
   }
 
   label {
@@ -650,32 +645,21 @@
     font-size: 0.875rem;
   }
 
-  input,
-  textarea {
-    font: inherit;
-  }
-
+  /* No boxes: a row is set off by space, its tools on the line of its legend. */
   .row {
-    position: relative;
     grid-template-columns: 1fr;
-    border: 1px solid GrayText;
-    border-radius: 0.25rem;
-    padding: 0.5rem;
+    padding-top: 0.25rem;
   }
 
-  /* On the row's top border, opposite its legend. */
   .tools {
-    position: absolute;
-    top: -0.875rem;
-    right: 0.5rem;
     display: flex;
-    gap: 0.25rem;
-    background: Canvas;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0;
   }
 
   .group {
-    padding-left: 0.5rem;
-    border-left: 3px solid GrayText;
+    gap: 0.75rem;
   }
 
   .group-head {
@@ -690,14 +674,13 @@
 
   .group-tools {
     display: flex;
-    gap: 0.25rem;
   }
 
   .icon {
-    min-width: 1.5rem;
-    padding: 0 0.25rem;
-    font-size: 0.75rem;
-    line-height: 1.5;
+    min-width: 1.75rem;
+    padding: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.25;
   }
 
   .rest {
@@ -710,22 +693,24 @@
     flex: 1;
   }
 
-  /* A scratch pad: dashed and shaded, since none of it is saved. */
+  /* A scratch pad: pencil, italic and a dashed line, since none of it is saved. */
   .scratch {
-    border: 1px dashed GrayText;
-    background: color-mix(in srgb, GrayText 12%, Canvas);
+    border-bottom-style: dashed;
+    color: var(--pencil);
     font-style: italic;
   }
 
   .not-saved {
     margin-top: -0.375rem;
-    color: GrayText;
+    color: var(--pencil);
     font-size: 0.75rem;
+    font-style: italic;
   }
 
   .step-head {
     display: flex;
-    gap: 0.25rem;
+    align-items: end;
+    gap: 0;
   }
 
   .step-head > input {
@@ -748,10 +733,11 @@
 
   .add {
     justify-self: start;
-    font-size: 1rem;
+    font-size: 1.125rem;
   }
 
   .summary {
+    color: var(--pencil);
     font-size: 0.875rem;
   }
 
@@ -763,17 +749,12 @@
   .new {
     justify-self: start;
     margin-top: -0.25rem;
-    padding: 0 0.375rem;
-    border-radius: 0.25rem;
-    background: #fff3c4;
-    color: #5c4400;
-    font-size: 0.75rem;
   }
 
   /* Numbered by each title's placeholder, so the list needs no indent. */
   .steps {
     display: grid;
-    gap: 0.75rem;
+    gap: 1rem;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -781,32 +762,14 @@
 
   /* As tall as its text (fitText), so a clipped step shows whole. */
   .step-text {
-    box-sizing: border-box;
     overflow: hidden;
     resize: none;
   }
 
   .too-long {
     margin-top: -0.25rem;
-    color: #a40e26;
+    color: var(--smock-red);
     font-size: 0.75rem;
-  }
-
-  .quiet {
-    color: GrayText;
-    font-size: 0.875rem;
-  }
-
-  [aria-invalid="true"] {
-    outline: 2px solid #a40e26;
-  }
-
-  .hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+    font-style: italic;
   }
 </style>

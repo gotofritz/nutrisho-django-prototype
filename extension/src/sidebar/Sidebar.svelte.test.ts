@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, within } from "@testing-library/svelte";
+import { tick } from "svelte";
 import { describe, expect, it, vi } from "vitest";
 
 import { clippingFrom, type Clipping } from "@/core/clipping";
@@ -12,6 +13,7 @@ import {
 import { createFakeClippingStore } from "@/core/ports/fakes/fake-clipping-store";
 import { createFakeDraftStore } from "@/core/ports/fakes/fake-draft-store";
 import { createFakeNutrishoClient } from "@/core/ports/fakes/fake-nutrisho-client";
+import { createFakeSettingsStore } from "@/core/ports/fakes/fake-settings-store";
 import type {
   ClippingStore,
   DraftStore,
@@ -21,6 +23,7 @@ import { EMPTY_ROW } from "@/core/ingredient-line";
 import { withDetails, withOpenGroup } from "@/core/recipe-draft";
 import { err, ok } from "@/core/result";
 import { EMPTY_VOCABULARY, parseVocabulary } from "@/core/vocabulary";
+import type { LogEntry } from "@/nutrisho/fetch-log";
 
 import { apiExample } from "../../tests/support/api-examples";
 
@@ -34,6 +37,8 @@ const CLIPPING = clippingFrom(
     warnings: [],
   },
   new Date("2026-11-20T09:30:00Z"),
+  // The blurb, so the draft has no rows a save would stop on.
+  "blurb",
 );
 
 const COOKS_LISTS = parseVocabulary(
@@ -47,6 +52,7 @@ function renderSidebar(
     client?: NutrishoClient;
     openSettings?: () => void;
     newSession?: boolean;
+    log?: readonly LogEntry[];
   } = {},
 ) {
   let changed: (() => void) | undefined;
@@ -63,6 +69,9 @@ function renderSidebar(
     client,
     openSettings: overrides.openSettings ?? vi.fn(),
     isNewSession: async () => overrides.newSession ?? false,
+    settings: createFakeSettingsStore(),
+    requestHostPermission: async () => true,
+    log: overrides.log ?? [],
   };
   render(Sidebar, props);
   return { ...props, changed: () => changed?.() };
@@ -89,15 +98,41 @@ describe("the clipping", () => {
     expect(screen.getByText(/Alt\+Shift\+N/)).toBeVisible();
   });
 
-  it("puts the clipped text in the clipboard, and says where it came from", async () => {
+  // Plan 012, M12: the site's lineout plate, as on its login page.
+  it("shows the lineout plate while nothing is clipped", async () => {
+    renderSidebar();
+
+    expect(
+      await screen.findByRole("img", { name: /rugby lineout/ }),
+    ).toHaveAttribute("src", "/img/plate-lineout.webp");
+  });
+
+  it("marks Save as the main action", async () => {
+    renderSidebar({
+      clippings: createFakeClippingStore(CLIPPING),
+      drafts: createFakeDraftStore(clipped()),
+    });
+
+    expect(await screen.findByRole("button", { name: "Save" })).toHaveClass(
+      "primary",
+    );
+  });
+
+  it("says where the clipped text came from", async () => {
     renderSidebar({ clippings: createFakeClippingStore(CLIPPING) });
 
     expect(
       await screen.findByRole("link", { name: "Melanzane — Example" }),
     ).toHaveAttribute("href", "https://example.test/melanzane");
-    expect(screen.getByRole("textbox", { name: "Clipboard" })).toHaveValue(
-      "2 aubergines\n1 tbsp olive oil",
-    );
+  });
+
+  // M12: the clipboard went, so nothing shows the clipped text on its own.
+  it("has no clipboard", async () => {
+    renderSidebar({ clippings: createFakeClippingStore(CLIPPING) });
+    await nameField();
+
+    expect(screen.queryByRole("textbox", { name: "Clipboard" })).toBeNull();
+    expect(screen.queryByText("Clipboard")).toBeNull();
   });
 
   // The sidebar is usually open already when the next capture happens.
@@ -110,8 +145,9 @@ describe("the clipping", () => {
     changed();
 
     expect(
-      await screen.findByRole("textbox", { name: "Clipboard" }),
-    ).toHaveValue("2 aubergines\n1 tbsp olive oil");
+      await screen.findByRole("link", { name: "Melanzane — Example" }),
+    ).toBeVisible();
+    expect(await nameField()).toHaveValue("Melanzane — Example");
   });
 
   it("says what could not be read off the page", async () => {
@@ -137,18 +173,24 @@ describe("the clipping", () => {
   });
 });
 
+/** Wait until the lists have been asked for so often, and have come. */
+async function listsLoaded(client: { readonly calls: number }, times = 1) {
+  await vi.waitFor(() => expect(client.calls).toBe(times));
+  await tick();
+}
+
 describe("the lists", () => {
-  it("loads them when it opens, and says whose they are", async () => {
+  // They are what the clipper knows, not what the user reads: the requests
+  // are in Advanced Mode's log, and only a problem is shown (#179).
+  it("loads them when it opens, and shows nothing while they are fine", async () => {
     const client = answering(COOKS_LISTS);
 
     renderSidebar({ client });
 
-    expect(
-      await screen.findByText(
-        "Lists loaded for cook: 3 ingredients, 3 units, 2 cuisines, 2 tags.",
-      ),
-    ).toBeVisible();
-    expect(client.calls).toBe(1);
+    await listsLoaded(client);
+    expect(screen.queryByRole("heading", { name: "Your lists" })).toBeNull();
+    expect(screen.queryByText(/Lists loaded/)).toBeNull();
+    expect(screen.queryByRole("alert")).toBeNull();
   });
 
   it("says what went wrong, and sends a key problem to the settings", async () => {
@@ -175,40 +217,20 @@ describe("the lists", () => {
     client.answerVocabulary(COOKS_LISTS);
     await fireEvent.click(screen.getByRole("button", { name: "Try again" }));
 
-    expect(await screen.findByText(/Lists loaded for cook/)).toBeVisible();
-    expect(client.calls).toBe(2);
+    await listsLoaded(client, 2);
+    expect(screen.queryByRole("alert")).toBeNull();
   });
 
-  it("says it is loading while it waits", async () => {
-    const client: NutrishoClient = {
-      ...createFakeNutrishoClient(),
-      vocabulary: () => new Promise(() => {}),
-    };
-
-    renderSidebar({ client });
-
-    expect(await screen.findByText("Loading your lists…")).toBeVisible();
-  });
-
-  it("counts one of a kind in the singular", async () => {
+  it("shows the log it is given in Advanced Mode, folded away", async () => {
     renderSidebar({
-      client: answering(
-        ok({
-          user: "cook",
-          ingredients: [{ name: "basil", spellings: [] }],
-          units: [],
-          cuisines: ["med"],
-          tags: [],
-          limits: {},
-        }),
-      ),
+      log: [{ at: new Date(), text: "← 200 OK · 15 B · 42 ms" }],
     });
 
-    expect(
-      await screen.findByText(
-        "Lists loaded for cook: 1 ingredient, 0 units, 1 cuisine, 0 tags.",
-      ),
-    ).toBeVisible();
+    const log = await screen.findByRole("log", { name: "Log" });
+    expect(log).toHaveTextContent("← 200 OK · 15 B · 42 ms");
+    expect(log).not.toBeVisible();
+    await fireEvent.click(screen.getByText("Advanced Mode"));
+    expect(log).toBeVisible();
   });
 });
 
@@ -252,16 +274,12 @@ describe("the draft", () => {
     expect(await nameField()).toHaveValue("Melanzane — Example");
   });
 
-  it("scans the lines sent to the ingredients against the lists", async () => {
+  // The lists load first, so the lines are scanned against them.
+  it("puts a clipping sent to the ingredients in a group, scanned against the lists", async () => {
     renderSidebar({
-      clippings: createFakeClippingStore(CLIPPING),
+      clippings: createFakeClippingStore({ ...CLIPPING, target: "group" }),
       client: answering(COOKS_LISTS),
     });
-    await screen.findByText(/Lists loaded for cook/);
-
-    await fireEvent.click(
-      screen.getByRole("button", { name: "Add to ingredient groups" }),
-    );
 
     const first = await screen.findByRole("group", { name: "Row 1" });
     expect(
@@ -283,41 +301,19 @@ describe("the draft", () => {
     );
   });
 
-  // The right-click submenu sends the text on as well as to the clipboard.
-  // The lists load first, so the lines are scanned against them.
-  it("puts a clipping sent to the ingredients in a group, scanned against the lists", async () => {
-    renderSidebar({
-      clippings: createFakeClippingStore({ ...CLIPPING, target: "group" }),
-      client: answering(COOKS_LISTS),
-    });
+  it("loads the lists again from a server picked in Advanced Mode", async () => {
+    const client = createFakeNutrishoClient();
+    renderSidebar({ client });
+    await listsLoaded(client);
+    await fireEvent.click(screen.getByText("Advanced Mode"));
+    await screen.findByDisplayValue("8987");
 
-    const first = await screen.findByRole("group", { name: "Row 1" });
-    expect(
-      within(first).getByRole("combobox", { name: "Ingredient" }),
-    ).toHaveValue("aubergine");
-    expect(screen.getByRole("textbox", { name: "Clipboard" })).toHaveValue(
-      CLIPPING.text,
-    );
-  });
-
-  // Mostly for looking into a capture, so it is folded away until opened.
-  it("folds the clipboard away, with the page's markup beside it", async () => {
-    renderSidebar({
-      clippings: createFakeClippingStore({
-        ...CLIPPING,
-        html: "2 aubergines<br>1 tbsp olive oil",
-      }),
-    });
-
-    const clipboard = await screen.findByRole("textbox", { name: "Clipboard" });
-    expect(clipboard).not.toBeVisible();
     await fireEvent.click(
-      screen.getByText("Clipboard", { selector: "summary" }),
+      screen.getByRole("button", { name: "Use this server" }),
     );
-    expect(clipboard).toBeVisible();
-    const html = screen.getByRole("textbox", { name: "Page HTML" });
-    expect(html).toHaveValue("2 aubergines<br>1 tbsp olive oil");
-    expect(html).toHaveAttribute("readonly");
+
+    await screen.findByText("Now using http://127.0.0.1:8987.");
+    expect(client.calls).toBe(2);
   });
 
   // A clip opens the sidebar, and can land while the sidebar is still
@@ -332,7 +328,7 @@ describe("the draft", () => {
       }),
     );
     const clippings = createFakeClippingStore(CLIPPING);
-    let listsArrive: (lists: typeof COOKS_LISTS) => void = () => {};
+    let listsArrive: ((lists: typeof COOKS_LISTS) => void) | undefined;
     const client: NutrishoClient = {
       ...answering(COOKS_LISTS),
       vocabulary: () =>
@@ -343,7 +339,8 @@ describe("the draft", () => {
     const drafts = createFakeDraftStore(kept);
     const saved = vi.spyOn(drafts, "save");
     const { changed } = renderSidebar({ clippings, drafts, client });
-    await screen.findByText("Loading your lists…");
+    // Asked for, and not come yet.
+    await vi.waitFor(() => expect(listsArrive).toBeDefined());
 
     await clippings.save({
       ...CLIPPING,
@@ -351,7 +348,7 @@ describe("the draft", () => {
       clippedAt: "2026-11-20T09:31:00.000Z",
     });
     changed();
-    listsArrive(COOKS_LISTS);
+    listsArrive?.(COOKS_LISTS);
 
     expect(await screen.findByRole("group", { name: "Row 1" })).toBeVisible();
     expect(await nameField()).toHaveValue("My melanzane");
@@ -366,14 +363,13 @@ describe("the draft", () => {
     }
   });
 
-  it("keeps the clipboard below the recipe", async () => {
+  it("keeps Advanced Mode below the recipe", async () => {
     renderSidebar({ clippings: createFakeClippingStore(CLIPPING) });
 
     const name = await nameField();
-    const clipboard = screen.getByRole("textbox", { name: "Clipboard" });
+    const advanced = screen.getByText("Advanced Mode");
     expect(
-      name.compareDocumentPosition(clipboard) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
+      name.compareDocumentPosition(advanced) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });
 
@@ -387,17 +383,6 @@ describe("the draft", () => {
 
     const stored = await drafts.load();
     expect(stored.ok && stored.value.drafts[0]?.name).toBe("Melanzane");
-  });
-
-  // Typed or pasted text is treated the same as clipped text (D3).
-  it("starts from typed text when nothing was clipped", async () => {
-    renderSidebar();
-    const clipboard = await screen.findByRole("textbox", { name: "Clipboard" });
-
-    await fireEvent.input(clipboard, { target: { value: "Lemon posset" } });
-    await fireEvent.click(screen.getByRole("button", { name: "Replace name" }));
-
-    expect(await nameField()).toHaveValue("Lemon posset");
   });
 
   it("says when the drafts could not be kept", async () => {
@@ -500,7 +485,9 @@ describe("the save", () => {
     await fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
     expect(
-      await screen.findByText("Saved as Melanzane — Example."),
+      within(await screen.findByRole("status")).getByText(
+        "Saved as Melanzane — Example.",
+      ),
     ).toBeVisible();
     expect(
       screen.getByRole("link", { name: "Open in Nutrisho" }),
@@ -512,36 +499,38 @@ describe("the save", () => {
   it("loads the lists again after a save, keeping the ones shown meanwhile", async () => {
     const client = answering(COOKS_LISTS);
     await ready(client);
-    await screen.findByText(/Lists loaded for cook/);
+    await listsLoaded(client);
 
     await fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
-    await screen.findByText("Saved as Melanzane — Example.");
-    await vi.waitFor(() => expect(client.calls).toBe(2));
-    expect(screen.queryByText("Loading your lists…")).toBeNull();
+    await screen.findByRole("status");
+    await listsLoaded(client, 2);
+    expect(screen.queryByRole("alert")).toBeNull();
   });
 
   it("keeps the lists it has when loading them again fails", async () => {
     const client = answering(COOKS_LISTS);
     await ready(client);
-    await screen.findByText(/Lists loaded for cook/);
+    await listsLoaded(client);
     client.answerVocabulary(err({ kind: "unreachable", message: "gone" }));
 
     await fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
-    await vi.waitFor(() => expect(client.calls).toBe(2));
-    expect(screen.getByText(/Lists loaded for cook/)).toBeVisible();
+    await listsLoaded(client, 2);
+    expect(screen.queryByRole("alert")).toBeNull();
   });
 
   it("does not load the lists again when the save fails", async () => {
     const client = answering(COOKS_LISTS);
     client.answerSave(err({ kind: "unreachable", message: "gone" }));
     await ready(client);
-    await screen.findByText(/Lists loaded for cook/);
+    await listsLoaded(client);
 
     await fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
-    await screen.findByText(/Nothing answered/);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      /Nothing answered/,
+    );
     expect(client.calls).toBe(1);
   });
 
@@ -631,7 +620,7 @@ describe("the save", () => {
   // M9 (D12): the server's limits, loaded with the lists, stop a save early.
   it("refuses text too long for its field, and sends nothing", async () => {
     const { client } = await ready(answering(COOKS_LISTS));
-    await screen.findByText(/Lists loaded for cook/);
+    await listsLoaded(client);
     await fireEvent.input(await nameField(), {
       target: { value: "x".repeat(201) },
     });
@@ -715,7 +704,7 @@ describe("the save", () => {
 });
 
 describe("Clear all", () => {
-  it("empties the clipboard and drops every draft and the clipping", async () => {
+  it("drops every draft and the clipping", async () => {
     const clippings = createFakeClippingStore(CLIPPING);
     const drafts = createFakeDraftStore(
       afterClip(clipped(), RAGU, () => "draft-ragu", EMPTY_VOCABULARY),
@@ -727,7 +716,6 @@ describe("Clear all", () => {
     changed();
 
     expect(await screen.findByText("Nothing clipped yet.")).toBeVisible();
-    expect(screen.getByRole("textbox", { name: "Clipboard" })).toHaveValue("");
     expect(screen.queryByRole("textbox", { name: "Name" })).toBeNull();
     const stored = await drafts.load();
     expect(stored.ok && stored.value.drafts).toEqual([]);
@@ -735,14 +723,14 @@ describe("Clear all", () => {
     expect(clipping.ok && clipping.value).toBeUndefined();
   });
 
-  it("sits at the top, before the clipboard", async () => {
+  it("sits at the top, before Advanced Mode", async () => {
     renderSidebar({ clippings: createFakeClippingStore(CLIPPING) });
     await nameField();
 
     const clear = screen.getByRole("button", { name: "Clear all" });
-    const clipboard = screen.getByRole("textbox", { name: "Clipboard" });
+    const advanced = screen.getByText("Advanced Mode");
     expect(
-      clear.compareDocumentPosition(clipboard) &
+      clear.compareDocumentPosition(advanced) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });

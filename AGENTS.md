@@ -384,6 +384,11 @@ is the reference for patterns, since the extension starts as a cut-down copy.
   same stem covers; config, types, barrels and entrypoints are exempt.
   `SKIP_TDD_HOOK=1` bypasses it, only for generated code or config, and only
   after asking.
+- **Look**: the site's, from copies of its tokens, two text faces and
+  lineout plate (`src/styles/tokens.css`, `public/`), kept identical by
+  `tests/look/site-copies.test.ts`: change the site's first, then copy.
+  `src/styles/clipper.css` styles elements; components add layout only.
+  `make ext-preview` shows each state.
 - **Manual pass**: from M6, an extension PR is done only after a pass by hand
   in a real Firefox (`make ext-dev`).
 

@@ -1,0 +1,32 @@
+/*
+ * The scene picker only. Everything in #app is the clipper's own look, which
+ * this file must not reach.
+ */
+#scenes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 6px;
+  background: #4a4d55;
+  font:
+    400 11px/1 ui-monospace,
+    monospace;
+}
+
+#scenes a {
+  padding: 5px 8px;
+  background: #e4e5e8;
+  color: #0a0a0c;
+  text-decoration: none;
+}
+
+#scenes a[aria-current="page"] {
+  background: #9a4f10;
+  color: #fff;
+}
+
+/* A sidebar is narrow, and a look checked at desktop width is not checked. */
+#app {
+  width: 380px;
+  margin: 0 auto;
+}

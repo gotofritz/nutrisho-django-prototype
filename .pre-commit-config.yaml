@@ -60,14 +60,15 @@ repos:
         language: system
         pass_filenames: false
         types: [python]
-      # The extension's checks, once per commit that touches extension/ (#162).
+      # The extension's checks, once per commit that touches extension/ (#162),
+      # or the site's look, which the clipper copies (M12).
       - id: ext-qa
         name: ext-qa
         entry: make ext-qa
         require_serial: true
         language: system
         pass_filenames: false
-        files: ^extension/
+        files: ^(extension/|server/src/recipes/static/(css/style\.css$|fonts/|img/plate-lineout\.webp$))
       - id: tdd-hook-tests
         name: TDD hook tests
         entry: bash .claude/hooks/test-check-tdd.sh

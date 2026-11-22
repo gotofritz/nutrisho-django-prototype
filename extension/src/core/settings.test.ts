@@ -3,18 +3,22 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_SETTINGS,
   checkSettings,
+  SERVERS,
   hostPatternFor,
   keysPageFor,
   readSettings,
+  serverParts,
+  serverUrlFor,
 } from "./settings";
 
 const KEY = "nsh_abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
 
 describe("the defaults", () => {
-  // Plan 012, D17: built against `make dev`, on loopback.
+  // Plan 012, D17: built against `make dev`, on loopback, at the address
+  // Django prints (M12).
   it("point at the dev server and hold no key", () => {
     expect(DEFAULT_SETTINGS).toEqual({
-      serverUrl: "http://localhost:8987",
+      serverUrl: "http://127.0.0.1:8987",
       apiKey: "",
     });
   });
@@ -27,6 +31,15 @@ describe("checkSettings", () => {
     ).toEqual({
       ok: true,
       value: { serverUrl: "http://localhost:8987", apiKey: KEY },
+    });
+  });
+
+  it("accepts nutrisho.com over https", () => {
+    expect(
+      checkSettings({ serverUrl: "https://nutrisho.com/", apiKey: KEY }),
+    ).toEqual({
+      ok: true,
+      value: { serverUrl: "https://nutrisho.com", apiKey: KEY },
     });
   });
 
@@ -47,8 +60,10 @@ describe("checkSettings", () => {
     ["localhost:8987", "not-a-url"],
     ["ftp://localhost", "not-http"],
     ["https://localhost:8987", "not-http"],
-    ["http://recipes.example.com", "not-loopback"],
-    ["http://[::1]:8987", "not-loopback"],
+    ["http://nutrisho.com", "not-https"],
+    ["http://recipes.example.com", "unknown-host"],
+    ["https://recipes.example.com", "unknown-host"],
+    ["http://[::1]:8987", "unknown-host"],
   ])("refuses the address %j (%s)", (serverUrl, code) => {
     const checked = checkSettings({ serverUrl, apiKey: KEY });
 
@@ -115,6 +130,9 @@ describe("hostPatternFor", () => {
   it("names the host without its port", () => {
     expect(hostPatternFor("http://localhost:8987")).toBe("http://localhost/*");
     expect(hostPatternFor("http://127.0.0.1:8000")).toBe("http://127.0.0.1/*");
+    expect(hostPatternFor("https://nutrisho.com")).toBe(
+      "https://nutrisho.com/*",
+    );
   });
 });
 
@@ -133,5 +151,47 @@ describe("keysPageFor", () => {
     expect(keysPageFor("")).toBeUndefined();
     expect(keysPageFor("localhost:8987")).toBeUndefined();
     expect(keysPageFor("https://example.com")).toBeUndefined();
+  });
+});
+
+describe("the server picker", () => {
+  // M12, Advanced Mode: this computer, at the address Django prints, or
+  // nutrisho.com.
+  it("offers this computer and nutrisho.com", () => {
+    expect(SERVERS.map((server) => server.host)).toEqual([
+      "127.0.0.1",
+      "nutrisho.com",
+    ]);
+  });
+
+  it.each([
+    ["127.0.0.1", "8000", "http://127.0.0.1:8000"],
+    ["127.0.0.1", " 8987 ", "http://127.0.0.1:8987"],
+    ["nutrisho.com", "", "https://nutrisho.com"],
+    ["nutrisho.com", "8443", "https://nutrisho.com:8443"],
+  ])("makes %s port %j into %s", (host, port, url) => {
+    expect(serverUrlFor({ host, port })).toEqual({ ok: true, value: url });
+  });
+
+  it.each([
+    ["127.0.0.1", ""],
+    ["127.0.0.1", "eighty"],
+    ["127.0.0.1", "0"],
+    ["127.0.0.1", "65536"],
+    ["nutrisho.com", "-1"],
+    ["example.com", "443"],
+  ])("refuses %s port %j", (host, port) => {
+    const url = serverUrlFor({ host, port });
+
+    expect(url.ok).toBe(false);
+  });
+
+  it.each([
+    ["http://127.0.0.1:8987", "127.0.0.1", "8987"],
+    ["http://localhost:8000", "127.0.0.1", "8000"],
+    ["https://nutrisho.com", "nutrisho.com", ""],
+    ["https://nutrisho.com:8443", "nutrisho.com", "8443"],
+  ])("reads %s back as %s port %j", (url, host, port) => {
+    expect(serverParts(url)).toEqual({ host, port });
   });
 });

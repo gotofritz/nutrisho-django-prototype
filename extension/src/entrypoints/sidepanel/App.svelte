@@ -1,6 +1,7 @@
 <script lang="ts">
   import { uuidV7 } from "@/core/uuid7";
   import { createNutrishoClient } from "@/nutrisho/client";
+  import { loggedFetch, type LogEntry } from "@/nutrisho/fetch-log";
   import {
     createStoredClipping,
     watchClipping,
@@ -31,8 +32,14 @@
   // The settings are read on every call, so a change on the options page
   // takes effect on the next Try again without reopening the sidebar. The
   // extension's own page calls the server, never a content script (D10).
+  // Advanced Mode's log: each request and reply while the sidebar is open,
+  // the last hundred, in memory only.
+  let log = $state.raw<readonly LogEntry[]>([]);
   const client = createNutrishoClient({
-    fetch: (input, init) => fetch(input, init),
+    fetch: loggedFetch(
+      (input, init) => fetch(input, init),
+      (entry) => (log = [...log, entry].slice(-100)),
+    ),
     loadSettings: () => loadSettingsOrDefaults(settings),
     hasHostPermission: (serverUrl) =>
       permissions.has(hostPermissionFor(serverUrl)),
@@ -47,4 +54,8 @@
   {client}
   openSettings={() => void options.open()}
   isNewSession={() => sessionStart.isNew()}
+  {settings}
+  requestHostPermission={(pattern) =>
+    permissions.request({ origins: [pattern] })}
+  {log}
 />

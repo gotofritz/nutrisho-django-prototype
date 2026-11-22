@@ -22,6 +22,7 @@ TASKS = (
     "ext-build",
     "ext-dev",
     "ext-install",
+    "ext-preview",
     "ext-qa",
     "ext-test",
     "help",
@@ -360,7 +361,7 @@ def test_test_hooks_runs_the_hook_tests():
     assert "test-check-tdd.sh" in output
 
 
-EXTENSION_TARGETS = ["ext-install", "ext-dev", "ext-test", "ext-build", "ext-qa"]
+EXTENSION_TARGETS = ["ext-install", "ext-dev", "ext-test", "ext-build", "ext-preview", "ext-qa"]
 
 
 @needs_make

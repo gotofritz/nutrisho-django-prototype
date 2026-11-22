@@ -120,7 +120,8 @@
       </p>
     {:else}
       <p class="quiet" id="server-url-hint">
-        <code>make dev</code> serves it at http://localhost:8987.
+        <code>make dev</code> serves it at http://127.0.0.1:8987; the other is https://nutrisho.com.
+        Advanced Mode in the sidebar picks either.
       </p>
     {/if}
   </div>
@@ -174,30 +175,17 @@
 </form>
 
 <style>
+  /* The site's look is global (styles/clipper.css); this is layout only. */
   .settings {
     display: grid;
-    gap: 1rem;
+    gap: 1.5rem;
     max-width: 36rem;
     margin: 1.5rem;
-    font:
-      1rem/1.5 system-ui,
-      sans-serif;
   }
 
   .field {
     display: grid;
     gap: 0.25rem;
-  }
-
-  .quiet {
-    margin: 0;
-    color: GrayText;
-    font-size: 0.875rem;
-  }
-
-  .problem {
-    margin: 0;
-    color: #a40e26;
   }
 
   button {

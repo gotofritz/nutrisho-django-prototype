@@ -105,6 +105,9 @@ ext-dev: $(EXT_INSTALLED) ## Run the extension in a fresh browser profile, reloa
 ext-install: ## Install the extension's dependencies from extension/pnpm-lock.yaml
 	$(EXT_INSTALL)
 
+ext-preview: $(EXT_INSTALLED) ## Show each state of the sidebar and settings in a plain page, without a browser extension
+	$(IN_EXT) pnpm preview
+
 ext-qa: $(EXT_INSTALLED) ## Run the extension's checks: formatting, lint, types, tests, and a build for each browser
 	$(IN_EXT) pnpm format:check
 	$(IN_EXT) pnpm lint

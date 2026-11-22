@@ -97,12 +97,12 @@ describe("background", () => {
   });
 
   // Shown only on a selection: there is nothing to clip without one. The
-  // submenu says where the text goes, as well as to the clipboard.
+  // submenu says where the text goes.
   it("registers a submenu, on selections only", async () => {
     const { deps, menus } = harness();
 
     startBackground(deps);
-    await vi.waitFor(() => expect(menus.created).toHaveLength(7));
+    await vi.waitFor(() => expect(menus.created).toHaveLength(6));
 
     expect(menus.removeAll).toHaveBeenCalled();
     expect(menus.created).toEqual([
@@ -117,7 +117,6 @@ describe("background", () => {
         ["group", "Ingredient group"],
         ["ingredient", "Ingredient"],
         ["steps", "Steps"],
-        ["clipboard", "Clipboard"],
       ].map(([to, title]) => ({
         id: `${CAPTURE_MENU_ITEM}-${to}`,
         parentId: CAPTURE_MENU_ITEM,
@@ -127,7 +126,7 @@ describe("background", () => {
     ]);
   });
 
-  it.each(["name", "blurb", "group", "ingredient", "steps", "clipboard"])(
+  it.each(["name", "blurb", "group", "ingredient", "steps"])(
     "clips to %s from its submenu entry",
     async (to) => {
       const { deps, clicks } = harness();
@@ -163,7 +162,7 @@ describe("background", () => {
     await vi.waitFor(async () =>
       expect(await clipped(deps)).toBe(CAPTURE.text),
     );
-    expect(await target(deps)).toBe("clipboard");
+    expect(await target(deps)).toBe("group");
   });
 
   it("ignores somebody else's shortcut", () => {
@@ -186,7 +185,7 @@ describe("background", () => {
     await vi.waitFor(async () =>
       expect(await clipped(deps)).toBe(CAPTURE.text),
     );
-    expect(await target(deps)).toBe("clipboard");
+    expect(await target(deps)).toBe("group");
   });
 
   // Both browsers require `sidebar.open` inside the gesture's own task. The
@@ -240,6 +239,6 @@ describe("reporting what a capture did", () => {
     await vi.waitFor(async () =>
       expect(await clipped(deps)).toBe(CAPTURE.text),
     );
-    expect(await target(deps)).toBe("clipboard");
+    expect(await target(deps)).toBe("group");
   });
 });

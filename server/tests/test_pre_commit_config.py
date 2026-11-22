@@ -1,5 +1,6 @@
 """Tests for the git hooks in `.pre-commit-config.yaml` (#68)."""
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -43,12 +44,21 @@ def test_commit_msg_hooks_are_installed_by_default():
 
 
 def test_extension_changes_run_the_extension_checks():
-    """A commit under `extension/` runs `make ext-qa`, once, whatever files it touches."""
+    """A commit under `extension/`, or to the site's look it copies, runs `make ext-qa` once."""
     hook = local_hook("ext-qa")
+    files = re.compile(hook["files"])
 
     assert hook["entry"] == "make ext-qa"
-    assert hook["files"] == "^extension/"
     assert hook["pass_filenames"] is False
+    for path in [
+        "extension/src/sidebar/Sidebar.svelte",
+        "server/src/recipes/static/css/style.css",
+        "server/src/recipes/static/fonts/libre-caslon-text/OFL.txt",
+        "server/src/recipes/static/img/plate-lineout.webp",
+    ]:
+        assert files.search(path), path
+    for path in ["server/src/recipes/static/js/app.js", "server/src/recipes/views/api.py"]:
+        assert not files.search(path), path
 
 
 def test_a_change_to_the_tdd_hook_runs_its_tests():

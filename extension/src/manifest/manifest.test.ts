@@ -4,6 +4,7 @@ import {
   CAPTURE_COMMAND,
   GECKO_ID,
   LOOPBACK_HOSTS,
+  REMOTE_HOST,
   manifestExtras,
 } from "./manifest";
 
@@ -33,22 +34,24 @@ describe("manifest permissions", () => {
   );
 
   // The server's address is a setting (D17), so its host is an optional
-  // permission, asked for when the options page saves it. Loopback only until
-  // there is a production server (#87).
+  // permission, asked for when it is saved. Loopback, and nutrisho.com over
+  // https (M12, Advanced Mode).
   it.each(["firefox", "chrome"])(
-    "offers %s loopback and nothing else as an optional host",
+    "offers %s loopback and nutrisho.com and nothing else as optional hosts",
     (target) => {
       expect(manifestExtras(target).optional_host_permissions).toEqual([
         "http://localhost/*",
         "http://127.0.0.1/*",
+        "https://nutrisho.com/*",
       ]);
     },
   );
 
-  it("offers one optional host for each loopback name the settings accept", () => {
-    expect(manifestExtras("firefox").optional_host_permissions).toEqual(
-      LOOPBACK_HOSTS.map((host) => `http://${host}/*`),
-    );
+  it("offers one optional host for each name the settings accept", () => {
+    expect(manifestExtras("firefox").optional_host_permissions).toEqual([
+      ...LOOPBACK_HOSTS.map((host) => `http://${host}/*`),
+      `https://${REMOTE_HOST}/*`,
+    ]);
   });
 
   it("never asks for every site", () => {

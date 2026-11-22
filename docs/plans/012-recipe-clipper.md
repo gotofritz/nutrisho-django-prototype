@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M11 and M14 done (#154, #156, #158, #160, #162, #166, #168, #171, #173, #149, #177, #150)
+## Status: In progress, M1 to M12 and M14 done (#154, #156, #158, #160, #162, #166, #168, #171, #173, #149, #177, #179, #150)
 
 ## What we are building
 
@@ -8,12 +8,11 @@ A browser extension, in `extension/` (#145), that clips a recipe from the
 page the user is reading into their Nutrisho.
 
 1. The user selects text on a recipe page and clips it from the right-click
-   menu, choosing where it goes: the title, the blurb, an ingredient group,
-   the steps, or only the clipboard. A shortcut and the toolbar button clip to
-   the clipboard.
-2. A sidebar opens with the recipe so far. Clipped text also lands in a
-   clipboard, folded away at the bottom, from where it can be added to any
-   part of the recipe, or replace it.
+   menu, choosing where it goes: the title, the blurb, an ingredient group or
+   the steps. A shortcut and the toolbar button clip to a new ingredient
+   group.
+2. A sidebar opens with the recipe so far. Advanced Mode, folded away at the
+   bottom, picks the server and logs each request to it and its reply.
 3. Each ingredient line becomes a row with the fields it has on the site.
    The sidebar fills in what it recognises and marks the names the library
    does not have. Everything can be edited, as on the site.
@@ -40,15 +39,13 @@ Changing one means editing this list.
   menu, a shortcut or the toolbar button: only those let the extension read
   the page (`activeTab`).
 - **D3 Where text goes.** The right-click menu's submenu (*Title*, *Blurb*,
-  *Ingredient group*, *Ingredient*, *Steps*, *Clipboard*) sends a capture to
-  that part of the recipe and to the clipboard: the title replaces the name,
-  the others add to what is there. *Ingredient group* starts a group;
-  *Ingredient* adds to the one group shown open, or starts one when none
-  is. The shortcut and the toolbar button send it to the
-  clipboard only. From the clipboard, at the bottom of the sidebar, text is
-  added to a part of the recipe or replaces it; typed or pasted text is
-  treated the same. (Changed after a first use of M7: the clipboard alone was
-  one step too many.)
+  *Ingredient group*, *Ingredient*, *Steps*) sends a capture to that part of
+  the recipe: the title replaces the name, the others add to what is there.
+  *Ingredient group* starts a group; *Ingredient* adds to the one group
+  shown open, or starts one when none is. The shortcut and the toolbar
+  button send it to a new ingredient group. (Changed twice: after a first
+  use of M7 the clipboard alone was one step too many, and in M12 the
+  clipboard went, as not useful.)
 - **D4 Lists loaded on open.** As Joplin's clipper does with tags, the
   sidebar loads the user's full lists of ingredients, units and cuisines
   every time it opens, and checks names against them in the browser. A name
@@ -86,8 +83,10 @@ Changing one means editing this list.
   first extension PR. After at most two set-up PRs, every PR leaves a
   clipper that can be used.
 - **D17 Dev server first.** Built against the local dev server (`http`, on
-  loopback only). The server's address is a setting, and a production one is
-  added when there is one (#87).
+  loopback, at `127.0.0.1` as Django prints it). The server's address is a
+  setting; the production server, `https://nutrisho.com`, joined the
+  optional host permissions in M12, when the person asked for it in
+  Advanced Mode (#87).
 - **D18 Firefox first.** Chrome is built in CI from the start, and becomes a
   release target after the first Firefox release.
 - **D19 Look.** The site's storybook look, from its own tokens and
@@ -225,21 +224,17 @@ too many requests (with how long to wait), server error and malformed reply.
 The client reads the server's `code`, not its wording. A refusal that names
 a field is flagged at that field in the editor's words (D12).
 
-### M12 · extension · The look
+### ✅ M12 · extension · The look
 
-The site's recipe page on a phone (`server/docs/features/design.md`), with a
-clipboard on top.
-
-- The tokens and the two text faces (Libre Caslon Text, IM Fell English SC)
-  are copied into `extension/`. A test keeps the copies identical to the
-  server's, and the extension workflow also runs when the server's change.
-- No boxes: space and type separate things. *New* in `--marmalade`, *Save*
-  on `--sunflower-wash`, errors in `--smock-red` and nothing else red, the
-  lineout plate when nothing is clipped.
-- Every control is labelled and reachable by keyboard, and changes are
-  announced.
-- A preview harness (anklipper's `preview/`) renders each state of the
-  sidebar without a browser.
+Done (#179). The sidebar and settings are in the site's storybook look, from
+copies of its tokens, its two text faces and its lineout plate, which a test
+keeps identical to the server's (D19). No boxes; Save on a sunflower wash;
+errors alone in smock red; the plate when nothing is clipped. `make
+ext-preview` shows each state on the fakes. After a first look the clipboard
+went (D3), and the clipped markup with it, which the clipper no longer
+reads; its fold, Advanced Mode, picks 127.0.0.1 or nutrisho.com (over https,
+a new optional host) and the port, and logs each request to the server and
+its reply, in monospace; of the lists, only a problem shows outside it.
 
 ### M13 · extension · A model of the user's own
 
@@ -271,8 +266,8 @@ confirmation. The clipper's settings link to the page.
   in one workflow, since a tag made by CI starts no workflow of its own,
   and runs in the `store-publishing` environment with a required reviewer
   (#145).
-- The production server's address joins the optional host permissions when
-  there is one (#87).
+- The production server's address, `https://nutrisho.com`, is already an
+  optional host permission (M12).
 
 ### M16 · extension · Fill from the page
 

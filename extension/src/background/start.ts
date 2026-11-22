@@ -16,14 +16,13 @@ import { captureFromGesture, describeCapture } from "./capture";
 /** The menu entry's id; its submenu entries are this plus their target. */
 export const CAPTURE_MENU_ITEM = CAPTURE_COMMAND;
 
-/** The submenu, in order: where the text goes, as well as to the clipboard. */
+/** The submenu, in order: where the text goes. */
 const SUBMENU: readonly { target: ClipTarget; title: string }[] = [
   { target: "name", title: "Title" },
   { target: "blurb", title: "Blurb" },
   { target: "group", title: "Ingredient group" },
   { target: "ingredient", title: "Ingredient" },
   { target: "steps", title: "Steps" },
-  { target: "clipboard", title: "Clipboard" },
 ];
 
 const menuItem = (target: ClipTarget) => `${CAPTURE_MENU_ITEM}-${target}`;

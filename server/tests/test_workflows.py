@@ -240,6 +240,10 @@ AUDIT = ROOT / ".github/workflows/server-audit.yml"
         (EXTENSION_WORKFLOW, ["Makefile"], "true"),
         (EXTENSION_WORKFLOW, [".pre-commit-config.yaml"], "true"),
         (EXTENSION_WORKFLOW, ["server/tests/api_examples/save.json"], "true"),
+        (EXTENSION_WORKFLOW, ["server/src/recipes/static/css/style.css"], "true"),
+        (EXTENSION_WORKFLOW, ["server/src/recipes/static/fonts/lobster/OFL.txt"], "true"),
+        (EXTENSION_WORKFLOW, ["server/src/recipes/static/img/plate-lineout.webp"], "true"),
+        (EXTENSION_WORKFLOW, ["server/src/recipes/static/js/app.js"], "false"),
     ],
     ids=lambda value: value.name if isinstance(value, Path) else None,
 )
@@ -249,7 +253,8 @@ def test_the_checks_run_for_the_files_they_cover(
     """Each part's checks run for the files they concern (#145).
 
     The server skips extension-only changes; the extension runs for its own files,
-    its workflow, the Makefile, the hooks and the API examples its tests read.
+    its workflow, the Makefile, the hooks, the API examples its tests read and the
+    site's stylesheet, fonts and plate it copies.
     """
     assert decide(path, changed, tmp_path) == runs
 

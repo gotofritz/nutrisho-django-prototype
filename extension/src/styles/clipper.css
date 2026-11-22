@@ -1,0 +1,189 @@
+/*
+ * The clipper in the site's storybook look (plan 012, M12, D19): the site's
+ * recipe page on a phone. Ink on warm paper, set in Caslon, with small
+ * capitals for labels and actions. No boxes: space and type separate things,
+ * and a field is a line to write on. The rules follow the site's own
+ * (server/src/recipes/static/css/style.css, docs/features/design.md); the
+ * tokens they use are copied in tokens.css. Components add only layout.
+ */
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 1rem/1.5 var(--font-text);
+  margin: 0;
+}
+
+body * {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1 {
+  font: 1.125rem var(--font-caps);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+h2,
+h3,
+summary,
+legend {
+  color: var(--marmalade);
+  font-family: var(--font-caps);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+
+h2 {
+  font-size: 1.125rem;
+}
+
+h3,
+legend {
+  font-size: 1rem;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: var(--color-field-border);
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--marmalade);
+}
+
+:focus-visible {
+  outline: 2px solid var(--orange-wash);
+  outline-offset: 3px;
+}
+
+/* No boxes: a group of fields is separated by space, not a frame. */
+fieldset {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+/* A field is a line to write on. */
+input:not([type="checkbox"], [type="radio"], [type="hidden"]),
+select,
+textarea {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--color-field-border);
+  border-radius: 0;
+  /* Text, even inside a label set in small capitals. */
+  color: var(--ink);
+  font: 1rem/1.5 var(--font-text);
+  letter-spacing: normal;
+  padding: 0.25em 0.1em;
+  width: 100%;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-bottom-color: var(--ink);
+  box-shadow: 0 2px 0 var(--orange-wash);
+  outline: none;
+}
+
+label {
+  color: var(--marmalade);
+  font-family: var(--font-caps);
+  letter-spacing: 0.06em;
+}
+
+/* An action is a word in small capitals; the one that commits sits on a wash. */
+button {
+  background: none;
+  border: 0;
+  color: var(--ink);
+  cursor: pointer;
+  font: 1rem var(--font-caps);
+  letter-spacing: 0.08em;
+  padding: 0.35em 0.6em;
+  white-space: nowrap;
+}
+
+button:hover {
+  color: var(--marmalade);
+}
+
+button[type="submit"],
+button.primary {
+  background: var(--sunflower-wash);
+  border-radius: var(--wash-radius);
+  padding: 0.5em 1.4em;
+}
+
+button[type="submit"]:hover,
+button.primary:hover {
+  background: var(--orange-wash);
+  color: var(--ink);
+}
+
+button:disabled,
+button:disabled:hover {
+  color: var(--disabled);
+  cursor: not-allowed;
+}
+
+/* Errors are smock red, and nothing else is red. */
+.problem {
+  color: var(--smock-red);
+  font-style: italic;
+}
+
+/* Declared after the field rules, which it ties with, so it wins. */
+:is(input, select, textarea)[aria-invalid="true"] {
+  border-bottom-color: var(--smock-red);
+  box-shadow: 0 2px 0 var(--smock-red);
+}
+
+.quiet {
+  color: var(--pencil);
+  font-size: 0.875rem;
+}
+
+/* A name saving would make, in marmalade, as the site marks a label. */
+.new {
+  color: var(--marmalade);
+  font: 0.875rem var(--font-caps);
+  letter-spacing: 0.06em;
+}
+
+/* A loose watercolour: its white turns into the paper. */
+.plate {
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  max-width: 100%;
+  mix-blend-mode: multiply;
+}
+
+/* Hidden on screen, still read out. */
+.hidden {
+  border: 0;
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
