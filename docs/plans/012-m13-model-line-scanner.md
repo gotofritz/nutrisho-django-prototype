@@ -1,0 +1,202 @@
+# Plan 012, M13: a model of the user's own (design note)
+
+Issue #181. The milestone in `012-recipe-clipper.md` asks for this note
+before any code: what is sent and to whom, how the user turns it on, where
+its key lives, whether a model accepts a request from an extension, and what
+happens when the answer is not the shape asked for. Each section ends with
+the choice it proposes; **Choices for the person** at the end lists the ones
+that change what gets built.
+
+## What it does
+
+The built-in scanner (`core/ingredient-line.ts`, M8) reads a line such as
+`2 tbsp olive oil, plus extra to serve` with the loaded lists: it finds a
+quantity, a unit and an ingredient it knows, and leaves the rest in *Rest*.
+It is quick, private and right for lines that use names the lists have. It
+is weakest on what it has never seen: a new ingredient, a substitute
+(`butter or ghee`), preparation and notes mixed in, two quantities
+(`1 x 400g tin`).
+
+The model is a second scanner behind the same rows (D20). It is asked to
+split lines into the same seven fields; the rows it returns replace the
+built-in ones only where the user asks, and only if they pass the checks
+below. The lists then mark names as known or *new* exactly as now, so the
+model never decides what is in the user's library.
+
+## What is sent, and to whom
+
+- **Only the ingredient lines of one group**, as the rows hold them (the
+  text of each row, rebuilt from its fields), or **only the steps**, and a
+  fixed instruction. Not
+  the page, its address or title, the recipe's name, blurb or steps, the
+  API key for Nutrisho, or the user's lists.
+- **To the one model the user set up**, at the address they gave, and
+  nowhere else. The project never runs or proxies a model (D20).
+- The lists stay out on purpose: 436 ingredient names cost tokens on every
+  request and tell a hosted provider what the user cooks. The model only
+  has to split the line; matching names to the lists stays in the browser.
+- Each request and reply appears in Advanced Mode's log like the server's
+  (method, address, status, size, time), never headers or bodies.
+- **A check, sending nothing of the recipe**, when the sidebar opens or a
+  model is saved, and on *Check the model* in Advanced Mode (#182):
+  `GET /v1/models` for MLX and llama.cpp, `GET /v1/models/<model>` for
+  Anthropic, which also finds a wrong key or model name. Advanced Mode says
+  whether the model answers, and at which address.
+
+**Proposed:** as above.
+
+## Which models
+
+The three backends of timbuktu's user guide ("Choosing an AI backend"), so
+one set-up serves both projects:
+
+| | MLX | llama.cpp | Anthropic |
+| --- | --- | --- | --- |
+| Runs | on the Mac, Apple silicon | on the machine, any OS | at Anthropic |
+| Server | `mlx_lm.server --model mlx-community/Qwen3-8B-4bit --port 8080` | `llama-server -hf unsloth/Qwen3-8B-GGUF:UD-Q4_K_XL --port 8081` | none |
+| Address | `http://localhost:8080`, editable | `http://localhost:8081`, editable | `https://api.anthropic.com` |
+| API | OpenAI-compatible `/v1/chat/completions` | the same | Messages, `/v1/messages` |
+| Model | the Hugging Face id the server was started with | empty when the server has one model | a Claude model id, `claude-haiku-5-5` unless changed |
+| Key | none, or the server's own as a Bearer token | none | the user's own |
+| Data leaves the machine | no | no | yes, the lines only |
+| Answer in a fixed shape | `response_format` with the rows' JSON schema | the same | a tool whose `input_schema` is the rows' schema |
+| Host permission | loopback over http, already optional (M6) | the same | `https://api.anthropic.com/*`, a new optional one |
+
+MLX and llama.cpp share one adapter, since both speak the OpenAI-compatible
+API; they differ only in their defaults. Anthropic has its own. A cheap,
+fast model suits the job, splitting short lines, so Anthropic's default is
+Haiku; the user can name any current model.
+
+**Chosen by the person:** all three.
+
+## Does it accept a request from the extension?
+
+- **MLX and llama.cpp** answer cross-origin requests by default, and a
+  Firefox extension page with the host permission is not held to CORS for
+  that host anyway. Neither checks the `Origin` itself, unlike Ollama, which
+  refuses an extension until `OLLAMA_ORIGINS` allows it.
+- **Anthropic** answers a request that carries an `Origin` with 401 unless it
+  also sends `anthropic-dangerous-direct-browser-access: true`. The header's
+  warning is about a key exposed in a web page; here the key never reaches a
+  page, only the extension's storage, so it is the case the header exists for.
+- Whether `mlx_lm.server` honours `response_format` is to be checked by
+  hand; if it ignores it, the instruction alone asks for the shape, and the
+  checks below catch an answer that does not keep to it.
+
+- Qwen3 thinks before it answers, which is no help in splitting a line and
+  can use up the server's room before any answer (seen by hand with
+  llama.cpp, #182). The local adapter sends
+  `chat_template_kwargs: {enable_thinking: false}`, which both servers pass
+  to the chat template, and an answer cut short says so.
+
+All three need a pass by hand in Firefox before the PR is done.
+
+## How the user turns it on
+
+- **Off by default.** Nothing changes for a user who does not set it up.
+- **Set up on the options page**, under the Nutrisho settings: *Line
+  scanner*, either *Built in* or one of the three, then its address, the
+  model's name (`mlx-community/Qwen3-8B-4bit`, `claude-haiku-5-5`) and its
+  key, where it takes one. Saving asks for the host permission, as the
+  server's address does (M6).
+- **Used per group, on request.** Each ingredient group gets *Ask the model*
+  beside its name. The built-in scan still fills the rows the moment text is
+  clipped; asking the model sends that group's lines, shows it is waiting,
+  and replaces the rows when the answer passes. Automatic use on every clip
+  would send text the user has not looked at, and a hosted model costs money
+  per call.
+- **Undo.** One step back restores the rows from before the answer.
+
+**Proposed:** as above.
+
+## Where the key lives
+
+As D11: in `storage.local`, never synced, logged or shown again; the options
+page says a key is saved and offers to replace it, and a key never carries
+over to another backend. Firefox writes `storage.local` unencrypted into the
+profile, out of reach of web pages and other extensions; what can read the
+profile is malware on the machine, which could take far worse (cookies,
+passwords), or a copy of the profile, which disk encryption covers.
+Typing the key each session (`storage.session`) or under a passphrase was
+weighed and turned down, as a chore every session; a proxy on the user's
+Nutrisho is ruled out by D20, and the system keychain needs a native helper.
+So the options page asks for a key made for the clipper alone, with a low
+spending limit, which can be revoked on its own: the protection a site's
+login cookie has. The key is sent only to Anthropic, and *Clear all* leaves
+it.
+
+**Chosen by the person:** `storage.local`, as above.
+
+## When the answer is not the shape asked for
+
+The model is asked for `{"rows": [{quantity, unit, ingredient, substitute,
+preparation, note, rest}, …]}`, one row per line, in order, every field a
+string. The answer is checked in pure TypeScript (`core/`), and nothing that
+fails is shown as if it were right:
+
+1. **Not JSON, or not that shape:** the rows stay as they were, and the group
+   says the model's answer could not be used.
+2. **Wrong number of rows:** the lines go numbered, each row names its
+   line, and the schema asks for exactly as many rows as lines. A line the
+   model gave no row (a small model merged two, #182) keeps its built-in
+   scan; a row for a line not sent is ignored. Only rows that match no line
+   at all are refused, as 1.
+3. **A field the line does not hold:** every non-empty field must appear in
+   its line, ignoring case and spacing, and a quantity must read as a
+   number. A row that fails keeps its built-in scan and is marked *kept as it
+   was*, so one invented word does not cost the whole group.
+4. **Timeout:** 60 seconds for a local model, 30 for a hosted one; then as 1.
+5. **Refusals and errors** (nothing at that address, an unknown model, 401
+   key, 429, 5xx) each get their own sentence and fix, as the server's do (M11).
+
+The checks run on recorded answers in the tests, including a few bad ones,
+so no test needs a model running.
+
+**Proposed:** as above.
+
+## Translation and the steps (added in review)
+
+Asked for by the person once the rest was built:
+
+- **Lines not in English** come back in English. The model marks a row it
+  translated (`translated`), which skips the word check, since its words
+  cannot be in its line; its quantity and unit are still checked. A row
+  marked translated whose words are its line's was not (seen with Qwen3-8B,
+  #182), so is not counted as one. The group's note says how many it
+  translated. The instruction shows two Italian lines and an English one.
+- **Units** must be the user's own (from the lists, once loaded): a model
+  can take a word of the line for one (`3 uova piccole` gave the unit
+  `uova`, #182), and the server would then make it a private unit.
+- **The steps** get *Ask the model* too, beside *Steps*. The model rewrites
+  them short, precise and colloquial (*mins*, *veg*), in English, a stage of
+  the cooking to a step: it may split a long step or merge two. Only the
+  steps are sent, as `[{title, text}]`. A rewrite cannot be checked word for
+  word, so the answer is checked for its shape only (at least one step, none
+  empty), and *Undo the model's steps* puts them back.
+- The instruction shows five of the person's own rewrites, done by hand
+  (`STEPS_EXAMPLES` in `core/model-steps.ts`): a split, a merge, a trim, a
+  technique explained, and the dal. Five rather than all fourteen, to keep
+  the prompt short for a local model and stop a small one copying phrases.
+  Where a hand-made rewrite drew on another part of the recipe (an
+  ingredient group's name, a later step), it was brought back to what its
+  original says, so the model does not learn to add.
+
+## Ports and permissions
+
+- A `LineModel` port (`splitLines(lines)` and `rewriteSteps(steps)`, each
+  `→ Result<answer, ModelError>`) with
+  an in-memory fake; two adapters in `src/models/` beside `src/nutrisho/`,
+  one OpenAI-compatible (MLX, llama.cpp) and one for Anthropic; the checks
+  in `src/core/`.
+- New optional host permission `https://api.anthropic.com/*`, asked for on
+  Save in the options page, only if Anthropic is chosen. Loopback over http
+  is already optional. No other permission changes.
+
+## Choices for the person
+
+1. Which models: MLX, llama.cpp and Anthropic, as timbuktu has them
+   (decided).
+2. Where Anthropic's key is kept: `storage.local`, with a dedicated,
+   spend-limited key (decided).
+3. On request per group (*Ask the model*), or automatically on every clip?
+   Proposed: on request.

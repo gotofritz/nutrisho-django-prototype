@@ -12,6 +12,8 @@
 
   import type { LogEntry } from "@/nutrisho/fetch-log";
 
+  import type { ModelCheck } from "./model-check";
+
   /**
    * Advanced Mode (plan 012, M12): folded away under the recipe, where the
    * clipboard was. It picks the server, this computer at the address Django
@@ -23,6 +25,8 @@
     requestHostPermission,
     onServerChanged,
     log,
+    modelCheck,
+    onCheckModel,
   }: {
     settings: SettingsStore;
     /** Called first on the press: Firefox refuses one made after an `await`. */
@@ -31,6 +35,10 @@
     onServerChanged: () => void;
     /** What went to the server and back, oldest first. */
     log: readonly LogEntry[];
+    /** How the last check of the user's own model went (#182). */
+    modelCheck?: ModelCheck;
+    /** Check it again; undefined while no model is set up. */
+    onCheckModel?: () => void;
   } = $props();
 
   /** The time on the clock, as hh:mm:ss. */
@@ -127,6 +135,25 @@
   {:else if status.kind === "problem"}
     <p class="problem" role="alert">{status.message}</p>
   {/if}
+  {#if onCheckModel !== undefined}
+    <div class="model">
+      {#if modelCheck?.kind === "checking"}
+        <p role="status">Checking your model…</p>
+      {:else if modelCheck?.kind === "answering"}
+        <p role="status">Your model answers at {modelCheck.address}.</p>
+      {:else if modelCheck?.kind === "problem"}
+        <p class="problem" role="alert">
+          Checked {modelCheck.address}: {modelCheck.problem.cause}
+          {modelCheck.problem.action}
+        </p>
+      {/if}
+      <button
+        type="button"
+        disabled={modelCheck?.kind === "checking"}
+        onclick={() => onCheckModel()}>Check the model</button
+      >
+    </div>
+  {/if}
   <section class="log" aria-labelledby="log-heading">
     <h3 id="log-heading">Log</h3>
     <ol role="log" aria-labelledby="log-heading">
@@ -166,6 +193,11 @@
 
   button {
     justify-self: start;
+  }
+
+  .model {
+    display: grid;
+    gap: 0.25rem;
   }
 
   .log {

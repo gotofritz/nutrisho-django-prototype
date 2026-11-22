@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { NutrishoErrorKind } from "@/core/ports/types";
 
-import { listsProblem, saveProblem } from "./error-copy";
+import { listsProblem, modelProblem, saveProblem } from "./error-copy";
 
 /** Every kind, and where its fix is: a record, so a new kind must be added. */
 const FIXES: Record<NutrishoErrorKind, "settings" | "retry"> = {
@@ -136,5 +136,42 @@ describe("saveProblem", () => {
         listsProblem({ kind, message: "x" }).fix,
       );
     }
+  });
+});
+
+// Plan 012, M13 (#181): the user's own model, a sentence and a fix each.
+describe("modelProblem", () => {
+  it.each([
+    ["not-set-up", "No model is set up for ingredient lines.", "settings"],
+    [
+      "permission-missing",
+      "The clipper has not been allowed to reach your model.",
+      "settings",
+    ],
+    ["unreachable", "Nothing answered at your model's address.", "retry"],
+    ["timeout", "Your model did not answer in time.", "retry"],
+    ["unauthorised", "Your model refused its key (it said: x).", "settings"],
+    [
+      "unknown-model",
+      "Your model's server does not have that model (it said: x).",
+      "settings",
+    ],
+    [
+      "rate-limited",
+      "Your model is asked too often, or its spending limit is spent (it said: x).",
+      "retry",
+    ],
+    ["server-error", "Your model's server failed (it said: x).", "retry"],
+    [
+      "malformed-response",
+      "Your model answered in a shape the clipper cannot read (it said: x).",
+      "retry",
+    ],
+  ] as const)("explains %s", (kind, cause, fix) => {
+    const problem = modelProblem({ kind, message: "x" });
+
+    expect(problem.cause).toBe(cause);
+    expect(problem.fix).toBe(fix);
+    expect(problem.action).not.toBe("");
   });
 });

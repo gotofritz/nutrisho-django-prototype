@@ -92,9 +92,20 @@ the *View* menu, under *Sidebar*.
    cuisine or tag your lists do not have is marked *new*, and saving makes it
    one of your own: `med.italy.marche` goes inside `med.italy`, and a name
    with no dots is a new area.
-7. *Save* sends the recipe to your Nutrisho and offers *Open in Nutrisho*.
+7. *Clip* sends the recipe to your Nutrisho and offers *Open in Nutrisho*.
    Saving the same recipe again changes nothing. Your lists load again after
    a save, so the names it made are no longer marked *new*.
+8. With a model of your own set up under *Ingredient lines* in the settings,
+   each group has *Ask the model*: its lines, and nothing else, go to the
+   model, and the rows it answers replace the group's. A row whose fields
+   are not in its line keeps its own scan, a line in another language comes
+   back in English, and *Undo the model's rows* puts the group back. *Ask the
+   model* by *Steps* rewrites the method short and colloquial, a stage of the
+   cooking to a step; *Undo the model's steps* puts it back. The model can be MLX or llama.cpp on your computer, as
+   [timbuktu](https://github.com/gotofritz/timbuktu/blob/main/docs/user-guide.md#choosing-an-ai-backend)
+   starts them, or Anthropic with your own key: make one for the clipper
+   alone, with a low spending limit. *Advanced Mode* says whether your model
+   answers, and *Check the model* asks again.
 
 Recipes not yet saved are kept in your browser, even after a restart. A new
 browser session opens none of them: pick one under *Draft*, or clip from its
@@ -103,9 +114,10 @@ from the same page go on into its recipe even after you change *Source*; ↗
 next to *Source* opens it in a new tab. Pick between recipes under *Draft*,
 *Discard this draft* to drop one, or *Clear all* at the top to start again.
 
-The key is kept in the browser's local storage, never synced, and the
-settings page never shows it again. Only the server's address you saved is
-ever contacted, and only the recipe you save is sent to it.
+The keys, Nutrisho's and a model's, are kept in the browser's local storage,
+never synced, and the settings page never shows them again. Only the
+addresses you saved are ever contacted: the recipe goes to your Nutrisho when
+you save, and a group's lines, or the steps, to your model when you ask it.
 
 `make ext-preview` serves [`preview/`](preview/) on Vite's address: a picker of
 scenes (nothing clipped, a key expired, a draft filled in, saved, the
@@ -120,7 +132,7 @@ The clipper looks like the site (`server/docs/features/design.md`):
 copies of the server's; `tests/look/site-copies.test.ts` fails when either
 side changes without the other, and a change to those server files runs the
 extension's checks too. `src/styles/clipper.css` styles the elements as the
-site does: no boxes, a field is a line, actions are small capitals, Save sits
+site does: no boxes, a field is a line, actions are small capitals, Clip sits
 on a sunflower wash, and errors alone are smock red. Components add layout
 only.
 
@@ -145,11 +157,12 @@ src/
   manifest/                # permissions, ids and the shortcut, merged into the manifest
   messaging/               # the typed messages between background and content script
   nutrisho/                # the server's client: a `fetch` adapter for the NutrishoClient port
+  models/                  # the user's own model: MLX and llama.cpp (OpenAI-compatible) and Anthropic
   platform/                # the only code that touches `browser.*`, each with a fake
   background/              # the capture chain: gesture, read the page, store, open the sidebar
   content/                 # reads the selection off the page; injected on a gesture only
   sidebar/                 # the sidebar's Svelte components
-  options/                 # the settings form
+  options/                 # the settings and line scanner forms
   entrypoints/             # background, content script, sidebar and options pages: they only wire
   styles/                  # the site's tokens and faces, and the clipper's element rules
 public/                    # copies of the site's fonts and lineout plate

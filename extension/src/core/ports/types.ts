@@ -1,6 +1,7 @@
 import type { Clipping } from "../clipping";
 import type { Drafts, SavedRecipe } from "../drafts";
-import type { RecipeDraft } from "../recipe-draft";
+import type { ModelSettings } from "../model-settings";
+import type { RecipeDraft, Step } from "../recipe-draft";
 import type { Result } from "../result";
 import type { Settings } from "../settings";
 import type { Vocabulary } from "../vocabulary";
@@ -34,6 +35,12 @@ export interface StoreError {
 export interface SettingsStore {
   load(): Promise<Result<Settings, StoreError>>;
   save(settings: Settings): Promise<Result<void, StoreError>>;
+}
+
+/** Which scanner reads ingredient lines, and where its model is (M13). */
+export interface ModelSettingsStore {
+  load(): Promise<Result<ModelSettings, StoreError>>;
+  save(settings: ModelSettings): Promise<Result<void, StoreError>>;
 }
 
 /** The last thing clipped, which the sidebar shows (M6). */
@@ -97,4 +104,55 @@ export interface NutrishoClient {
   vocabulary(): Promise<Result<Vocabulary, NutrishoError>>;
   /** Save the draft under its own id; a second save answers with the first's recipe. */
   saveRecipe(draft: RecipeDraft): Promise<Result<SavedRecipe, NutrishoError>>;
+}
+
+/** Why the user's own model gave no answer to read (plan 012, M13). */
+export type ModelErrorKind =
+  /** No model is set up: the built-in scan is all there is. */
+  | "not-set-up"
+  /** The user has not allowed the clipper to reach the model's address. */
+  | "permission-missing"
+  /** Nothing answered at the address: the model is not running. */
+  | "unreachable"
+  /** It answered, but not in time. */
+  | "timeout"
+  /** A 401 or 403: the model's key is wrong, missing or revoked. */
+  | "unauthorised"
+  /** A 429: too many requests, or the account's limit is spent. */
+  | "rate-limited"
+  /** The model named in the settings is not there to run. */
+  | "unknown-model"
+  /** Any other status that is not a success. */
+  | "server-error"
+  /** A success that is not the provider's shape, or holds no JSON. */
+  | "malformed-response";
+
+export interface ModelError {
+  readonly kind: ModelErrorKind;
+  readonly message: string;
+  readonly status?: number;
+}
+
+/**
+ * The user's own model (D20), which splits ingredient lines into rows and
+ * rewrites the method.
+ */
+export interface LineModel {
+  /**
+   * The model's answer for these lines, as JSON and unchecked:
+   * `readModelAnswer` (core/model-answer) decides what of it is used.
+   * Never throws.
+   */
+  splitLines(lines: readonly string[]): Promise<Result<unknown, ModelError>>;
+  /**
+   * The model's rewrite of these steps, as JSON and unchecked:
+   * `readStepsAnswer` (core/model-steps) decides whether it is used.
+   * Never throws.
+   */
+  rewriteSteps(steps: readonly Step[]): Promise<Result<unknown, ModelError>>;
+  /**
+   * Whether the model answers at all, sending nothing of the recipe (#182).
+   * Never throws.
+   */
+  check(): Promise<Result<void, ModelError>>;
 }

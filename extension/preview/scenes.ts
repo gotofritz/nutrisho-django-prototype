@@ -12,12 +12,16 @@ import {
 import { createFakeClippingStore } from "@/core/ports/fakes/fake-clipping-store";
 import { createFakeDraftStore } from "@/core/ports/fakes/fake-draft-store";
 import { createFakeNutrishoClient } from "@/core/ports/fakes/fake-nutrisho-client";
+import { createFakeLineModel } from "@/core/ports/fakes/fake-line-model";
+import { createFakeModelSettingsStore } from "@/core/ports/fakes/fake-model-settings-store";
 import { createFakeSettingsStore } from "@/core/ports/fakes/fake-settings-store";
+import { defaultsFor } from "@/core/model-settings";
 import type { NutrishoClient, NutrishoError } from "@/core/ports/types";
 import { withDetails, type RecipeDraft } from "@/core/recipe-draft";
 import { err, ok } from "@/core/result";
 import { DEFAULT_SETTINGS } from "@/core/settings";
 import type { Vocabulary } from "@/core/vocabulary";
+import ModelForm from "@/options/ModelForm.svelte";
 import SettingsForm from "@/options/SettingsForm.svelte";
 import Sidebar from "@/sidebar/Sidebar.svelte";
 import type { LogEntry } from "@/nutrisho/fetch-log";
@@ -116,6 +120,8 @@ function sidebar(
         settings: createFakeSettingsStore(),
         requestHostPermission: async () => true,
         log: LOG,
+        model: createFakeLineModel(),
+        modelSettings: createFakeModelSettingsStore(defaultsFor("mlx")),
       },
     });
 }
@@ -162,8 +168,8 @@ export const SCENES: Readonly<Record<string, Scene>> = {
   },
   settings: {
     label: "Settings",
-    mount: (target) =>
-      void mount(SettingsForm, {
+    mount: (target) => {
+      mount(SettingsForm, {
         target,
         props: {
           settings: createFakeSettingsStore({
@@ -172,7 +178,15 @@ export const SCENES: Readonly<Record<string, Scene>> = {
           }),
           requestHostPermission: async () => true,
         },
-      }),
+      });
+      mount(ModelForm, {
+        target,
+        props: {
+          store: createFakeModelSettingsStore(defaultsFor("mlx")),
+          requestHostPermission: async () => true,
+        },
+      });
+    },
   },
 };
 

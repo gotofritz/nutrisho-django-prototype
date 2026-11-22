@@ -1,4 +1,4 @@
-import type { NutrishoError } from "@/core/ports/types";
+import type { ModelError, NutrishoError } from "@/core/ports/types";
 
 /**
  * What the sidebar says when the lists will not load or a save fails (plan
@@ -111,4 +111,66 @@ function problem(error: NutrishoError, task: string): Problem {
 function waitFor(seconds: number | undefined): string {
   if (seconds === undefined) return "a minute";
   return seconds === 1 ? "a second" : `${seconds} seconds`;
+}
+
+/** The user's own model gave no rows to use (M13). */
+export function modelProblem(error: ModelError): Problem {
+  const said = `(it said: ${error.message})`;
+  switch (error.kind) {
+    case "not-set-up":
+      return {
+        cause: "No model is set up for ingredient lines.",
+        action: "Choose one under Ingredient lines in the settings.",
+        fix: "settings",
+      };
+    case "permission-missing":
+      return {
+        cause: "The clipper has not been allowed to reach your model.",
+        action:
+          "Save the line scanner again in the settings, and allow it when the browser asks.",
+        fix: "settings",
+      };
+    case "unreachable":
+      return {
+        cause: "Nothing answered at your model's address.",
+        action: "Start its server, or check the address, then try again.",
+        fix: "retry",
+      };
+    case "timeout":
+      return {
+        cause: "Your model did not answer in time.",
+        action: "Try again; a smaller model answers sooner.",
+        fix: "retry",
+      };
+    case "unauthorised":
+      return {
+        cause: `Your model refused its key ${said}.`,
+        action: "Check the key in the settings, or make a new one.",
+        fix: "settings",
+      };
+    case "unknown-model":
+      return {
+        cause: `Your model's server does not have that model ${said}.`,
+        action: "Check the model's name in the settings.",
+        fix: "settings",
+      };
+    case "rate-limited":
+      return {
+        cause: `Your model is asked too often, or its spending limit is spent ${said}.`,
+        action: "Wait a little, or raise the limit, then try again.",
+        fix: "retry",
+      };
+    case "server-error":
+      return {
+        cause: `Your model's server failed ${said}.`,
+        action: "Try again; if it keeps failing, look at the server's own log.",
+        fix: "retry",
+      };
+    case "malformed-response":
+      return {
+        cause: `Your model answered in a shape the clipper cannot read ${said}.`,
+        action: "Try again, or a model that keeps to JSON.",
+        fix: "retry",
+      };
+  }
 }

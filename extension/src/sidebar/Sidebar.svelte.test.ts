@@ -14,9 +14,14 @@ import { createFakeClippingStore } from "@/core/ports/fakes/fake-clipping-store"
 import { createFakeDraftStore } from "@/core/ports/fakes/fake-draft-store";
 import { createFakeNutrishoClient } from "@/core/ports/fakes/fake-nutrisho-client";
 import { createFakeSettingsStore } from "@/core/ports/fakes/fake-settings-store";
+import { defaultsFor } from "@/core/model-settings";
+import { createFakeLineModel } from "@/core/ports/fakes/fake-line-model";
+import { createFakeModelSettingsStore } from "@/core/ports/fakes/fake-model-settings-store";
 import type {
   ClippingStore,
   DraftStore,
+  LineModel,
+  ModelSettingsStore,
   NutrishoClient,
 } from "@/core/ports/types";
 import { EMPTY_ROW } from "@/core/ingredient-line";
@@ -53,9 +58,12 @@ function renderSidebar(
     openSettings?: () => void;
     newSession?: boolean;
     log?: readonly LogEntry[];
+    model?: LineModel;
+    modelSettings?: ModelSettingsStore;
   } = {},
 ) {
   let changed: (() => void) | undefined;
+  let modelChanged: (() => void) | undefined;
   const client = overrides.client ?? createFakeNutrishoClient();
   let made = 0;
   const props = {
@@ -72,9 +80,19 @@ function renderSidebar(
     settings: createFakeSettingsStore(),
     requestHostPermission: async () => true,
     log: overrides.log ?? [],
+    model: overrides.model ?? createFakeLineModel(),
+    modelSettings: overrides.modelSettings ?? createFakeModelSettingsStore(),
+    watchModelSettings: (listener: () => void) => {
+      modelChanged = listener;
+      return () => {};
+    },
   };
   render(Sidebar, props);
-  return { ...props, changed: () => changed?.() };
+  return {
+    ...props,
+    changed: () => changed?.(),
+    modelChanged: () => modelChanged?.(),
+  };
 }
 
 function answering(
@@ -113,7 +131,7 @@ describe("the clipping", () => {
       drafts: createFakeDraftStore(clipped()),
     });
 
-    expect(await screen.findByRole("button", { name: "Save" })).toHaveClass(
+    expect(await screen.findByRole("button", { name: "Clip" })).toHaveClass(
       "primary",
     );
   });
@@ -282,17 +300,17 @@ describe("the draft", () => {
     });
 
     const first = await screen.findByRole("group", { name: "Row 1" });
-    expect(
-      within(first).getByRole("textbox", { name: "Quantity" }),
-    ).toHaveValue("2");
+    expect(within(first).getByRole("textbox", { name: "Qty" })).toHaveValue(
+      "2",
+    );
     expect(
       within(first).getByRole("combobox", { name: "Ingredient" }),
     ).toHaveValue("aubergine");
     // Olive oil is not in the lists, but the amount and unit it starts with are.
     const second = screen.getByRole("group", { name: "Row 2" });
-    expect(
-      within(second).getByRole("textbox", { name: "Quantity" }),
-    ).toHaveValue("1");
+    expect(within(second).getByRole("textbox", { name: "Qty" })).toHaveValue(
+      "1",
+    );
     expect(within(second).getByRole("combobox", { name: "Unit" })).toHaveValue(
       "tbsp",
     );
@@ -482,7 +500,7 @@ describe("the save", () => {
   it("sends the draft, and offers to open the recipe", async () => {
     const { client } = await ready();
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     expect(
       within(await screen.findByRole("status")).getByText(
@@ -501,7 +519,7 @@ describe("the save", () => {
     await ready(client);
     await listsLoaded(client);
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     await screen.findByRole("status");
     await listsLoaded(client, 2);
@@ -514,7 +532,7 @@ describe("the save", () => {
     await listsLoaded(client);
     client.answerVocabulary(err({ kind: "unreachable", message: "gone" }));
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     await listsLoaded(client, 2);
     expect(screen.queryByRole("alert")).toBeNull();
@@ -526,7 +544,7 @@ describe("the save", () => {
     await ready(client);
     await listsLoaded(client);
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       /Nothing answered/,
@@ -548,7 +566,7 @@ describe("the save", () => {
     );
     await ready(client);
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     expect(
       await screen.findByText(/Already saved, so nothing changed/),
@@ -569,7 +587,7 @@ describe("the save", () => {
     );
     await ready(client);
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     expect(
       await screen.findByText("handful is now one of your own units."),
@@ -584,7 +602,10 @@ describe("the save", () => {
       {
         ...draft,
         groups: [
-          { name: "Syrup", rows: [{ ...EMPTY_ROW, rest: "something" }] },
+          {
+            name: "Syrup",
+            rows: [{ ...EMPTY_ROW, quantity: "two", ingredient: "sugar" }],
+          },
           { name: "Base", rows: [{ ...EMPTY_ROW, ingredient: "lemon" }] },
         ],
       },
@@ -599,10 +620,10 @@ describe("the save", () => {
     const syrup = screen.getByRole("region", { name: "Group 1" });
     expect(within(syrup).queryByRole("textbox")).toBeNull();
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     expect(
-      await within(syrup).findByRole("combobox", { name: "Ingredient" }),
+      await within(syrup).findByRole("textbox", { name: "Qty" }),
     ).toBeInvalid();
   });
 
@@ -610,7 +631,7 @@ describe("the save", () => {
     const { client } = await ready();
     await fireEvent.input(await nameField(), { target: { value: " " } });
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     expect(await screen.findByText("The recipe needs a name.")).toBeVisible();
     expect(await nameField()).toBeInvalid();
@@ -625,7 +646,7 @@ describe("the save", () => {
       target: { value: "x".repeat(201) },
     });
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     expect(
       await screen.findAllByText(
@@ -649,7 +670,7 @@ describe("the save", () => {
     );
     await ready(client);
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     expect(
       await screen.findAllByText("The name must be at most 200 characters."),
@@ -669,7 +690,7 @@ describe("the save", () => {
     );
     await ready(client);
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     expect(
       await screen.findByText(
@@ -685,7 +706,7 @@ describe("the save", () => {
     );
     await ready(client);
 
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
 
     expect(await screen.findByText("Your API key has expired.")).toBeVisible();
     expect(screen.getByRole("button", { name: "Open settings" })).toBeVisible();
@@ -693,7 +714,7 @@ describe("the save", () => {
 
   it("is kept with the draft, so it still shows when the sidebar opens again", async () => {
     const { drafts } = await ready();
-    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Clip" }));
     await screen.findByRole("link", { name: "Open in Nutrisho" });
 
     const stored = await drafts.load();
@@ -733,5 +754,399 @@ describe("Clear all", () => {
       clear.compareDocumentPosition(advanced) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
+  });
+});
+
+// Plan 012, M13 (#181): a group's lines go to the user's own model when they
+// ask, and its rows replace the group's only if they pass the checks.
+describe("asking the model", () => {
+  const MODEL_ROWS = {
+    rows: [
+      { quantity: "2", ingredient: "aubergine" },
+      { quantity: "1", unit: "tbsp", ingredient: "olive oil" },
+    ],
+  };
+
+  async function grouped(model = createFakeLineModel()) {
+    renderSidebar({
+      clippings: createFakeClippingStore({ ...CLIPPING, target: "group" }),
+      client: answering(COOKS_LISTS),
+      model,
+      modelSettings: createFakeModelSettingsStore(defaultsFor("mlx")),
+    });
+    await screen.findByRole("group", { name: "Row 2" });
+    return model;
+  }
+
+  function row(n: number) {
+    return screen.getByRole("group", { name: `Row ${n}` });
+  }
+
+  async function ask() {
+    await fireEvent.click(
+      await screen.findByRole("button", {
+        name: "Ask the model about group 1",
+      }),
+    );
+  }
+
+  it("is not offered while the built-in scan is chosen", async () => {
+    renderSidebar({
+      clippings: createFakeClippingStore({ ...CLIPPING, target: "group" }),
+    });
+    await screen.findByRole("group", { name: "Row 1" });
+
+    expect(screen.queryByRole("button", { name: /Ask the model/ })).toBeNull();
+  });
+
+  // #182: the log showed nothing of the model until it was asked.
+  it("checks the model when it opens, and says so in Advanced Mode", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok(MODEL_ROWS));
+    await grouped(model);
+    await fireEvent.click(screen.getByText("Advanced Mode"));
+
+    expect(
+      await screen.findByText("Your model answers at http://localhost:8080."),
+    ).toBeVisible();
+    expect(model.checks).toBe(1);
+  });
+
+  it("says in Advanced Mode why the model does not answer", async () => {
+    const model = createFakeLineModel();
+    model.answer(err({ kind: "unreachable", message: "NetworkError" }));
+    await grouped(model);
+    await fireEvent.click(screen.getByText("Advanced Mode"));
+
+    expect(
+      await screen.findByText(/Nothing answered at your model's address\./),
+    ).toBeVisible();
+  });
+
+  it("checks nothing while the built-in scan is chosen", async () => {
+    const model = createFakeLineModel();
+    renderSidebar({
+      clippings: createFakeClippingStore({ ...CLIPPING, target: "group" }),
+      model,
+    });
+    await screen.findByRole("group", { name: "Row 1" });
+
+    expect(model.checks).toBe(0);
+  });
+
+  // Seen by hand (#182): the sidebar was open while the model was saved.
+  it("is offered once a model is saved while the sidebar is open", async () => {
+    const modelSettings = createFakeModelSettingsStore();
+    const sidebar = renderSidebar({
+      clippings: createFakeClippingStore({ ...CLIPPING, target: "group" }),
+      modelSettings,
+    });
+    await screen.findByRole("group", { name: "Row 1" });
+
+    await modelSettings.save(defaultsFor("mlx"));
+    sidebar.modelChanged();
+
+    expect(
+      await screen.findByRole("button", {
+        name: "Ask the model about group 1",
+      }),
+    ).toBeVisible();
+  });
+
+  it("sends the group's lines only, and takes the rows it answers", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok(MODEL_ROWS));
+    await grouped(model);
+
+    await ask();
+
+    expect(await screen.findByText("The model split 2 lines.")).toBeVisible();
+    expect(model.sent).toHaveLength(1);
+    expect(model.sent[0]).toHaveLength(2);
+    expect(model.sent[0]?.[1]).toContain("olive oil");
+    expect(
+      within(row(2)).getByRole("combobox", { name: "Ingredient" }),
+    ).toHaveValue("olive oil");
+    expect(within(row(2)).getByRole("textbox", { name: "Rest" })).toHaveValue(
+      "",
+    );
+  });
+
+  it("puts the rows back on Undo", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok(MODEL_ROWS));
+    await grouped(model);
+    await ask();
+    await screen.findByText("The model split 2 lines.");
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Undo the model's rows" }),
+    );
+
+    expect(within(row(2)).getByRole("textbox", { name: "Rest" })).toHaveValue(
+      "olive oil",
+    );
+    expect(screen.queryByText("The model split 2 lines.")).toBeNull();
+  });
+
+  it("keeps the scan of a row the model made up a word for", async () => {
+    const model = createFakeLineModel();
+    model.answer(
+      ok({
+        rows: [
+          MODEL_ROWS.rows[0],
+          { quantity: "1", unit: "tbsp", ingredient: "rapeseed oil" },
+        ],
+      }),
+    );
+    await grouped(model);
+
+    await ask();
+
+    expect(
+      await screen.findByText(
+        "The model split 2 lines; 1 of its rows did not match its line, so that row is as it was.",
+      ),
+    ).toBeVisible();
+    expect(within(row(2)).getByRole("textbox", { name: "Rest" })).toHaveValue(
+      "olive oil",
+    );
+  });
+
+  it("keeps the scan of a row whose unit is not one of the user's", async () => {
+    const model = createFakeLineModel();
+    model.answer(
+      ok({
+        rows: [
+          MODEL_ROWS.rows[0],
+          { quantity: "1", unit: "olive", ingredient: "oil" },
+        ],
+      }),
+    );
+    await grouped(model);
+
+    await ask();
+
+    expect(
+      await screen.findByText(/1 of its rows did not match its line/),
+    ).toBeVisible();
+  });
+
+  it("says which rows it translated", async () => {
+    const model = createFakeLineModel();
+    model.answer(
+      ok({
+        rows: [
+          // Words not in the lines, as a translation's are.
+          { ...MODEL_ROWS.rows[0], ingredient: "eggplants", translated: true },
+          {
+            ...MODEL_ROWS.rows[1],
+            ingredient: "oil of olives",
+            translated: true,
+          },
+        ],
+      }),
+    );
+    await grouped(model);
+
+    await ask();
+
+    expect(
+      await screen.findByText(
+        "The model split 2 lines, and translated 2 of them into English.",
+      ),
+    ).toBeVisible();
+  });
+
+  it("says why the model gave nothing, and changes nothing", async () => {
+    const model = createFakeLineModel();
+    model.answer(err({ kind: "unreachable", message: "NetworkError" }));
+    await grouped(model);
+
+    await ask();
+
+    // Advanced Mode's check says so too; this is the ask's own alert.
+    expect(
+      await screen.findByText("Nothing answered at your model's address."),
+    ).toBeVisible();
+    expect(within(row(2)).getByRole("textbox", { name: "Rest" })).toHaveValue(
+      "olive oil",
+    );
+  });
+
+  it("refuses an answer that does not fit the lines", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok({ rows: [] }));
+    await grouped(model);
+
+    await ask();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The model answered 0 rows for 2 lines.",
+    );
+  });
+
+  // Seen by hand (#182): the news was far below the button pressed.
+  it("says what the model did inside the group it asked about", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok(MODEL_ROWS));
+    await grouped(model);
+
+    await ask();
+
+    const group = screen.getByRole("region", { name: "Group 1" });
+    expect(
+      await within(group).findByText("The model split 2 lines."),
+    ).toBeVisible();
+    expect(
+      within(group).getByRole("button", { name: "Undo the model's rows" }),
+    ).toBeVisible();
+  });
+
+  it("says why the model failed inside the group it asked about", async () => {
+    const model = createFakeLineModel();
+    model.answer(err({ kind: "unreachable", message: "NetworkError" }));
+    await grouped(model);
+
+    await ask();
+
+    expect(
+      await within(screen.getByRole("region", { name: "Group 1" })).findByRole(
+        "alert",
+      ),
+    ).toHaveTextContent("Nothing answered at your model's address.");
+  });
+
+  it("says it is asking while it waits", async () => {
+    const model: LineModel = {
+      splitLines: () => new Promise(() => {}),
+      rewriteSteps: () => new Promise(() => {}),
+      check: async () => ok(undefined),
+    };
+    await grouped(model as ReturnType<typeof createFakeLineModel>);
+
+    await ask();
+
+    expect(
+      screen.getByRole("button", { name: "Ask the model about group 1" }),
+    ).toBeDisabled();
+    expect(
+      within(screen.getByRole("region", { name: "Group 1" })).getByText(
+        "Asking the model…",
+      ),
+    ).toBeVisible();
+  });
+});
+
+// #181: the method rewritten short, precise and colloquial.
+describe("asking the model about the steps", () => {
+  const REWRITE = {
+    steps: [
+      { title: "", text: "Halve the aubergines" },
+      { title: "", text: "Fry in the oil" },
+      { title: "", text: "Season" },
+    ],
+  };
+
+  async function stepped(model = createFakeLineModel()) {
+    renderSidebar({
+      clippings: createFakeClippingStore({ ...CLIPPING, target: "steps" }),
+      client: answering(COOKS_LISTS),
+      model,
+      modelSettings: createFakeModelSettingsStore(defaultsFor("anthropic")),
+    });
+    await screen.findByRole("textbox", { name: "Step 1" });
+    return model;
+  }
+
+  async function ask() {
+    await fireEvent.click(
+      await screen.findByRole("button", {
+        name: "Ask the model about the steps",
+      }),
+    );
+  }
+
+  it("is not offered while the built-in scan is chosen", async () => {
+    renderSidebar({
+      clippings: createFakeClippingStore({ ...CLIPPING, target: "steps" }),
+    });
+    await screen.findByRole("textbox", { name: "Step 1" });
+
+    expect(screen.queryByRole("button", { name: /Ask the model/ })).toBeNull();
+  });
+
+  it("sends the steps, and takes the rewrite", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok(REWRITE));
+    await stepped(model);
+    const sent = screen
+      .getAllByRole("textbox", { name: /^Step \d+$/ })
+      .map((box) => (box as HTMLTextAreaElement).value);
+
+    await ask();
+
+    expect(
+      await screen.findByText(
+        `The model rewrote ${sent.length} ${sent.length === 1 ? "step" : "steps"} as 3.`,
+      ),
+    ).toBeVisible();
+    expect(model.stepsSent[0]?.map((step) => step.text)).toEqual(sent);
+    expect(model.sent).toEqual([]);
+    expect(screen.getByRole("textbox", { name: "Step 3" })).toHaveValue(
+      "Season",
+    );
+  });
+
+  it("says what it did between the steps' heading and the steps", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok(REWRITE));
+    await stepped(model);
+
+    await ask();
+
+    const note = await screen.findByText(/The model rewrote/);
+    const heading = screen.getByRole("heading", { name: "Steps" });
+    const first = screen.getByRole("textbox", { name: "Step 1" });
+    expect(
+      heading.compareDocumentPosition(note) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      note.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it("puts the steps back on Undo", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok(REWRITE));
+    await stepped(model);
+    const before = (
+      screen.getByRole("textbox", { name: "Step 1" }) as HTMLTextAreaElement
+    ).value;
+    await ask();
+    await screen.findByText(/The model rewrote/);
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Undo the model's steps" }),
+    );
+
+    expect(screen.getByRole("textbox", { name: "Step 1" })).toHaveValue(before);
+    expect(screen.queryByText(/The model rewrote/)).toBeNull();
+  });
+
+  it("refuses an answer of the wrong shape, and changes nothing", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok({ steps: [] }));
+    await stepped(model);
+    const before = (
+      screen.getByRole("textbox", { name: "Step 1" }) as HTMLTextAreaElement
+    ).value;
+
+    await ask();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The model answered no steps.",
+    );
+    expect(screen.getByRole("textbox", { name: "Step 1" })).toHaveValue(before);
   });
 });

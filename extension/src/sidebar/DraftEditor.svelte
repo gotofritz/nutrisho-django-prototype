@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
   import { SvelteSet } from "svelte/reactivity";
 
   import { fitText } from "./fit-text.dom";
@@ -43,18 +44,33 @@
     vocabulary,
     issues,
     onChange,
+    onAskModel,
+    onAskModelSteps,
+    asking = false,
+    modelAt,
+    modelFeedback,
   }: {
     draft: RecipeDraft;
     vocabulary: Vocabulary;
     /** What stopped the last save, each marked at its field. */
     issues: readonly DraftIssue[];
     onChange: (draft: RecipeDraft) => void;
+    /** Send a group's lines to the user's own model (M13); absent while none is set up. */
+    onAskModel?: (groupIndex: number) => void;
+    /** Ask the user's own model to rewrite the steps; none while it is off. */
+    onAskModelSteps?: () => void;
+    /** A model is working on a group, so no other is asked meanwhile. */
+    asking?: boolean;
+    /** The group, or the steps, the model was last asked about. */
+    modelAt?: number | "steps";
+    /** What the model is doing or did, shown beside the button pressed. */
+    modelFeedback?: Snippet;
   } = $props();
 
   type RowField = keyof IngredientRow;
 
   const ROW_FIELDS: readonly { field: RowField; label: string }[] = [
-    { field: "quantity", label: "Quantity" },
+    { field: "quantity", label: "Qty" },
     { field: "unit", label: "Unit" },
     { field: "ingredient", label: "Ingredient" },
     { field: "substitute", label: "Substitute" },
@@ -405,6 +421,14 @@
           </label>
         {/if}
         <div class="group-tools">
+          {#if onAskModel !== undefined && !groupShut}
+            <button
+              type="button"
+              aria-label="Ask the model about group {groupIndex + 1}"
+              disabled={asking}
+              onclick={() => onAskModel(groupIndex)}>Ask the model</button
+            >
+          {/if}
           <button
             type="button"
             class="icon"
@@ -423,6 +447,9 @@
       </div>
       {#if !groupShut}
         {@render longNote(`groups.${groupIndex}.name`)}
+      {/if}
+      {#if modelAt === groupIndex}
+        {@render modelFeedback?.()}
       {/if}
       {#each groupShut ? [] : group.rows as row, index (index)}
         {@const key = `${groupIndex}-${index}`}
@@ -470,65 +497,83 @@
           {#if shut}
             <p class="summary">{summary(row)}</p>
           {/if}
-          {#each shut ? [] : ROW_FIELDS as { field, label } (field)}
-            {@const mark = `group-${groupIndex}-row-${index}-${field}-new`}
-            {@const at = `groups.${groupIndex}.rows.${index}.${field}`}
-            <label>
-              {label}
-              <input
-                type="text"
-                list={SUGGESTED[field]}
-                value={row[field]}
-                aria-invalid={flagged(at)}
-                aria-describedby={describedBy(
-                  isNew(field, row[field]) ? mark : undefined,
-                  longId(at),
-                )}
-                oninput={(event) =>
-                  onChange(
-                    updateRow(draft, groupIndex, index, {
-                      [field]: valueOf(event),
-                    }),
-                  )}
-              />
-            </label>
-            {#if isNew(field, row[field])}
-              <span class="new" id={mark}
-                >new<span class="hidden">: saving makes it one of your own</span
-                ></span
-              >
-            {/if}
-            {@render longNote(at)}
-          {/each}
           {#if !shut}
             {@const restNote = `group-${groupIndex}-row-${index}-rest-note`}
-            <!-- Rest is the row's scratch pad: what is wanted is moved out of it. -->
-            <div class="rest">
-              <label>
-                Rest
-                <input
-                  type="text"
-                  class="scratch"
-                  value={row.rest}
-                  aria-describedby={restNote}
-                  oninput={(event) =>
-                    onChange(
-                      updateRow(draft, groupIndex, index, {
-                        rest: valueOf(event),
-                      }),
-                    )}
-                />
-              </label>
-              <button
-                type="button"
-                class="icon"
-                aria-label="Clear rest of row {index + 1}"
-                onclick={() =>
-                  onChange(updateRow(draft, groupIndex, index, { rest: "" }))}
-                >🗑</button
-              >
+            {@const label = (field: RowField) =>
+              ROW_FIELDS.find((each) => each.field === field)?.label ?? field}
+            <!-- As a recipe says it: quantity, unit and ingredient on one
+                 line; preparation and note beneath quantity and unit, with
+                 substitute and rest beneath the ingredient. -->
+            <div class="fields">
+              {#each ["quantity", "unit", "ingredient"] as const as field (field)}
+                <div class="cell">
+                  {@render rowField(
+                    groupIndex,
+                    index,
+                    row,
+                    field,
+                    label(field),
+                  )}
+                </div>
+              {/each}
+              <div class="cell wide">
+                {@render rowField(
+                  groupIndex,
+                  index,
+                  row,
+                  "preparation",
+                  label("preparation"),
+                )}
+              </div>
+              <div class="cell">
+                {@render rowField(
+                  groupIndex,
+                  index,
+                  row,
+                  "substitute",
+                  label("substitute"),
+                )}
+              </div>
+              <div class="cell wide">
+                {@render rowField(
+                  groupIndex,
+                  index,
+                  row,
+                  "note",
+                  label("note"),
+                )}
+              </div>
+              <!-- Rest is the row's scratch pad: what is wanted is moved out of it. -->
+              <div class="cell">
+                <div class="rest">
+                  <label>
+                    Rest
+                    <input
+                      type="text"
+                      class="scratch"
+                      value={row.rest}
+                      aria-describedby={restNote}
+                      oninput={(event) =>
+                        onChange(
+                          updateRow(draft, groupIndex, index, {
+                            rest: valueOf(event),
+                          }),
+                        )}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    class="icon"
+                    aria-label="Clear rest of row {index + 1}"
+                    onclick={() =>
+                      onChange(
+                        updateRow(draft, groupIndex, index, { rest: "" }),
+                      )}>🗑</button
+                  >
+                </div>
+                <span class="not-saved" id={restNote}>Not saved</span>
+              </div>
             </div>
-            <span class="not-saved" id={restNote}>Not saved</span>
           {/if}
         </fieldset>
       {/each}
@@ -551,7 +596,20 @@
     onclick={() => onChange(addGroup(draft))}>+</button
   >
 
-  <h3>Steps</h3>
+  <div class="steps-head">
+    <h3>Steps</h3>
+    {#if onAskModelSteps !== undefined && draft.steps.length > 0}
+      <button
+        type="button"
+        aria-label="Ask the model about the steps"
+        disabled={asking}
+        onclick={() => onAskModelSteps()}>Ask the model</button
+      >
+    {/if}
+  </div>
+  {#if modelAt === "steps"}
+    {@render modelFeedback?.()}
+  {/if}
   {#if draft.steps.length === 0}
     <p class="quiet">No steps yet: clip them, or add one with +.</p>
   {/if}
@@ -626,6 +684,42 @@
   {/if}
 </section>
 
+{#snippet rowField(
+  groupIndex: number,
+  index: number,
+  row: IngredientRow,
+  field: RowField,
+  label: string,
+)}
+  {@const mark = `group-${groupIndex}-row-${index}-${field}-new`}
+  {@const at = `groups.${groupIndex}.rows.${index}.${field}`}
+  <label>
+    {label}
+    <input
+      type="text"
+      list={SUGGESTED[field]}
+      value={row[field]}
+      aria-invalid={flagged(at)}
+      aria-describedby={describedBy(
+        isNew(field, row[field]) ? mark : undefined,
+        longId(at),
+      )}
+      oninput={(event) =>
+        onChange(
+          updateRow(draft, groupIndex, index, {
+            [field]: valueOf(event),
+          }),
+        )}
+    />
+  </label>
+  {#if isNew(field, row[field])}
+    <span class="new" id={mark}
+      >new<span class="hidden">: saving makes it one of your own</span></span
+    >
+  {/if}
+  {@render longNote(at)}
+{/snippet}
+
 <style>
   /* The site's look is global (styles/clipper.css); this is layout only. */
   .draft,
@@ -649,6 +743,29 @@
   .row {
     grid-template-columns: 1fr;
     padding-top: 0.25rem;
+  }
+
+  .fields {
+    display: grid;
+    /* Qty and unit narrow; the ingredient, substitute and rest take the rest. */
+    grid-template-columns: 3rem 5rem minmax(0, 1fr);
+    gap: 0.5rem;
+    align-items: start;
+  }
+
+  .cell {
+    display: grid;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+
+  .cell.wide {
+    grid-column: span 2;
+  }
+
+  .cell input {
+    width: 100%;
+    min-width: 0;
   }
 
   .tools {
@@ -701,7 +818,6 @@
   }
 
   .not-saved {
-    margin-top: -0.375rem;
     color: var(--pencil);
     font-size: 0.75rem;
     font-style: italic;
@@ -752,6 +868,13 @@
   }
 
   /* Numbered by each title's placeholder, so the list needs no indent. */
+  .steps-head {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
   .steps {
     display: grid;
     gap: 1rem;
