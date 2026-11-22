@@ -1,4 +1,6 @@
 import type { Clipping } from "../clipping";
+import type { Drafts, SavedRecipe } from "../drafts";
+import type { RecipeDraft } from "../recipe-draft";
 import type { Result } from "../result";
 import type { Settings } from "../settings";
 import type { Vocabulary } from "../vocabulary";
@@ -41,6 +43,12 @@ export interface ClippingStore {
   clear(): Promise<Result<void, StoreError>>;
 }
 
+/** Every draft the sidebar holds, so one survives the sidebar closing (M7). */
+export interface DraftStore {
+  load(): Promise<Result<Drafts, StoreError>>;
+  save(drafts: Drafts): Promise<Result<void, StoreError>>;
+}
+
 /**
  * Why the server did not answer, or answered with a refusal. Each kind has a
  * different fix, so the client tells them apart rather than collapsing them.
@@ -56,6 +64,8 @@ export type NutrishoErrorKind =
   | "timeout"
   /** A 401: the key is wrong, or was deleted. */
   | "unauthorised"
+  /** A 400, 409 or 413: the server read the request and said no, and why. */
+  | "refused"
   /** Any other status that is not a success. */
   | "server-error"
   /** A success whose body is not the shape the server's example shows. */
@@ -72,4 +82,6 @@ export interface NutrishoError {
 export interface NutrishoClient {
   /** The lists the sidebar loads when it opens (D4). Never throws. */
   vocabulary(): Promise<Result<Vocabulary, NutrishoError>>;
+  /** Save the draft under its own id; a second save answers with the first's recipe. */
+  saveRecipe(draft: RecipeDraft): Promise<Result<SavedRecipe, NutrishoError>>;
 }

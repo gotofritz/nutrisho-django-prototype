@@ -31,6 +31,21 @@ describe("createFakeStorage", () => {
     expect(changed).toHaveBeenCalledTimes(1);
   });
 
+  // As `storage.local` and `storage.session` do: they keep a structured
+  // clone, and refuse a Proxy such as Svelte's reactive state.
+  it("keeps a copy, and refuses what the browser cannot clone", async () => {
+    const storage = createFakeStorage();
+    const value = { rows: ["1 lemon"] };
+
+    await storage.set("drafts", value);
+    expect(storage.written.drafts).toEqual(value);
+    expect(storage.written.drafts).not.toBe(value);
+
+    await expect(storage.set("drafts", new Proxy(value, {}))).rejects.toThrow(
+      /could not be cloned/,
+    );
+  });
+
   it("can be made to refuse", async () => {
     const storage = createFakeStorage();
     storage.failWith(new Error("storage is full"));

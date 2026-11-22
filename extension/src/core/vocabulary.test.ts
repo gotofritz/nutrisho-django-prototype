@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { apiExample } from "../../tests/support/api-examples";
 
-import { EMPTY_VOCABULARY, parseVocabulary } from "./vocabulary";
+import { EMPTY_VOCABULARY, knows, parseVocabulary } from "./vocabulary";
 
 const REPLY = apiExample("vocabulary.json").response.body as Record<
   string,
@@ -72,5 +72,24 @@ describe("parseVocabulary", () => {
       tags: [],
       limits: {},
     });
+  });
+});
+
+// Plan 012, D4: a name the lists do not hold is marked *new*, and the save
+// makes it the user's own.
+describe("knows", () => {
+  const units = [{ name: "tbsp", spellings: ["tablespoon", "tablespoons"] }];
+
+  it("knows a name by any of its spellings, ignoring case", () => {
+    expect(knows(units, "tbsp")).toBe(true);
+    expect(knows(units, "Tablespoons")).toBe(true);
+  });
+
+  it("ignores spaces around it and a trailing full stop, as the server does for units", () => {
+    expect(knows(units, " tbsp. ")).toBe(true);
+  });
+
+  it("does not know any other name", () => {
+    expect(knows(units, "handful")).toBe(false);
   });
 });

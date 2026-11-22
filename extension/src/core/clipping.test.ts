@@ -20,7 +20,23 @@ describe("clippingFrom", () => {
       url: "https://example.test/melanzane",
       clippedAt: "2026-11-20T09:30:00.000Z",
       warnings: [{ kind: "selection-truncated", message: "cut" }],
+      target: "clipboard",
+      html: "",
     });
+  });
+
+  // The markup is kept to look into a capture that read oddly.
+  it("keeps the selection's markup", () => {
+    expect(
+      clippingFrom({ ...CAPTURE, html: "<p>2 aubergines</p>" }, new Date())
+        .html,
+    ).toBe("<p>2 aubergines</p>");
+  });
+
+  // The right-click submenu names where the text goes; the shortcut and the
+  // toolbar button send it to the clipboard only.
+  it("keeps where the text was sent", () => {
+    expect(clippingFrom(CAPTURE, new Date(), "group").target).toBe("group");
   });
 
   it("is a plain value that survives extension storage", () => {
@@ -35,6 +51,16 @@ describe("isClipping", () => {
     expect(isClipping(clippingFrom(CAPTURE, new Date()))).toBe(true);
   });
 
+  it("knows a clipping stored before the markup was kept", () => {
+    const older: Record<string, unknown> = {
+      ...clippingFrom(CAPTURE, new Date()),
+    };
+    delete older.html;
+
+    expect(isClipping(older)).toBe(true);
+    expect(isClipping({ ...older, html: 3 })).toBe(false);
+  });
+
   it.each([
     ["nothing", undefined],
     ["a string", "basil"],
@@ -45,6 +71,17 @@ describe("isClipping", () => {
     [
       "warnings that are not a list",
       { text: "", title: "", url: "", clippedAt: "", warnings: "none" },
+    ],
+    [
+      "a target it does not know",
+      {
+        text: "",
+        title: "",
+        url: "",
+        clippedAt: "",
+        warnings: [],
+        target: "ingredients",
+      },
     ],
   ])("refuses %s", (_, value) => {
     expect(isClipping(value)).toBe(false);

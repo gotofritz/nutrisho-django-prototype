@@ -1,17 +1,19 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M6 done (#154, #156, #158, #160, #162, #166)
+## Status: In progress, M1 to M7 done (#154, #156, #158, #160, #162, #166, #168)
 
 ## What we are building
 
 A browser extension, in `extension/` (#145), that clips a recipe from the
 page the user is reading into their Nutrisho.
 
-1. The user selects text on a recipe page and clips it, from the right-click
-   menu, a shortcut or the toolbar button.
-2. A sidebar opens with the text in a clipboard area. From there it is added
-   to the recipe's name, blurb, ingredients or steps, or replaces what is
-   there.
+1. The user selects text on a recipe page and clips it from the right-click
+   menu, choosing where it goes: the title, the blurb, an ingredient group,
+   the steps, or only the clipboard. A shortcut and the toolbar button clip to
+   the clipboard.
+2. A sidebar opens with the recipe so far. Clipped text also lands in a
+   clipboard, folded away at the bottom, from where it can be added to any
+   part of the recipe, or replace it.
 3. Each ingredient line becomes a row with the fields it has on the site.
    The sidebar fills in what it recognises and marks the names the library
    does not have. Everything can be edited, as on the site.
@@ -37,9 +39,16 @@ Changing one means editing this list.
 - **D2 Sidebar.** The UI is a sidebar. A capture starts from the right-click
   menu, a shortcut or the toolbar button: only those let the extension read
   the page (`activeTab`).
-- **D3 Clipboard.** Captured text lands in a clipboard area, and from there
-  is added to the name, blurb, ingredients or steps, or replaces them. Typed
-  or pasted text is treated the same.
+- **D3 Where text goes.** The right-click menu's submenu (*Title*, *Blurb*,
+  *Ingredient group*, *Ingredient*, *Steps*, *Clipboard*) sends a capture to
+  that part of the recipe and to the clipboard: the title replaces the name,
+  the others add to what is there. *Ingredient group* starts a group;
+  *Ingredient* adds to the one group shown open, or starts one when none
+  is. The shortcut and the toolbar button send it to the
+  clipboard only. From the clipboard, at the bottom of the sidebar, text is
+  added to a part of the recipe or replaces it; typed or pasted text is
+  treated the same. (Changed after a first use of M7: the clipboard alone was
+  one step too many.)
 - **D4 Lists loaded on open.** As Joplin's clipper does with tags, the
   sidebar loads the user's full lists of ingredients, units and cuisines
   every time it opens, and checks names against them in the browser. A name
@@ -49,9 +58,11 @@ Changing one means editing this list.
 - **D6 Ingredient rows.** A row has the site's fields (quantity, unit,
   ingredient, substitute, preparation, note) plus *rest*. Each line is
   scanned: what is recognised fills a field, and everything else stays in
-  *rest* (M7).
-- **D7 Group headings.** A line among the ingredients can be made a group
-  name.
+  *rest*, a scratch pad that is never saved (M7).
+- **D7 Group headings.** Ingredients come in groups, one per capture sent to
+  *Ingredient group*. A first line that holds nothing the lists know, with
+  more lines after it, is taken for the group's name (`For the sauce:`), and
+  every name can be edited (M7).
 - **D8 Ids.** A recipe's id is a UUID, made by whoever creates the recipe.
   The extension makes one when a draft starts, so a save sent twice makes
   one recipe. A capture from another page starts a new recipe.
@@ -150,62 +161,52 @@ lists, tested against M4's JSON files, and the sidebar shows the clipping and
 whose lists loaded or what went wrong. No Chrome `key`; the gecko id is
 pinned.
 
-### M7 · extension · A clipper that can be used
+### ✅ M7 · extension · A clipper that can be used
 
-- `RecipeDraft`, pure and written test-first: the id (a version 7 UUID,
-  made when the draft starts), the name (from the page's title), the source
-  (the page's address), blurb, servings, ingredient rows and steps, with
-  *Add to* and *Replace* for name, blurb, ingredients and steps.
-- **Scanning a line.** Each line sent to the ingredients becomes a row. The
-  scan fills a field only when it is sure, and leaves every other word, in
-  order, in *rest*:
-  - the ingredient is the longest name from the loaded list that the line
-    holds, stored in its canonical spelling;
-  - the unit is a name from the loaded list directly before the ingredient;
-  - the quantity is a number directly before the unit, or before the
-    ingredient when there is no unit.
-
-  | Line | Quantity | Unit | Ingredient | Rest |
-  |------|----------|------|------------|------|
-  | `Juice of 1 lemon` | 1 | | lemon | Juice of |
-  | `1 (14-ounce) can diced tomatoes` | | | diced tomato | 1 (14-ounce) can |
-  | `A fresh basket of boletus` | | | | A fresh basket of boletus |
-
-  These are its first tests, with `lemon` and `diced tomato` in the list
-  and `boletus` not. Lines it gets wrong join them as they turn up.
-- Every field of a row can be edited. An ingredient or unit that is not in
-  the lists is marked *new*, and the save makes it the user's own. A row
-  with no ingredient stops the save. What is left in *rest* is saved in the
-  row's note.
-- Steps: one for each line or paragraph of the text, each editable.
-- Drafts are kept in the extension's storage, so one survives the sidebar
-  closing. A capture from another page starts a new draft, and the earlier
-  ones stay listed until they are saved or discarded.
-- *Save* posts the draft as a Nutrisho document to
-  `POST /recipes/api/recipes/?id=<draft id>`, then shows *Open in Nutrisho*
-  (`/recipes/<id>/?edit=1`) with the server's warnings, or the server's
-  refusal as it came.
-- **Done when** a recipe clipped from a real page opens on the dev server
-  with its rows as the sidebar showed them, and saving it twice makes one
-  recipe.
+Done (#168). A clipping starts a draft named after the page, with a version
+7 UUID; a clipping from another page starts another, matched on the page
+rather than the editable source. The right-click submenu
+sends it to the title, blurb, a new ingredient group or the steps as well as
+to the clipboard, which is folded away at the bottom with the clipped HTML
+and has *Add* and *Replace* for each part (D3). Unsaved drafts are kept in
+local storage, across restarts, but a new browser session opens none of them;
+the clipping is kept in session storage; *Clear all* drops both. ↗ beside the
+source opens it in a new tab. A line break in the page's source is a space, as on
+screen. Each ingredient line is scanned against the lists: the longest
+ingredient, a unit just before or just after it or straight after an amount
+a few words earlier, and that amount or else the nearest one before it
+(`600ml` is `600 ml`); a line with no known ingredient keeps the amount and
+unit it starts with. Everything else stays in *rest*, a scratch pad that is
+never saved. Unknown names are marked *new*; a group's first line is its
+name when it has no amount and nothing in it is known or it starts with
+*For* (D7). Groups and rows fold to one line, are deleted, or are added with + (an
+empty row is left out of a save); a step has a
+title, + adds one and × deletes one, and an empty step is left out of a
+save. *Save* checks the name, servings, quantities and that every row has
+an ingredient, posts the draft as a Nutrisho document, and shows *Open in
+Nutrisho*, the server's warnings, or its refusal as it came. The draft and the
+save are tested against the server's API examples.
 
 ### M8 · extension · Names from the lists
 
 - Typing in an ingredient, substitute or unit field offers the names in the
   loaded lists.
-- A cuisine field that only picks from the tree, as on the site (anklipper's
-  `Picker`).
+- A cuisine field that picks from the tree (anklipper's `Picker`) and, like
+  tags, takes a new one, marked *new*. The tree is staff-only today, so the
+  server needs a way to make a user's own cuisine first: decide whether it
+  is private, as a user's ingredients and tags are, and where in the tree it
+  goes.
 - A tags field, comma-separated as on the site, with a tag that is not in
   the list marked *new*.
 - The lists load again after a save, so the names it made are known.
 
 ### M9 · extension · Structure, as on the site
 
-- A line among the ingredients can be made a group name (D7). The scan
-  proposes it for a line that ends in a colon and holds nothing it knows
-  (`For the sauce:`).
-- Step titles. Rows and steps can be reordered and deleted, and a row moved
-  to another group.
+- A line inside a group can be made a group name, splitting it (D7: M7
+  already names a group from its first line).
+- Rows and steps can be reordered, and a row moved to another group. (Step
+  titles, adding and deleting steps, groups and rows, and folding groups
+  and rows, came early, in M7.)
 - Text too long for its field is flagged at the field before the save, from
   the `limits` loaded with the lists (D12).
 
@@ -283,10 +284,6 @@ pages' data is loose, so its fixtures are the shapes real pages use.
 
 ## Open questions
 
-- Should users add their own cuisines too? Today the tree is staff-only;
-  ingredients, tags and (after M1) units are not.
-- What is left in *rest* at a save: into the note (assumed in M7), or must
-  it be emptied first?
 - Do the loaded lists need to refresh while the sidebar stays open, or is
   loading on open enough?
 - The toolbar button opens the sidebar and clips the selection: assumed in
