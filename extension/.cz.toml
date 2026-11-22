@@ -1,0 +1,26 @@
+# The clipper's releases, tagged ext-v<version> (plan 012, M15). Only commits
+# scoped `ext` count: the server's config leaves them out in turn, so neither
+# part's changelog or version moves for the other's commits. Run through
+# `make ext-release`, which borrows the server's commitizen.
+[tool.commitizen]
+changelog_incremental = true
+ignored_tag_formats = ["server-v*", "v*"]
+major_version_zero = true
+name = "cz_customize"
+tag_format = "ext-v$version"
+update_changelog_on_bump = true
+version_provider = "npm"
+version_scheme = "semver2"
+
+[tool.commitizen.customize]
+bump_pattern = '^((feat|fix|refactor|perf)\(ext\)!?):'
+changelog_pattern = '^((feat|fix|refactor|perf)\(ext\)!?):'
+commit_parser = '^(?P<change_type>feat|fix|refactor|perf)\(ext\)(?P<breaking>!)?:\s(?P<message>.*)?'
+schema = "<type>(<scope>): <subject>"
+schema_pattern = '(?s)(build|bump|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(\S+\))?!?: ([^\n\r]+)((\n\n.*)|(\s*))?$'
+
+[tool.commitizen.customize.change_type_map]
+feat = "Feat"
+fix = "Fix"
+perf = "Perf"
+refactor = "Refactor"

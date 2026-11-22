@@ -270,12 +270,10 @@ confirmation. The clipper's settings link to the page.
 
 ### M15 · extension · Release
 
-- `ext-v<version>` tags and `extension/CHANGELOG.md`, by commitizen with a
-  config of its own in `extension/` that counts only commits scoped `ext`,
-  and the mirror filter on the server's side. Its default plugin has no
-  scope filter: tried, it put the server's commits in the extension's
-  changelog, and a `feat(ext)` commit raised the server's version. If that
-  cannot be made to work, release-please for the extension only.
+- ✅ `ext-v<version>` tags and `extension/CHANGELOG.md` (#190): commitizen's
+  `cz_customize` in `extension/.cz.toml` counts only commits scoped `ext`,
+  and the server's config the rest. `make ext-release` starts the PR, and
+  CI tags the merge and attaches the zips to the release.
 - Icons, and AMO's data-collection declaration: page content goes to a
   server, so anklipper's `none` does not apply.
 - The file is signed by AMO as an unlisted add-on (D22) and attached to the

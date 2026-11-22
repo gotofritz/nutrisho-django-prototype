@@ -220,8 +220,8 @@ Prioritize:
 - Imperative present tense
 - Subject ≤ 72 chars
 - Reference issues when relevant
-- Scope extension-only commits `ext` (`feat(ext): ...`): the server's changelog
-  sees every commit, and the scope makes them easy to spot
+- Scope extension-only commits `ext` (`feat(ext): ...`): the scope decides
+  which part's release a commit counts for, and which changelog lists it
 
 ### Branches
 
@@ -251,7 +251,10 @@ The server's version in `server/pyproject.toml` is its only one. Never edit it
 by hand: cut a release with `make release`, which runs `cz bump` in `server/` on
 a new branch and commits the version and `server/CHANGELOG.md` section for a PR.
 CI tags `server-v<version>` and publishes the GitHub release when that PR
-merges. The extension will release on its own `ext-v<version>` tags. See
+merges. The extension releases the same way on its own `ext-v<version>` tags,
+from `make ext-release`, with the version in `extension/package.json` and
+`extension/CHANGELOG.md`. Each counts only its own commits: those scoped `ext`
+are the extension's (`extension/.cz.toml`), the rest the server's. See
 `docs/developer-guide.md#releases`.
 
 ## Pull Requests

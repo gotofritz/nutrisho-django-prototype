@@ -17,6 +17,8 @@
     "preview:build": "vite build --config preview/vite.config.ts",
     "build": "wxt build -b firefox",
     "build:chrome": "wxt build -b chrome",
+    "zip": "wxt zip -b firefox",
+    "zip:chrome": "wxt zip -b chrome",
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",

@@ -28,7 +28,7 @@ IN_EXT := cd extension &&
 TEST_ARGS = $(patsubst server/%,%,$(ARGS))
 
 .PHONY: help audit backup bootstrap check-migrations coverage coverage-badge dev e2e ext-build ext-dev \
-	ext-install ext-qa ext-test lint lint-fix manage migrate qa release schema seed test test-cov test-hooks \
+	ext-install ext-qa ext-release ext-test ext-zip lint lint-fix manage migrate qa release schema seed test test-cov test-hooks \
 	typecheck
 
 help: ## List the available targets
@@ -115,6 +115,25 @@ ext-qa: $(EXT_INSTALLED) ## Run the extension's checks: formatting, lint, types,
 	$(IN_EXT) pnpm test
 	$(IN_EXT) pnpm build
 	$(IN_EXT) pnpm build:chrome
+
+# Releases the extension alone, tagged ext-v<version> (plan 012, M15), as
+# `release` does the server, with the server's commitizen and
+# extension/.cz.toml, which counts only commits scoped `ext`. When the PR
+# merges, the extension workflow tags the version and publishes the release.
+ext-release: ## Start an extension release branch: bump the version and CHANGELOG.md in extension/ from the ext commits since the last ext-v tag
+	git diff --quiet HEAD || { echo "Commit or stash your changes first" >&2; exit 1; }
+	git fetch origin main --tags
+	git switch --detach origin/main
+	$(IN_EXT) next=$$(uv run --project ../server --frozen cz bump --get-next --yes); \
+	git switch -c chore-release-ext-v$$next; \
+	uv run --project ../server --frozen cz bump --version-files-only --yes; \
+	git add package.json CHANGELOG.md; \
+	git commit -m "chore(release): ext-v$$next"; \
+	echo "Push chore-release-ext-v$$next and open a PR; CI tags ext-v$$next when it merges."
+
+ext-zip: $(EXT_INSTALLED) ## Zip the extension for each browser, and its sources for AMO, into extension/.output/
+	$(IN_EXT) pnpm zip
+	$(IN_EXT) pnpm zip:chrome
 
 ext-test: $(EXT_INSTALLED) ## Run the extension's tests (pass a path or other vitest args as ARGS="...")
 	$(IN_EXT) pnpm test $(ARGS)

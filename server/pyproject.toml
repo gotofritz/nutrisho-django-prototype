@@ -37,11 +37,27 @@ changelog_incremental = true
 ignored_tag_formats = ["ext-v*"]
 legacy_tag_formats = ["v$version"]
 major_version_zero = true
-name = "cz_conventional_commits"
+name = "cz_customize"
 tag_format = "server-v$version"
 update_changelog_on_bump = true
 version_provider = "uv"
 version_scheme = "semver2"
+
+# Conventional Commits, as cz_conventional_commits reads them, less those
+# scoped `ext`: the extension counts those for its own releases
+# (extension/.cz.toml), and the default plugin cannot leave them out.
+[tool.commitizen.customize]
+bump_pattern = '^((BREAKING[\-\ ]CHANGE|\w+)(\((?!ext\))[^()]+\))?!?):'
+changelog_pattern = '^((BREAKING[\-\ ]CHANGE|\w+)(\((?!ext\))[^()]+\))?!?):'
+commit_parser = '^((?P<change_type>feat|fix|refactor|perf|BREAKING CHANGE)(?:\((?P<scope>(?!ext\))[^()\r\n]*)\)|\()?(?P<breaking>!)?|\w+!):\s(?P<message>.*)?'
+schema = "<type>(<scope>): <subject>"
+schema_pattern = '(?s)(build|bump|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(\S+\))?!?: ([^\n\r]+)((\n\n.*)|(\s*))?$'
+
+[tool.commitizen.customize.change_type_map]
+feat = "Feat"
+fix = "Fix"
+perf = "Perf"
+refactor = "Refactor"
 
 [tool.coverage.run]
 branch = true

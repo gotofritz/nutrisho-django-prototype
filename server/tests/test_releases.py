@@ -1,7 +1,10 @@
 """Tests for the server's release setup: one version number, cut by commitizen (#72, #145)."""
 
+import re
 import tomllib
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PYPROJECT = tomllib.loads((ROOT / "pyproject.toml").read_text())
@@ -53,3 +56,32 @@ def test_changelog_has_a_section_for_the_current_version():
     headings = (f"## server-v{version} (", f"## v{version} (")  # v0.3.0 predates the prefix
 
     assert any(line.startswith(headings) for line in CHANGELOG.read_text().splitlines())
+
+
+SERVER_COMMITS = ["feat: add a tool", "fix(export): keep the singular", "perf!: drop a query"]
+EXTENSION_COMMITS = [
+    "feat(ext): clip a recipe",
+    "fix(ext): say the error",
+    "feat(ext)!: change the draft",
+]
+
+
+def _patterns() -> dict[str, re.Pattern[str]]:
+    """What commitizen matches a subject against to bump, list and parse it."""
+    customize = COMMITIZEN["customize"]
+    return {
+        name: re.compile(customize[name])
+        for name in ("bump_pattern", "changelog_pattern", "commit_parser")
+    }
+
+
+@pytest.mark.parametrize("message", SERVER_COMMITS)
+def test_server_commits_count_towards_a_server_release(message: str):
+    """A server commit, scoped or not, bumps the version and has a changelog line."""
+    assert all(pattern.match(message) for pattern in _patterns().values())
+
+
+@pytest.mark.parametrize("message", EXTENSION_COMMITS)
+def test_extension_commits_are_left_out(message: str):
+    """A commit scoped `ext` counts for the extension's release (M15), never the server's."""
+    assert not any(pattern.match(message) for pattern in _patterns().values())
