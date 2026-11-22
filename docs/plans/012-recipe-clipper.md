@@ -257,7 +257,9 @@ Since #183 the user keeps several set-ups, each under a name, made and
 changed under *Your models* in Advanced Mode rather than on the options
 page; *Default model* picks the one asked, and the note after an ask names
 it. The one model saved before becomes the first set-up. Holding *Ask the
-model* to ask another just once follows in its own PR.
+model* for 2 seconds, a right-click, the context-menu key or Shift+Enter
+opens a menu of the other set-ups, to ask one just once; one Undo takes it
+back.
 
 ### ✅ M14 · server · API keys on the Config page (#150)
 

@@ -141,6 +141,7 @@ function sidebar(
         requestHostPermission: async () => true,
         log: LOG,
         model: answeringModel(),
+        modelFor: () => answeringModel(),
         modelSettings: createFakeModelSettingsStore(MODELS),
       },
     });

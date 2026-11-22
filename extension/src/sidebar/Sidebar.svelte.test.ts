@@ -14,7 +14,12 @@ import { createFakeClippingStore } from "@/core/ports/fakes/fake-clipping-store"
 import { createFakeDraftStore } from "@/core/ports/fakes/fake-draft-store";
 import { createFakeNutrishoClient } from "@/core/ports/fakes/fake-nutrisho-client";
 import { createFakeSettingsStore } from "@/core/ports/fakes/fake-settings-store";
-import { choicesFrom, defaultsFor } from "@/core/model-settings";
+import {
+  choicesFrom,
+  defaultsFor,
+  type ModelChoices,
+  type ModelSetup,
+} from "@/core/model-settings";
 import { createFakeLineModel } from "@/core/ports/fakes/fake-line-model";
 import { createFakeModelSettingsStore } from "@/core/ports/fakes/fake-model-settings-store";
 import type {
@@ -59,6 +64,7 @@ function renderSidebar(
     newSession?: boolean;
     log?: readonly LogEntry[];
     model?: LineModel;
+    modelFor?: (setup: ModelSetup) => LineModel;
     modelSettings?: ModelSettingsStore;
   } = {},
 ) {
@@ -81,6 +87,7 @@ function renderSidebar(
     requestHostPermission: async () => true,
     log: overrides.log ?? [],
     model: overrides.model ?? createFakeLineModel(),
+    modelFor: overrides.modelFor ?? (() => createFakeLineModel()),
     modelSettings: overrides.modelSettings ?? createFakeModelSettingsStore(),
     watchModelSettings: (listener: () => void) => {
       modelChanged = listener;
@@ -1168,5 +1175,122 @@ describe("asking the model about the steps", () => {
     expect(stepText(screen.getByRole("button", { name: "Edit step 1" }))).toBe(
       before,
     );
+  });
+});
+
+describe("asking another model once (#183)", () => {
+  const QWEN: ModelSetup = {
+    ...defaultsFor("mlx"),
+    id: "1",
+    name: "Qwen3-8B-4bit on MLX",
+  };
+  const HAIKU: ModelSetup = {
+    ...defaultsFor("anthropic"),
+    key: "sk-ant-api03-clipper",
+    id: "2",
+    name: "Haiku",
+  };
+  const BOTH: ModelChoices = { setups: [QWEN, HAIKU], chosen: "1" };
+  const ROWS = {
+    rows: [
+      { quantity: "2", ingredient: "aubergine" },
+      { quantity: "1", unit: "tbsp", ingredient: "olive oil" },
+    ],
+  };
+
+  function twoModels(target: "group" | "steps", choices = BOTH) {
+    const model = createFakeLineModel();
+    const other = createFakeLineModel();
+    model.answer(ok(ROWS));
+    other.answer(ok(ROWS));
+    const modelFor = vi.fn<(setup: ModelSetup) => LineModel>(() => other);
+    renderSidebar({
+      clippings: createFakeClippingStore({ ...CLIPPING, target }),
+      client: answering(COOKS_LISTS),
+      model,
+      modelFor,
+      modelSettings: createFakeModelSettingsStore(choices),
+    });
+    return { model, other, modelFor };
+  }
+
+  async function askOnce(name: string, setup: string) {
+    await fireEvent.contextMenu(await screen.findByRole("button", { name }));
+    await fireEvent.click(screen.getByRole("menuitem", { name: setup }));
+  }
+
+  it("asks the one picked about a group, and names it", async () => {
+    const { model, other, modelFor } = twoModels("group");
+
+    await askOnce("Ask the model about group 1", "Haiku");
+
+    expect(await screen.findByText("Haiku split 2 lines.")).toBeVisible();
+    expect(modelFor).toHaveBeenCalledWith(HAIKU);
+    expect(other.sent).toHaveLength(1);
+    expect(model.sent).toEqual([]);
+  });
+
+  it("lists only the models other than the default", async () => {
+    twoModels("group");
+    await fireEvent.contextMenu(
+      await screen.findByRole("button", {
+        name: "Ask the model about group 1",
+      }),
+    );
+
+    expect(
+      screen.getAllByRole("menuitem").map((item) => item.textContent),
+    ).toEqual(["Haiku"]);
+  });
+
+  it("goes back to the default on the next click", async () => {
+    const { model } = twoModels("group");
+    await askOnce("Ask the model about group 1", "Haiku");
+    await screen.findByText("Haiku split 2 lines.");
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Ask the model about group 1" }),
+    );
+
+    expect(
+      await screen.findByText("Qwen3-8B-4bit on MLX split 2 lines."),
+    ).toBeVisible();
+    expect(model.sent).toHaveLength(1);
+  });
+
+  it("is taken back by one Undo", async () => {
+    twoModels("group");
+    await askOnce("Ask the model about group 1", "Haiku");
+    await screen.findByText("Haiku split 2 lines.");
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Undo the model's rows" }),
+    );
+
+    expect(
+      within(await openRow(2)).getByRole("textbox", { name: "Rest" }),
+    ).toHaveValue("olive oil");
+  });
+
+  it("asks the one picked about the steps, and names it", async () => {
+    const { model, other } = twoModels("steps");
+    other.answer(ok({ steps: [{ title: "", text: "Fry it all" }] }));
+
+    await askOnce("Ask the model about the steps", "Haiku");
+
+    expect(
+      await screen.findByText(/^Haiku rewrote \d+ steps? as 1\.$/),
+    ).toBeVisible();
+    expect(other.stepsSent).toHaveLength(1);
+    expect(model.stepsSent).toEqual([]);
+  });
+
+  it("offers no menu with one model", async () => {
+    twoModels("group", choicesFrom(defaultsFor("mlx")));
+    const button = await screen.findByRole("button", {
+      name: "Ask the model about group 1",
+    });
+
+    expect(button).not.toHaveAttribute("aria-haspopup");
   });
 });

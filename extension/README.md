@@ -110,11 +110,13 @@ the *View* menu, under *Sidebar*.
    model* by *Steps* rewrites the method short and colloquial, a stage of the
    cooking to a step; *Undo the model's steps* puts it back. The model can be MLX or llama.cpp on your computer, as
    [timbuktu](https://github.com/gotofritz/timbuktu/blob/main/docs/user-guide.md#choosing-an-ai-backend)
-   starts them, or Anthropic with your own key: make one for the clipper
-   alone, with a low spending limit. You can keep several, each under a
+   starts them, or Anthropic with your own key, in a workspace of its own
+   with a low spend limit (see below). You can keep several, each under a
    name: *+ add model* adds one, ✎ edits one and × deletes it, and *Default
-   model* picks the one *Ask the model* uses, or *Built in* for none. The
-   note after an ask names the model that answered. *Advanced Mode* says
+   model* picks the one *Ask the model* uses, or *Built in* for none. To ask
+   another just once, hold *Ask the model* for 2 seconds, right-click it, or
+   press Shift+Enter on it, and pick one from the menu; the next click asks
+   the default again. The note after an ask names the model that answered. *Advanced Mode* says
    whether your model answers, and *Check the model* asks again.
 
 Recipes not yet saved are kept in your browser, even after a restart. A new
@@ -128,6 +130,22 @@ The keys, Nutrisho's and a model's, are kept in the browser's local storage,
 never synced, and are never shown again. Only the
 addresses you saved are ever contacted: the recipe goes to your Nutrisho when
 you save, and a group's lines, or the steps, to your model when you ask it.
+
+### Capping what Anthropic can spend
+
+Anthropic sets spend limits on a workspace, not on a key, so give the clipper
+a workspace of its own:
+
+1. In the [Anthropic Console](https://console.anthropic.com), open
+   *Settings*, then *Workspaces*, and create one, for example *Clipper*
+2. Open it and set its spend limit to a small monthly amount
+3. Under *API keys*, create the key in that workspace, and paste it into the
+   set-up's *Anthropic key*
+
+When the workspace reaches its limit, the model stops answering until the
+next month, and nothing else of yours is touched. Deleting the key, or the
+workspace, cuts the clipper off alone. The organisation's own limit, under
+*Settings*, then *Limits*, still caps everything together.
 
 `make ext-preview` serves [`preview/`](preview/) on Vite's address: a picker of
 scenes (nothing clipped, a key expired, a draft filled in, saved, the

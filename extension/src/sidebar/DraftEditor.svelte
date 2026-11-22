@@ -2,6 +2,7 @@
   import type { Snippet } from "svelte";
   import { SvelteSet } from "svelte/reactivity";
 
+  import AskButton from "./AskButton.svelte";
   import { fitText } from "./fit-text.dom";
 
   import type { IngredientRow } from "@/core/ingredient-line";
@@ -47,6 +48,7 @@
     onChange,
     onAskModel,
     onAskModelSteps,
+    otherModels = [],
     asking = false,
     modelAt,
     modelFeedback,
@@ -57,9 +59,11 @@
     issues: readonly DraftIssue[];
     onChange: (draft: RecipeDraft) => void;
     /** Send a group's lines to the user's own model (M13); absent while none is set up. */
-    onAskModel?: (groupIndex: number) => void;
+    onAskModel?: (groupIndex: number, setupId?: string) => void;
     /** Ask the user's own model to rewrite the steps; none while it is off. */
-    onAskModelSteps?: () => void;
+    onAskModelSteps?: (setupId?: string) => void;
+    /** The set-ups other than the default, to ask one once (#183). */
+    otherModels?: readonly { readonly id: string; readonly name: string }[];
     /** A model is working on a group, so no other is asked meanwhile. */
     asking?: boolean;
     /** The group, or the steps, the model was last asked about. */
@@ -572,12 +576,12 @@
         {/if}
         <div class="group-tools">
           {#if onAskModel !== undefined && !groupShut}
-            <button
-              type="button"
-              aria-label="Ask the model about group {groupIndex + 1}"
+            <AskButton
+              label="Ask the model about group {groupIndex + 1}"
+              others={otherModels}
               disabled={asking}
-              onclick={() => onAskModel(groupIndex)}>Ask the model</button
-            >
+              onAsk={(setupId) => onAskModel(groupIndex, setupId)}
+            />
           {/if}
           <button
             type="button"
@@ -760,12 +764,12 @@
   <div class="steps-head part">
     <h3>Steps</h3>
     {#if onAskModelSteps !== undefined && draft.steps.length > 0}
-      <button
-        type="button"
-        aria-label="Ask the model about the steps"
+      <AskButton
+        label="Ask the model about the steps"
+        others={otherModels}
         disabled={asking}
-        onclick={() => onAskModelSteps()}>Ask the model</button
-      >
+        onAsk={(setupId) => onAskModelSteps(setupId)}
+      />
     {/if}
   </div>
   {#if modelAt === "steps"}

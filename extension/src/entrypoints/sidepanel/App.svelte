@@ -2,7 +2,11 @@
   import { uuidV7 } from "@/core/uuid7";
   import { createNutrishoClient } from "@/nutrisho/client";
   import { loggedFetch, type LogEntry } from "@/nutrisho/fetch-log";
-  import { BUILT_IN, chosenSettings } from "@/core/model-settings";
+  import {
+    BUILT_IN,
+    chosenSettings,
+    type ModelSetup,
+  } from "@/core/model-settings";
   import { createUserModel } from "@/models/user-model";
   import {
     createStoredModelSettings,
@@ -63,6 +67,14 @@
     },
     hasHostPermission: (address) => permissions.has(hostPermissionFor(address)),
   });
+  // Another set-up, asked once from the menu a hold on *Ask* opens (#183).
+  const modelFor = (setup: ModelSetup) =>
+    createUserModel({
+      fetch: logged,
+      loadSettings: async () => setup,
+      hasHostPermission: (address) =>
+        permissions.has(hostPermissionFor(address)),
+    });
 </script>
 
 <Sidebar
@@ -78,6 +90,7 @@
     permissions.request({ origins: [pattern] })}
   {log}
   {model}
+  {modelFor}
   {modelSettings}
   watchModelSettings={(onChange) => watchModelSettings(storage, onChange)}
 />

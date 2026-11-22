@@ -207,9 +207,9 @@
       </p>
     {:else if chosen.backend === "anthropic"}
       <p class="quiet" id="setup-key-hint">
-        Make a key for the clipper alone, with a low spending limit, in the
-        Anthropic Console, so it can be revoked on its own. It is kept in this
-        browser and sent only to Anthropic.
+        Make the clipper a key in a workspace of its own, with a low spend
+        limit, in the Anthropic Console, so it can be capped and revoked on its
+        own. It is kept in this browser and sent only to Anthropic.
       </p>
     {:else}
       <p class="quiet" id="setup-key-hint">Only if the server asks for one.</p>
