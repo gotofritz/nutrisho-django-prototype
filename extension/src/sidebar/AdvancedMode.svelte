@@ -1,7 +1,16 @@
 <script lang="ts">
   import { untrack } from "svelte";
 
-  import type { SettingsStore } from "@/core/ports/types";
+  import {
+    NO_CHOICES,
+    chooseSetup,
+    removeSetup,
+    saveSetup,
+    type ModelChoices,
+    type ModelSetup,
+    type UnsavedSetup,
+  } from "@/core/model-settings";
+  import type { ModelSettingsStore, SettingsStore } from "@/core/ports/types";
   import {
     DEFAULT_SETTINGS,
     SERVERS,
@@ -13,15 +22,19 @@
   import type { LogEntry } from "@/nutrisho/fetch-log";
 
   import type { ModelCheck } from "./model-check";
+  import SetupForm from "./SetupForm.svelte";
 
   /**
    * Advanced Mode (plan 012, M12): folded away under the recipe, where the
    * clipboard was. It picks the server, this computer at the address Django
    * prints or nutrisho.com, and its port, and keeps a log of what the clipper
-   * did. Handed the ports, never a `browser.*` API.
+   * did. Since #183 it also holds the user's own models, and which one
+   * *Ask the model* uses. Handed the ports, never a `browser.*` API.
    */
   const {
     settings,
+    modelSettings,
+    onModelsChanged,
     requestHostPermission,
     onServerChanged,
     log,
@@ -29,6 +42,10 @@
     onCheckModel,
   }: {
     settings: SettingsStore;
+    /** The user's own models, and the default (#183). */
+    modelSettings: ModelSettingsStore;
+    /** A set-up or the default changed, so the sidebar loads it again. */
+    onModelsChanged: () => void;
     /** Called first on the press: Firefox refuses one made after an `await`. */
     requestHostPermission: (pattern: string) => Promise<boolean>;
     /** The server changed, so the lists are loaded again from it. */
@@ -56,14 +73,54 @@
     | { kind: "problem"; message: string }
   >({ kind: "idle" });
 
+  let models = $state.raw<ModelChoices>(NO_CHOICES);
+  /** The set-up form: closed, a new set-up, or one being changed. */
+  let editing = $state.raw<
+    { kind: "closed" } | { kind: "new" } | { kind: "edit"; setup: ModelSetup }
+  >({ kind: "closed" });
+  let modelStatus = $state<
+    | { kind: "idle" }
+    | { kind: "saved"; name: string }
+    | { kind: "refused"; name: string; address: string }
+    | { kind: "problem"; message: string }
+  >({ kind: "idle" });
+
   $effect(() => {
     untrack(() => void load());
   });
 
   async function load() {
-    const stored = await settings.load();
+    const [stored, storedModels] = await Promise.all([
+      settings.load(),
+      modelSettings.load(),
+    ]);
+    if (storedModels.ok) models = storedModels.value;
     if (!stored.ok) return;
     ({ host, port } = serverParts(stored.value.serverUrl));
+  }
+
+  /** Keep the set-ups, and tell the sidebar. */
+  async function keepModels(next: ModelChoices) {
+    const written = await modelSettings.save(next);
+    if (!written.ok) return written;
+    models = next;
+    onModelsChanged();
+    return written;
+  }
+
+  async function changeModels(next: ModelChoices) {
+    modelStatus = { kind: "idle" };
+    const written = await keepModels(next);
+    if (!written.ok) {
+      modelStatus = {
+        kind: "problem",
+        message: `Your models could not be saved: ${written.error.message}`,
+      };
+    }
+  }
+
+  function saveOne(setup: UnsavedSetup) {
+    return keepModels(saveSetup(models, setup));
   }
 
   /** Each server starts at its own port. */
@@ -135,6 +192,94 @@
   {:else if status.kind === "problem"}
     <p class="problem" role="alert">{status.message}</p>
   {/if}
+  <section class="models" aria-labelledby="models-heading">
+    <h3 id="models-heading">Your models</h3>
+    <label>
+      Default model
+      <select
+        value={models.chosen ?? ""}
+        onchange={(event) =>
+          void changeModels(
+            chooseSetup(models, event.currentTarget.value || undefined),
+          )}
+      >
+        <option value="">Built in</option>
+        {#each models.setups as setup (setup.id)}
+          <option value={setup.id}>{setup.name}</option>
+        {/each}
+      </select>
+    </label>
+    {#if models.setups.length === 0}
+      <p class="quiet">
+        No models of your own yet: the built-in scan reads the lines. A model
+        can split harder lines, and rewrite the steps short.
+      </p>
+    {:else}
+      <ul>
+        {#each models.setups as setup (setup.id)}
+          <li>
+            <span>{setup.name}</span>
+            <button
+              type="button"
+              class="icon"
+              aria-label="Edit {setup.name}"
+              title="Edit"
+              onclick={() => {
+                modelStatus = { kind: "idle" };
+                editing = { kind: "edit", setup };
+              }}>✎</button
+            >
+            <button
+              type="button"
+              class="icon"
+              aria-label="Delete {setup.name}"
+              title="Delete"
+              onclick={() => void changeModels(removeSetup(models, setup.id))}
+              >×</button
+            >
+          </li>
+        {/each}
+      </ul>
+    {/if}
+    {#if editing.kind === "closed"}
+      <button
+        type="button"
+        class="add"
+        onclick={() => {
+          modelStatus = { kind: "idle" };
+          editing = { kind: "new" };
+        }}>+ add model</button
+      >
+    {:else}
+      {#key editing}
+        <SetupForm
+          choices={models}
+          {...editing.kind === "edit" ? { editing: editing.setup } : {}}
+          {requestHostPermission}
+          onSave={saveOne}
+          onDone={({ name, refused }) => {
+            editing = { kind: "closed" };
+            modelStatus =
+              refused === undefined
+                ? { kind: "saved", name }
+                : { kind: "refused", name, address: refused };
+          }}
+          onCancel={() => (editing = { kind: "closed" })}
+        />
+      {/key}
+    {/if}
+    {#if modelStatus.kind === "saved"}
+      <p role="status">Saved {modelStatus.name}.</p>
+    {:else if modelStatus.kind === "refused"}
+      <p role="status">
+        Saved {modelStatus.name}, but the clipper was not allowed to reach {modelStatus.address},
+        so it cannot ask it. Edit it, save again and allow it when the browser
+        asks.
+      </p>
+    {:else if modelStatus.kind === "problem"}
+      <p class="problem" role="alert">{modelStatus.message}</p>
+    {/if}
+  </section>
   {#if onCheckModel !== undefined}
     <div class="model">
       {#if modelCheck?.kind === "checking"}
@@ -195,9 +340,37 @@
     justify-self: start;
   }
 
-  .model {
+  .model,
+  .models {
     display: grid;
     gap: 0.25rem;
+  }
+
+  .models {
+    margin-top: 0.75rem;
+  }
+
+  .models ul {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .models li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+  }
+
+  .models li > span {
+    flex: 1;
+  }
+
+  .icon {
+    min-width: 1.75rem;
+    padding: 0.25rem;
+    font-size: 0.875rem;
   }
 
   .log {

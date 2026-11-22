@@ -14,7 +14,7 @@ import { createFakeClippingStore } from "@/core/ports/fakes/fake-clipping-store"
 import { createFakeDraftStore } from "@/core/ports/fakes/fake-draft-store";
 import { createFakeNutrishoClient } from "@/core/ports/fakes/fake-nutrisho-client";
 import { createFakeSettingsStore } from "@/core/ports/fakes/fake-settings-store";
-import { defaultsFor } from "@/core/model-settings";
+import { choicesFrom, defaultsFor } from "@/core/model-settings";
 import { createFakeLineModel } from "@/core/ports/fakes/fake-line-model";
 import { createFakeModelSettingsStore } from "@/core/ports/fakes/fake-model-settings-store";
 import type {
@@ -851,7 +851,7 @@ describe("asking the model", () => {
     });
     await screen.findByRole("group", { name: "Row 1" });
 
-    await modelSettings.save(defaultsFor("mlx"));
+    await modelSettings.save(choicesFrom(defaultsFor("mlx")));
     sidebar.modelChanged();
 
     expect(
@@ -868,7 +868,9 @@ describe("asking the model", () => {
 
     await ask();
 
-    expect(await screen.findByText("The model split 2 lines.")).toBeVisible();
+    expect(
+      await screen.findByText("Qwen3-8B-4bit on MLX split 2 lines."),
+    ).toBeVisible();
     expect(model.sent).toHaveLength(1);
     expect(model.sent[0]).toHaveLength(2);
     expect(model.sent[0]?.[1]).toContain("olive oil");
@@ -886,7 +888,7 @@ describe("asking the model", () => {
     model.answer(ok(MODEL_ROWS));
     await grouped(model);
     await ask();
-    await screen.findByText("The model split 2 lines.");
+    await screen.findByText("Qwen3-8B-4bit on MLX split 2 lines.");
 
     await fireEvent.click(
       screen.getByRole("button", { name: "Undo the model's rows" }),
@@ -895,7 +897,7 @@ describe("asking the model", () => {
     expect(
       within(await openRow(2)).getByRole("textbox", { name: "Rest" }),
     ).toHaveValue("olive oil");
-    expect(screen.queryByText("The model split 2 lines.")).toBeNull();
+    expect(screen.queryByText(/split 2 lines/)).toBeNull();
   });
 
   it("keeps the scan of a row the model made up a word for", async () => {
@@ -914,7 +916,7 @@ describe("asking the model", () => {
 
     expect(
       await screen.findByText(
-        "The model split 2 lines; 1 of its rows did not match its line, so that row is as it was.",
+        "Qwen3-8B-4bit on MLX split 2 lines; 1 of its rows did not match its line, so that row is as it was.",
       ),
     ).toBeVisible();
     expect(
@@ -962,7 +964,7 @@ describe("asking the model", () => {
 
     expect(
       await screen.findByText(
-        "The model split 2 lines, and translated 2 of them into English.",
+        "Qwen3-8B-4bit on MLX split 2 lines, and translated 2 of them into English.",
       ),
     ).toBeVisible();
   });
@@ -1005,7 +1007,7 @@ describe("asking the model", () => {
 
     const group = screen.getByRole("region", { name: "Group 1" });
     expect(
-      await within(group).findByText("The model split 2 lines."),
+      await within(group).findByText("Qwen3-8B-4bit on MLX split 2 lines."),
     ).toBeVisible();
     expect(
       within(group).getByRole("button", { name: "Undo the model's rows" }),
@@ -1102,7 +1104,7 @@ describe("asking the model about the steps", () => {
 
     expect(
       await screen.findByText(
-        `The model rewrote ${sent.length} ${sent.length === 1 ? "step" : "steps"} as 3.`,
+        `claude-haiku-5-5 on Anthropic rewrote ${sent.length} ${sent.length === 1 ? "step" : "steps"} as 3.`,
       ),
     ).toBeVisible();
     expect(model.stepsSent[0]?.map((step) => step.text)).toEqual(sent);
@@ -1119,7 +1121,7 @@ describe("asking the model about the steps", () => {
 
     await ask();
 
-    const note = await screen.findByText(/The model rewrote/);
+    const note = await screen.findByText(/on Anthropic rewrote/);
     const heading = screen.getByRole("heading", { name: "Steps" });
     const first = screen.getByRole("button", { name: "Edit step 1" });
     expect(
@@ -1138,7 +1140,7 @@ describe("asking the model about the steps", () => {
       screen.getByRole("button", { name: "Edit step 1" }),
     );
     await ask();
-    await screen.findByText(/The model rewrote/);
+    await screen.findByText(/on Anthropic rewrote/);
 
     await fireEvent.click(
       screen.getByRole("button", { name: "Undo the model's steps" }),
@@ -1147,7 +1149,7 @@ describe("asking the model about the steps", () => {
     expect(stepText(screen.getByRole("button", { name: "Edit step 1" }))).toBe(
       before,
     );
-    expect(screen.queryByText(/The model rewrote/)).toBeNull();
+    expect(screen.queryByText(/on Anthropic rewrote/)).toBeNull();
   });
 
   it("refuses an answer of the wrong shape, and changes nothing", async () => {

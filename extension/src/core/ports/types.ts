@@ -1,6 +1,6 @@
 import type { Clipping } from "../clipping";
 import type { Drafts, SavedRecipe } from "../drafts";
-import type { ModelSettings } from "../model-settings";
+import type { ModelChoices } from "../model-settings";
 import type { RecipeDraft, Step } from "../recipe-draft";
 import type { Result } from "../result";
 import type { Settings } from "../settings";
@@ -39,8 +39,8 @@ export interface SettingsStore {
 
 /** Which scanner reads ingredient lines, and where its model is (M13). */
 export interface ModelSettingsStore {
-  load(): Promise<Result<ModelSettings, StoreError>>;
-  save(settings: ModelSettings): Promise<Result<void, StoreError>>;
+  load(): Promise<Result<ModelChoices, StoreError>>;
+  save(choices: ModelChoices): Promise<Result<void, StoreError>>;
 }
 
 /** The last thing clipped, which the sidebar shows (M6). */

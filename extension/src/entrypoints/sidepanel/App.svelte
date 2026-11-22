@@ -2,7 +2,7 @@
   import { uuidV7 } from "@/core/uuid7";
   import { createNutrishoClient } from "@/nutrisho/client";
   import { loggedFetch, type LogEntry } from "@/nutrisho/fetch-log";
-  import { BUILT_IN } from "@/core/model-settings";
+  import { BUILT_IN, chosenSettings } from "@/core/model-settings";
   import { createUserModel } from "@/models/user-model";
   import {
     createStoredModelSettings,
@@ -52,14 +52,14 @@
       permissions.has(hostPermissionFor(serverUrl)),
   });
 
-  // The user's own model (M13), whichever backend the options page saved;
-  // its requests are in the log too.
+  // The user's own model (M13): the default set-up (#183), read on every
+  // call; its requests are in the log too.
   const modelSettings = createStoredModelSettings(storage);
   const model = createUserModel({
     fetch: logged,
     loadSettings: async () => {
       const stored = await modelSettings.load();
-      return stored.ok ? stored.value : BUILT_IN;
+      return stored.ok ? chosenSettings(stored.value) : BUILT_IN;
     },
     hasHostPermission: (address) => permissions.has(hostPermissionFor(address)),
   });

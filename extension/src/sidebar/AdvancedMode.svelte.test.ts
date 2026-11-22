@@ -2,6 +2,15 @@ import { fireEvent, render, screen, within } from "@testing-library/svelte";
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  defaultsFor,
+  type ModelChoices,
+  type ModelSetup,
+} from "@/core/model-settings";
+import {
+  createFakeModelSettingsStore,
+  type FakeModelSettingsStore,
+} from "@/core/ports/fakes/fake-model-settings-store";
+import {
   createFakeSettingsStore,
   type FakeSettingsStore,
 } from "@/core/ports/fakes/fake-settings-store";
@@ -19,6 +28,7 @@ function renderAdvanced(
     log?: readonly LogEntry[];
     modelCheck?: ModelCheck;
     checkModel?: boolean;
+    models?: FakeModelSettingsStore;
   } = {},
 ) {
   const settings =
@@ -32,8 +42,12 @@ function renderAdvanced(
   );
   const onServerChanged = vi.fn<() => void>();
   const onCheckModel = vi.fn<() => void>();
+  const onModelsChanged = vi.fn<() => void>();
+  const models = options.models ?? createFakeModelSettingsStore();
   render(AdvancedMode, {
     settings,
+    modelSettings: models,
+    onModelsChanged,
     requestHostPermission,
     onServerChanged,
     log: options.log ?? [],
@@ -42,7 +56,14 @@ function renderAdvanced(
       ? {}
       : { modelCheck: options.modelCheck }),
   });
-  return { settings, requestHostPermission, onServerChanged, onCheckModel };
+  return {
+    settings,
+    requestHostPermission,
+    onServerChanged,
+    onCheckModel,
+    onModelsChanged,
+    models,
+  };
 }
 
 async function open() {
@@ -72,9 +93,9 @@ describe("Advanced Mode", () => {
     await open();
 
     expect(await screen.findByDisplayValue("8987")).toBeVisible();
-    expect(screen.getByRole<HTMLSelectElement>("combobox").value).toBe(
-      "127.0.0.1",
-    );
+    expect(
+      screen.getByRole<HTMLSelectElement>("combobox", { name: "Server" }).value,
+    ).toBe("127.0.0.1");
   });
 
   it("switches to nutrisho.com, asking for it first and keeping the key", async () => {
@@ -249,5 +270,145 @@ describe("Advanced Mode", () => {
     );
 
     expect(onCheckModel).toHaveBeenCalledTimes(1);
+  });
+});
+
+// #183: several set-ups, made here, and the default picked here.
+const MLX: ModelSetup = { ...defaultsFor("mlx"), id: "1", name: "Qwen on MLX" };
+const HAIKU: ModelSetup = {
+  ...defaultsFor("anthropic"),
+  key: "sk-ant-api03-clipper",
+  id: "2",
+  name: "Haiku",
+};
+const BOTH: ModelChoices = { setups: [MLX, HAIKU], chosen: "1" };
+
+async function choices(models: FakeModelSettingsStore) {
+  const loaded = await models.load();
+  return loaded.ok ? loaded.value : undefined;
+}
+
+describe("your models", () => {
+  it("picks the default from the built-in scan and your set-ups", async () => {
+    const models = createFakeModelSettingsStore(BOTH);
+    const { onModelsChanged } = renderAdvanced({ models });
+    await open();
+
+    const pulldown = await screen.findByRole("combobox", {
+      name: "Default model",
+    });
+    await vi.waitFor(() => expect(pulldown).toHaveValue("1"));
+    expect(
+      within(pulldown)
+        .getAllByRole("option")
+        .map((option) => option.textContent),
+    ).toEqual(["Built in", "Qwen on MLX", "Haiku"]);
+
+    await fireEvent.change(pulldown, { target: { value: "2" } });
+
+    await vi.waitFor(async () =>
+      expect((await choices(models))?.chosen).toBe("2"),
+    );
+    expect(onModelsChanged).toHaveBeenCalled();
+  });
+
+  it("goes back to the built-in scan", async () => {
+    const models = createFakeModelSettingsStore(BOTH);
+    renderAdvanced({ models });
+    await open();
+    const pulldown = await screen.findByRole("combobox", {
+      name: "Default model",
+    });
+    await vi.waitFor(() => expect(pulldown).toHaveValue("1"));
+
+    await fireEvent.change(pulldown, { target: { value: "" } });
+
+    await vi.waitFor(async () =>
+      expect((await choices(models))?.chosen).toBeUndefined(),
+    );
+  });
+
+  it("says when there are no set-ups yet", async () => {
+    renderAdvanced();
+    await open();
+
+    expect(await screen.findByText(/No models of your own yet/)).toBeVisible();
+  });
+
+  it("adds a set-up, which the list then shows", async () => {
+    const { models, onModelsChanged, requestHostPermission } = renderAdvanced();
+    await open();
+
+    await fireEvent.click(screen.getByRole("button", { name: "+ add model" }));
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Save the set-up" }),
+    );
+
+    expect(
+      await screen.findByText("Saved Qwen3-8B-4bit on MLX."),
+    ).toBeVisible();
+    expect(requestHostPermission).toHaveBeenCalledWith("http://localhost/*");
+    expect((await choices(models))?.setups).toHaveLength(1);
+    expect(onModelsChanged).toHaveBeenCalled();
+    expect(
+      screen.queryByRole("button", { name: "Save the set-up" }),
+    ).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Edit Qwen3-8B-4bit on MLX" }),
+    ).toBeVisible();
+  });
+
+  it("edits a set-up", async () => {
+    const models = createFakeModelSettingsStore(BOTH);
+    renderAdvanced({ models });
+    await open();
+
+    await fireEvent.click(
+      await screen.findByRole("button", { name: "Edit Haiku" }),
+    );
+    await fireEvent.input(screen.getByLabelText("Name"), {
+      target: { value: "Claude" },
+    });
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Save the set-up" }),
+    );
+
+    expect(await screen.findByText("Saved Claude.")).toBeVisible();
+    expect((await choices(models))?.setups[1]).toEqual({
+      ...HAIKU,
+      name: "Claude",
+    });
+  });
+
+  it("deletes a set-up", async () => {
+    const models = createFakeModelSettingsStore(BOTH);
+    const { onModelsChanged } = renderAdvanced({ models });
+    await open();
+
+    await fireEvent.click(
+      await screen.findByRole("button", { name: "Delete Haiku" }),
+    );
+
+    await vi.waitFor(async () =>
+      expect((await choices(models))?.setups).toEqual([MLX]),
+    );
+    expect(screen.queryByRole("button", { name: "Edit Haiku" })).toBeNull();
+    expect(onModelsChanged).toHaveBeenCalled();
+  });
+
+  it("says when the browser would not let it reach the model", async () => {
+    renderAdvanced({ granted: false });
+    await open();
+
+    await fireEvent.click(screen.getByRole("button", { name: "+ add model" }));
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Save the set-up" }),
+    );
+
+    expect(
+      await screen.findByText(
+        /Saved Qwen3-8B-4bit on MLX, but the clipper was not allowed to reach http:\/\/localhost:8080/,
+      ),
+    ).toBeVisible();
   });
 });

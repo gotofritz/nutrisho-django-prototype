@@ -154,3 +154,156 @@ export function modelHostPattern(settings: ModelSettings): string | undefined {
   const url = new URL(settings.address);
   return `${url.protocol}//${url.hostname}/*`;
 }
+
+/**
+ * One of the user's own models, saved under a name of their choosing
+ * (#183). Never the built-in scan, which needs no set-up.
+ */
+export interface ModelSetup extends ModelSettings {
+  readonly id: string;
+  readonly name: string;
+}
+
+/** The set-up's fields before it is saved, which gives it an id. */
+export type UnsavedSetup = Omit<ModelSetup, "id"> & { readonly id?: string };
+
+/**
+ * Every set-up, and which one *Ask the model* uses: `chosen` is a set-up's
+ * id, or undefined for the built-in scan.
+ */
+export interface ModelChoices {
+  readonly setups: readonly ModelSetup[];
+  readonly chosen: string | undefined;
+}
+
+export const NO_CHOICES: ModelChoices = { setups: [], chosen: undefined };
+
+const WHERE: Readonly<Record<Exclude<ModelBackend, "built-in">, string>> = {
+  mlx: "MLX",
+  llama: "llama.cpp",
+  anthropic: "Anthropic",
+};
+
+/** A first name for a set-up: `Qwen3-8B-4bit on MLX`, or `llama.cpp`. */
+export function suggestName(settings: ModelSettings): string {
+  if (settings.backend === "built-in") return "Built in";
+  const where = WHERE[settings.backend];
+  const model = settings.model.trim().split("/").at(-1) ?? "";
+  return model === "" ? where : `${model} on ${where}`;
+}
+
+/** The one model saved before #183, as the first set-up and the default. */
+export function choicesFrom(settings: ModelSettings): ModelChoices {
+  if (settings.backend === "built-in") return NO_CHOICES;
+  return {
+    setups: [{ ...settings, id: "1", name: suggestName(settings) }],
+    chosen: "1",
+  };
+}
+
+function readSetup(stored: unknown): ModelSetup | undefined {
+  if (typeof stored !== "object" || stored === null) return undefined;
+  const raw = stored as Partial<Record<keyof ModelSetup, unknown>>;
+  const settings = readModelSettings(stored);
+  if (
+    settings.backend === "built-in" ||
+    typeof raw.id !== "string" ||
+    typeof raw.name !== "string"
+  ) {
+    return undefined;
+  }
+  return { ...settings, id: raw.id, name: raw.name };
+}
+
+/** What was stored: the set-ups, or the single model saved before them. */
+export function readModelChoices(stored: unknown): ModelChoices {
+  if (typeof stored !== "object" || stored === null) return NO_CHOICES;
+  const raw = stored as { setups?: unknown; chosen?: unknown };
+  if (!Array.isArray(raw.setups)) {
+    return choicesFrom(readModelSettings(stored));
+  }
+  const setups = raw.setups.flatMap((one: unknown) => {
+    const setup = readSetup(one);
+    return setup === undefined ? [] : [setup];
+  });
+  const chosen = setups.some((setup) => setup.id === raw.chosen)
+    ? (raw.chosen as string)
+    : undefined;
+  return { setups, chosen };
+}
+
+/** The set-up *Ask the model* uses; undefined for the built-in scan. */
+export function chosenSetup(choices: ModelChoices): ModelSetup | undefined {
+  return choices.setups.find((setup) => setup.id === choices.chosen);
+}
+
+/** What the model's adapters need: the default set-up, or the built-in scan. */
+export function chosenSettings(choices: ModelChoices): ModelSettings {
+  const setup = chosenSetup(choices);
+  if (setup === undefined) return BUILT_IN;
+  const { backend, address, model, key } = setup;
+  return { backend, address, model, key };
+}
+
+/**
+ * Add a set-up, with the next id, or change one in its place. The first
+ * set-up becomes the default; later ones wait to be picked.
+ */
+export function saveSetup(
+  choices: ModelChoices,
+  setup: UnsavedSetup,
+): ModelChoices {
+  if (setup.id !== undefined) {
+    const id = setup.id;
+    return {
+      ...choices,
+      setups: choices.setups.map((one) =>
+        one.id === id ? { ...setup, id } : one,
+      ),
+    };
+  }
+  const id = String(
+    Math.max(0, ...choices.setups.map((one) => Number(one.id) || 0)) + 1,
+  );
+  return {
+    setups: [...choices.setups, { ...setup, id }],
+    chosen: choices.setups.length === 0 ? id : choices.chosen,
+  };
+}
+
+/** Remove a set-up; the built-in scan is the default if it was. */
+export function removeSetup(choices: ModelChoices, id: string): ModelChoices {
+  return {
+    setups: choices.setups.filter((setup) => setup.id !== id),
+    chosen: choices.chosen === id ? undefined : choices.chosen,
+  };
+}
+
+/** Make a set-up the default, or the built-in scan with undefined. */
+export function chooseSetup(
+  choices: ModelChoices,
+  id: string | undefined,
+): ModelChoices {
+  if (id !== undefined && !choices.setups.some((setup) => setup.id === id)) {
+    return choices;
+  }
+  return { ...choices, chosen: id };
+}
+
+/** A set-up's name is needed, and unlike the others' ignoring case. */
+export function checkSetupName({
+  name,
+  choices,
+  id,
+}: {
+  name: string;
+  choices: ModelChoices;
+  id?: string;
+}): string | undefined {
+  const typed = name.trim().toLowerCase();
+  if (typed === "") return "Give the set-up a name.";
+  const taken = choices.setups.some(
+    (setup) => setup.id !== id && setup.name.trim().toLowerCase() === typed,
+  );
+  return taken ? "Another set-up has that name." : undefined;
+}

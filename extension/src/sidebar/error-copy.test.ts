@@ -142,19 +142,19 @@ describe("saveProblem", () => {
 // Plan 012, M13 (#181): the user's own model, a sentence and a fix each.
 describe("modelProblem", () => {
   it.each([
-    ["not-set-up", "No model is set up for ingredient lines.", "settings"],
+    ["not-set-up", "No model is set up for ingredient lines.", "advanced"],
     [
       "permission-missing",
       "The clipper has not been allowed to reach your model.",
-      "settings",
+      "advanced",
     ],
     ["unreachable", "Nothing answered at your model's address.", "retry"],
     ["timeout", "Your model did not answer in time.", "retry"],
-    ["unauthorised", "Your model refused its key (it said: x).", "settings"],
+    ["unauthorised", "Your model refused its key (it said: x).", "advanced"],
     [
       "unknown-model",
       "Your model's server does not have that model (it said: x).",
-      "settings",
+      "advanced",
     ],
     [
       "rate-limited",
@@ -173,5 +173,7 @@ describe("modelProblem", () => {
     expect(problem.cause).toBe(cause);
     expect(problem.fix).toBe(fix);
     expect(problem.action).not.toBe("");
+    // #183: a model is set up in Advanced Mode, not the options page.
+    expect(problem.action).not.toMatch(/settings/);
   });
 });

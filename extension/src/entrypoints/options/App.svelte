@@ -1,7 +1,5 @@
 <script lang="ts">
-  import ModelForm from "@/options/ModelForm.svelte";
   import SettingsForm from "@/options/SettingsForm.svelte";
-  import { createStoredModelSettings } from "@/platform/model-settings-store";
   import { createPermissions } from "@/platform/permissions";
   import { createStoredSettings } from "@/platform/settings-store";
   import { createStorage } from "@/platform/storage";
@@ -11,7 +9,6 @@
   const permissions = createPermissions();
   const storage = createStorage();
   const settings = createStoredSettings(storage);
-  const model = createStoredModelSettings(storage);
 </script>
 
 <!--
@@ -23,8 +20,15 @@
   requestHostPermission={(pattern) =>
     permissions.request({ origins: [pattern] })}
 />
-<ModelForm
-  store={model}
-  requestHostPermission={(pattern) =>
-    permissions.request({ origins: [pattern] })}
-/>
+<!-- The user's own models moved to the sidebar's Advanced Mode (#183). -->
+<p class="moved">
+  Your own models, for splitting lines and rewriting steps, are set up in the
+  sidebar, under Advanced Mode.
+</p>
+
+<style>
+  .moved {
+    max-width: 36rem;
+    margin: 1.5rem;
+  }
+</style>

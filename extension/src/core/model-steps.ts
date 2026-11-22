@@ -33,8 +33,12 @@ export function readStepsAnswer(answer: unknown): Result<Step[], string> {
 }
 
 /** What the model did to the method, for the sidebar to say. */
-export function describeSteps(before: number, after: number): string {
-  return `The model rewrote ${before} ${before === 1 ? "step" : "steps"} as ${after}.`;
+export function describeSteps(
+  before: number,
+  after: number,
+  who = "The model",
+): string {
+  return `${who} rewrote ${before} ${before === 1 ? "step" : "steps"} as ${after}.`;
 }
 
 export const STEPS_SCHEMA = {
