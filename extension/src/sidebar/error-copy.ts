@@ -31,7 +31,7 @@ function problem(error: NutrishoError, task: string): Problem {
       return {
         cause: "No API key is saved yet.",
         action:
-          'Make one with make manage ARGS="create_api_token <username> --name clipper", then paste it into the settings.',
+          "Make one on the API keys page, under Config in your Nutrisho, then paste it into the settings.",
         fix: "settings",
       };
     case "permission-missing":

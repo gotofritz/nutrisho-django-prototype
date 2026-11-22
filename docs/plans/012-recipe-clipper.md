@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M10 done (#154, #156, #158, #160, #162, #166, #168, #171, #173, #149)
+## Status: In progress, M1 to M10 and M14 done (#154, #156, #158, #160, #162, #166, #168, #171, #173, #149, #150)
 
 ## What we are building
 
@@ -71,8 +71,7 @@ Changing one means editing this list.
 - **D10 API.** Plain JSON endpoints, no GraphQL, signed in by API key only.
   The extension's own pages call them, never a content script.
 - **D11 API key.** Kept in `storage.local`; never synced, logged or shown
-  again. Made with `create_api_token` until the Config page exists (#150),
-  which comes before a release.
+  again. Made by the user on the server's API keys page, under Config (#150).
 - **D12 Long text.** Text too long for its field is refused, never cut, and
   the sidebar names the field.
 - **D13 Structure.** Ports and adapters, as in anklipper: the draft and its
@@ -250,10 +249,12 @@ whom, how the user turns it on, where its key lives (as D11), whether a
 provider or a local model accepts a request from an extension's origin, and
 what happens when the answer is not the shape asked for.
 
-### M14 · server · API keys on the Config page (#150)
+### ✅ M14 · server · API keys on the Config page (#150)
 
-Users make a key (shown once), see their keys by name and last use, and
-revoke one.
+Done (#150), ahead of M11. "API keys" on the Config page lists the user's own
+keys by name, last use and expiry; makes one with a name and an optional date,
+shown once with a Copy button, at most 10 a user; and revokes one after a
+confirmation. The clipper's settings link to the page.
 
 ### M15 · extension · Release
 

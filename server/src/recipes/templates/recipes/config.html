@@ -14,6 +14,10 @@
       <a href="{% url 'recipes:import' %}">Import &amp; export</a>
       <span class="config-note">Download all your recipes, or import a file of them.</span>
     </li>
+    <li>
+      <a href="{% url 'recipes:api_keys' %}">API keys</a>
+      <span class="config-note">Keys for the recipe clipper: make one, or revoke one you no longer use.</span>
+    </li>
     {% if user.is_staff %}
     <li>
       <a href="{% url 'recipes:ingredient_manage' %}">Ingredients</a>

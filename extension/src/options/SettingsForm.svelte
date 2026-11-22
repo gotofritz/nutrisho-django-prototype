@@ -6,6 +6,7 @@
     DEFAULT_SETTINGS,
     checkSettings,
     hostPatternFor,
+    keysPageFor,
     type SettingsField,
     type SettingsIssue,
   } from "@/core/settings";
@@ -29,6 +30,7 @@
   } = $props();
 
   let serverUrl = $state(DEFAULT_SETTINGS.serverUrl);
+  const keysPage = $derived(keysPageFor(serverUrl));
   /** What is typed; the saved key is never shown again (D11). */
   let apiKey = $state("");
   let savedKey = $state("");
@@ -144,10 +146,13 @@
       </p>
     {:else}
       <p class="quiet" id="api-key-hint">
-        Make one with
-        <code
-          >make manage ARGS="create_api_token &lt;username&gt; --name clipper"</code
-        >.
+        Make one on the
+        {#if keysPage !== undefined}
+          <a href={keysPage} target="_blank" rel="noreferrer">API keys page</a>
+        {:else}
+          API keys page
+        {/if}
+        of your Nutrisho, under Config.
       </p>
     {/if}
   </div>

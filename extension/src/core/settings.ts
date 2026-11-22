@@ -150,3 +150,12 @@ export function hostPatternFor(serverUrl: string): string {
   const url = new URL(serverUrl);
   return `${url.protocol}//${url.hostname}/*`;
 }
+
+/**
+ * The server's page where a user makes their own API key (#150), on an
+ * address the settings would take; undefined for any other.
+ */
+export function keysPageFor(serverUrl: string): string | undefined {
+  const checked = checkServerUrl(serverUrl);
+  return checked.ok ? `${checked.value}/recipes/keys/` : undefined;
+}

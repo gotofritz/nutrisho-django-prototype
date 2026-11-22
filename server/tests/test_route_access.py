@@ -25,6 +25,7 @@ from recipes.models import (
     Step,
     Unit,
 )
+from recipes.services.api_tokens import create_token
 
 # Routes an anonymous user may reach. Adding one is a deliberate choice: mark the
 # view `@login_not_required` and list it here.
@@ -101,6 +102,7 @@ def path_values(owner) -> dict[str, str]:
     )
     cuisine = Cuisine.objects.create(cuisine="route-cuisine")
     unit = Unit.objects.create(name="route-unit", dimension=Unit.COUNT)
+    token, _ = create_token(user=owner, name="route-key")
     return {
         "recipe_id": str(recipe.pk),
         "step_id": str(step.pk),
@@ -109,6 +111,7 @@ def path_values(owner) -> dict[str, str]:
         "ingredient_id": str(ingredient.pk),
         "cuisine_id": str(cuisine.pk),
         "unit_id": str(unit.pk),
+        "token_id": str(token.pk),
         "field_name": "recipe_name",
         "uidb64": "MQ",
         "token": "set-password",

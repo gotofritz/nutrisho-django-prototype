@@ -10,6 +10,7 @@ from django.urls import path
 
 from recipes.views import (
     api,
+    api_keys,
     config,
     cuisine_admin,
     home,
@@ -39,6 +40,8 @@ urlpatterns = [
     path("trash/", recipe_trash.trash, name="trash"),
     path("export/", recipe_transfer.recipe_export, name="export"),
     path("import/", recipe_transfer.recipe_import, name="import"),
+    path("keys/", api_keys.api_keys, name="api_keys"),
+    path("keys/<int:token_id>/revoke/", api_keys.api_key_revoke, name="api_key_revoke"),
     # For the recipe clipper: token-authenticated JSON, not a page (#78).
     path("api/recipes/", api.api_recipes, name="api_recipes"),
     path("api/vocabulary/", api.api_vocabulary, name="api_vocabulary"),

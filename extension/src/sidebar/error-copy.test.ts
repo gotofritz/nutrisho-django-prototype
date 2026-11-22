@@ -40,7 +40,7 @@ describe("listsProblem", () => {
 
   it("tells someone with no key how to make one", () => {
     expect(listsProblem({ kind: "no-key", message: "" }).action).toContain(
-      "create_api_token",
+      "API keys page",
     );
   });
 
