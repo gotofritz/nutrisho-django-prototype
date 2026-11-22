@@ -107,13 +107,6 @@ describe("extractCapture", () => {
     ]);
   });
 
-  it("keeps the selection's markup too, to look into a capture", () => {
-    document.body.innerHTML = `<p id="target">2 aubergines<br><b>basil</b></p>`;
-    selectContentsOf(document.querySelector("#target")!);
-
-    expect(extract().html).toBe("2 aubergines<br><b>basil</b>");
-  });
-
   it("keeps the line breaks of preformatted text", () => {
     document.body.innerHTML = `<pre id="target">2 lemons
 1 lime</pre>`;
@@ -203,9 +196,8 @@ describe("extractCapture", () => {
     document.body.innerHTML = `<p id="target">Heat the oven.</p><p>Not this.</p>`;
     selectContentsOf(document.querySelector("#target")!);
 
-    expect(extract().html).not.toContain("Not this");
+    expect(extract().text).not.toContain("Not this");
     expect(Object.keys(extract()).sort()).toEqual([
-      "html",
       "text",
       "title",
       "url",

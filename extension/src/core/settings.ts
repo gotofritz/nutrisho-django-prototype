@@ -1,4 +1,4 @@
-import { LOOPBACK_HOSTS } from "@/manifest/manifest";
+import { LOOPBACK_HOSTS, REMOTE_HOST } from "@/manifest/manifest";
 
 import { err, ok, type Result } from "./result";
 
@@ -13,9 +13,9 @@ export interface Settings {
   readonly apiKey: string;
 }
 
-/** `make dev`'s address (D17). */
+/** `make dev`'s address (D17), as Django prints it. */
 export const DEFAULT_SETTINGS: Settings = {
-  serverUrl: "http://localhost:8987",
+  serverUrl: "http://127.0.0.1:8987",
   apiKey: "",
 };
 
@@ -24,10 +24,12 @@ export type SettingsField = keyof Settings;
 export type SettingsIssueCode =
   | "missing"
   | "not-a-url"
-  /** Only `http`: the dev server on loopback serves nothing else (D17). */
+  /** Only `http` on loopback: the dev server serves nothing else (D17). */
   | "not-http"
-  /** Only this machine, until there is a production server (#87). */
-  | "not-loopback"
+  /** Only `https` at nutrisho.com. */
+  | "not-https"
+  /** Only this machine or nutrisho.com (M12). */
+  | "unknown-host"
   | "not-a-key";
 
 export interface SettingsIssue {
@@ -70,18 +72,30 @@ function checkServerUrl(input: string): Result<string, SettingsIssue> {
       ),
     );
   }
-  if (url.protocol !== "http:") {
-    return err(
-      issue("serverUrl", "not-http", "The address has to start with http://."),
-    );
+  if (url.hostname === REMOTE_HOST) {
+    if (url.protocol !== "https:") {
+      return err(
+        issue(
+          "serverUrl",
+          "not-https",
+          `${REMOTE_HOST} has to be reached over https://.`,
+        ),
+      );
+    }
+    return ok(url.origin);
   }
   if (!LOOPBACK.includes(url.hostname)) {
     return err(
       issue(
         "serverUrl",
-        "not-loopback",
-        "For now the clipper only talks to a Nutrisho on this computer: localhost or 127.0.0.1.",
+        "unknown-host",
+        `The clipper talks to a Nutrisho on this computer (127.0.0.1 or localhost) or at ${REMOTE_HOST}.`,
       ),
+    );
+  }
+  if (url.protocol !== "http:") {
+    return err(
+      issue("serverUrl", "not-http", "The address has to start with http://."),
     );
   }
   return ok(url.origin);
@@ -158,4 +172,50 @@ export function hostPatternFor(serverUrl: string): string {
 export function keysPageFor(serverUrl: string): string | undefined {
   const checked = checkServerUrl(serverUrl);
   return checked.ok ? `${checked.value}/recipes/keys/` : undefined;
+}
+
+/** A server the Advanced Mode picker offers (M12), with the port it starts at. */
+export interface ServerChoice {
+  readonly host: string;
+  readonly label: string;
+  /** "" for the scheme's own. */
+  readonly port: string;
+}
+
+/** This computer, at the address Django prints and `make dev`'s port, or nutrisho.com. */
+export const SERVERS: readonly ServerChoice[] = [
+  { host: "127.0.0.1", label: "127.0.0.1 (this computer)", port: "8987" },
+  { host: REMOTE_HOST, label: REMOTE_HOST, port: "" },
+];
+
+/** A host and port picked in Advanced Mode, as an address the settings take. */
+export function serverUrlFor(choice: {
+  readonly host: string;
+  readonly port: string;
+}): Result<string, string> {
+  const port = choice.port.trim();
+  const remote = choice.host === REMOTE_HOST;
+  if (!SERVERS.some((server) => server.host === choice.host)) {
+    return err(`${choice.host} is not one the clipper talks to.`);
+  }
+  if (port === "" && remote) return ok(`https://${REMOTE_HOST}`);
+  const number = /^\d+$/.test(port) ? Number(port) : NaN;
+  if (!(number >= 1 && number <= 65_535)) {
+    return err("The port is a whole number from 1 to 65535.");
+  }
+  return ok(
+    remote
+      ? `https://${REMOTE_HOST}:${number}`
+      : `http://${choice.host}:${number}`,
+  );
+}
+
+/** An address the settings hold, as the picker shows it; localhost shows as 127.0.0.1. */
+export function serverParts(serverUrl: string): {
+  host: string;
+  port: string;
+} {
+  const url = new URL(serverUrl);
+  const host = url.hostname === REMOTE_HOST ? REMOTE_HOST : "127.0.0.1";
+  return { host, port: url.port };
 }

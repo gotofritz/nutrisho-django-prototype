@@ -13,6 +13,8 @@
   "scripts": {
     "dev": "wxt -b firefox",
     "dev:chrome": "wxt -b chrome",
+    "preview": "vite --config preview/vite.config.ts",
+    "preview:build": "vite build --config preview/vite.config.ts",
     "build": "wxt build -b firefox",
     "build:chrome": "wxt build -b chrome",
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc --noEmit",

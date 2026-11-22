@@ -20,6 +20,7 @@ make ext-dev BROWSER=chrome   # the same in Chrome
 make ext-test                 # the tests; ARGS="src/sidebar" narrows them
 make ext-qa                   # every check CI runs
 make ext-build                # .output/firefox-mv3/ and .output/chrome-mv3/
+make ext-preview              # each state of the sidebar and settings, in a plain page
 ```
 
 The other `ext-` targets run `make ext-install` first when `node_modules` is
@@ -35,23 +36,25 @@ the *View* menu, under *Sidebar*.
 
 ## Using it
 
-1. Start the server (`make dev`, on `http://localhost:8987`), sign in, and
+1. Start the server (`make dev`, on `http://127.0.0.1:8987`), sign in, and
    make an API key on *Config*, then *API keys*. It is shown once, so copy it
    then. (`make manage ARGS="create_api_token <username> --name clipper"`
    makes one from the command line.)
 
 2. Open the clipper's settings (from the sidebar, or the add-on's
    *Preferences* in `about:addons`), enter the server's address and the key,
-   and save. The browser asks once for permission to reach that address. Only
-   `localhost` and `127.0.0.1` are allowed for now.
+   and save. The browser asks once for permission to reach that address.
+   The clipper talks to a Nutrisho on this computer (`127.0.0.1` or
+   `localhost`, over `http`) or at `https://nutrisho.com`. *Advanced Mode*,
+   folded away at the bottom of the sidebar, switches between the two and
+   sets the port: pick one and press *Use this server*.
 3. Select text on a page, right-click, and choose where it goes under *Clip
    into Nutrisho*: *Title* (replaces the recipe's name), *Blurb*,
    *Ingredient group* (a new group), *Ingredient* (adds to the open group, or
-   starts one when none is open), *Steps* (each adds to what is there) or
-   *Clipboard*.
-   The sidebar opens with a new recipe named after the page, and the text is
-   also in the clipboard, folded away at the bottom. <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd>
-   and the toolbar button clip to the clipboard only.
+   starts one when none is open) or *Steps* (each adds to what is there).
+   The sidebar opens with a new recipe named after the page.
+   <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd> and the toolbar button clip
+   to a new ingredient group.
 4. Each ingredient line becomes a row. The ingredient is the longest name
    from your lists in the line. The unit is a name from your lists just
    before it (`600ml` counts) or, failing that, just after it
@@ -78,10 +81,10 @@ the *View* menu, under *Sidebar*.
    one after it, ↑ and ↓ move it, × deletes it, and an empty step is left
    out when you save. Text too long for its field is marked at the field as
    you type, says by how much, and stops a save.
-5. Open *Clipboard* to send all of it, or the part you select, to any part
-   of the recipe with *Add* or *Replace*. You can also type or paste into it.
-   Below it, *Page HTML* shows the markup that was clipped, which helps
-   when a clipping reads oddly.
+5. *Advanced Mode*, at the bottom, picks the server and its port, and keeps
+   a *Log* of each request to your Nutrisho and its reply, with sizes and
+   times but never your key or what was sent. Only a problem with your lists
+   shows outside it.
 6. As you type an ingredient, substitute or unit, the field offers the
    names in your lists. *Cuisine* offers the paths in the cuisine tree, such
    as `med.italy.sicily`; a bare name that only one place has, such as
@@ -99,11 +102,27 @@ page again. Clipping from another page starts another recipe, while clips
 from the same page go on into its recipe even after you change *Source*; ↗
 next to *Source* opens it in a new tab. Pick between recipes under *Draft*,
 *Discard this draft* to drop one, or *Clear all* at the top to start again.
-The clipboard empties when the browser restarts.
 
 The key is kept in the browser's local storage, never synced, and the
 settings page never shows it again. Only the server's address you saved is
 ever contacted, and only the recipe you save is sent to it.
+
+`make ext-preview` serves [`preview/`](preview/) on Vite's address: a picker of
+scenes (nothing clipped, a key expired, a draft filled in, saved, the
+settings), each mounted on the in-memory fakes at a sidebar's width. Use it to
+look at a change of style without loading the extension.
+
+## The look
+
+The clipper looks like the site (`server/docs/features/design.md`):
+`src/styles/tokens.css` holds the site's colour tokens and its two text faces,
+`public/fonts/` and `public/img/` the font files and the lineout plate, all
+copies of the server's; `tests/look/site-copies.test.ts` fails when either
+side changes without the other, and a change to those server files runs the
+extension's checks too. `src/styles/clipper.css` styles the elements as the
+site does: no boxes, a field is a line, actions are small capitals, Save sits
+on a sunflower wash, and errors alone are smock red. Components add layout
+only.
 
 ## Checks
 
@@ -132,7 +151,11 @@ src/
   sidebar/                 # the sidebar's Svelte components
   options/                 # the settings form
   entrypoints/             # background, content script, sidebar and options pages: they only wire
+  styles/                  # the site's tokens and faces, and the clipper's element rules
+public/                    # copies of the site's fonts and lineout plate
+preview/                   # the look preview: each state, on the fakes
 tests/
+  look/                    # the copies match the site's; every preview scene mounts
   manifest/                # the built manifest, per browser
   setup/                   # Vitest setup: fake browser APIs, Testing Library
   support/                 # reads the server's API examples

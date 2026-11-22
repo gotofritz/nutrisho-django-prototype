@@ -12,15 +12,19 @@
  * its host is an **optional** permission: nothing is granted at install, and
  * the options page asks for the one the user typed, from the Save gesture.
  * `checkSettings` refuses any other host, so the setting and the permission
- * cannot disagree. A production server is added when there is one (#87).
+ * cannot disagree. Loopback is the dev server, over `http`; nutrisho.com is
+ * the production server, over `https` only (M12, Advanced Mode).
  *
  * IPv6 is absent because match patterns have no syntax for a literal address.
  */
 export const LOOPBACK_HOSTS = ["localhost", "127.0.0.1"] as const;
 
-export const OPTIONAL_HOST_PERMISSIONS = LOOPBACK_HOSTS.map(
-  (host) => `http://${host}/*`,
-);
+export const REMOTE_HOST = "nutrisho.com";
+
+export const OPTIONAL_HOST_PERMISSIONS = [
+  ...LOOPBACK_HOSTS.map((host) => `http://${host}/*`),
+  `https://${REMOTE_HOST}/*`,
+];
 
 /**
  * The permission ceiling (D14). Never `<all_urls>`: `activeTab` plus

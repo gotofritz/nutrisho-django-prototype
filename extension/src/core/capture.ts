@@ -11,9 +11,6 @@
 /** Select-all on a long article is megabytes; the cap bites first. */
 export const SELECTION_CAP = 20_000;
 
-/** The selection's markup is kept only to look into a capture; cut short. */
-export const HTML_CAP = 50_000;
-
 /**
  * What could not be captured, or was captured only in part. A clipping
  * silently missing text is worse than a message saying so, and each kind
@@ -48,8 +45,6 @@ export interface PageCapture {
   readonly title: string;
   readonly url: string;
   readonly warnings: readonly CaptureWarning[];
-  /** The selection's markup, capped, to look into a capture that read oddly. */
-  readonly html?: string;
 }
 
 export interface CappedText {

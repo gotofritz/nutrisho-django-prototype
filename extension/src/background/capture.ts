@@ -27,7 +27,7 @@ export interface CaptureTrigger {
    */
   readonly selectionText?: string;
   readonly pageUrl?: string;
-  /** Where the text goes; the clipboard only, unless the submenu said. */
+  /** Where the text goes; a new ingredient group, unless the submenu said. */
   readonly target?: ClipTarget;
 }
 
@@ -208,7 +208,7 @@ async function finish(
   const clipping = clippingFrom(
     filled,
     (deps.now ?? (() => new Date()))(),
-    trigger.target ?? "clipboard",
+    trigger.target ?? "group",
   );
   const saved = await deps.clippings.save(clipping);
   if (!saved.ok) {

@@ -17,31 +17,29 @@
     DraftStore,
     NutrishoClient,
     NutrishoError,
+    SettingsStore,
     StoreError,
   } from "@/core/ports/types";
   import {
-    addTo,
     checkDraft,
     explainRefusal,
-    replace,
-    startDraft,
     type DraftIssue,
     withOpenGroup,
-    type DraftTarget,
     type RecipeDraft,
   } from "@/core/recipe-draft";
   import type { Result } from "@/core/result";
   import { EMPTY_VOCABULARY, type Vocabulary } from "@/core/vocabulary";
+  import type { LogEntry } from "@/nutrisho/fetch-log";
 
-  import Clipboard from "./Clipboard.svelte";
+  import AdvancedMode from "./AdvancedMode.svelte";
   import DraftEditor from "./DraftEditor.svelte";
   import { listsProblem, saveProblem, type Problem } from "./error-copy";
 
   /**
-   * The sidebar (plan 012, M7): the draft, the save, and the clipboard below
-   * them. The right-click submenu sends text to a part of the draft as well
-   * as to the clipboard. Handed the ports, never a `browser.*` API, so its tests run against
-   * the fakes.
+   * The sidebar (plan 012, M7): the draft, the save, and Advanced Mode below
+   * them (M12). The right-click submenu sends text to a part of the draft.
+   * Handed the ports, never a `browser.*` API, so its tests run against the
+   * fakes.
    */
   const {
     clippings,
@@ -51,6 +49,9 @@
     client,
     openSettings,
     isNewSession,
+    settings,
+    requestHostPermission,
+    log,
   }: {
     clippings: ClippingStore;
     drafts: DraftStore;
@@ -62,6 +63,12 @@
     openSettings: () => void;
     /** True once per browser session: the drafts kept then open none. */
     isNewSession: () => Promise<boolean>;
+    /** Where the server is; Advanced Mode changes it. */
+    settings: SettingsStore;
+    /** Asked first on the press that picks a server. */
+    requestHostPermission: (pattern: string) => Promise<boolean>;
+    /** What went to the server and back, shown in Advanced Mode. */
+    log: readonly LogEntry[];
   } = $props();
 
   let clipping = $state<Result<Clipping | undefined, StoreError> | undefined>(
@@ -72,7 +79,6 @@
   // and browser storage refuses to clone the Proxy a deep `$state` makes.
   let drafts = $state.raw<Drafts>(EMPTY_DRAFTS);
   let storeProblem = $state<string | undefined>(undefined);
-  let clipboard = $state("");
   let issues = $state<readonly DraftIssue[]>([]);
   let saving = $state(false);
   let saveFailure = $state<Problem | undefined>(undefined);
@@ -96,7 +102,6 @@
   async function loadClipping() {
     clipping = await clippings.load();
     if (clipping.ok && clipping.value !== undefined) {
-      clipboard = clipping.value.text;
       await keep(afterClip(drafts, clipping.value, newId, vocabulary));
     }
   }
@@ -135,36 +140,8 @@
     void keep(withDraft(drafts, changed));
   }
 
-  /** Clipped, typed or pasted, text goes the same way (D3). */
-  function send(target: DraftTarget, mode: "add" | "replace", text: string) {
-    const shown =
-      draft ??
-      startDraft({
-        id: newId(),
-        title: "",
-        url: "",
-        now: new Date().toISOString(),
-      });
-    const changed = (mode === "add" ? addTo : replace)(
-      shown,
-      target,
-      text,
-      vocabulary,
-    );
-    void keep(
-      draft === undefined
-        ? {
-            ...drafts,
-            drafts: [...drafts.drafts, changed],
-            current: changed.id,
-          }
-        : withDraft(drafts, changed),
-    );
-  }
-
-  /** Start again: no clipping, an empty clipboard, no drafts. The settings stay. */
+  /** Start again: no clipping and no drafts. The settings stay. */
   async function clearAll() {
-    clipboard = "";
     issues = [];
     saveFailure = undefined;
     await keep(EMPTY_DRAFTS);
@@ -222,13 +199,6 @@
     if (fresh.ok) lists = fresh;
   }
 
-  function count(n: number, one: string, many: string): string {
-    return `${n} ${n === 1 ? one : many}`;
-  }
-
-  /** The clipped selection's markup, to look into a capture that read oddly. */
-  const pageHtml = $derived(clipping?.ok ? (clipping.value?.html ?? "") : "");
-
   const problem = $derived(
     lists !== undefined && !lists.ok ? listsProblem(lists.error) : undefined,
   );
@@ -240,23 +210,9 @@
     <button type="button" onclick={() => void clearAll()}>Clear all</button>
   </header>
 
-  <section aria-labelledby="lists-heading">
-    <h2 id="lists-heading">Your lists</h2>
-    {#if lists === undefined}
-      <p class="quiet">Loading your lists…</p>
-    {:else if lists.ok}
-      <p>
-        Lists loaded for {lists.value.user}: {count(
-          lists.value.ingredients.length,
-          "ingredient",
-          "ingredients",
-        )}, {count(lists.value.units.length, "unit", "units")}, {count(
-          lists.value.cuisines.length,
-          "cuisine",
-          "cuisines",
-        )}, {count(lists.value.tags.length, "tag", "tags")}.
-      </p>
-    {:else if problem !== undefined}
+  <!-- The requests are in Advanced Mode's log; only a problem shows here. -->
+  {#if problem !== undefined}
+    <section aria-label="Your lists">
       <div class="problem" role="alert">
         <p>{problem.cause}</p>
         <p>{problem.action}</p>
@@ -267,16 +223,23 @@
         <button type="button" onclick={() => void loadLists()}>Try again</button
         >
       {/if}
-    {/if}
-  </section>
+    </section>
+  {/if}
   {#if clipping !== undefined && clipping.ok && clipping.value === undefined && draft === undefined}
     <div class="hint">
+      <img
+        class="plate"
+        src="/img/plate-lineout.webp"
+        width="1400"
+        height="1107"
+        alt="Watercolour of a rugby lineout: a player in yellow, lifted high, reaches for a cauliflower thrown in place of the ball, while players of both teams, among them a greyhound, a rhino, a bull and a bear, brace below."
+      />
       <p>Nothing clipped yet.</p>
       <p class="quiet">
         Select text on a page, then choose <em>Clip into Nutrisho</em> from the right-click
-        menu and where the text goes: the title, the blurb, an ingredient group, the
-        steps, or the clipboard. Alt+Shift+N and the toolbar button send it to the
-        clipboard.
+        menu and where the text goes: the title, the blurb, an ingredient group or
+        the steps. Alt+Shift+N and the toolbar button send it to a new ingredient
+        group.
       </p>
     </div>
   {/if}
@@ -352,8 +315,11 @@
         </div>
       {/if}
       <div class="actions">
-        <button type="button" disabled={saving} onclick={() => void save()}
-          >{saving ? "Saving…" : "Save"}</button
+        <button
+          type="button"
+          class="primary"
+          disabled={saving}
+          onclick={() => void save()}>{saving ? "Saving…" : "Save"}</button
         >
         <button
           type="button"
@@ -383,42 +349,22 @@
         <p class="problem">{warning.message}</p>
       {/each}
     {/if}
-    <!-- Mostly for looking into a capture, so folded away until opened. -->
-    <details class="clipboard">
-      <summary>Clipboard</summary>
-      <Clipboard bind:text={clipboard} onSend={send} />
-      {#if pageHtml !== ""}
-        <label class="html">
-          Page HTML
-          <textarea readonly rows="4" value={pageHtml}></textarea>
-        </label>
-      {/if}
-    </details>
+    <!-- The server, and the log: folded away until opened. -->
+    <AdvancedMode
+      {settings}
+      {requestHostPermission}
+      onServerChanged={() => void loadLists()}
+      {log}
+    />
   </section>
 </main>
 
 <style>
+  /* The site's look is global (styles/clipper.css); this is layout only. */
   main {
     display: grid;
-    gap: 1rem;
-    padding: 0.75rem;
-    font:
-      0.9375rem/1.5 system-ui,
-      sans-serif;
-  }
-
-  h1,
-  h2,
-  p {
-    margin: 0;
-  }
-
-  h1 {
-    font-size: 1.25rem;
-  }
-
-  h2 {
-    font-size: 1rem;
+    gap: 1.5rem;
+    padding: 1rem;
   }
 
   section {
@@ -433,34 +379,19 @@
     gap: 0.5rem;
   }
 
-  .clipboard[open] {
+  .hint {
     display: grid;
     gap: 0.5rem;
+    text-align: center;
   }
 
-  .clipboard summary {
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  .html {
-    display: grid;
-    gap: 0.125rem;
-    font-size: 0.875rem;
-  }
-
-  .html textarea {
-    font:
-      0.75rem/1.4 ui-monospace,
-      monospace;
-    border: 1px dashed GrayText;
-    background: color-mix(in srgb, GrayText 12%, Canvas);
+  .plate {
+    width: 80%;
   }
 
   .drafts {
     display: grid;
     gap: 0.125rem;
-    font-size: 0.875rem;
   }
 
   .save,
@@ -472,6 +403,7 @@
   .actions {
     display: flex;
     gap: 0.5rem;
+    align-items: center;
     justify-content: space-between;
   }
 
@@ -480,23 +412,9 @@
     padding-left: 1.25rem;
   }
 
-  .hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .quiet,
   .source {
-    color: GrayText;
+    color: var(--pencil);
     font-size: 0.875rem;
-  }
-
-  .problem {
-    color: #a40e26;
   }
 
   button {

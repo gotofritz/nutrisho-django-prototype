@@ -148,7 +148,7 @@ describe("the settings form", () => {
     await save();
     await screen.findByText("Saved.");
 
-    expect(requestHostPermission).toHaveBeenCalledWith("http://localhost/*");
+    expect(requestHostPermission).toHaveBeenCalledWith("http://127.0.0.1/*");
     expect(order).toEqual(["permission", "save"]);
   });
 
@@ -163,7 +163,7 @@ describe("the settings form", () => {
 
     expect(
       await screen.findByText(
-        /was not allowed to reach http:\/\/localhost:8987/,
+        /was not allowed to reach http:\/\/127\.0\.0\.1:8987/,
       ),
     ).toBeVisible();
     const saved = await settings.load();
@@ -179,7 +179,7 @@ describe("the settings form", () => {
 
     const address = screen.getByLabelText("Your Nutrisho's address");
     expect(address).toHaveAttribute("aria-invalid", "true");
-    expect(address).toHaveAccessibleDescription(/http:\/\//);
+    expect(address).toHaveAccessibleDescription(/nutrisho\.com/);
     expect(screen.getByLabelText("API key")).toHaveAccessibleDescription(
       /starts with nsh_/,
     );

@@ -2,7 +2,8 @@ name: Extension
 
 # The recipe clipper under extension/ (#162). Its checks run for changes to
 # extension/, this workflow and the script that gates it, the Makefile, the
-# git hooks and the server's API examples, which the extension's tests read.
+# git hooks, the server's API examples, which the extension's tests read, and
+# the site's stylesheet, fonts and plate, which the clipper copies (M12).
 # The `changes` job decides, rather than a path filter here, so the workflow
 # always reports and its checks can be required.
 on:
@@ -37,7 +38,7 @@ jobs:
         id: diff
         env:
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
-        run: bash .github/scripts/touches.sh extension '^(extension/|\.github/workflows/extension\.yml$|\.github/scripts/|Makefile$|\.pre-commit-config\.yaml$|server/tests/api_examples/)' >> "$GITHUB_OUTPUT"
+        run: bash .github/scripts/touches.sh extension '^(extension/|\.github/workflows/extension\.yml$|\.github/scripts/|Makefile$|\.pre-commit-config\.yaml$|server/tests/api_examples/|server/src/recipes/static/(css/style\.css$|fonts/|img/plate-lineout\.webp$))' >> "$GITHUB_OUTPUT"
 
   ext-qa:
     needs: changes

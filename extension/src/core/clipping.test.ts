@@ -20,23 +20,14 @@ describe("clippingFrom", () => {
       url: "https://example.test/melanzane",
       clippedAt: "2026-11-20T09:30:00.000Z",
       warnings: [{ kind: "selection-truncated", message: "cut" }],
-      target: "clipboard",
-      html: "",
+      target: "group",
     });
   });
 
-  // The markup is kept to look into a capture that read oddly.
-  it("keeps the selection's markup", () => {
-    expect(
-      clippingFrom({ ...CAPTURE, html: "<p>2 aubergines</p>" }, new Date())
-        .html,
-    ).toBe("<p>2 aubergines</p>");
-  });
-
   // The right-click submenu names where the text goes; the shortcut and the
-  // toolbar button send it to the clipboard only.
+  // toolbar button send it to a new ingredient group (M12: no clipboard).
   it("keeps where the text was sent", () => {
-    expect(clippingFrom(CAPTURE, new Date(), "group").target).toBe("group");
+    expect(clippingFrom(CAPTURE, new Date(), "steps").target).toBe("steps");
   });
 
   it("is a plain value that survives extension storage", () => {
@@ -51,14 +42,21 @@ describe("isClipping", () => {
     expect(isClipping(clippingFrom(CAPTURE, new Date()))).toBe(true);
   });
 
-  it("knows a clipping stored before the markup was kept", () => {
-    const older: Record<string, unknown> = {
-      ...clippingFrom(CAPTURE, new Date()),
-    };
-    delete older.html;
+  // Kept from before M12, when a clipping could go to the clipboard only.
+  it("is not a clipping sent to the clipboard, which is gone", () => {
+    expect(
+      isClipping({ ...clippingFrom(CAPTURE, new Date()), target: "clipboard" }),
+    ).toBe(false);
+  });
 
-    expect(isClipping(older)).toBe(true);
-    expect(isClipping({ ...older, html: 3 })).toBe(false);
+  // From M7 to M12 a clipping kept the selection's markup too.
+  it("knows a clipping stored while the markup was kept", () => {
+    expect(
+      isClipping({
+        ...clippingFrom(CAPTURE, new Date()),
+        html: "<p>2 aubergines</p>",
+      }),
+    ).toBe(true);
   });
 
   it.each([

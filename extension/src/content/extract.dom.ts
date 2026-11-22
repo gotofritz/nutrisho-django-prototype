@@ -1,5 +1,5 @@
 import type { CaptureWarning, PageCapture } from "@/core/capture";
-import { HTML_CAP, SELECTION_CAP, capText, warn } from "@/core/capture";
+import { SELECTION_CAP, capText, warn } from "@/core/capture";
 
 /**
  * Extraction off a live page, copied from anklipper.
@@ -201,9 +201,5 @@ export function extractCapture(deps: ExtractDeps): PageCapture {
     }
   }
 
-  const holder = doc.createElement("div");
-  holder.append(range.cloneContents());
-  const html = capText(holder.innerHTML, HTML_CAP).text;
-
-  return { text: selection.text, ...page, warnings, html };
+  return { text: selection.text, ...page, warnings };
 }

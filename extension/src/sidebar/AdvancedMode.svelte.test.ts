@@ -1,0 +1,189 @@
+import { fireEvent, render, screen, within } from "@testing-library/svelte";
+import { describe, expect, it, vi } from "vitest";
+
+import {
+  createFakeSettingsStore,
+  type FakeSettingsStore,
+} from "@/core/ports/fakes/fake-settings-store";
+import type { LogEntry } from "@/nutrisho/fetch-log";
+
+import AdvancedMode from "./AdvancedMode.svelte";
+
+const KEY = "nsh_abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+
+function renderAdvanced(
+  options: {
+    settings?: FakeSettingsStore;
+    granted?: boolean;
+    log?: readonly LogEntry[];
+  } = {},
+) {
+  const settings =
+    options.settings ??
+    createFakeSettingsStore({
+      serverUrl: "http://127.0.0.1:8987",
+      apiKey: KEY,
+    });
+  const requestHostPermission = vi.fn<(pattern: string) => Promise<boolean>>(
+    async () => options.granted ?? true,
+  );
+  const onServerChanged = vi.fn<() => void>();
+  render(AdvancedMode, {
+    settings,
+    requestHostPermission,
+    onServerChanged,
+    log: options.log ?? [],
+  });
+  return { settings, requestHostPermission, onServerChanged };
+}
+
+async function open() {
+  await fireEvent.click(screen.getByText("Advanced Mode"));
+}
+
+async function stored(settings: FakeSettingsStore) {
+  const loaded = await settings.load();
+  return loaded.ok ? loaded.value : undefined;
+}
+
+// Plan 012, M12: the clipboard went; its fold stays, as Advanced Mode, where
+// the server is picked.
+describe("Advanced Mode", () => {
+  it("is folded away until opened", async () => {
+    renderAdvanced();
+
+    expect(
+      await screen.findByRole("combobox", { name: "Server" }),
+    ).not.toBeVisible();
+    await open();
+    expect(screen.getByRole("combobox", { name: "Server" })).toBeVisible();
+  });
+
+  it("starts from the saved server and port", async () => {
+    renderAdvanced();
+    await open();
+
+    expect(await screen.findByDisplayValue("8987")).toBeVisible();
+    expect(screen.getByRole<HTMLSelectElement>("combobox").value).toBe(
+      "127.0.0.1",
+    );
+  });
+
+  it("switches to nutrisho.com, asking for it first and keeping the key", async () => {
+    const { settings, requestHostPermission, onServerChanged } =
+      renderAdvanced();
+    await open();
+    await screen.findByDisplayValue("8987");
+
+    await fireEvent.change(screen.getByRole("combobox", { name: "Server" }), {
+      target: { value: "nutrisho.com" },
+    });
+    expect(screen.getByRole("textbox", { name: "Port" })).toHaveValue("");
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Use this server" }),
+    );
+
+    expect(requestHostPermission).toHaveBeenCalledWith(
+      "https://nutrisho.com/*",
+    );
+    expect(
+      await screen.findByText("Now using https://nutrisho.com."),
+    ).toBeVisible();
+    expect(await stored(settings)).toEqual({
+      serverUrl: "https://nutrisho.com",
+      apiKey: KEY,
+    });
+    expect(onServerChanged).toHaveBeenCalledOnce();
+  });
+
+  it("takes another port on this computer", async () => {
+    const { settings } = renderAdvanced();
+    await open();
+    await fireEvent.input(await screen.findByDisplayValue("8987"), {
+      target: { value: "8000" },
+    });
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Use this server" }),
+    );
+
+    await screen.findByText("Now using http://127.0.0.1:8000.");
+    expect((await stored(settings))?.serverUrl).toBe("http://127.0.0.1:8000");
+  });
+
+  it("refuses a port that is not one, and changes nothing", async () => {
+    const { settings, requestHostPermission, onServerChanged } =
+      renderAdvanced();
+    await open();
+    await fireEvent.input(await screen.findByDisplayValue("8987"), {
+      target: { value: "eighty" },
+    });
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Use this server" }),
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The port is a whole number from 1 to 65535.",
+    );
+    expect(requestHostPermission).not.toHaveBeenCalled();
+    expect(onServerChanged).not.toHaveBeenCalled();
+    expect((await stored(settings))?.serverUrl).toBe("http://127.0.0.1:8987");
+  });
+
+  it("says when the browser would not let it reach the server", async () => {
+    renderAdvanced({ granted: false });
+    await open();
+    await screen.findByDisplayValue("8987");
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Use this server" }),
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      /not allowed to reach http:\/\/127\.0\.0\.1:8987/,
+    );
+  });
+
+  // #179: the page's markup was the clipboard again, so it went too.
+  it("shows no markup from the page", async () => {
+    renderAdvanced();
+    await open();
+
+    expect(screen.queryByRole("textbox", { name: "Page HTML" })).toBeNull();
+  });
+
+  it("shows the log of requests and replies, oldest first, with the time", async () => {
+    renderAdvanced({
+      log: [
+        {
+          at: new Date(2026, 10, 22, 5, 20, 1),
+          text: "→ GET http://127.0.0.1:8987/recipes/api/vocabulary/",
+        },
+        {
+          at: new Date(2026, 10, 22, 5, 20, 2),
+          text: "← 200 OK · 15 B · 42 ms",
+        },
+      ],
+    });
+    await open();
+
+    const entries = within(
+      screen.getByRole("log", { name: "Log" }),
+    ).getAllByRole("listitem");
+    expect(entries.map((entry) => entry.textContent)).toEqual([
+      "05:20:01 → GET http://127.0.0.1:8987/recipes/api/vocabulary/",
+      "05:20:02 ← 200 OK · 15 B · 42 ms",
+    ]);
+    expect(entries[0]).toBeVisible();
+  });
+
+  it("says when nothing is logged yet", async () => {
+    renderAdvanced();
+    await open();
+
+    expect(screen.getByRole("log", { name: "Log" })).toHaveTextContent(
+      "Nothing yet.",
+    );
+  });
+});
