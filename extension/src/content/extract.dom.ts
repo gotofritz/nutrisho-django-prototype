@@ -1,5 +1,5 @@
 import type { CaptureWarning, PageCapture } from "@/core/capture";
-import { SELECTION_CAP, capText, warn } from "@/core/capture";
+import { HTML_CAP, SELECTION_CAP, capText, warn } from "@/core/capture";
 
 /**
  * Extraction off a live page, copied from anklipper.
@@ -70,17 +70,31 @@ function tidy(value: string): string {
     .trim();
 }
 
-/** Flatten a fragment to text: the markup decides only where lines break. */
-function flatten(node: Node, into: string[]): void {
+/**
+ * Flatten a fragment to text: the markup decides only where lines break.
+ * Inside a list item nothing breaks, since an item is one ingredient or step
+ * even when the page wraps `(about 2 tsp)` in an element of its own.
+ */
+interface Context {
+  /** Inside a list item, where nothing breaks a line. */
+  readonly inItem: boolean;
+  /** Inside `<pre>`, where the source's line breaks show. */
+  readonly pre: boolean;
+}
+
+function flatten(node: Node, into: string[], context: Context): void {
+  const { inItem, pre } = context;
   if (node.nodeType === 3) {
-    into.push((node as Text).data);
+    // A line break in the source shows as a space, except in <pre>.
+    const data = (node as Text).data;
+    into.push(pre ? data : data.replace(/\s+/g, " "));
     return;
   }
   if (node.nodeType !== 1 && node.nodeType !== 11) return;
 
   const element = node.nodeType === 1 ? (node as Element) : undefined;
   if (element?.tagName === "BR") {
-    into.push("\n");
+    into.push(inItem ? " " : "\n");
     return;
   }
   // Anything the page does not render is not part of the selection's text.
@@ -92,14 +106,28 @@ function flatten(node: Node, into: string[]): void {
   }
 
   const breaks = element !== undefined && isBlock(element);
-  if (breaks) into.push("\n");
-  for (const child of Array.from(node.childNodes)) flatten(child, into);
-  if (breaks) into.push("\n");
+  const edge = breaks && !inItem ? "\n" : breaks ? " " : "";
+  const inner = {
+    inItem: inItem || element?.tagName === "LI",
+    pre: pre || element?.tagName === "PRE",
+  };
+  into.push(edge);
+  for (const child of Array.from(node.childNodes)) flatten(child, into, inner);
+  into.push(edge);
 }
 
-function fragmentToText(fragment: DocumentFragment): string {
+/** What the selection sits inside, which its clone leaves out. */
+function contextOf(range: Range): Context {
+  const around = asElement(range.commonAncestorContainer);
+  return {
+    inItem: around?.closest("li") != null,
+    pre: around?.closest("pre") != null,
+  };
+}
+
+function fragmentToText(range: Range): string {
   const parts: string[] = [];
-  flatten(fragment, parts);
+  flatten(range.cloneContents(), parts, contextOf(range));
   return tidy(parts.join(""));
 }
 
@@ -145,10 +173,7 @@ export function extractCapture(deps: ExtractDeps): PageCapture {
   const range = firstRange(win);
   if (!range) return { text: "", ...page, warnings };
 
-  const selection = capText(
-    fragmentToText(range.cloneContents()),
-    SELECTION_CAP,
-  );
+  const selection = capText(fragmentToText(range), SELECTION_CAP);
   if (selection.truncated) {
     warnings.push(
       warn(
@@ -176,5 +201,9 @@ export function extractCapture(deps: ExtractDeps): PageCapture {
     }
   }
 
-  return { text: selection.text, ...page, warnings };
+  const holder = doc.createElement("div");
+  holder.append(range.cloneContents());
+  const html = capText(holder.innerHTML, HTML_CAP).text;
+
+  return { text: selection.text, ...page, warnings, html };
 }

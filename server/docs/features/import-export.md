@@ -8,7 +8,7 @@ Three ways in or out, one importer behind them:
   Nutrisho document or a page's schema.org JSON-LD and lists what came in.
 - **`POST /recipes/api/recipes/`** takes the same two formats as a JSON body,
   signed in with an API token. It is what the recipe clipper (`extension/`)
-  will call.
+  calls.
 
 `services/recipe_document.py` reads either format into drafts and
 `services/recipe_import.py` writes them; `services/recipe_export.py` writes a

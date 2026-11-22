@@ -4,6 +4,8 @@ export type ContextMenuContext = "selection" | "page";
 
 export interface ContextMenuItem {
   readonly id: string;
+  /** Puts the item in a submenu under this one. */
+  readonly parentId?: string;
   readonly title: string;
   /** Non-empty: the browsers reject an item that matches no context. */
   readonly contexts: readonly [ContextMenuContext, ...ContextMenuContext[]];
@@ -37,6 +39,7 @@ export function createContextMenus(): ContextMenusPort {
     async create(item: ContextMenuItem): Promise<void> {
       browser.contextMenus.create({
         id: item.id,
+        ...(item.parentId === undefined ? {} : { parentId: item.parentId }),
         title: item.title,
         contexts: [...item.contexts] as [
           ContextMenuContext,

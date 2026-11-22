@@ -41,7 +41,7 @@ export function createFakeStorage(
 
     async set<T>(key: string, value: T): Promise<void> {
       check();
-      written[key] = value;
+      written[key] = structuredClone(value);
       changed(key);
     },
 

@@ -68,6 +68,60 @@ describe("extractCapture", () => {
     expect(extract().text).toBe("2 aubergines\n1 tbsp olive oil\nbasil");
   });
 
+  // Some sites wrap part of an ingredient, `(about 2 tsp)`, in an element of
+  // its own, or break it with a <br>: inside a list item it is one line.
+  it("keeps what is inside one list item on one line", () => {
+    document.body.innerHTML = `
+      <ul id="target"><li>4g allspice berries<div>(about 2 tsp)</div></li><li>1 medium shallot,<br />peeled and sliced</li></ul>`;
+    selectContentsOf(document.querySelector("#target")!);
+
+    expect(extract().text).toBe(
+      "4g allspice berries (about 2 tsp)\n1 medium shallot, peeled and sliced",
+    );
+  });
+
+  // A line break in the page's source is a space on screen; only the markup
+  // breaks a line. The markup a user clipped, as the page gave it.
+  it("reads a line break in the page's source as a space", () => {
+    document.body.innerHTML = `<p id="target">For the pickled raisins
+ <br>
+ <strong>500g apple cider vinegar
+  <br>8g black peppercorns </strong>(about 1 tbsp)<strong>
+  <br>4g allspice berries 
+ </strong>(about 2 tsp)<strong>
+  <br>2 bay leaves
+  <br>1 medium shallot,
+ </strong> peeled and sliced
+ <br>
+ <strong>1 </strong><strong>fresh jalapeño chilli</strong>, left whole</p>`;
+    selectContentsOf(document.querySelector("#target")!);
+
+    expect(extract().text.split("\n")).toEqual([
+      "For the pickled raisins",
+      "500g apple cider vinegar",
+      "8g black peppercorns (about 1 tbsp)",
+      "4g allspice berries (about 2 tsp)",
+      "2 bay leaves",
+      "1 medium shallot, peeled and sliced",
+      "1 fresh jalapeño chilli, left whole",
+    ]);
+  });
+
+  it("keeps the selection's markup too, to look into a capture", () => {
+    document.body.innerHTML = `<p id="target">2 aubergines<br><b>basil</b></p>`;
+    selectContentsOf(document.querySelector("#target")!);
+
+    expect(extract().html).toBe("2 aubergines<br><b>basil</b>");
+  });
+
+  it("keeps the line breaks of preformatted text", () => {
+    document.body.innerHTML = `<pre id="target">2 lemons
+1 lime</pre>`;
+    selectContentsOf(document.querySelector("#target")!);
+
+    expect(extract().text).toBe("2 lemons\n1 lime");
+  });
+
   it("gives each paragraph a line of its own, and a <br> breaks one", () => {
     document.body.innerHTML = `
       <div id="target"><p>Heat the oven.</p><p>Slice the <i>aubergines</i>.<br />Salt them.</p></div>`;
@@ -149,7 +203,9 @@ describe("extractCapture", () => {
     document.body.innerHTML = `<p id="target">Heat the oven.</p><p>Not this.</p>`;
     selectContentsOf(document.querySelector("#target")!);
 
+    expect(extract().html).not.toContain("Not this");
     expect(Object.keys(extract()).sort()).toEqual([
+      "html",
       "text",
       "title",
       "url",
