@@ -100,14 +100,15 @@ def test_recipe_new_post_saves_metadata(auth_client, user):
 
 
 @pytest.mark.django_db
-def test_recipe_new_post_rejects_an_unknown_cuisine(auth_client, user):
-    """Cuisines are a curated list (plan 011): an unknown one is an error, not a new row."""
+def test_recipe_new_post_makes_an_unknown_cuisine_the_owners_own(auth_client, user):
+    """An unknown cuisine becomes a private one, as an unknown tag does (#171)."""
     auth_client.post(
         "/recipes/new/",
         {"recipe_name": "Gagh", "cuisine_name": "Klingon", "servings": "4"},
     )
-    assert not Cuisine.objects.filter(cuisine="Klingon").exists()
-    assert not Recipe.objects.filter(recipe_name="Gagh").exists()
+    klingon = Cuisine.objects.get(cuisine="Klingon")
+    assert klingon.owner == user
+    assert Recipe.objects.get(recipe_name="Gagh").cuisine == klingon
 
 
 @pytest.mark.django_db

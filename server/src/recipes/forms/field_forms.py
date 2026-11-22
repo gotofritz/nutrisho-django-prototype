@@ -2,10 +2,10 @@ from django import forms
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import transaction
 
-from recipes.models import Cuisine, Recipe
+from recipes.models import Recipe
 from recipes.models.tag import TAG_MAX_LENGTH
-from recipes.services.name_resolution import find_cuisine
-from recipes.services.recipe_metadata import set_tags
+from recipes.services.name_resolution import CuisineNameError, check_cuisine
+from recipes.services.recipe_metadata import set_cuisine, set_tags
 
 EDITABLE_RECIPE_FIELDS = frozenset(["recipe_name", "short_description", "servings"])
 
@@ -15,8 +15,11 @@ _METADATA_MODEL_FIELDS = ["recipe_name", "short_description", "servings", "sourc
 class RecipeMetadataForm(forms.ModelForm):
     """Form for creating or editing recipe metadata.
 
-    Cuisine is text plus a datalist of the tree's dotted paths
-    (`med.italy.sicily`); a bare unambiguous name (`sicily`) is accepted too.
+    Cuisine is text plus a datalist of the dotted paths the owner sees
+    (`med.italy.sicily`); a bare unambiguous name (`sicily`) is accepted too,
+    and a cuisine they cannot see becomes one of their own (#171). Like tags,
+    it is made when the recipe is saved, never while the form is checked:
+    `cuisine_name` is cleaned to the text, and the services resolve it.
 
     `tags` is comma-separated names, resolved within `owner`'s vocabulary (the
     recipe's owner): global tags or their private ones, an unknown name
@@ -63,26 +66,21 @@ class RecipeMetadataForm(forms.ModelForm):
         """Set the recipe's tags to exactly the typed names."""
         set_tags(recipe, names=self.cleaned_data["tags"])
 
-    def clean_cuisine_name(self) -> Cuisine | None:
-        """The picked cuisine node, None when blank; unknown names are an error.
-
-        Cuisines are a curated tree (plan 011), so the editor never creates one.
-        """
+    def clean_cuisine_name(self) -> str:
+        """The typed cuisine, stripped; one that could not be placed is an error."""
         text = (self.cleaned_data.get("cuisine_name") or "").strip()
-        if not text:
-            return None
-        cuisine = find_cuisine(text)
-        if cuisine is None:
-            msg = "Pick a cuisine from the list (staff can add new ones)."
-            raise forms.ValidationError(msg)
-        return cuisine
+        try:
+            check_cuisine(text, owner=self._owner)
+        except CuisineNameError as error:
+            raise forms.ValidationError(str(error)) from error
+        return text
 
     def save(self, commit: bool = True) -> Recipe:
-        """Save the recipe with the picked cuisine; tags too when committing."""
+        """Save the recipe; its cuisine and tags too when committing."""
         recipe = super().save(commit=False)
-        recipe.cuisine = self.cleaned_data.get("cuisine_name")
         if commit:
             with transaction.atomic():
+                set_cuisine(recipe, name=self.cleaned_data["cuisine_name"], owner=self._owner)
                 recipe.save()
                 self.save_tags(recipe)
         return recipe

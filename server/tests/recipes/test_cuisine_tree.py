@@ -1,7 +1,8 @@
 """The curated cuisine tree (plan 011, PR 4).
 
 Cuisines are nodes `area.region.subregion` (`med.italy.sicily`). Migration 0021
-seeds the agreed list; the editor picks from it and never creates a cuisine.
+seeds the agreed list. A cuisine a user types that the tree lacks becomes their
+own (#171, `test_private_cuisines.py`).
 """
 
 import importlib
@@ -182,12 +183,12 @@ def test_picking_a_path_sets_the_cuisine(auth_client, user):
 
 
 @pytest.mark.django_db
-def test_an_unknown_cuisine_is_a_form_error_and_creates_nothing(auth_client, user):
-    """Users pick from the list; only staff add to it."""
+def test_a_cuisine_that_cannot_be_placed_is_a_form_error_and_creates_nothing(auth_client, user):
+    """An unknown cuisine becomes the user's own (#171), but a fourth level is refused."""
     before = Cuisine.objects.count()
-    response = auth_client.post("/recipes/new/", _data(cuisine_name="klingon"))
+    response = auth_client.post("/recipes/new/", _data(cuisine_name="med.italy.sicily.palermo"))
     assert response.status_code == 200
-    assert "Pick a cuisine from the list" in response.content.decode()
+    assert "levels deep" in response.content.decode()
     assert not Recipe.objects.exists()
     assert Cuisine.objects.count() == before
 

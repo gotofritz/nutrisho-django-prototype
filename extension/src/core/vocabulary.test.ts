@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { apiExample } from "../../tests/support/api-examples";
 
-import { EMPTY_VOCABULARY, knows, parseVocabulary } from "./vocabulary";
+import {
+  EMPTY_VOCABULARY,
+  knows,
+  knowsCuisine,
+  knowsTag,
+  parseVocabulary,
+} from "./vocabulary";
 
 const REPLY = apiExample("vocabulary.json").response.body as Record<
   string,
@@ -91,5 +97,37 @@ describe("knows", () => {
 
   it("does not know any other name", () => {
     expect(knows(units, "handful")).toBe(false);
+  });
+});
+
+// M8: a cuisine is a dotted path, or a bare name the server finds because
+// only one node has it (`find_cuisine`).
+describe("knowsCuisine", () => {
+  const paths = [
+    "med",
+    "med.italy",
+    "med.italy.sicily",
+    "asia.thailand.north",
+    "asia.vietnam.north",
+  ];
+
+  it("knows a whole path, ignoring case and spaces around it", () => {
+    expect(knowsCuisine(paths, " Med.Italy ")).toBe(true);
+  });
+
+  it("knows a bare name only one node has", () => {
+    expect(knowsCuisine(paths, "sicily")).toBe(true);
+    expect(knowsCuisine(paths, "north")).toBe(false);
+  });
+
+  it("does not know any other name", () => {
+    expect(knowsCuisine(paths, "med.italy.marche")).toBe(false);
+  });
+});
+
+describe("knowsTag", () => {
+  it("knows a tag in the list, ignoring case and spaces around it", () => {
+    expect(knowsTag(["dinner"], " Dinner ")).toBe(true);
+    expect(knowsTag(["dinner"], "lunch")).toBe(false);
   });
 });

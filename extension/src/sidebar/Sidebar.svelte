@@ -192,8 +192,19 @@
     saving = true;
     const answer = await client.saveRecipe(sending);
     saving = false;
-    if (answer.ok) await keep(markSaved(drafts, sending.id, answer.value));
-    else saveFailure = saveProblem(answer.error);
+    if (answer.ok) {
+      await keep(markSaved(drafts, sending.id, answer.value));
+      await reloadLists();
+    } else saveFailure = saveProblem(answer.error);
+  }
+
+  /**
+   * After a save, which may have made names of the user's own (M8). The lists
+   * shown stay until the new ones come, and stay if they do not.
+   */
+  async function reloadLists() {
+    const fresh = await client.vocabulary();
+    if (fresh.ok) lists = fresh;
   }
 
   function count(n: number, one: string, many: string): string {

@@ -303,7 +303,7 @@ def test_cuisine_name_error_marks_the_input(auth_client, recipe, panel):
     headers = {"HTTP_HX_REQUEST": "true"} if panel else {}
     response = auth_client.post(
         reverse("recipes:metadata_edit", kwargs={"recipe_id": recipe.pk}),
-        {"recipe_name": "Soup", "servings": 2, "cuisine_name": "atlantis"},
+        {"recipe_name": "Soup", "servings": 2, "cuisine_name": "north"},
         **headers,
     )
     html = response.content.decode()
@@ -318,7 +318,7 @@ def test_new_recipe_cuisine_error_marks_the_input(auth_client):
     """The new-recipe page renders the cuisine input by hand too."""
     response = auth_client.post(
         reverse("recipes:new"),
-        {"recipe_name": "Stew", "servings": 2, "cuisine_name": "atlantis"},
+        {"recipe_name": "Stew", "servings": 2, "cuisine_name": "north"},
     )
     tag = _tag(response.content.decode(), 'name="cuisine_name"')
     assert 'aria-invalid="true"' in tag

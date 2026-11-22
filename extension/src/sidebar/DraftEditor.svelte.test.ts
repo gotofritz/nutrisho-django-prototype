@@ -11,6 +11,8 @@ const LISTS: Vocabulary = {
   ...EMPTY_VOCABULARY,
   ingredients: [{ name: "lemon", spellings: ["lemons"] }],
   units: [{ name: "g", spellings: ["grams"] }],
+  cuisines: ["med", "med.italy", "med.italy.sicily"],
+  tags: ["dinner", "quick"],
 };
 
 const DRAFT: RecipeDraft = {
@@ -105,6 +107,106 @@ describe("the source", () => {
       ).toBeNull();
     },
   );
+});
+
+/** The names a field with a list offers, in order. */
+function offered(input: HTMLElement): string[] {
+  const list = document.getElementById(input.getAttribute("list") ?? "");
+  return [...(list?.querySelectorAll("option") ?? [])].map(
+    (option) => option.value,
+  );
+}
+
+// M8: typing in a field offers the names in the loaded lists.
+describe("names from the lists", () => {
+  it("offers the ingredients for an ingredient or substitute, the units for a unit", () => {
+    renderEditor();
+
+    const first = row(1);
+    expect(
+      offered(within(first).getByRole("combobox", { name: "Ingredient" })),
+    ).toEqual(["lemon"]);
+    expect(
+      offered(within(first).getByRole("combobox", { name: "Substitute" })),
+    ).toEqual(["lemon"]);
+    expect(
+      offered(within(first).getByRole("combobox", { name: "Unit" })),
+    ).toEqual(["g"]);
+  });
+
+  it("marks a substitute the lists do not hold as new", () => {
+    renderEditor({
+      ...DRAFT,
+      groups: [
+        {
+          name: "",
+          rows: [{ ...EMPTY_ROW, ingredient: "lemon", substitute: "lime" }],
+        },
+      ],
+    });
+
+    expect(
+      within(row(1)).getByRole("combobox", { name: "Substitute" }),
+    ).toHaveAccessibleDescription("new: saving makes it one of your own");
+  });
+});
+
+describe("the cuisine", () => {
+  it("offers the cuisine tree's paths, and edits the cuisine", async () => {
+    const { changed } = renderEditor();
+
+    const cuisine = screen.getByRole("combobox", { name: "Cuisine" });
+    expect(offered(cuisine)).toEqual(["med", "med.italy", "med.italy.sicily"]);
+
+    await fireEvent.input(cuisine, { target: { value: "sicily" } });
+    expect(changed()?.cuisine).toBe("sicily");
+  });
+
+  it("marks a cuisine the tree does not hold as new", () => {
+    renderEditor({ ...DRAFT, cuisine: "med.italy.marche" });
+
+    expect(
+      screen.getByRole("combobox", { name: "Cuisine" }),
+    ).toHaveAccessibleDescription("new: saving makes it one of your own");
+  });
+
+  it("does not mark a cuisine the tree holds", () => {
+    renderEditor({ ...DRAFT, cuisine: "Sicily" });
+
+    expect(
+      screen.getByRole("combobox", { name: "Cuisine" }),
+    ).not.toHaveAccessibleDescription();
+  });
+});
+
+describe("the tags", () => {
+  it("shows the tags comma-separated, and edits them as typed", async () => {
+    const { changed } = renderEditor({ ...DRAFT, tags: ["dinner", " quick"] });
+
+    const tags = screen.getByRole("textbox", { name: "Tags" });
+    expect(tags).toHaveValue("dinner, quick");
+
+    await fireEvent.input(tags, { target: { value: "dinner, ice cream, " } });
+    expect(changed()?.tags).toEqual(["dinner", " ice cream", " "]);
+  });
+
+  it("names the tags the lists do not hold as new", () => {
+    renderEditor({ ...DRAFT, tags: ["Dinner", " ice cream", " fika"] });
+
+    expect(
+      screen.getByRole("textbox", { name: "Tags" }),
+    ).toHaveAccessibleDescription(
+      "new: ice cream, fika: saving makes them your own",
+    );
+  });
+
+  it("marks nothing when every tag is known", () => {
+    renderEditor({ ...DRAFT, tags: ["dinner", " quick"] });
+
+    expect(
+      screen.getByRole("textbox", { name: "Tags" }),
+    ).not.toHaveAccessibleDescription();
+  });
 });
 
 describe("the ingredient groups", () => {
@@ -228,13 +330,18 @@ describe("the ingredient rows", () => {
       within(first).getByRole("textbox", { name: "Quantity" }),
     ).toHaveValue("2");
     expect(
-      within(first).getByRole("textbox", { name: "Ingredient" }),
+      within(first).getByRole("combobox", { name: "Ingredient" }),
     ).toHaveValue("lemon");
     expect(within(first).getByRole("textbox", { name: "Rest" })).toHaveValue(
       "Juice of",
     );
-    for (const field of ["Unit", "Substitute", "Preparation", "Note"]) {
+    for (const field of ["Preparation", "Note"]) {
       expect(within(first).getByRole("textbox", { name: field })).toHaveValue(
+        "",
+      );
+    }
+    for (const field of ["Unit", "Substitute"]) {
+      expect(within(first).getByRole("combobox", { name: field })).toHaveValue(
         "",
       );
     }
@@ -266,7 +373,7 @@ describe("the ingredient rows", () => {
     expect(within(first).queryByText("new")).toBeNull();
     expect(within(second).getAllByText("new")).toHaveLength(2);
     expect(
-      within(second).getByRole("textbox", { name: "Ingredient" }),
+      within(second).getByRole("combobox", { name: "Ingredient" }),
     ).toHaveAccessibleDescription("new: saving makes it one of your own");
   });
 
@@ -292,13 +399,16 @@ describe("the ingredient rows", () => {
     await fireEvent.click(collapse);
 
     expect(within(row(1)).queryByRole("textbox")).toBeNull();
+    expect(within(row(1)).queryByRole("combobox")).toBeNull();
     expect(within(row(1)).getByText("2 lemon · Juice of")).toBeVisible();
     expect(collapse).toHaveAttribute("aria-expanded", "false");
     expect(collapse).toHaveTextContent("▼");
-    expect(within(row(2)).getAllByRole("textbox")).toHaveLength(7);
+    // Quantity, preparation, note and rest; unit, ingredient and substitute.
+    expect(within(row(2)).getAllByRole("textbox")).toHaveLength(4);
+    expect(within(row(2)).getAllByRole("combobox")).toHaveLength(3);
 
     await fireEvent.click(collapse);
-    expect(within(row(1)).getAllByRole("textbox")).toHaveLength(7);
+    expect(within(row(1)).getAllByRole("textbox")).toHaveLength(4);
   });
 
   it("keeps a row collapsed when the one before it is deleted", async () => {
@@ -319,6 +429,7 @@ describe("the ingredient rows", () => {
     await rerender({ draft: onChange.mock.lastCall![0] });
 
     expect(within(row(1)).queryByRole("textbox")).toBeNull();
+    expect(within(row(1)).queryByRole("combobox")).toBeNull();
     expect(within(row(1)).getByText("1 handful boletus")).toBeVisible();
   });
 
@@ -372,12 +483,36 @@ describe("the steps", () => {
     expect(changed()?.steps).toEqual([DRAFT.steps[1]]);
   });
 
-  it("adds a step below the others", async () => {
+  it("adds a step below the last", async () => {
     const { changed } = renderEditor();
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Add a step after step 2" }),
+    );
+
+    expect(changed()?.steps).toEqual([...DRAFT.steps, { title: "", text: "" }]);
+  });
+
+  it("adds a step after any step", async () => {
+    const { changed } = renderEditor();
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Add a step after step 1" }),
+    );
+
+    expect(changed()?.steps).toEqual([
+      DRAFT.steps[0],
+      { title: "", text: "" },
+      DRAFT.steps[1],
+    ]);
+  });
+
+  it("adds the first step when there are none", async () => {
+    const { changed } = renderEditor({ ...DRAFT, steps: [] });
 
     await fireEvent.click(screen.getByRole("button", { name: "Add a step" }));
 
-    expect(changed()?.steps).toEqual([...DRAFT.steps, { title: "", text: "" }]);
+    expect(changed()?.steps).toEqual([{ title: "", text: "" }]);
   });
 
   it("shows each step's title, and edits one", async () => {
@@ -413,7 +548,7 @@ describe("what stops a save", () => {
     expect(screen.getByRole("textbox", { name: "Name" })).toBeInvalid();
     const second = row(2);
     expect(
-      within(second).getByRole("textbox", { name: "Ingredient" }),
+      within(second).getByRole("combobox", { name: "Ingredient" }),
     ).toBeInvalid();
     expect(
       within(second).getByRole("textbox", { name: "Quantity" }),

@@ -94,11 +94,25 @@ def test_import_finds_existing_ingredients_and_leaves_them_alone(user, other_use
 
 
 @pytest.mark.django_db
-def test_import_leaves_out_an_unknown_cuisine(user):
-    """A cuisine the server lacks is never created; the recipe has none, and says so."""
-    result = _import(user, _minimal(cuisine="atlantis.north"))
+def test_import_leaves_out_a_cuisine_it_cannot_place(user):
+    """A cuisine too deep to place is left out, and the import says so; one it lacks is made (#171)."""
+    result = _import(user, _minimal(cuisine="med.italy.sicily.palermo"))
     assert Recipe.objects.get(owner=user).cuisine is None
-    assert result.warnings == ["“Soup”: there is no cuisine “atlantis.north” here, so it has none."]
+    assert result.warnings == [
+        (
+            "“Soup”: the cuisine “med.italy.sicily.palermo” was left out: "
+            "Cuisines go at most 3 levels deep (area.region.subregion)."
+        )
+    ]
+
+
+@pytest.mark.django_db
+def test_import_warns_of_a_bad_cuisine_on_each_recipe(user):
+    """Two recipes with the same unplaceable cuisine are each reported."""
+    document = _minimal(cuisine="north")
+    document["recipes"].append({"recipe_name": "Stew", "cuisine": "North"})
+    result = _import(user, document)
+    assert [w.split(":")[0] for w in result.warnings] == ["“Soup”", "“Stew”"]
 
 
 @pytest.mark.django_db

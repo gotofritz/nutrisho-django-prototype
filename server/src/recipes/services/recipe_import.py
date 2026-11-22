@@ -3,8 +3,9 @@
 `parse_document` reads a file or request body into drafts; `import_recipes`
 writes them as new recipes of `owner`, never touching one they already have.
 Names go through `name_resolution` as typed names do: ingredients, tags and
-units the owner cannot see become private to them (#154), while a cuisine the
-server does not know is never created and is left blank, with a warning. A size
+units the owner cannot see become private to them (#154), and so do cuisines
+(#171); a cuisine that cannot be placed, such as a bare name more than one
+node has, is left blank, with a warning. A size
 word or an amount phrase in the unit field (`small`, `to taste`) never becomes
 a unit: it stays as written in `legacy_unit`, with a warning too.
 
@@ -34,7 +35,12 @@ from recipes.models import (
     Step,
     Unit,
 )
-from recipes.services.name_resolution import find_cuisine, resolve_ingredient, resolve_unit
+from recipes.services.name_resolution import (
+    CuisineNameError,
+    resolve_cuisine,
+    resolve_ingredient,
+    resolve_unit,
+)
 from recipes.services.recipe_document import (
     ImportBatch,
     ImportFormatError,
@@ -118,7 +124,8 @@ class _Writer:
         self._known = ingredients
         self._ingredients: dict[str, Ingredient] = {}
         self._units: dict[str, Unit | None] = {}
-        self._cuisines: dict[str, Cuisine | None] = {}
+        # A cuisine by its typed path, or why it could not be placed.
+        self._cuisines: dict[str, Cuisine | str | None] = {}
 
     def write(self, draft: RecipeDraft, *, recipe_id: UUID | None = None) -> ImportedRecipe:
         label = plain_text(draft.recipe_name)
@@ -207,12 +214,16 @@ class _Writer:
         if not key:
             return None
         if key not in self._cuisines:
-            self._cuisines[key] = find_cuisine(path)
+            try:
+                self._cuisines[key] = resolve_cuisine(path, owner=self._owner)
+            except CuisineNameError as error:
+                self._cuisines[key] = str(error)
         cuisine = self._cuisines[key]
-        if cuisine is None:
+        if isinstance(cuisine, str):
             self.result.warnings.append(
-                f"“{label}”: there is no cuisine “{path.strip()}” here, so it has none."
+                f"“{label}”: the cuisine “{path.strip()}” was left out: {cuisine}"
             )
+            return None
         return cuisine
 
 

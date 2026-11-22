@@ -4,9 +4,9 @@ Names are unique ignoring case, so `Onion` typed on a phone that
 auto-capitalises is the stored `onion`, not a second row; and a plural is a
 display form, so `onions` is the stored `onion` too (#66). Lookups are
 case-insensitive and keep the stored spelling; a miss creates an ingredient,
-tag or unit as typed, but never a cuisine, which only staff add.
-Ingredients, tags and units are scoped to the recipe's owner: the global list
-plus their own private rows (plan 011, #154).
+tag, unit or cuisine as typed.
+Each is scoped to the recipe's owner: the global list plus their own private
+rows (plan 011, #154, #171).
 Every editor path goes through here rather than calling `get_or_create` on the
 raw name, which matched case-sensitively and then hit the unique index (#34).
 """
@@ -16,7 +16,7 @@ from django.db.models import F, Q, QuerySet
 from django.db.models.functions import Lower
 
 from recipes.models import Cuisine, Ingredient, IngredientAlias, Tag, Unit, UnitAlias
-from recipes.models.cuisine import MAX_CUISINE_DEPTH, PATH_SEPARATOR
+from recipes.models.cuisine import CUISINE_MAX_LENGTH, MAX_CUISINE_DEPTH, PATH_SEPARATOR
 from recipes.utils.pluralise import pluralise
 from recipes.utils.unit_words import not_a_unit
 
@@ -144,31 +144,98 @@ def resolve_tag(name: str, *, owner: AbstractBaseUser) -> Tag:
     return Tag.objects.create(tag=name.strip(), owner=owner)
 
 
-def find_cuisine(text: str) -> Cuisine | None:
+class CuisineNameError(ValueError):
+    """A typed cuisine that names no node and cannot be made into one."""
+
+
+def _visible_cuisines(owner: AbstractBaseUser | None) -> QuerySet:
+    """The global tree plus `owner`'s own nodes, global first; the global tree alone for None."""
+    visible = Q(owner__isnull=True) if owner is None else Q(owner__isnull=True) | Q(owner=owner)
+    return Cuisine.objects.filter(visible).order_by(F("owner").asc(nulls_first=True), "pk")
+
+
+def _cuisine_parts(text: str) -> list[str]:
+    return [part.strip() for part in text.strip().split(PATH_SEPARATOR)]
+
+
+def find_cuisine(text: str, *, owner: AbstractBaseUser | None = None) -> Cuisine | None:
     """The cuisine node `text` names, ignoring case; never creates one.
 
     `text` is a dotted path from the area down (`med.italy.sicily`), or a bare
     node name when exactly one node has it (`sicily`, but not `north`, which
-    sits under thailand, vietnam and mexico). Cuisines are a curated global
-    tree (plan 011): the editor picks from it and staff add to it in admin.
+    sits under thailand, vietnam and mexico). Only the global tree and
+    `owner`'s own nodes are seen, and a global node wins over a private one of
+    the same name.
     """
-    parts = [part.strip() for part in text.strip().split(PATH_SEPARATOR)]
+    parts = _cuisine_parts(text)
     if not all(parts):
         return None
+    visible = _visible_cuisines(owner)
     node = None
     for part in parts:
-        node = Cuisine.objects.filter(parent=node, cuisine__iexact=part).first()
+        node = visible.filter(parent=node, cuisine__iexact=part).first()
         if node is None:
             break
     if node is not None or len(parts) > 1:
         return node
-    named = list(Cuisine.objects.filter(cuisine__iexact=parts[0])[:2])
+    named = list(visible.filter(cuisine__iexact=parts[0])[:2])
     return named[0] if len(named) == 1 else None
 
 
+def resolve_cuisine(text: str, *, owner: AbstractBaseUser) -> Cuisine | None:
+    """`find_cuisine`, or on a miss the node made private to `owner`; None when blank.
+
+    A path's missing levels are made inside the deepest node it names that
+    `owner` sees (`med.italy.marche` inside the global `med.italy`), and an
+    unknown bare name becomes an area of their own. Raises `CuisineNameError`,
+    making nothing, for a bare name more than one node has, a blank part, a
+    name too long, or a path deeper than three levels. Call inside the
+    write's transaction.
+    """
+    if not text.strip():
+        return None
+    found = find_cuisine(text, owner=owner)
+    if found is not None:
+        return found
+    _check_cuisine(text, owner=owner)
+    visible = _visible_cuisines(owner)
+    node = None
+    for part in _cuisine_parts(text):
+        parent, node = node, visible.filter(parent=node, cuisine__iexact=part).first()
+        if node is None:
+            node = Cuisine.objects.create(cuisine=part, parent=parent, owner=owner)
+    return node
+
+
+def _check_cuisine(text: str, *, owner: AbstractBaseUser) -> None:
+    parts = _cuisine_parts(text)
+    if not all(parts):
+        msg = f"“{text.strip()}” has an empty part: write it as area.region.subregion."
+        raise CuisineNameError(msg)
+    if len(parts) > MAX_CUISINE_DEPTH:
+        msg = f"Cuisines go at most {MAX_CUISINE_DEPTH} levels deep (area.region.subregion)."
+        raise CuisineNameError(msg)
+    if any(len(part) > CUISINE_MAX_LENGTH for part in parts):
+        msg = f"A cuisine name can be at most {CUISINE_MAX_LENGTH} characters long."
+        raise CuisineNameError(msg)
+    if len(parts) == 1 and _visible_cuisines(owner).filter(cuisine__iexact=parts[0]).exists():
+        msg = f"More than one cuisine is called “{parts[0]}”: pick one from the list."
+        raise CuisineNameError(msg)
+
+
+def check_cuisine(text: str, *, owner: AbstractBaseUser) -> None:
+    """Raise `CuisineNameError` if `resolve_cuisine` would refuse `text`; writes nothing."""
+    if text.strip() and find_cuisine(text, owner=owner) is None:
+        _check_cuisine(text, owner=owner)
+
+
 def cuisine_path_map() -> dict[int, str]:
-    """Every node's dotted path by its id, read in one query."""
-    nodes = {c.pk: c for c in Cuisine.objects.all()}
+    """Every node's dotted path by its id, read in one query, private ones included."""
+    return _path_map(Cuisine.objects.all())
+
+
+def _path_map(nodes_query: QuerySet) -> dict[int, str]:
+    nodes = {c.pk: c for c in nodes_query.only("pk", "cuisine", "parent")}
     paths = {}
     for pk, cuisine in nodes.items():
         names = [str(cuisine.cuisine)]
@@ -180,9 +247,9 @@ def cuisine_path_map() -> dict[int, str]:
     return paths
 
 
-def cuisine_paths() -> list[str]:
-    """Every node's dotted path, sorted: the editor's cuisine suggestions."""
-    return sorted(cuisine_path_map().values(), key=str.lower)
+def cuisine_paths(*, owner: AbstractBaseUser | None = None) -> list[str]:
+    """The dotted path of every node `owner` sees, sorted: the editor's cuisine suggestions."""
+    return sorted(set(_path_map(_visible_cuisines(owner)).values()), key=str.lower)
 
 
 def _visible_units(owner: AbstractBaseUser | None) -> QuerySet:

@@ -89,18 +89,18 @@ def test_import_a_nutrisho_export(client, user, other_user, rich_recipe):
 
 @pytest.mark.django_db
 def test_import_says_what_it_renamed_and_left_out(client, user):
-    """A name already taken and a cuisine the server lacks are both reported."""
+    """A name already taken and a cuisine that cannot be placed are both reported."""
     Recipe.objects.create(recipe_name="Soup", owner=user, servings=1)
     document = {
         "format": "nutrisho",
         "version": 1,
-        "recipes": [{"recipe_name": "Soup", "cuisine": "atlantis"}],
+        "recipes": [{"recipe_name": "Soup", "cuisine": "north"}],
     }
     html = _post(client, _upload(document)).content.decode()
     assert "Imported 1 recipe<" in html
     assert "Soup Imported" in html
     assert "renamed, since you already had “Soup”" in html
-    assert "there is no cuisine “atlantis” here" in html
+    assert "the cuisine “north” was left out" in html
 
 
 @pytest.mark.django_db

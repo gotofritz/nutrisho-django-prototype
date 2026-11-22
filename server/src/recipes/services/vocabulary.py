@@ -30,7 +30,7 @@ def vocabulary(*, owner: AbstractBaseUser) -> dict[str, Any]:
         "user": owner.get_username(),
         "ingredients": _ingredients(owner),
         "units": _units(owner),
-        "cuisines": cuisine_paths(),
+        "cuisines": cuisine_paths(owner=owner),
         "tags": _tags(owner),
         "limits": dict(FIELD_LENGTHS),
     }

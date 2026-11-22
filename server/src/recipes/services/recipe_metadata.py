@@ -11,7 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, transaction
 
 from recipes.models import Recipe
-from recipes.services.name_resolution import resolve_tag
+from recipes.services.name_resolution import resolve_cuisine, resolve_tag
 
 _METADATA_FIELDS = ["recipe_name", "short_description", "servings", "source_instance", "cuisine"]
 
@@ -34,15 +34,34 @@ def set_tags(recipe: Recipe, *, names: list[str]) -> None:
     recipe.tags.set(tags)  # ty: ignore[unresolved-attribute]  # reverse M2M
 
 
+def set_cuisine(recipe: Recipe, *, name: str | None, owner: AbstractBaseUser) -> None:
+    """Point the recipe at the named cuisine, made private to `owner` if they cannot see it (#171).
+
+    None leaves the cuisine as it is. Set before the recipe is saved, inside
+    the write's transaction. Raises
+    `CuisineNameError` for a name that cannot be placed; the forms check that
+    first, with `check_cuisine`.
+    """
+    if name is not None:
+        recipe.cuisine = resolve_cuisine(name, owner=owner)  # ty: ignore[invalid-assignment]  # FK descriptor
+
+
 def _lock(recipe: Recipe) -> bool:
     return bool(list(Recipe.objects.filter(pk=recipe.pk).select_for_update().values("pk")))
 
 
-def create_recipe(*, owner: AbstractBaseUser, recipe: Recipe, tag_names: list[str]) -> Recipe:
-    """Save `recipe`, its fields already set, as `owner`'s, with the named tags."""
+def create_recipe(
+    *,
+    owner: AbstractBaseUser,
+    recipe: Recipe,
+    tag_names: list[str],
+    cuisine_name: str | None = None,
+) -> Recipe:
+    """Save `recipe`, its fields already set, as `owner`'s, with the named cuisine and tags."""
     recipe.owner = owner  # ty: ignore[invalid-assignment]  # FK descriptor
     try:
         with transaction.atomic():
+            set_cuisine(recipe, name=cuisine_name, owner=owner)
             recipe.save()
             set_tags(recipe, names=tag_names)
     except IntegrityError as exc:
@@ -50,12 +69,13 @@ def create_recipe(*, owner: AbstractBaseUser, recipe: Recipe, tag_names: list[st
     return recipe
 
 
-def save_metadata(*, recipe: Recipe, tag_names: list[str]) -> None:
-    """Save `recipe`'s metadata fields, already set, and its tags."""
+def save_metadata(*, recipe: Recipe, tag_names: list[str], cuisine_name: str | None = None) -> None:
+    """Save `recipe`'s metadata fields, already set, its cuisine and its tags."""
     try:
         with transaction.atomic():
             found = _lock(recipe)
             if found:
+                set_cuisine(recipe, name=cuisine_name, owner=recipe.owner)
                 recipe.save(update_fields=_METADATA_FIELDS)
                 set_tags(recipe, names=tag_names)
     except IntegrityError as exc:

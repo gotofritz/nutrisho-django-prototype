@@ -46,13 +46,16 @@ def recipe_new(request: AuthedRequest) -> HttpResponse:
                     owner=request.user,
                     recipe=form.save(commit=False),
                     tag_names=form.cleaned_data["tags"],
+                    cuisine_name=form.cleaned_data["cuisine_name"],
                 )
             except DuplicateRecipeNameError as exc:
                 form.add_error("recipe_name", str(exc))
             else:
                 return _redirect_to(request, recipe)
     return render(
-        request, "recipes/recipe_new.html", {"form": form, "all_cuisines": _cuisine_names()}
+        request,
+        "recipes/recipe_new.html",
+        {"form": form, "all_cuisines": cuisine_paths(owner=request.user)},
     )
 
 
@@ -71,7 +74,11 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: UUID) -> HttpRespons
         form = RecipeMetadataForm(data=request.POST, instance=recipe, owner=recipe.owner)
         if form.is_valid():
             try:
-                save_metadata(recipe=form.save(commit=False), tag_names=form.cleaned_data["tags"])
+                save_metadata(
+                    recipe=form.save(commit=False),
+                    tag_names=form.cleaned_data["tags"],
+                    cuisine_name=form.cleaned_data["cuisine_name"],
+                )
             except ObjectDoesNotExist:
                 return HttpResponse("", status=404)
             except DuplicateRecipeNameError as exc:
@@ -86,7 +93,7 @@ def recipe_metadata_edit(request: AuthedRequest, recipe_id: UUID) -> HttpRespons
     return render(
         request,
         template,
-        {"recipe": recipe, "form": form, "all_cuisines": _cuisine_names()},
+        {"recipe": recipe, "form": form, "all_cuisines": cuisine_paths(owner=recipe.owner)},
     )
 
 
@@ -184,7 +191,3 @@ def recipe_scale_copy(request: AuthedRequest, recipe_id: UUID) -> HttpResponse:
     except ScaleError as exc:
         return _scale_panel(request, original, servings=servings, error=str(exc), status=422)
     return _redirect_to(request, copy)
-
-
-def _cuisine_names() -> list[str]:
-    return cuisine_paths()

@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M7 done (#154, #156, #158, #160, #162, #166, #168)
+## Status: In progress, M1 to M8 done (#154, #156, #158, #160, #162, #166, #168, #171)
 
 ## What we are building
 
@@ -187,18 +187,18 @@ an ingredient, posts the draft as a Nutrisho document, and shows *Open in
 Nutrisho*, the server's warnings, or its refusal as it came. The draft and the
 save are tested against the server's API examples.
 
-### M8 · extension · Names from the lists
+### ✅ M8 · extension · Names from the lists
 
-- Typing in an ingredient, substitute or unit field offers the names in the
-  loaded lists.
-- A cuisine field that picks from the tree (anklipper's `Picker`) and, like
-  tags, takes a new one, marked *new*. The tree is staff-only today, so the
-  server needs a way to make a user's own cuisine first: decide whether it
-  is private, as a user's ingredients and tags are, and where in the tree it
-  goes.
-- A tags field, comma-separated as on the site, with a tag that is not in
-  the list marked *new*.
-- The lists load again after a save, so the names it made are known.
+Done (#171). Ingredient, substitute and unit fields offer the loaded names
+in a `<datalist>`; so does a cuisine field, with the tree's paths, rather
+than anklipper's `Picker`, since it must take a new name too. Tags are
+typed comma-separated, as on the site. A cuisine, tag or substitute the
+lists lack is marked *new*, and the lists load again after a save. On the
+server, a cuisine is now private to a user as a tag is (`Cuisine.owner`): a
+typed path the user cannot see is made inside the deepest node it names,
+or as an area of their own, in the editor, an import and the clipper's
+save alike. Staff see each user's nodes in the cuisine tool, make one
+global or merge it into the tree.
 
 ### M9 · extension · Structure, as on the site
 

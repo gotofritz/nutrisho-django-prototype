@@ -77,6 +77,29 @@ def test_save_metadata_writes_the_fields_cuisine_and_tags(recipe):
 
 
 @pytest.mark.django_db
+def test_save_metadata_sets_the_named_cuisine_or_clears_it(recipe):
+    """A typed name is resolved in the owner's tree; a blank one clears the cuisine (#171)."""
+    save_metadata(recipe=recipe, tag_names=[], cuisine_name="med.italy.marche")
+    recipe.refresh_from_db()
+    assert recipe.cuisine is not None
+    assert (recipe.cuisine.path, recipe.cuisine.owner) == ("med.italy.marche", recipe.owner)
+
+    save_metadata(recipe=recipe, tag_names=[], cuisine_name="")
+    recipe.refresh_from_db()
+    assert recipe.cuisine is None
+
+
+@pytest.mark.django_db
+def test_save_metadata_with_a_taken_name_makes_no_cuisine(recipe, user, make_recipe):
+    """The cuisine is made in the save's transaction, so a refused save leaves none (#171)."""
+    make_recipe(owner=user, name="Taken")
+    recipe.recipe_name = "Taken"
+    with pytest.raises(DuplicateRecipeNameError):
+        save_metadata(recipe=recipe, tag_names=[], cuisine_name="atlantis")
+    assert not Cuisine.objects.filter(cuisine="atlantis").exists()
+
+
+@pytest.mark.django_db
 def test_save_metadata_with_a_taken_name_writes_nothing(recipe, user, make_recipe):
     """A rename onto another of the owner's recipes is refused, tags included."""
     make_recipe(owner=user, name="Stew")

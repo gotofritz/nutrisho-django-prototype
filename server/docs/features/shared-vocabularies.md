@@ -29,15 +29,35 @@ they draw on are split by who may change them:
   owner and folds the old flat names in (adjectives such as `Italian` via its
   `ALIASES`, else a node name occurring once; `fusion` and `modern` became
   global **tags**, being styles, not places; anything unmatched stays as a
-  top-level row for staff). Users pick from the tree: the editor's datalist
-  holds every dotted path (`cuisine_paths()`), `find_cuisine` takes a path or
-  an unambiguous bare name, and an unknown name is a form error. Staff edit
+  top-level row for staff). Users pick from the tree or type a new one, as
+  with tags (#171): the editor's datalist holds the dotted paths the user
+  sees (`cuisine_paths(owner=...)`: the global tree plus their own nodes),
+  `find_cuisine` takes a path or an unambiguous bare name, and on a miss
+  `resolve_cuisine` makes the missing levels private to the recipe's owner
+  (`Cuisine.owner`), inside the deepest node the path names
+  (`med.italy.marche` inside the global `med.italy`; a bare `fika` becomes an
+  area of their own). It refuses, making nothing, a bare name more than one
+  node has, a blank part or a fourth level: a form error in the editor, a
+  warning on import. The metadata form only checks the name
+  (`check_cuisine`); `create_recipe` and `save_metadata` make it in the
+  save's transaction, as tags are. A private node sits inside a global node
+  or one of its owner's, never another user's, and no global node sits
+  inside a private one (`Cuisine.clean()`). Staff edit
   the tree in the cuisine tool at `/recipes/cuisines/manage/` (linked from the
   home page next to "Manage ingredients"; Django admin works too).
   `Cuisine.clean()` forbids dots in names, loops and a fourth level, and the
   tool's `CuisineForm` surfaces those and the uniqueness rules as form errors.
   Names are unique ignoring case among siblings
-  (`cuisine_ci_unique_per_parent`) and among areas (`cuisine_ci_unique`).
+  (`cuisine_ci_unique_per_parent`) and among areas (`cuisine_ci_unique`),
+  the global tree and each user's own nodes apart
+  (`cuisine_ci_unique_private_per_parent`, `cuisine_ci_unique_private`), so
+  two users may each have a `marche` under `med.italy`. The tool lists every
+  user's nodes, each marked "private to" its owner; Edit's "Make it global"
+  moves one into the shared tree once its parent is global, and Merge folds
+  one into a global node, its owner's recipes following. A private node is
+  never a survivor or replacement for a node that is not its owner's
+  (`CuisineOwnerError`), since those recipes' owners could not see it. Nodes
+  staff add are global, inside a global node.
   The tool is a smaller sibling of the ingredient one: a searchable list of
   every path, the staff member's own recipes for the selection, and Add,
   Edit (rename or move), Merge and Delete. Its pure functions live in
