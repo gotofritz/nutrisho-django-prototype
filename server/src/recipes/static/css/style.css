@@ -397,6 +397,51 @@ button:disabled {
   font-style: italic;
 }
 
+/* --- API keys (#150) ----------------------------------------------------- */
+
+.key-list {
+  list-style: none;
+  padding: 0;
+}
+
+.key-row {
+  align-items: baseline;
+  border-bottom: 1px solid var(--honey-wash);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  padding: 0.6rem 0;
+}
+
+.key-name {
+  flex: 1 1 12rem;
+}
+
+.key-when {
+  color: var(--pencil);
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+.key-expired {
+  color: var(--smock-red);
+}
+
+.key-row form {
+  margin: 0;
+}
+
+.new-key-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.new-key-row input {
+  flex: 1 1 20rem;
+  font-family: "Inconsolata", monospace;
+}
+
 /* --- import and export (#78) ---------------------------------------------- */
 
 .transfer-page section {

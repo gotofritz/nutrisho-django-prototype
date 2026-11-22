@@ -30,6 +30,7 @@ from recipes.models import (
     Step,
     Unit,
 )
+from recipes.services.api_tokens import create_token
 
 _PARAM = re.compile(r"<(?:\w+:)?(\w+)>")
 # Django's own admin and auth pages are not ours to change.
@@ -185,6 +186,7 @@ def path_values(staff: User) -> dict[str, str]:
         index_in_sequence=0,
     )
     cuisine = Cuisine.objects.create(cuisine="Welsh")
+    token, _ = create_token(user=staff, name="clipper")
     return {
         "recipe_id": str(recipe.pk),
         "step_id": str(step.pk),
@@ -194,6 +196,7 @@ def path_values(staff: User) -> dict[str, str]:
         "cuisine_id": str(cuisine.pk),
         "unit_id": str(Unit.objects.get(name="cup").pk),
         "field_name": "recipe_name",
+        "token_id": str(token.pk),
     }
 
 

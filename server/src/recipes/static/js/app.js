@@ -17,6 +17,7 @@
 //   data-dismiss-toast                  removes the toast it sits in
 //   data-toast-text                     a toast's text, read out on arrival
 //   data-escape                         Escape in its form presses it (Cancel)
+//   data-copy="<input id>"              copies that input's text (a new API key)
 //
 // Not opt-in: resting on any control shows the keys that work it (#60).
 (function () {
@@ -153,6 +154,23 @@
   // Sent by the delete views in HX-Trigger, since a deleted row just vanishes.
   document.addEventListener('announce', function (e) {
     announce(e.detail && e.detail.message);
+  });
+
+  // --- Copy a new API key (#150) --------------------------------------------
+  // Shown once, so a button saves selecting it by hand. Without the clipboard
+  // (an insecure origin), the text is selected for the user to copy.
+
+  document.addEventListener('click', function (e) {
+    var button = e.target.closest('[data-copy]');
+    if (!button) return;
+    var input = document.getElementById(button.getAttribute('data-copy'));
+    if (!input) return;
+    input.select();
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(input.value).then(function () {
+      button.textContent = 'Copied';
+      announce('Key copied.');
+    });
   });
 
   // --- Focus after a swap (#61) ---------------------------------------------

@@ -35,12 +35,10 @@ the *View* menu, under *Sidebar*.
 
 ## Using it
 
-1. Start the server (`make dev`, on `http://localhost:8987`) and make an API
-   key for your user. It is shown once:
-
-   ```bash
-   make manage ARGS="create_api_token <username> --name clipper"
-   ```
+1. Start the server (`make dev`, on `http://localhost:8987`), sign in, and
+   make an API key on *Config*, then *API keys*. It is shown once, so copy it
+   then. (`make manage ARGS="create_api_token <username> --name clipper"`
+   makes one from the command line.)
 
 2. Open the clipper's settings (from the sidebar, or the add-on's
    *Preferences* in `about:addons`), enter the server's address and the key,

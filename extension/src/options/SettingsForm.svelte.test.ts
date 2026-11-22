@@ -44,6 +44,26 @@ describe("the settings form", () => {
     expect(screen.getByLabelText("API key")).toBeVisible();
   });
 
+  // #150: users make their own keys on the server's API keys page.
+  it("links to the page where a key is made, on the address typed", async () => {
+    renderForm();
+
+    await fill("Your Nutrisho's address", "http://127.0.0.1:8000/");
+
+    expect(
+      await screen.findByRole("link", { name: "API keys page" }),
+    ).toHaveAttribute("href", "http://127.0.0.1:8000/recipes/keys/");
+  });
+
+  it("names the page without a link while the address is not one", async () => {
+    renderForm();
+
+    await fill("Your Nutrisho's address", "not an address");
+
+    expect(await screen.findByText(/API keys page/)).toBeVisible();
+    expect(screen.queryByRole("link", { name: "API keys page" })).toBeNull();
+  });
+
   it("starts from the saved address", async () => {
     renderForm(
       createFakeSettingsStore({

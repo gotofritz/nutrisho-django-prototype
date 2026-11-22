@@ -9,6 +9,9 @@ A key expires (#149) on its own `expires_at`, if it has one, or once unused for
 `settings.API_TOKEN_IDLE_DAYS`, counted from its last use or, if never used,
 from when it was made. An expired key raises `TokenExpiredError`, so the
 caller can say to make a new one; any other wrong key is just no user.
+
+Users make their own on the API keys page (#150), at most
+`MAX_TOKENS_PER_USER` each; `create_api_token` makes one for any user.
 """
 
 import hashlib
@@ -24,6 +27,7 @@ from django.utils import timezone
 from recipes.models import ApiToken
 
 TOKEN_PREFIX = "nsh_"
+MAX_TOKENS_PER_USER = 10
 
 
 def _digest(key: str) -> str:
@@ -32,6 +36,10 @@ def _digest(key: str) -> str:
 
 class TokenExpiredError(Exception):
     """The key was a real one, but has expired: past its date, or unused too long."""
+
+
+class TokenLimitError(Exception):
+    """The user already holds `MAX_TOKENS_PER_USER` keys."""
 
 
 def create_token(
@@ -47,18 +55,40 @@ def create_token(
     return token, key
 
 
+def make_own_token(
+    *, user: AbstractBaseUser, name: str, days: int | None = None
+) -> tuple[ApiToken, str]:
+    """`create_token`, refused with `TokenLimitError` once `user` holds the most keys allowed."""
+    with transaction.atomic():
+        if ApiToken.objects.filter(user=user).count() >= MAX_TOKENS_PER_USER:
+            raise TokenLimitError
+        return create_token(user=user, name=name, days=days)
+
+
+def user_tokens(*, user: AbstractBaseUser) -> list[ApiToken]:
+    """`user`'s own tokens, newest first."""
+    return list(ApiToken.objects.filter(user=user).order_by("-created_at", "-pk"))
+
+
 def idle_since(token: ApiToken) -> datetime:
     """When the token was last used, or made if it never was."""
     return cast("datetime", token.last_used_at or token.created_at)
 
 
+def expires_on(token: ApiToken) -> datetime | None:
+    """When `token` expires if left unused: its own date or the end of its idle days, whichever is sooner."""
+    idle_days = settings.API_TOKEN_IDLE_DAYS
+    limits = [
+        cast("datetime | None", token.expires_at),
+        idle_since(token) + timedelta(days=idle_days) if idle_days else None,
+    ]
+    return min((when for when in limits if when is not None), default=None)
+
+
 def is_expired(token: ApiToken, *, now: datetime | None = None) -> bool:
     """Whether `token` is past its own date or has been unused too long."""
-    now = now or timezone.now()
-    if token.expires_at is not None and token.expires_at <= now:
-        return True
-    idle_days = settings.API_TOKEN_IDLE_DAYS
-    return bool(idle_days) and idle_since(token) + timedelta(days=idle_days) <= now
+    when = expires_on(token)
+    return when is not None and when <= (now or timezone.now())
 
 
 def bearer_key(header: str) -> str:

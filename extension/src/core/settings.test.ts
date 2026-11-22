@@ -4,6 +4,7 @@ import {
   DEFAULT_SETTINGS,
   checkSettings,
   hostPatternFor,
+  keysPageFor,
   readSettings,
 } from "./settings";
 
@@ -114,5 +115,23 @@ describe("hostPatternFor", () => {
   it("names the host without its port", () => {
     expect(hostPatternFor("http://localhost:8987")).toBe("http://localhost/*");
     expect(hostPatternFor("http://127.0.0.1:8000")).toBe("http://127.0.0.1/*");
+  });
+});
+
+describe("keysPageFor", () => {
+  // #150: the server's page where a user makes their own key.
+  it("is the API keys page on the server", () => {
+    expect(keysPageFor("http://localhost:8987")).toBe(
+      "http://localhost:8987/recipes/keys/",
+    );
+    expect(keysPageFor(" http://127.0.0.1:8000/ ")).toBe(
+      "http://127.0.0.1:8000/recipes/keys/",
+    );
+  });
+
+  it("is undefined for an address the settings would refuse", () => {
+    expect(keysPageFor("")).toBeUndefined();
+    expect(keysPageFor("localhost:8987")).toBeUndefined();
+    expect(keysPageFor("https://example.com")).toBeUndefined();
   });
 });

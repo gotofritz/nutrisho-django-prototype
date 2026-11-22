@@ -158,11 +158,20 @@ session cookie plus CSRF token does not fit them; instead the client sends
   `code: token_expired` and `WWW-Authenticate: Bearer error="invalid_token"`,
   so the clipper can say to make a new one; an unknown key keeps the plain
   reply.
-- `make manage ARGS="create_api_token <username> --name clipper [--days N]"`
-  makes one and prints the key, and its date if `--days` gave it one. Django
-  admin lists tokens, with their date and whether they have expired, and
-  deletes them to revoke; it cannot add one, since it could not show the key. A settings page where users
-  make their own is for when the clipper exists.
+- Users manage their own keys on `/recipes/keys/` (#150, "API keys" on the
+  Config page, `views/api_keys.py`): each is listed by name, when it was made
+  and last used, and when it expires (`expires_on`: its own date or the end of
+  its idle days, whichever is sooner), never by its key. Making one needs a
+  name and may set a date (30 days, 90, a year); the key comes back once, in a
+  full page sent `Cache-Control: no-store`, with a Copy button (`data-copy`
+  in `app.js`). A user may hold `MAX_TOKENS_PER_USER` (10) keys
+  (`make_own_token`). Revoke deletes the key behind `hx-confirm`; another
+  user's key is a 404.
+- For operators, `make manage ARGS="create_api_token <username> --name clipper [--days N]"`
+  makes one for any user, with no cap, and prints the key, and its date if
+  `--days` gave it one. Django admin lists every user's tokens, with their
+  date and whether they have expired, and deletes them to revoke; it cannot
+  add one, since it could not show the key.
 
 For the extension: post from the background service worker, which with a host
 permission for the server is not subject to CORS, so the server sends no CORS
