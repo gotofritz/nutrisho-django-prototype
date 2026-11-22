@@ -31,7 +31,10 @@ export const VOCABULARY_PATH = "/recipes/api/vocabulary/";
 export const SAVE_PATH = "/recipes/api/recipes/";
 
 /** The statuses with which the server reads a save and refuses it, saying why. */
-const REFUSALS = new Set([400, 409, 413]);
+const REFUSALS = new Set([400, 409]);
+
+/** An endpoint that is not there, or not for this method: not a Nutrisho, or too old. */
+const NOT_HERE = new Set([404, 405]);
 
 /** Long enough for a dev server's first request, short enough to say so. */
 export const DEFAULT_TIMEOUT_MS = 10_000;
@@ -44,15 +47,72 @@ function failure(
   return err({ kind, message, ...(status === undefined ? {} : { status }) });
 }
 
-/** The server's own `{"error": ...}`, or the status line when it sent none. */
-async function reasonFrom(response: Response): Promise<string> {
+/** The body as JSON, or undefined when it is not. */
+async function jsonOf(response: Response): Promise<unknown> {
   try {
-    const body = (await response.json()) as { error?: unknown };
-    if (typeof body.error === "string") return body.error;
+    return (await response.json()) as unknown;
   } catch {
-    // Not JSON: a dev server's HTML error page, say.
+    return undefined;
   }
+}
+
+/** The server's refusal, `{"error": "...", "code": "..."}`, or undefined for any other shape. */
+function refusalOf(
+  body: unknown,
+): { readonly error: string; readonly code: string } | undefined {
+  if (typeof body !== "object" || body === null) return undefined;
+  const { error, code } = body as { error?: unknown; code?: unknown };
+  if (typeof error !== "string") return undefined;
+  if (code !== undefined && typeof code !== "string") return undefined;
+  return { error, code: code ?? "" };
+}
+
+function statusLine(response: Response): string {
   return `the server answered ${response.status} ${response.statusText}`.trim();
+}
+
+/** `Retry-After` in seconds; its other form, a date, the server never sends. */
+function retryAfterOf(response: Response): number | undefined {
+  const header = response.headers.get("Retry-After")?.trim() ?? "";
+  return /^\d+$/.test(header) ? Number(header) : undefined;
+}
+
+/** A reply that is not a success, by the cause the user has to fix. */
+async function failed(
+  response: Response,
+  isSave: boolean,
+): Promise<Result<never, NutrishoError>> {
+  const { status } = response;
+  const refusal = refusalOf(await jsonOf(response));
+  if (status >= 500) {
+    return failure(
+      "server-error",
+      refusal?.error ?? statusLine(response),
+      status,
+    );
+  }
+  if (NOT_HERE.has(status) || refusal === undefined) {
+    return failure("not-nutrisho", statusLine(response), status);
+  }
+  if (status === 401) {
+    const kind =
+      refusal.code === "token_expired" ? "key-expired" : "unauthorised";
+    return failure(kind, refusal.error, status);
+  }
+  if (status === 429) {
+    const retryAfter = retryAfterOf(response);
+    return err({
+      kind: "rate-limited",
+      message: refusal.error,
+      status,
+      ...(retryAfter === undefined ? {} : { retryAfter }),
+    });
+  }
+  if (status === 413) return failure("too-large", refusal.error, status);
+  if (isSave && REFUSALS.has(status)) {
+    return failure("refused", refusal.error, status);
+  }
+  return failure("server-error", refusal.error, status);
 }
 
 /** A success, with the address it came from, which a save's link is built on. */
@@ -147,33 +207,20 @@ export function createNutrishoClient(deps: NutrishoClientDeps): NutrishoClient {
       clearTimeout(timer);
     }
 
-    if (response.status === 401) {
-      return failure("unauthorised", await reasonFrom(response), 401);
-    }
-    if (REFUSALS.has(response.status) && body !== undefined) {
-      return failure("refused", await reasonFrom(response), response.status);
-    }
-    if (!response.ok) {
+    if (!response.ok) return failed(response, body !== undefined);
+    const answer = await jsonOf(response);
+    if (answer === undefined) {
       return failure(
-        "server-error",
-        await reasonFrom(response),
+        "not-nutrisho",
+        "the server's answer is not JSON, which a Nutrisho's always is",
         response.status,
       );
     }
-    try {
-      const answer = (await response.json()) as unknown;
-      return ok({
-        status: response.status,
-        body: answer,
-        serverUrl: settings.serverUrl,
-      });
-    } catch {
-      return failure(
-        "malformed-response",
-        "the server's answer is not JSON",
-        response.status,
-      );
-    }
+    return ok({
+      status: response.status,
+      body: answer,
+      serverUrl: settings.serverUrl,
+    });
   }
 
   return {

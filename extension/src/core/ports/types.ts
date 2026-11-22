@@ -54,7 +54,7 @@ export interface DraftStore {
  * different fix, so the client tells them apart rather than collapsing them.
  */
 export type NutrishoErrorKind =
-  /** No API key is saved yet. */
+  /** No API key is saved yet: the clipper is not set up. */
   | "no-key"
   /** The server's host has not been granted (Firefox grants none at install). */
   | "permission-missing"
@@ -62,13 +62,24 @@ export type NutrishoErrorKind =
   | "unreachable"
   /** The server answered, but not in time. */
   | "timeout"
+  /**
+   * Something answered that is not a Nutrisho: a 404 or 405 on the endpoint,
+   * a success that is not JSON, or a refusal not in the server's shape.
+   */
+  | "not-nutrisho"
   /** A 401: the key is wrong, or was deleted. */
   | "unauthorised"
-  /** A 400, 409 or 413: the server read the request and said no, and why. */
+  /** A 401 with `code: token_expired` (#149): the key was right, but has expired. */
+  | "key-expired"
+  /** A 400 or 409 to a save: the server read it and said no, and why. */
   | "refused"
-  /** Any other status that is not a success. */
+  /** A 413: too many recipes, too many new names, or too large a body (#149). */
+  | "too-large"
+  /** A 429 (#149): wait `retryAfter` seconds, if the server said. */
+  | "rate-limited"
+  /** A 5xx, or any other status that is not a success. */
   | "server-error"
-  /** A success whose body is not the shape the server's example shows. */
+  /** A JSON success that is not the shape the server's example shows. */
   | "malformed-response";
 
 export interface NutrishoError {
@@ -76,6 +87,8 @@ export interface NutrishoError {
   readonly message: string;
   /** The HTTP status, when there was one. */
   readonly status?: number;
+  /** For `rate-limited`: the seconds `Retry-After` says to wait. */
+  readonly retryAfter?: number;
 }
 
 /** The user's Nutrisho, over its two JSON endpoints (D10). */
