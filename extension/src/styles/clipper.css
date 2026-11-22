@@ -187,3 +187,73 @@ button:disabled:hover {
   white-space: nowrap;
   width: 1px;
 }
+
+/*
+ * The draft's hierarchy (#184), from the site's own marks. A part of the
+ * draft opens on the dotted line a group's name sits on; a group's rows hang
+ * from the honey bar of the site's margin tools; rows are ruled apart in
+ * honey, and the one open to edit sits on the wash, as a selected row does.
+ */
+.part {
+  border-bottom: 2px dotted var(--color-field-border);
+  padding-bottom: 0.125rem;
+}
+
+h3.part,
+.part h3 {
+  font-size: 1.25rem;
+}
+
+.group {
+  border-left: 3px solid var(--honey-wash);
+}
+
+.row + .row {
+  border-top: 1px solid var(--honey-wash);
+}
+
+.row.open,
+.steps > li.open,
+.details.open {
+  background: var(--honey-wash);
+}
+
+/* The name heads the draft, as the recipe's title heads its page. */
+input.recipe-name {
+  font-size: 1.375rem;
+}
+
+/* A folded blurb, as the site sets one under the title. */
+.blurb {
+  color: var(--pencil);
+  font-style: italic;
+}
+
+/* A folded row reads as a line of the recipe, and is what opens it. */
+button.line {
+  color: var(--ink);
+  font: 1rem/1.4 var(--font-text);
+  letter-spacing: normal;
+  text-align: left;
+  white-space: normal;
+}
+
+button.line:hover {
+  background: var(--honey-wash);
+  color: var(--ink);
+}
+
+/* Adding is a quiet word in italics, as the site's add buttons are. */
+button.add {
+  color: var(--pencil);
+  font: italic 0.875rem var(--font-text);
+  letter-spacing: 0;
+}
+
+button.add:hover {
+  color: var(--marmalade);
+}
+
+.steps > li + li {
+  border-top: 1px solid var(--honey-wash);
+}

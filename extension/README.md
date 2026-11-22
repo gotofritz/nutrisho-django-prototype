@@ -71,15 +71,22 @@ the *View* menu, under *Sidebar*.
    lists do not have is marked *new*, and saving makes it one of your own.
    A group's first line becomes its name when it has no amount and either
    nothing in it is known or it starts with *For* (`For the sauce:`). One
-   group is open at a time: ▼ opens another and ▲ closes it. Each row too
-   has ▲ to fold it to one line, which saves scrolling, and each group and
-   row has × to delete it. ↑ and ↓ move a row; the first or last row of a
-   group moves on into the group before or after, which opens. ¶ turns a
-   row that is really a heading (`To serve`) into the name of a new group
-   holding the rows below it. + at the end of a group adds an ingredient, and +
-   below the groups adds a group; a row left empty is not saved. Each step has a title as well as its text; + below a step adds
-   one after it, ↑ and ↓ move it, × deletes it, and an empty step is left
-   out when you save. Text too long for its field is marked at the field as
+   group is open at a time: ▼ opens another and ▲ closes it. Each row
+   shows as one line, the way a printed recipe reads it; click the line to
+   edit the row, and ▲ folds it again. One row is open at a time, on a pale
+   yellow background, and a row with something to fix opens by itself.
+   Each group and the open row have × to delete them. ↑ and ↓ move a row;
+   the first or last row of a group moves on into the group before or
+   after, which opens. ¶ turns a row that is really a heading (`To serve`)
+   into the name of a new group holding the rows below it. *+ ingredient*
+   at the end of a group adds a row, and *+ group* below the groups adds a
+   group; a row left empty is not saved. Each step has a title as well as
+   its text, and shows as one line too until you click it; *+ step* adds
+   one, and on the open step ↑ and ↓ move it and × deletes it. An empty
+   step is left out when you save. Under the recipe's name, the servings,
+   cuisine, tags and source show as one line with the blurb beneath; click
+   them to edit. Only one thing is open at a time, so opening a step folds
+   the row you had open. Text too long for its field is marked at the field as
    you type, says by how much, and stops a save.
 5. *Advanced Mode*, at the bottom, picks the server and its port, and keeps
    a *Log* of each request to your Nutrisho and its reply, with sizes and
