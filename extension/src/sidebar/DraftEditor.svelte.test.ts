@@ -2,7 +2,11 @@ import { fireEvent, render, screen, within } from "@testing-library/svelte";
 import { describe, expect, it, vi } from "vitest";
 
 import { EMPTY_ROW } from "@/core/ingredient-line";
-import { startDraft, type RecipeDraft } from "@/core/recipe-draft";
+import {
+  startDraft,
+  withOpenGroup,
+  type RecipeDraft,
+} from "@/core/recipe-draft";
 import { EMPTY_VOCABULARY, type Vocabulary } from "@/core/vocabulary";
 
 import DraftEditor from "./DraftEditor.svelte";
@@ -553,5 +557,154 @@ describe("what stops a save", () => {
     expect(
       within(second).getByRole("textbox", { name: "Quantity" }),
     ).toBeValid();
+  });
+});
+
+// M9: rows and steps move one place at a time, as on the site's ↑ and ↓.
+describe("moving rows and steps", () => {
+  it("moves a row down, and up", async () => {
+    const { changed } = renderLiveEditor();
+
+    await fireEvent.click(
+      within(row(1)).getByRole("button", { name: "Move row 1 down" }),
+    );
+    expect(changed()?.groups[0]?.rows.map((one) => one.quantity)).toEqual([
+      "1",
+      "2",
+    ]);
+
+    await fireEvent.click(
+      within(row(2)).getByRole("button", { name: "Move row 2 up" }),
+    );
+    expect(changed()?.groups[0]).toEqual(DRAFT.groups[0]);
+  });
+
+  it("moves a group's last row into the next group, which opens", async () => {
+    const { changed } = renderLiveEditor();
+
+    await fireEvent.click(
+      within(row(2)).getByRole("button", { name: "Move row 2 down" }),
+    );
+
+    expect(changed()?.openGroup).toBe(1);
+    expect(
+      within(row(1, 2)).getByRole("combobox", { name: "Ingredient" }),
+    ).toHaveValue("boletus");
+  });
+
+  it("cannot move the very first row up, or the very last down", () => {
+    renderEditor(withOpenGroup(DRAFT, 1));
+
+    expect(
+      within(row(1, 2)).getByRole("button", { name: "Move row 1 down" }),
+    ).toBeDisabled();
+    expect(
+      within(row(1, 2)).getByRole("button", { name: "Move row 1 up" }),
+    ).toBeEnabled();
+  });
+
+  it("keeps a collapsed row collapsed as it moves", async () => {
+    renderLiveEditor();
+
+    await fireEvent.click(
+      within(row(1)).getByRole("button", { name: "Collapse row 1" }),
+    );
+    await fireEvent.click(
+      within(row(1)).getByRole("button", { name: "Move row 1 down" }),
+    );
+
+    expect(within(row(2)).getByText("2 lemon · Juice of")).toBeVisible();
+    expect(
+      within(row(1)).getByRole("combobox", { name: "Ingredient" }),
+    ).toHaveValue("boletus");
+  });
+
+  it("moves a step down, and up", async () => {
+    const { changed } = renderLiveEditor();
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Move step 1 down" }),
+    );
+    expect(changed()?.steps).toEqual([DRAFT.steps[1], DRAFT.steps[0]]);
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Move step 2 up" }),
+    );
+    expect(changed()?.steps).toEqual(DRAFT.steps);
+  });
+
+  it("cannot move the first step up, or the last down", () => {
+    renderEditor();
+
+    expect(
+      screen.getByRole("button", { name: "Move step 1 up" }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Move step 2 down" }),
+    ).toBeDisabled();
+  });
+});
+
+// M9 (D7): a heading caught inside a group starts a group of its own.
+describe("splitting a group", () => {
+  it("makes a row the name of a new group holding the rows below it", async () => {
+    const { changed } = renderLiveEditor({
+      ...DRAFT,
+      groups: [
+        {
+          name: "",
+          rows: [
+            { ...EMPTY_ROW, quantity: "2", ingredient: "lemon" },
+            { ...EMPTY_ROW, rest: "To serve:" },
+            { ...EMPTY_ROW, unit: "g", ingredient: "lemon" },
+          ],
+        },
+      ],
+    });
+
+    await fireEvent.click(
+      within(row(2)).getByRole("button", {
+        name: "Start a new group named after row 2",
+      }),
+    );
+
+    expect(changed()?.groups.map((group) => group.name)).toEqual([
+      "",
+      "To serve",
+    ]);
+    expect(
+      screen.getAllByRole("textbox", { name: "Group name" }).at(-1),
+    ).toHaveValue("To serve");
+  });
+});
+
+// M9 (D12): text too long for its field is named at the field as it is typed.
+describe("text too long for its field", () => {
+  it("marks the field, and says by how much", () => {
+    render(DraftEditor, {
+      draft: { ...DRAFT, name: "Lemon tart, the best" },
+      vocabulary: {
+        ...LISTS,
+        limits: { recipe_name: 10, ingredient: 4, step_text: 4 },
+      },
+      issues: [],
+      onChange: vi.fn(),
+    });
+
+    const name = screen.getByRole("textbox", { name: "Name" });
+    expect(name).toBeInvalid();
+    expect(name).toHaveAccessibleDescription(
+      "The name is 10 characters too long: it can have 10.",
+    );
+    expect(
+      within(row(1)).getByRole("combobox", { name: "Ingredient" }),
+    ).toHaveAccessibleDescription(
+      "The ingredient in row 1 of group 1 is 1 character too long: it can have 4.",
+    );
+    expect(
+      screen.getByRole("textbox", { name: "Step 1" }),
+    ).toHaveAccessibleDescription(
+      "Step 1 is 12 characters too long: it can have 4.",
+    );
   });
 });

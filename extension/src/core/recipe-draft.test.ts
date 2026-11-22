@@ -11,11 +11,15 @@ import {
   addRow,
   addStep,
   isRecipeDraft,
+  lengthIssues,
+  moveRow,
+  moveStep,
   removeGroup,
   removeRow,
   removeStep,
   replace,
   savePath,
+  splitGroupAt,
   startDraft,
   tagNames,
   tagsText,
@@ -527,6 +531,224 @@ describe("what stops a save", () => {
 
   it("is not blank servings, which the server takes as 1", () => {
     expect(checkDraft(withDetails(ready, { servings: "" }))).toEqual([]);
+  });
+});
+
+// M9: rows and steps move one place at a time, as on the site's ↑ and ↓.
+describe("moving", () => {
+  const two = addTo(
+    addTo(draft(), "group", "1 lemon\n2 lemons\n3 lemons", LISTS),
+    "group",
+    "Syrup:\n100 g sugar\n1 lemon",
+    LISTS,
+  );
+  const quantities = (moved: RecipeDraft) =>
+    moved.groups.map((group) => group.rows.map((row) => row.quantity));
+
+  it("moves a step up or down", () => {
+    const before = addTo(draft(), "steps", "Fry.\nToss.\nServe.", LISTS);
+    const texts = (moved: RecipeDraft) => moved.steps.map((step) => step.text);
+
+    expect(texts(moveStep(before, 1, -1))).toEqual(["Toss.", "Fry.", "Serve."]);
+    expect(texts(moveStep(before, 1, 1))).toEqual(["Fry.", "Serve.", "Toss."]);
+  });
+
+  it("leaves the first step where it is when moved up, and the last when moved down", () => {
+    const before = addTo(draft(), "steps", "Fry.\nServe.", LISTS);
+
+    expect(moveStep(before, 0, -1)).toBe(before);
+    expect(moveStep(before, 1, 1)).toBe(before);
+  });
+
+  it("moves a row up or down within its group", () => {
+    expect(quantities(moveRow(two, 0, 1, -1))).toEqual([
+      ["2", "1", "3"],
+      ["100", "1"],
+    ]);
+    expect(quantities(moveRow(two, 1, 0, 1))).toEqual([
+      ["1", "2", "3"],
+      ["1", "100"],
+    ]);
+  });
+
+  it("moves a group's last row to the start of the next group, and opens it", () => {
+    const moved = moveRow(two, 0, 2, 1);
+
+    expect(quantities(moved)).toEqual([
+      ["1", "2"],
+      ["3", "100", "1"],
+    ]);
+    expect(moved.openGroup).toBe(1);
+  });
+
+  it("moves a group's first row to the end of the group before, and opens it", () => {
+    const moved = moveRow(withOpenGroup(two, 1), 1, 0, -1);
+
+    expect(quantities(moved)).toEqual([["1", "2", "3", "100"], ["1"]]);
+    expect(moved.openGroup).toBe(0);
+  });
+
+  it("leaves the very first row and the very last where they are", () => {
+    expect(moveRow(two, 0, 0, -1)).toBe(two);
+    expect(moveRow(two, 1, 1, 1)).toBe(two);
+  });
+});
+
+// M9 (D7): a heading caught inside a group starts a group of its own.
+describe("splitting a group", () => {
+  const block = addTo(
+    draft(),
+    "group",
+    "1 lemon\n2 lemons\nTo serve\n100 g sugar",
+    LISTS,
+  );
+
+  it("makes a row the name of a new group holding the rows after it, and opens it", () => {
+    const split = splitGroupAt(block, 0, 2);
+
+    expect(split.groups.map((group) => group.name)).toEqual(["", "To serve"]);
+    expect(
+      split.groups.map((group) => group.rows.map((row) => row.quantity)),
+    ).toEqual([["1", "2"], ["100"]]);
+    expect(split.openGroup).toBe(1);
+  });
+
+  it("names the group from every part of the row, without a closing colon", () => {
+    const row = {
+      ...EMPTY_ROW,
+      ingredient: "raisins",
+      rest: "For the pickled",
+      note: "below:",
+    };
+    const split = splitGroupAt(
+      { ...draft(), groups: [{ name: "", rows: [EMPTY_ROW, row] }] },
+      0,
+      1,
+    );
+
+    expect(split.groups[1]!.name).toBe("For the pickled raisins below");
+  });
+
+  it("renames the group itself when the row is its first", () => {
+    const lemon = { ...EMPTY_ROW, quantity: "1", ingredient: "lemon" };
+    const heading = { ...EMPTY_ROW, rest: "Sauce" };
+    const split = splitGroupAt(
+      { ...draft(), groups: [{ name: "", rows: [heading, lemon] }] },
+      0,
+      0,
+    );
+
+    expect(split.groups).toEqual([{ name: "Sauce", rows: [lemon] }]);
+  });
+
+  it("moves the groups after it along", () => {
+    const three = addTo(block, "group", "Syrup:\n1 lemon", LISTS);
+
+    expect(splitGroupAt(three, 0, 2).groups.map((group) => group.name)).toEqual(
+      ["", "To serve", "Syrup"],
+    );
+  });
+});
+
+// M9 (D12): text too long for its field is refused, never cut, and named.
+describe("text too long for its field", () => {
+  const limits = {
+    recipe_name: 10,
+    short_description: 20,
+    source_instance: 200,
+    cuisine: 12,
+    tags: 5,
+    step_title: 5,
+    step_text: 10,
+    group_name: 5,
+    ingredient: 6,
+    substitute: 6,
+    unit: 3,
+    preparation: 6,
+    note: 6,
+  };
+  const ok = withDetails(addTo(draft(), "group", "1 lemon", LISTS), {
+    name: "Norma",
+  });
+
+  it("is nothing when every field fits, or the limits are not loaded", () => {
+    expect(lengthIssues(ok, limits)).toEqual([]);
+    expect(
+      lengthIssues(withDetails(ok, { name: "x".repeat(500) }), {}),
+    ).toEqual([]);
+  });
+
+  it("names each field too long, by how much", () => {
+    const long: RecipeDraft = {
+      ...withDetails(ok, {
+        name: "Pasta alla Norma",
+        cuisine: "med.italy.sicily",
+      }),
+      tags: ["quick", "dinner"],
+      steps: [{ title: "Frying", text: "Fry the aubergine." }],
+      groups: [
+        {
+          name: "For the sauce",
+          rows: [{ ...EMPTY_ROW, ingredient: "aubergine", note: "in cubes" }],
+        },
+      ],
+    };
+
+    expect(lengthIssues(long, limits)).toEqual([
+      {
+        field: "name",
+        message: "The name is 6 characters too long: it can have 10.",
+      },
+      {
+        field: "cuisine",
+        message: "The cuisine is 4 characters too long: it can have 12.",
+      },
+      {
+        field: "tags",
+        message: "The tag “dinner” is 1 character too long: it can have 5.",
+      },
+      {
+        field: "groups.0.name",
+        message: "The name of group 1 is 8 characters too long: it can have 5.",
+      },
+      {
+        field: "groups.0.rows.0.ingredient",
+        message:
+          "The ingredient in row 1 is 3 characters too long: it can have 6.",
+      },
+      {
+        field: "groups.0.rows.0.note",
+        message: "The note in row 1 is 2 characters too long: it can have 6.",
+      },
+      {
+        field: "steps.0.title",
+        message: "The title of step 1 is 1 character too long: it can have 5.",
+      },
+      {
+        field: "steps.0.text",
+        message: "Step 1 is 8 characters too long: it can have 10.",
+      },
+    ]);
+  });
+
+  it("counts characters as the server does, after trimming", () => {
+    expect(
+      lengthIssues(
+        withDetails(ok, { name: "  🍋🍋🍋🍋🍋🍋🍋🍋🍋🍋  " }),
+        limits,
+      ),
+    ).toEqual([]);
+  });
+
+  it("stops a save", () => {
+    expect(
+      checkDraft(withDetails(ok, { name: "x".repeat(11) }), limits),
+    ).toEqual([
+      {
+        field: "name",
+        message: "The name is 1 character too long: it can have 10.",
+      },
+    ]);
   });
 });
 

@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M8 done (#154, #156, #158, #160, #162, #166, #168, #171)
+## Status: In progress, M1 to M9 done (#154, #156, #158, #160, #162, #166, #168, #171, #173)
 
 ## What we are building
 
@@ -200,15 +200,13 @@ or as an area of their own, in the editor, an import and the clipper's
 save alike. Staff see each user's nodes in the cuisine tool, make one
 global or merge it into the tree.
 
-### M9 · extension · Structure, as on the site
+### ✅ M9 · extension · Structure, as on the site
 
-- A line inside a group can be made a group name, splitting it (D7: M7
-  already names a group from its first line).
-- Rows and steps can be reordered, and a row moved to another group. (Step
-  titles, adding and deleting steps, groups and rows, and folding groups
-  and rows, came early, in M7.)
-- Text too long for its field is flagged at the field before the save, from
-  the `limits` loaded with the lists (D12).
+Done (#173). ↑ and ↓ move rows and steps; a group's first or last row moves
+on into the group before or after, which opens. ¶ makes a row the name of a
+new group holding the rows below it (D7). Text too long for its field, by
+the `limits` loaded with the lists, is flagged at the field as it is typed
+and stops a save (D12).
 
 ### M10 · server · Harden the API (#149)
 
