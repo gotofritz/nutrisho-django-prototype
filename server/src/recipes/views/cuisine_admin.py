@@ -17,6 +17,7 @@ from recipes.forms.cuisine_admin_forms import CuisineForm
 from recipes.models import Cuisine
 from recipes.services.cuisine_admin import (
     CuisineHasChildrenError,
+    CuisineOwnerError,
     cuisine_rows,
     delete_cuisines,
     merge_cuisines,
@@ -217,7 +218,7 @@ def cuisine_manage_merge(request: AuthedRequest) -> HttpResponse:
         else:
             try:
                 merge_cuisines(survivor_id=survivor_id, victim_ids=selected_ids)
-            except CuisineHasChildrenError as error:
+            except (CuisineHasChildrenError, CuisineOwnerError) as error:
                 context["error"] = str(error)
             else:
                 return _columns_response(request, selected_ids=[survivor_id])
@@ -243,7 +244,7 @@ def cuisine_manage_delete(request: AuthedRequest) -> HttpResponse:
                 cuisine_ids=selected_ids,
                 replacement_id=_optional_id(request.POST.get("replacement_id")),
             )
-        except CuisineHasChildrenError as error:
+        except (CuisineHasChildrenError, CuisineOwnerError) as error:
             context["error"] = str(error)
             return _workspace(
                 request, "_delete.html", context, selected_ids=selected_ids, status=422

@@ -4,6 +4,8 @@ Pure ORM helpers with no HTTP concerns, like `ingredient_admin`, so the HTMX
 views in `recipes/views/cuisine_admin.py` stay thin. `Recipe.cuisine` is
 SET_NULL and `Cuisine.parent` is PROTECT, so a node is merged away or deleted
 only together with everything inside it: its regions would have nowhere to go.
+The list holds users' private nodes too (#171), so staff can fold one into the
+tree; a recipe is never moved onto a node its owner cannot see.
 """
 
 from collections.abc import Iterable
@@ -22,14 +24,20 @@ class CuisineHasChildrenError(Exception):
     """Raised when a merge or delete would leave a node's children without a parent."""
 
 
+class CuisineOwnerError(Exception):
+    """Raised when a merge or delete would move recipes onto a node their owner cannot see."""
+
+
 @dataclass(frozen=True)
 class CuisineRow:
-    """One line of the tool's list: the node, its path and how deep it sits."""
+    """One line of the tool's list: the node, its path, how deep it sits and whose it is."""
 
     cuisine: Cuisine
     path: str
     depth: int
     recipe_count: int
+    # The username of a private node's owner; blank for the global tree.
+    owner_name: str = ""
 
 
 def cuisine_rows(
@@ -44,7 +52,10 @@ def cuisine_rows(
     Paths are built in Python from one query, since the tree is a few hundred
     rows and SQLite has no convenient recursive path expression here.
     """
-    nodes = {c.pk: c for c in Cuisine.objects.annotate(recipe_count=Count("recipe"))}
+    nodes = {
+        c.pk: c
+        for c in Cuisine.objects.select_related("owner").annotate(recipe_count=Count("recipe"))
+    }
     rows = []
     used: set[int] = set()
     for node in nodes.values():
@@ -65,6 +76,7 @@ def cuisine_rows(
                     path=path,
                     depth=len(names) - 1,
                     recipe_count=node.recipe_count,
+                    owner_name=node.owner.get_username() if node.owner else "",
                 )
             )
     if unused_only:
@@ -105,6 +117,22 @@ def _refuse_parents(cuisine_ids: list[int]) -> None:
         raise CuisineHasChildrenError(msg)
 
 
+def _refuse_hidden_target(*, target_id: int | None, cuisine_ids: list[int]) -> None:
+    """Raise if `target_id` is private and a node in `cuisine_ids` is global or someone else's.
+
+    Those nodes' recipes would move onto it, and their owners cannot see it.
+    """
+    target = Cuisine.objects.filter(pk=target_id).select_related("owner").first()
+    if target is None or target.owner_id is None:
+        return
+    if Cuisine.objects.filter(pk__in=cuisine_ids).exclude(owner=target.owner_id).exists():
+        msg = (
+            f"{target.path} is private to {target.owner.get_username()}, so only their own "
+            "cuisines can go into it. Pick a global cuisine, or make it global first."
+        )
+        raise CuisineOwnerError(msg)
+
+
 def _delete_leaves_first(cuisine_ids: list[int]) -> int:
     """Delete the nodes bottom-up, since `parent` is PROTECT; returns how many went."""
     deleted = 0
@@ -120,11 +148,13 @@ def merge_cuisines(*, survivor_id: int, victim_ids: Iterable[int]) -> int:
 
     The survivor is never deleted, even when listed. Raises
     `CuisineHasChildrenError`, writing nothing, if a victim has a child that
-    is not a victim too.
+    is not a victim too, and `CuisineOwnerError` if the survivor is private
+    and a victim is not that owner's.
     Returns the number of nodes merged away.
     """
     victims = [pk for pk in dict.fromkeys(victim_ids) if pk != survivor_id]
     _refuse_parents(victims)
+    _refuse_hidden_target(target_id=survivor_id, cuisine_ids=victims)
     Recipe.objects.filter(cuisine__in=victims).update(cuisine=survivor_id)
     return _delete_leaves_first(victims)
 
@@ -135,10 +165,12 @@ def delete_cuisines(*, cuisine_ids: Iterable[int], replacement_id: int | None = 
 
     The replacement is never deleted, even when selected. Raises
     `CuisineHasChildrenError`, writing nothing, if a node has a child that is
-    not being deleted too.
+    not being deleted too, and `CuisineOwnerError` if the replacement is
+    private and a node is not that owner's.
     Returns the number of nodes deleted.
     """
     victims = [pk for pk in dict.fromkeys(cuisine_ids) if pk != replacement_id]
     _refuse_parents(victims)
+    _refuse_hidden_target(target_id=replacement_id, cuisine_ids=victims)
     Recipe.objects.filter(cuisine__in=victims).update(cuisine=replacement_id)
     return _delete_leaves_first(victims)

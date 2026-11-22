@@ -23,6 +23,7 @@
             {% if row.cuisine.pk in selected_ids %}checked{% endif %}
           >
           <span class="cuisine-path">{{ row.path }}</span>
+          {% if row.owner_name %}<span class="cuisine-owner">private to {{ row.owner_name }}</span>{% endif %}
           {% if row.recipe_count %}<span class="cuisine-recipe-count">({{ row.recipe_count }})</span>{% endif %}
         </label>
       </li>

@@ -2,8 +2,8 @@
 
 A browser extension that clips recipes from web pages into Nutrisho. You
 select text on a recipe page, send it to the recipe's title, blurb,
-ingredients or steps, check what it made of each ingredient line, and save.
-Cuisines, tags and the look come in later milestones of
+ingredients or steps, check what it made of each ingredient line, give it a
+cuisine and tags, and save. The look comes in a later milestone of
 [plan 012](../docs/plans/012-recipe-clipper.md).
 
 ## Running it
@@ -73,14 +73,22 @@ the *View* menu, under *Sidebar*.
    group is open at a time: ▼ opens another and ▲ closes it. Each row too
    has ▲ to fold it to one line, which saves scrolling, and each group and
    row has × to delete it. + at the end of a group adds an ingredient, and +
-   below the groups adds a group; a row left empty is not saved. Each step has a title as well as its text; + below the steps adds
-   one, × deletes one, and an empty step is left out when you save.
+   below the groups adds a group; a row left empty is not saved. Each step has a title as well as its text; + below a step adds
+   one after it, × deletes one, and an empty step is left out when you save.
 5. Open *Clipboard* to send all of it, or the part you select, to any part
    of the recipe with *Add* or *Replace*. You can also type or paste into it.
    Below it, *Page HTML* shows the markup that was clipped, which helps
    when a clipping reads oddly.
-6. *Save* sends the recipe to your Nutrisho and offers *Open in Nutrisho*.
-   Saving the same recipe again changes nothing.
+6. As you type an ingredient, substitute or unit, the field offers the
+   names in your lists. *Cuisine* offers the paths in the cuisine tree, such
+   as `med.italy.sicily`; a bare name that only one place has, such as
+   `sicily`, works too. *Tags* are separated by commas, as on the site. A
+   cuisine or tag your lists do not have is marked *new*, and saving makes it
+   one of your own: `med.italy.marche` goes inside `med.italy`, and a name
+   with no dots is a new area.
+7. *Save* sends the recipe to your Nutrisho and offers *Open in Nutrisho*.
+   Saving the same recipe again changes nothing. Your lists load again after
+   a save, so the names it made are no longer marked *new*.
 
 Recipes not yet saved are kept in your browser, even after a restart. A new
 browser session opens none of them: pick one under *Draft*, or clip from its

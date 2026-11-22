@@ -81,11 +81,16 @@ def test_submit_a_nutrisho_document(user, key):
     document = {
         "format": "nutrisho",
         "version": 1,
-        "recipes": [{"recipe_name": "Soup", "cuisine": "atlantis"}],
+        "recipes": [{"recipe_name": "Soup", "cuisine": "north"}],
     }
     body = _post(document, key=key).json()
     assert body["recipes"][0]["name"] == "Soup"
-    assert body["warnings"] == ["“Soup”: there is no cuisine “atlantis” here, so it has none."]
+    assert body["warnings"] == [
+        (
+            "“Soup”: the cuisine “north” was left out: "
+            "More than one cuisine is called “north”: pick one from the list."
+        )
+    ]
 
 
 @pytest.mark.django_db

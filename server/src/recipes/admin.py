@@ -17,10 +17,11 @@ from .models import (
 
 @admin.register(Cuisine)
 class CuisineAdmin(admin.ModelAdmin):
-    """The curated cuisine tree (plan 011): one row per area, region or subregion."""
+    """The cuisine tree (plan 011): one row per area, region or subregion, global or a user's own (#171)."""
 
-    list_display = ("__str__", "cuisine", "parent")
-    list_select_related = ("parent__parent",)
+    list_display = ("__str__", "cuisine", "parent", "owner")
+    list_filter = (("owner", admin.EmptyFieldListFilter),)
+    list_select_related = ("parent__parent", "owner")
     search_fields = ("cuisine",)
     autocomplete_fields = ("parent",)
 

@@ -17,12 +17,15 @@ import {
   replace,
   savePath,
   startDraft,
+  tagNames,
+  tagsText,
   toDocument,
   updateGroupName,
   updateRow,
   updateStep,
   withDetails,
   withOpenGroup,
+  withTags,
   type RecipeDraft,
 } from "./recipe-draft";
 import { EMPTY_VOCABULARY, type Vocabulary } from "./vocabulary";
@@ -417,6 +420,16 @@ describe("editing", () => {
     ]);
   });
 
+  it("adds an empty step after a given one", () => {
+    const before = addTo(draft(), "steps", "Fry.\nServe.", LISTS);
+
+    expect(addStep(before, 0).steps.map((step) => step.text)).toEqual([
+      "Fry.",
+      "",
+      "Serve.",
+    ]);
+  });
+
   it("removes one step", () => {
     const before = addTo(draft(), "steps", "Fry.\nToss.\nServe.", LISTS);
 
@@ -514,6 +527,41 @@ describe("what stops a save", () => {
 
   it("is not blank servings, which the server takes as 1", () => {
     expect(checkDraft(withDetails(ready, { servings: "" }))).toEqual([]);
+  });
+});
+
+// M8: tags are typed comma-separated, as on the site. The text is kept as
+// typed, so a space or comma being typed is not taken away mid-word.
+describe("tags", () => {
+  it("keeps the text as typed", () => {
+    const tagged = withTags(draft(), "dinner, ice cream, ");
+
+    expect(tagsText(tagged)).toBe("dinner, ice cream, ");
+  });
+
+  it("names each tag once, trimmed, leaving out blanks", () => {
+    const tagged = withTags(draft(), " dinner,, Dinner , ice cream,");
+
+    expect(tagNames(tagged)).toEqual(["dinner", "ice cream"]);
+  });
+
+  it("sends the tags by name", () => {
+    const tagged = withTags(draft(), "dinner, , quick ");
+
+    expect(toDocument(tagged)).toMatchObject({
+      recipes: [{ tags: ["dinner", "quick"] }],
+    });
+  });
+});
+
+describe("the cuisine", () => {
+  it("is edited, and sent trimmed", () => {
+    const picked = withDetails(draft(), { cuisine: " med.italy " });
+
+    expect(picked.cuisine).toBe(" med.italy ");
+    expect(toDocument(picked)).toMatchObject({
+      recipes: [{ cuisine: "med.italy" }],
+    });
   });
 });
 

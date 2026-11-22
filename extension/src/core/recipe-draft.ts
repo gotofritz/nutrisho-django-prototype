@@ -30,9 +30,12 @@ export interface RecipeDraft {
    * Absent from drafts stored before it was kept, which use the source.
    */
   readonly clippedFrom?: string;
-  /** A dotted path through the cuisine tree; picked in M8. */
+  /** A dotted path through the cuisine tree, or a bare name, as typed. */
   readonly cuisine: string;
-  /** Picked in M8. */
+  /**
+   * The tags field's text split at its commas, untrimmed, so joining them
+   * gives back what was typed; `tagNames` gives the tags themselves.
+   */
   readonly tags: readonly string[];
   readonly groups: readonly IngredientGroup[];
   /** The one ingredient group shown open, by index; none when absent. */
@@ -295,9 +298,14 @@ export function updateStep(
   };
 }
 
-/** An empty step at the end, to type into. */
-export function addStep(draft: RecipeDraft): RecipeDraft {
-  return { ...draft, steps: [...draft.steps, { title: "", text: "" }] };
+/** An empty step after the one at `after`, or at the end, to type into. */
+export function addStep(
+  draft: RecipeDraft,
+  after = draft.steps.length - 1,
+): RecipeDraft {
+  const steps = [...draft.steps];
+  steps.splice(after + 1, 0, { title: "", text: "" });
+  return { ...draft, steps };
 }
 
 /** Takes one step out. */
@@ -347,9 +355,34 @@ export function removeRow(
 
 export function withDetails(
   draft: RecipeDraft,
-  patch: Partial<Pick<RecipeDraft, "name" | "blurb" | "servings" | "source">>,
+  patch: Partial<
+    Pick<RecipeDraft, "name" | "blurb" | "servings" | "source" | "cuisine">
+  >,
 ): RecipeDraft {
   return { ...draft, ...patch };
+}
+
+/** The tags as typed: comma-separated, as on the site. */
+export function withTags(draft: RecipeDraft, text: string): RecipeDraft {
+  return { ...draft, tags: text.split(",") };
+}
+
+/** The tags field's text, exactly as typed. */
+export function tagsText(draft: RecipeDraft): string {
+  return draft.tags.join(",");
+}
+
+/** Each tag once, trimmed, blanks left out; the first spelling of a name wins. */
+export function tagNames(draft: RecipeDraft): string[] {
+  const seen = new Set<string>();
+  return draft.tags
+    .map((tag) => tag.trim())
+    .filter((tag) => {
+      const key = tag.toLowerCase();
+      if (tag === "" || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
 }
 
 function quantityIssue(quantity: string): boolean {
@@ -468,8 +501,8 @@ export function toDocument(draft: RecipeDraft): unknown {
         short_description: draft.blurb.trim(),
         ...(servings === "" ? {} : { servings: Number(servings) }),
         source_instance: draft.source,
-        cuisine: draft.cuisine,
-        tags: [...draft.tags],
+        cuisine: draft.cuisine.trim(),
+        tags: tagNames(draft),
         // An empty step is left out, wherever it is.
         steps: draft.steps
           .map((step) => ({

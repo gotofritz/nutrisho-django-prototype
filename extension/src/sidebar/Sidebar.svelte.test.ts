@@ -268,14 +268,14 @@ describe("the draft", () => {
       within(first).getByRole("textbox", { name: "Quantity" }),
     ).toHaveValue("2");
     expect(
-      within(first).getByRole("textbox", { name: "Ingredient" }),
+      within(first).getByRole("combobox", { name: "Ingredient" }),
     ).toHaveValue("aubergine");
     // Olive oil is not in the lists, but the amount and unit it starts with are.
     const second = screen.getByRole("group", { name: "Row 2" });
     expect(
       within(second).getByRole("textbox", { name: "Quantity" }),
     ).toHaveValue("1");
-    expect(within(second).getByRole("textbox", { name: "Unit" })).toHaveValue(
+    expect(within(second).getByRole("combobox", { name: "Unit" })).toHaveValue(
       "tbsp",
     );
     expect(within(second).getByRole("textbox", { name: "Rest" })).toHaveValue(
@@ -293,7 +293,7 @@ describe("the draft", () => {
 
     const first = await screen.findByRole("group", { name: "Row 1" });
     expect(
-      within(first).getByRole("textbox", { name: "Ingredient" }),
+      within(first).getByRole("combobox", { name: "Ingredient" }),
     ).toHaveValue("aubergine");
     expect(screen.getByRole("textbox", { name: "Clipboard" })).toHaveValue(
       CLIPPING.text,
@@ -508,6 +508,43 @@ describe("the save", () => {
     expect(client.sent.map((draft) => draft.id)).toEqual(["draft-0"]);
   });
 
+  // M8: the save may have made names, so the lists load again to know them.
+  it("loads the lists again after a save, keeping the ones shown meanwhile", async () => {
+    const client = answering(COOKS_LISTS);
+    await ready(client);
+    await screen.findByText(/Lists loaded for cook/);
+
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    await screen.findByText("Saved as Melanzane — Example.");
+    await vi.waitFor(() => expect(client.calls).toBe(2));
+    expect(screen.queryByText("Loading your lists…")).toBeNull();
+  });
+
+  it("keeps the lists it has when loading them again fails", async () => {
+    const client = answering(COOKS_LISTS);
+    await ready(client);
+    await screen.findByText(/Lists loaded for cook/);
+    client.answerVocabulary(err({ kind: "unreachable", message: "gone" }));
+
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    await vi.waitFor(() => expect(client.calls).toBe(2));
+    expect(screen.getByText(/Lists loaded for cook/)).toBeVisible();
+  });
+
+  it("does not load the lists again when the save fails", async () => {
+    const client = answering(COOKS_LISTS);
+    client.answerSave(err({ kind: "unreachable", message: "gone" }));
+    await ready(client);
+    await screen.findByText(/Lists loaded for cook/);
+
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    await screen.findByText(/Nothing answered/);
+    expect(client.calls).toBe(1);
+  });
+
   it("says nothing changed when the server already had it", async () => {
     const client = createFakeNutrishoClient();
     client.answerSave(
@@ -576,7 +613,7 @@ describe("the save", () => {
     await fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
     expect(
-      await within(syrup).findByRole("textbox", { name: "Ingredient" }),
+      await within(syrup).findByRole("combobox", { name: "Ingredient" }),
     ).toBeInvalid();
   });
 

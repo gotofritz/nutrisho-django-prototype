@@ -54,8 +54,9 @@ not need it, since readers ignore keys they do not know.
   (aliases and plurals included). One the user cannot see becomes private to
   them; a new ingredient takes its display data from the document's
   `ingredients` list, while one that is found keeps its own.
-- Cuisines are never created, since staff curate them; an unknown cuisine is
-  left blank. A size word or an amount phrase in a row's `unit` (`small`, `to
+- A cuisine the owner cannot see becomes their own, as in the editor (#171);
+  one that cannot be placed (a bare name more than one node has, a fourth
+  level) is left blank. A size word or an amount phrase in a row's `unit` (`small`, `to
   taste`) never becomes a unit: it is kept as written in `legacy_unit`, where
   `normalise_units` can move it. Both come back as warnings, shown on the page
   and in the endpoint's response.
@@ -127,7 +128,7 @@ session cookie plus CSRF token does not fit them; instead the client sends
   names up and never inflects one. Lookups ignore case, and a unit's also
   ignore a trailing full stop. Ingredients, units and tags are the global ones
   plus the user's own, a name in both listed once as the global row; cuisines
-  are dotted paths; `limits` is `recipe_document.FIELD_LENGTHS`, the length
+  are the dotted paths of the global tree and the user's own nodes; `limits` is `recipe_document.FIELD_LENGTHS`, the length
   the reader allows each text field of a saved recipe (`tags`: each tag). One
   query per section, so its cost does not grow with the library. A new kind of
   data is a new section, not a new endpoint.

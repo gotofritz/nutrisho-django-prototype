@@ -25,9 +25,12 @@ CREATE TABLE "django_session" ("session_key" varchar(40) NOT NULL PRIMARY KEY, "
 CREATE INDEX "django_session_expire_date_a5c62663" ON "django_session" ("expire_date");
 CREATE TABLE "recipes_apitoken" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(64) NOT NULL, "key_digest" varchar(64) NOT NULL UNIQUE, "created_at" datetime NOT NULL, "last_used_at" datetime NULL, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED);
 CREATE INDEX "recipes_apitoken_user_id_30e4fa54" ON "recipes_apitoken" ("user_id");
-CREATE TABLE "recipes_cuisine" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "cuisine" varchar(200) NOT NULL, "parent_id" integer NULL REFERENCES "recipes_cuisine" ("id") DEFERRABLE INITIALLY DEFERRED);
-CREATE UNIQUE INDEX "cuisine_ci_unique" ON "recipes_cuisine" ((LOWER("cuisine"))) WHERE "parent_id" IS NULL;
-CREATE UNIQUE INDEX "cuisine_ci_unique_per_parent" ON "recipes_cuisine" ((LOWER("cuisine")), "parent_id");
+CREATE TABLE "recipes_cuisine" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "cuisine" varchar(200) NOT NULL, "parent_id" integer NULL REFERENCES "recipes_cuisine" ("id") DEFERRABLE INITIALLY DEFERRED, "owner_id" integer NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE UNIQUE INDEX "cuisine_ci_unique" ON "recipes_cuisine" ((LOWER("cuisine"))) WHERE ("owner_id" IS NULL AND "parent_id" IS NULL);
+CREATE UNIQUE INDEX "cuisine_ci_unique_per_parent" ON "recipes_cuisine" ((LOWER("cuisine")), "parent_id") WHERE "owner_id" IS NULL;
+CREATE UNIQUE INDEX "cuisine_ci_unique_private" ON "recipes_cuisine" ((LOWER("cuisine")), "owner_id") WHERE ("owner_id" IS NOT NULL AND "parent_id" IS NULL);
+CREATE UNIQUE INDEX "cuisine_ci_unique_private_per_parent" ON "recipes_cuisine" ((LOWER("cuisine")), "parent_id", "owner_id") WHERE "owner_id" IS NOT NULL;
+CREATE INDEX "recipes_cuisine_owner_id_a27496fa" ON "recipes_cuisine" ("owner_id");
 CREATE INDEX "recipes_cuisine_parent_id_b01b6ab4" ON "recipes_cuisine" ("parent_id");
 CREATE TABLE "recipes_ingredient" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "ingredient_name" varchar(128) NOT NULL, "dietary_constraint" varchar(32) NOT NULL, "family" varchar(32) NOT NULL, "owner_id" integer NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "plural_name" varchar(128) NOT NULL);
 CREATE UNIQUE INDEX "ingredient_name_ci_unique" ON "recipes_ingredient" ((LOWER("ingredient_name"))) WHERE "owner_id" IS NULL;

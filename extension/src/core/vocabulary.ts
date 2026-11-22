@@ -110,3 +110,26 @@ export function knows(terms: readonly Term[], name: string): boolean {
     ),
   );
 }
+
+const PATH_SEPARATOR = ".";
+
+/**
+ * Whether the tree holds `text`: a whole dotted path, or a bare name only one
+ * node has, as the server's `find_cuisine` reads it. Ignores case.
+ */
+export function knowsCuisine(paths: readonly string[], text: string): boolean {
+  const wanted = text.trim().toLowerCase();
+  const lowered = paths.map((path) => path.toLowerCase());
+  if (lowered.includes(wanted)) return true;
+  if (wanted.includes(PATH_SEPARATOR)) return false;
+  const named = lowered.filter(
+    (path) => path.split(PATH_SEPARATOR).at(-1) === wanted,
+  );
+  return named.length === 1;
+}
+
+/** Whether `tags` hold `name`, ignoring case and spaces around it. */
+export function knowsTag(tags: readonly string[], name: string): boolean {
+  const wanted = name.trim().toLowerCase();
+  return tags.some((tag) => tag.toLowerCase() === wanted);
+}

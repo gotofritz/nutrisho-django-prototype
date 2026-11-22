@@ -11,15 +11,24 @@
     removeGroup,
     removeRow,
     removeStep,
+    tagNames,
+    tagsText,
     updateGroupName,
     updateRow,
     updateStep,
     withDetails,
     withOpenGroup,
+    withTags,
     type DraftIssue,
     type RecipeDraft,
   } from "@/core/recipe-draft";
-  import { knows, type Term, type Vocabulary } from "@/core/vocabulary";
+  import {
+    knows,
+    knowsCuisine,
+    knowsTag,
+    type Term,
+    type Vocabulary,
+  } from "@/core/vocabulary";
 
   /**
    * The draft's fields, as on the site's recipe editor (plan 012, D5). Every
@@ -55,7 +64,24 @@
   > = {
     unit: (lists) => lists.units,
     ingredient: (lists) => lists.ingredients,
+    substitute: (lists) => lists.ingredients,
   };
+
+  /** The `<datalist>` that offers a field's names as it is typed in (M8). */
+  const SUGGESTED: Partial<Record<RowField, string>> = {
+    unit: "unit-names",
+    ingredient: "ingredient-names",
+    substitute: "ingredient-names",
+  };
+
+  const cuisineIsNew = $derived(
+    draft.cuisine.trim() !== "" &&
+      !knowsCuisine(vocabulary.cuisines, draft.cuisine),
+  );
+
+  const newTags = $derived(
+    tagNames(draft).filter((tag) => !knowsTag(vocabulary.tags, tag)),
+  );
 
   const invalid = $derived(new Set(issues.map((issue) => issue.field)));
 
@@ -194,6 +220,56 @@
     {/if}
   </div>
 
+  <label>
+    Cuisine
+    <input
+      type="text"
+      list="cuisine-names"
+      value={draft.cuisine}
+      aria-describedby={cuisineIsNew ? "cuisine-new" : undefined}
+      oninput={(event) =>
+        onChange(withDetails(draft, { cuisine: valueOf(event) }))}
+    />
+  </label>
+  {#if cuisineIsNew}
+    <span class="new" id="cuisine-new"
+      >new<span class="hidden">: saving makes it one of your own</span></span
+    >
+  {/if}
+
+  <label>
+    Tags
+    <input
+      type="text"
+      value={tagsText(draft)}
+      aria-describedby={newTags.length > 0 ? "tags-new" : undefined}
+      oninput={(event) => onChange(withTags(draft, valueOf(event)))}
+    />
+  </label>
+  {#if newTags.length > 0}
+    <span class="new" id="tags-new"
+      >new: {newTags.join(", ")}<span class="hidden"
+        >: saving makes them your own</span
+      ></span
+    >
+  {/if}
+
+  <datalist id="cuisine-names">
+    {#each vocabulary.cuisines as path (path)}
+      <option value={path}></option>
+    {/each}
+  </datalist>
+  <datalist id="ingredient-names">
+    {#each vocabulary.ingredients as term (term.name)}
+      <option value={term.name}></option>
+    {/each}
+  </datalist>
+  <datalist id="unit-names">
+    {#each vocabulary.units as term (term.name)}
+      <option value={term.name}></option>
+    {/each}
+  </datalist>
+
   <h3>Ingredients</h3>
   {#if draft.groups.length === 0}
     <p class="quiet">
@@ -264,6 +340,7 @@
               {label}
               <input
                 type="text"
+                list={SUGGESTED[field]}
                 value={row[field]}
                 aria-invalid={invalid.has(
                   `groups.${groupIndex}.rows.${index}.${field}`,
@@ -367,16 +444,25 @@
           oninput={(event) =>
             onChange(updateStep(draft, index, { text: valueOf(event) }))}
         ></textarea>
+        <button
+          type="button"
+          class="icon add"
+          aria-label="Add a step after step {index + 1}"
+          title="Add a step after step {index + 1}"
+          onclick={() => onChange(addStep(draft, index))}>+</button
+        >
       </li>
     {/each}
   </ol>
-  <button
-    type="button"
-    class="icon add"
-    aria-label="Add a step"
-    title="Add a step"
-    onclick={() => onChange(addStep(draft))}>+</button
-  >
+  {#if draft.steps.length === 0}
+    <button
+      type="button"
+      class="icon add"
+      aria-label="Add a step"
+      title="Add a step"
+      onclick={() => onChange(addStep(draft))}>+</button
+    >
+  {/if}
 </section>
 
 <style>

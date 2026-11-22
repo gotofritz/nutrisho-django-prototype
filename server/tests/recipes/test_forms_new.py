@@ -158,72 +158,41 @@ def test_ingredient_in_recipe_form_commit_false_does_not_create_ingredient(user)
     assert not Ingredient.objects.filter(ingredient_name="ghost-veggie").exists()
 
 
+def _metadata(cuisine_name: str) -> dict[str, str]:
+    return {
+        "recipe_name": "Test",
+        "short_description": "",
+        "servings": "4",
+        "source_instance": "",
+        "cuisine_name": cuisine_name,
+    }
+
+
 @pytest.mark.django_db
-def test_recipe_metadata_form_rejects_an_unknown_cuisine(user):
-    """An unknown cuisine is a form error and never written (plan 011)."""
+def test_recipe_metadata_form_rejects_a_cuisine_it_cannot_place(user):
+    """A bare name more than one node has is a form error, and nothing is written (#171)."""
     from recipes.models import Cuisine
 
+    before = Cuisine.objects.count()
     recipe = Recipe.objects.create(recipe_name="Test", owner=user)
-    form = RecipeMetadataForm(
-        owner=User(),
-        data={
-            "recipe_name": "Test",
-            "short_description": "",
-            "servings": "4",
-            "source_instance": "",
-            "cuisine_name": "ghost-cuisine",
-        },
-        instance=recipe,
-    )
+    form = RecipeMetadataForm(owner=user, data=_metadata("north"), instance=recipe)
     assert not form.is_valid()
     assert "cuisine_name" in form.errors
-    assert not Cuisine.objects.filter(cuisine="ghost-cuisine").exists()
+    assert Cuisine.objects.count() == before
 
 
 @pytest.mark.django_db
-def test_recipe_metadata_form_commit_false_clears_cuisine_when_blank(user):
-    """save(commit=False) with blank cuisine_name must set recipe.cuisine = None in-memory."""
+def test_recipe_metadata_form_commit_false_leaves_the_cuisine_to_the_save(user):
+    """save(commit=False) writes nothing: the services resolve the cleaned name (#171)."""
     from recipes.models import Cuisine
 
-    cuisine = Cuisine.objects.create(cuisine="Italian")
-    recipe = Recipe.objects.create(recipe_name="Test", owner=user, cuisine=cuisine)
-    form = RecipeMetadataForm(
-        owner=User(),
-        data={
-            "recipe_name": "Test",
-            "short_description": "",
-            "servings": "4",
-            "source_instance": "",
-            "cuisine_name": "",
-        },
-        instance=recipe,
-    )
-    assert form.is_valid()
-    result = form.save(commit=False)
-    assert result.cuisine is None
-
-
-@pytest.mark.django_db
-def test_recipe_metadata_form_commit_false_sets_existing_cuisine(user):
-    """save(commit=False) with existing cuisine must set recipe.cuisine in-memory without write."""
-    from recipes.models import Cuisine
-
-    cuisine = Cuisine.objects.create(cuisine="Thai")
+    before = Cuisine.objects.count()
     recipe = Recipe.objects.create(recipe_name="Test", owner=user)
-    form = RecipeMetadataForm(
-        owner=User(),
-        data={
-            "recipe_name": "Test",
-            "short_description": "",
-            "servings": "4",
-            "source_instance": "",
-            "cuisine_name": "Thai",
-        },
-        instance=recipe,
-    )
+    form = RecipeMetadataForm(owner=user, data=_metadata("atlantis"), instance=recipe)
     assert form.is_valid()
-    result = form.save(commit=False)
-    assert result.cuisine == cuisine
+    form.save(commit=False)
+    assert form.cleaned_data["cuisine_name"] == "atlantis"
+    assert Cuisine.objects.count() == before
 
 
 @pytest.mark.django_db
