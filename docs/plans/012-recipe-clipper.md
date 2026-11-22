@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M10 and M14 done (#154, #156, #158, #160, #162, #166, #168, #171, #173, #149, #150)
+## Status: In progress, M1 to M11 and M14 done (#154, #156, #158, #160, #162, #166, #168, #171, #173, #149, #177, #150)
 
 ## What we are building
 
@@ -216,14 +216,14 @@ too many requests a key, or wrong keys an address, are a 429 with
 else a 413. Each refusal the clipper must tell apart has a `code` and an API
 example. The rest of #149 (HTTPS only, an audit log, scopes) is left to it.
 
-### M11 · extension · Failures said properly
+### ✅ M11 · extension · Failures said properly
 
-Until here the sidebar shows a failure as the server worded it. Now each
-cause that needs a different fix has its own line: not set up, no host
-permission, server unreachable, not a Nutrisho server, key missing or
-refused, key expired, save refused (with the server's message and the field
-it names), too large, too many requests, server error, malformed reply,
-timeout. Every reply is checked for shape before it is used.
+Done (#177). Each cause has its own line and fix: not set up, no host
+permission, unreachable, timeout, not a Nutrisho (a 404 or 405, or a reply
+not in the server's shape), key refused, key expired, refused, too large,
+too many requests (with how long to wait), server error and malformed reply.
+The client reads the server's `code`, not its wording. A refusal that names
+a field is flagged at that field in the editor's words (D12).
 
 ### M12 · extension · The look
 

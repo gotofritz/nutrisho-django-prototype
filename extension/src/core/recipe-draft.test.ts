@@ -6,6 +6,7 @@ import { EMPTY_ROW } from "./ingredient-line";
 import {
   addTo,
   checkDraft,
+  explainRefusal,
   groupFrom,
   addGroup,
   addRow,
@@ -938,3 +939,88 @@ interface DocumentShape {
     steps: { step_title: string; step_text: string }[];
   }[];
 }
+
+describe("explainRefusal", () => {
+  // Plan 012, M11: the server names the field it refused by its path in the
+  // document, which leaves out empty steps, rows and groups.
+  const sent: RecipeDraft = {
+    ...draft(),
+    tags: ["quick", " ", "a very long tag"],
+    steps: [
+      { title: "", text: "" },
+      { title: "", text: "Fry." },
+      { title: "Serving", text: "Toss." },
+    ],
+    groups: [
+      {
+        name: "",
+        rows: [{ ...EMPTY_ROW }, { ...EMPTY_ROW, ingredient: "salt" }],
+      },
+      { name: "", rows: [{ ...EMPTY_ROW }] },
+      {
+        name: "Sauce",
+        rows: [{ ...EMPTY_ROW, quantity: "lots", ingredient: "oil" }],
+      },
+    ],
+  };
+
+  it.each([
+    [
+      "document.recipes[0].recipe_name is required.",
+      "name",
+      "The name is required.",
+    ],
+    [
+      "document.recipes[0].short_description must be at most 4000 characters.",
+      "blurb",
+      "The blurb must be at most 4000 characters.",
+    ],
+    [
+      "document.recipes[0].servings must be from 1 to 32767.",
+      "servings",
+      "The servings must be from 1 to 32767.",
+    ],
+    [
+      "document.recipes[0].steps[1].step_title must be at most 128 characters.",
+      "steps.2.title",
+      "The title of step 3 must be at most 128 characters.",
+    ],
+    [
+      "document.recipes[0].steps[0].step_text must be text.",
+      "steps.1.text",
+      "Step 2 must be text.",
+    ],
+    [
+      "document.recipes[0].ingredient_groups[1].items[0].quantity must be a number.",
+      "groups.2.rows.0.quantity",
+      "The quantity in row 1 of Sauce must be a number.",
+    ],
+    [
+      "document.recipes[0].ingredient_groups[0].items[0].ingredient is required.",
+      "groups.0.rows.1.ingredient",
+      "The ingredient in row 2 of group 1 is required.",
+    ],
+    [
+      "document.recipes[0].ingredient_groups[1].group_name must be at most 128 characters.",
+      "groups.2.name",
+      "The name of group 3 must be at most 128 characters.",
+    ],
+    [
+      "document.recipes[0].tags[1] must be at most 5 characters.",
+      "tags",
+      "The tag “a very long tag” must be at most 5 characters.",
+    ],
+  ])("reads %s as the field it names", (message, field, said) => {
+    expect(explainRefusal(sent, message)).toEqual({ field, message: said });
+  });
+
+  it.each([
+    "That id is taken: make a new one for this recipe.",
+    "document.recipes[0].legacy_unit must be text.",
+    "document.recipes[0].steps[9].step_text must be text.",
+    "document.recipes[1].recipe_name is required.",
+    "document.version must be 1.",
+  ])("is nothing for a message naming no field of the draft: %s", (message) => {
+    expect(explainRefusal(sent, message)).toBeUndefined();
+  });
+});

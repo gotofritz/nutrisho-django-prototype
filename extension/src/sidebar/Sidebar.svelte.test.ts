@@ -646,14 +646,36 @@ describe("the save", () => {
     expect(client.sent).toEqual([]);
   });
 
-  it("shows the server's refusal as it came", async () => {
+  // Plan 012, M11: the field the server names is flagged in the editor, in
+  // the editor's words.
+  it("flags the field the server refused, in the editor's words", async () => {
     const client = createFakeNutrishoClient();
     client.answerSave(
       err({
         kind: "refused",
         status: 400,
         message:
-          "document.recipes[0].steps[0].step_text must be at most 4000 characters.",
+          "document.recipes[0].recipe_name must be at most 200 characters.",
+      }),
+    );
+    await ready(client);
+
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(
+      await screen.findAllByText("The name must be at most 200 characters."),
+    ).not.toHaveLength(0);
+    expect(await nameField()).toBeInvalid();
+    expect(client.sent).toHaveLength(1);
+  });
+
+  it("shows a refusal that names no field in the server's words", async () => {
+    const client = createFakeNutrishoClient();
+    client.answerSave(
+      err({
+        kind: "refused",
+        status: 409,
+        message: "That id is taken: make a new one for this recipe.",
       }),
     );
     await ready(client);
@@ -662,9 +684,22 @@ describe("the save", () => {
 
     expect(
       await screen.findByText(
-        "Your Nutrisho did not save the recipe: document.recipes[0].steps[0].step_text must be at most 4000 characters.",
+        "Your Nutrisho did not save the recipe: That id is taken: make a new one for this recipe.",
       ),
     ).toBeVisible();
+  });
+
+  it("sends an expired key to the settings", async () => {
+    const client = createFakeNutrishoClient();
+    client.answerSave(
+      err({ kind: "key-expired", status: 401, message: "expired" }),
+    );
+    await ready(client);
+
+    await fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText("Your API key has expired.")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Open settings" })).toBeVisible();
   });
 
   it("is kept with the draft, so it still shows when the sidebar opens again", async () => {

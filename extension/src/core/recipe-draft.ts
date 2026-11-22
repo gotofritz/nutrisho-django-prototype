@@ -564,44 +564,28 @@ export function lengthIssues(
       });
     }
   }
-  check("name", "recipe_name", "The name", draft.name);
-  check("blurb", "short_description", "The blurb", draft.blurb);
-  check("source", "source_instance", "The source", draft.source);
-  check("cuisine", "cuisine", "The cuisine", draft.cuisine);
+  const label = (field: string) => labelOf(draft, field);
+  check("name", "recipe_name", label("name"), draft.name);
+  check("blurb", "short_description", label("blurb"), draft.blurb);
+  check("source", "source_instance", label("source"), draft.source);
+  check("cuisine", "cuisine", label("cuisine"), draft.cuisine);
   for (const tag of tagNames(draft)) {
     check("tags", "tags", `The tag “${tag}”`, tag);
   }
   draft.groups.forEach((group, groupIndex) => {
     const at = `groups.${groupIndex}`;
-    const of =
-      draft.groups.length > 1
-        ? ` of ${group.name.trim() || `group ${groupIndex + 1}`}`
-        : "";
-    check(
-      `${at}.name`,
-      "group_name",
-      `The name of group ${groupIndex + 1}`,
-      group.name,
-    );
+    check(`${at}.name`, "group_name", label(`${at}.name`), group.name);
     group.rows.forEach((row, index) => {
       for (const field of ROW_TEXT) {
-        check(
-          `${at}.rows.${index}.${field}`,
-          field,
-          `The ${field} in row ${index + 1}${of}`,
-          row[field],
-        );
+        const path = `${at}.rows.${index}.${field}`;
+        check(path, field, label(path), row[field]);
       }
     });
   });
   draft.steps.forEach((step, index) => {
-    check(
-      `steps.${index}.title`,
-      "step_title",
-      `The title of step ${index + 1}`,
-      step.title,
-    );
-    check(`steps.${index}.text`, "step_text", `Step ${index + 1}`, step.text);
+    const at = `steps.${index}`;
+    check(`${at}.title`, "step_title", label(`${at}.title`), step.title);
+    check(`${at}.text`, "step_text", label(`${at}.text`), step.text);
   });
   return issues;
 }
@@ -674,6 +658,100 @@ function documentRow(row: IngredientRow) {
     // Rest is the row's scratch pad, and is never sent.
     note: row.note.trim(),
   };
+}
+
+/** The recipe's own fields, by the document's name for each. */
+const DOCUMENT_FIELDS: Readonly<Record<string, string>> = {
+  recipe_name: "name",
+  short_description: "blurb",
+  servings: "servings",
+  source_instance: "source",
+  cuisine: "cuisine",
+};
+
+/** A row's fields, by the document's names, which are the draft's too. */
+const ROW_FIELDS = new Set<string>(["quantity", ...ROW_TEXT]);
+
+/**
+ * How a field of the draft is named to the user: `name`, `steps.2.title`,
+ * `groups.0.rows.1.unit`. A row names its group when there is more than one.
+ */
+function labelOf(draft: RecipeDraft, field: string): string {
+  const step = /^steps\.(\d+)\.(title|text)$/.exec(field);
+  if (step !== null) {
+    const n = Number(step[1]) + 1;
+    return step[2] === "title" ? `The title of step ${n}` : `Step ${n}`;
+  }
+  const group = /^groups\.(\d+)\.name$/.exec(field);
+  if (group !== null) return `The name of group ${Number(group[1]) + 1}`;
+  const row = /^groups\.(\d+)\.rows\.(\d+)\.(\w+)$/.exec(field);
+  if (row !== null) {
+    const groupIndex = Number(row[1]);
+    const name =
+      draft.groups[groupIndex]?.name.trim() || `group ${groupIndex + 1}`;
+    const of = draft.groups.length > 1 ? ` of ${name}` : "";
+    return `The ${row[3]} in row ${Number(row[2]) + 1}${of}`;
+  }
+  return `The ${field}`;
+}
+
+/** The indices of `items` that `keep` keeps, in order: the document's index → the draft's. */
+function kept<T>(items: readonly T[], keep: (item: T) => boolean): number[] {
+  return items.flatMap((item, index) => (keep(item) ? [index] : []));
+}
+
+/** The draft's field at a path of the document `toDocument` made, or undefined. */
+function fieldAtPath(draft: RecipeDraft, path: string): string | undefined {
+  const own = DOCUMENT_FIELDS[path];
+  if (own !== undefined) return own;
+  if (/^tags(\[\d+\])?$/.test(path)) return "tags";
+  const step = /^steps\[(\d+)\]\.step_(title|text)$/.exec(path);
+  if (step !== null) {
+    const index = kept(
+      draft.steps,
+      (s) => s.title.trim() !== "" || s.text.trim() !== "",
+    )[Number(step[1])];
+    return index === undefined ? undefined : `steps.${index}.${step[2]}`;
+  }
+  const group =
+    /^ingredient_groups\[(\d+)\]\.(?:group_name|items\[(\d+)\]\.(\w+))$/.exec(
+      path,
+    );
+  if (group === null) return undefined;
+  const groupIndex = kept(
+    draft.groups,
+    (g) => g.name.trim() !== "" || g.rows.some((row) => !isBlank(row)),
+  )[Number(group[1])];
+  if (groupIndex === undefined) return undefined;
+  if (group[2] === undefined) return `groups.${groupIndex}.name`;
+  const rowIndex = kept(draft.groups[groupIndex]!.rows, (row) => !isBlank(row))[
+    Number(group[2])
+  ];
+  if (rowIndex === undefined || !ROW_FIELDS.has(group[3]!)) return undefined;
+  return `groups.${groupIndex}.rows.${rowIndex}.${group[3]}`;
+}
+
+/**
+ * A save the server refused, read against the draft that was sent (plan 012,
+ * M11). The server names the field by its path in the document, as in
+ * `document.recipes[0].steps[2].step_title must be at most 128 characters.`;
+ * this is that field of the draft, and the message in the editor's words.
+ * Undefined when the message names no field of the draft.
+ */
+export function explainRefusal(
+  draft: RecipeDraft,
+  message: string,
+): DraftIssue | undefined {
+  const named = /^document\.recipes\[0\]\.(\S+) (.*)$/.exec(message);
+  if (named === null) return undefined;
+  const [, path, rest] = named;
+  const field = fieldAtPath(draft, path!);
+  if (field === undefined) return undefined;
+  const tag = /^tags\[(\d+)\]$/.exec(path!);
+  const tagName = tag === null ? undefined : tagNames(draft)[Number(tag[1])];
+  const label =
+    tagName === undefined ? labelOf(draft, field) : `The tag “${tagName}”`;
+  return { field, message: `${label} ${rest}` };
 }
 
 /** The draft as a Nutrisho document of one recipe, as the save endpoint reads it. */

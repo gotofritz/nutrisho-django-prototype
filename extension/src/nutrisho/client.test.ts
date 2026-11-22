@@ -26,7 +26,10 @@ function replying(example: ApiExample) {
     async () =>
       new Response(JSON.stringify(example.response.body), {
         status: example.response.status,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...example.response.headers,
+        },
       }),
   );
 }
@@ -107,6 +110,46 @@ describe("the lists call", () => {
     });
   });
 
+  // #149: an expired key has a code of its own, so the clipper can say to
+  // make a new one rather than to check it.
+  it("tells an expired key from a wrong one", async () => {
+    const expired = apiExample("vocabulary-key-expired.json");
+
+    expect(await client(replying(expired)).vocabulary()).toEqual({
+      ok: false,
+      error: {
+        kind: "key-expired",
+        status: 401,
+        message: (expired.response.body as { error: string }).error,
+      },
+    });
+  });
+
+  it("says how long to wait when there were too many requests", async () => {
+    const busy = apiExample("vocabulary-too-many-requests.json");
+    const waiting = {
+      ...busy,
+      response: { ...busy.response, headers: { "Retry-After": "42" } },
+    };
+
+    const lists = await client(replying(waiting)).vocabulary();
+
+    expect(!lists.ok && lists.error).toEqual({
+      kind: "rate-limited",
+      status: 429,
+      message: (busy.response.body as { error: string }).error,
+      retryAfter: 42,
+    });
+  });
+
+  it("leaves the wait out when Retry-After is not a number of seconds", async () => {
+    const lists = await client(
+      replying(apiExample("vocabulary-too-many-requests.json")),
+    ).vocabulary();
+
+    expect(!lists.ok && lists.error).not.toHaveProperty("retryAfter");
+  });
+
   it.each(
     apiExampleNames()
       .map((name) => [name, apiExample(name)] as const)
@@ -176,14 +219,59 @@ describe("a server that does not answer properly", () => {
     );
   });
 
-  it("is malformed when a success is not JSON", async () => {
+  it("is not a Nutrisho when a success is not JSON", async () => {
     const fetch = vi.fn<FetchLike>(
       async () => new Response("<html>login</html>", { status: 200 }),
     );
 
     const lists = await client(fetch).vocabulary();
 
-    expect(!lists.ok && lists.error.kind).toBe("malformed-response");
+    expect(!lists.ok && lists.error.kind).toBe("not-nutrisho");
+  });
+
+  // Plan 012, M11: something else listens at the address, or an old server
+  // without the endpoint.
+  it.each([404, 405])(
+    "is not a Nutrisho when the endpoint is a %s",
+    async (status) => {
+      const fetch = vi.fn<FetchLike>(
+        async () => new Response("<h1>Not Found</h1>", { status }),
+      );
+
+      const lists = await client(fetch).vocabulary();
+
+      expect(!lists.ok && lists.error).toEqual(
+        expect.objectContaining({ kind: "not-nutrisho", status }),
+      );
+    },
+  );
+
+  it("is not a Nutrisho when a refusal is not in the server's shape", async () => {
+    const fetch = vi.fn<FetchLike>(
+      async () =>
+        new Response(JSON.stringify({ message: "nope" }), { status: 401 }),
+    );
+
+    const lists = await client(fetch).vocabulary();
+
+    expect(!lists.ok && lists.error.kind).toBe("not-nutrisho");
+  });
+
+  it("passes on a server error's own reason when it sends one", async () => {
+    const fetch = vi.fn<FetchLike>(
+      async () =>
+        new Response(JSON.stringify({ error: "The database is locked." }), {
+          status: 503,
+        }),
+    );
+
+    const lists = await client(fetch).vocabulary();
+
+    expect(!lists.ok && lists.error).toEqual({
+      kind: "server-error",
+      status: 503,
+      message: "The database is locked.",
+    });
   });
 
   it("is malformed when a success is not the lists", async () => {
@@ -308,6 +396,39 @@ describe("the save", () => {
       });
     },
   );
+
+  // #149: a save may bring only so many recipes and new names, and a body
+  // only so large.
+  it("is too large when the server says so", async () => {
+    const fetch = vi.fn<FetchLike>(
+      async () =>
+        new Response(
+          JSON.stringify({
+            error:
+              "One request may make at most 150 new names; this one would make 151.",
+            code: "too_many_new_names",
+          }),
+          { status: 413 },
+        ),
+    );
+
+    const saved = await client(fetch).saveRecipe(NORMA);
+
+    expect(!saved.ok && saved.error).toEqual({
+      kind: "too-large",
+      status: 413,
+      message:
+        "One request may make at most 150 new names; this one would make 151.",
+    });
+  });
+
+  it("is a server error when the server cannot read what this clipper sends", async () => {
+    const saved = await client(
+      replying(apiExample("save-not-json.json")),
+    ).saveRecipe(NORMA);
+
+    expect(!saved.ok && saved.error.kind).toBe("server-error");
+  });
 
   it("is malformed when a success does not name the recipe", async () => {
     const fetch = vi.fn<FetchLike>(

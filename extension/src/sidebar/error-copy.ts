@@ -2,9 +2,8 @@ import type { NutrishoError } from "@/core/ports/types";
 
 /**
  * What the sidebar says when the lists will not load or a save fails (plan
- * 012, M6 and M7), in the user's words rather than the client's. M11 says
- * failures properly; this is enough to tell the causes apart, since each has
- * a different fix.
+ * 012, M11), in the user's words rather than the client's: a line of its own
+ * for each cause, since each has a different fix.
  */
 export interface Problem {
   /** What went wrong. */
@@ -40,6 +39,20 @@ function problem(error: NutrishoError, task: string): Problem {
         action: "Save the settings again, and allow it when the browser asks.",
         fix: "settings",
       };
+    case "not-nutrisho":
+      return {
+        cause: `What answered at your Nutrisho's address is not a Nutrisho, or not one this clipper can talk to (${error.message}).`,
+        action:
+          "Check the address in the settings, and update the server if it is older than the clipper.",
+        fix: "settings",
+      };
+    case "key-expired":
+      return {
+        cause: "Your API key has expired.",
+        action:
+          "Make a new one on the API keys page, under Config in your Nutrisho, then paste it into the settings.",
+        fix: "settings",
+      };
     case "unauthorised":
       return {
         cause: `Your Nutrisho refused the API key: ${error.message}`,
@@ -65,6 +78,19 @@ function problem(error: NutrishoError, task: string): Problem {
         action: "Change what it names, then try again.",
         fix: "retry",
       };
+    case "too-large":
+      return {
+        cause: `Your Nutrisho would not ${task}, as it is too large: ${error.message}`,
+        action:
+          "Make it smaller, or use names from your lists where you can, then try again.",
+        fix: "retry",
+      };
+    case "rate-limited":
+      return {
+        cause: "Your Nutrisho has had too many requests from this clipper.",
+        action: `Wait ${waitFor(error.retryAfter)}, then try again.`,
+        fix: "retry",
+      };
     case "server-error":
       return {
         cause: `Your Nutrisho could not ${task}: ${error.message}`,
@@ -80,4 +106,9 @@ function problem(error: NutrishoError, task: string): Problem {
         fix: "retry",
       };
   }
+}
+
+function waitFor(seconds: number | undefined): string {
+  if (seconds === undefined) return "a minute";
+  return seconds === 1 ? "a second" : `${seconds} seconds`;
 }

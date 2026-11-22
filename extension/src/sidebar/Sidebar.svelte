@@ -22,6 +22,7 @@
   import {
     addTo,
     checkDraft,
+    explainRefusal,
     replace,
     startDraft,
     type DraftIssue,
@@ -177,17 +178,7 @@
     const sending = draft;
     if (sending === undefined) return;
     saveFailure = undefined;
-    issues = checkDraft(sending, vocabulary.limits);
-    if (issues.length > 0) {
-      // One group is open at a time: open the one the first problem is in.
-      const inGroup = issues
-        .map((issue) => /^groups\.(\d+)\./.exec(issue.field)?.[1])
-        .find((group) => group !== undefined);
-      if (inGroup !== undefined) {
-        await keep(withDraft(drafts, withOpenGroup(sending, Number(inGroup))));
-      }
-      return;
-    }
+    if (await flag(sending, checkDraft(sending, vocabulary.limits))) return;
 
     saving = true;
     const answer = await client.saveRecipe(sending);
@@ -195,7 +186,31 @@
     if (answer.ok) {
       await keep(markSaved(drafts, sending.id, answer.value));
       await reloadLists();
-    } else saveFailure = saveProblem(answer.error);
+      return;
+    }
+    // A refusal that names a field is flagged there, like the draft's own (M11).
+    const refusal =
+      answer.error.kind === "refused"
+        ? explainRefusal(sending, answer.error.message)
+        : undefined;
+    if (refusal === undefined) saveFailure = saveProblem(answer.error);
+    else await flag(sending, [refusal]);
+  }
+
+  /** Show what stops a save at its fields; true if anything does. */
+  async function flag(
+    sending: RecipeDraft,
+    found: readonly DraftIssue[],
+  ): Promise<boolean> {
+    issues = found;
+    // One group is open at a time: open the one the first problem is in.
+    const inGroup = found
+      .map((issue) => /^groups\.(\d+)\./.exec(issue.field)?.[1])
+      .find((group) => group !== undefined);
+    if (inGroup !== undefined) {
+      await keep(withDraft(drafts, withOpenGroup(sending, Number(inGroup))));
+    }
+    return found.length > 0;
   }
 
   /**
