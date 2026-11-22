@@ -13,7 +13,7 @@
     type Drafts,
   } from "@/core/drafts";
   import { describeSplit, lineOf, readModelAnswer } from "@/core/model-answer";
-  import { chosenSetup } from "@/core/model-settings";
+  import { chosenSetup, type ModelSetup } from "@/core/model-settings";
   import { describeSteps, readStepsAnswer } from "@/core/model-steps";
   import type {
     ClippingStore,
@@ -66,6 +66,7 @@
     requestHostPermission,
     log,
     model,
+    modelFor,
     modelSettings,
     watchModelSettings = () => () => {},
   }: {
@@ -87,6 +88,8 @@
     log: readonly LogEntry[];
     /** The user's own model, which splits a group's lines on request (M13). */
     model: LineModel;
+    /** The same, for a set-up other than the default, asked once (#183). */
+    modelFor: (setup: ModelSetup) => LineModel;
     /** The set-ups and the default (#183): the built-in scan asks nothing. */
     modelSettings: ModelSettingsStore;
     /** Called when the set-ups change in storage; returns the unsubscribe. */
@@ -108,6 +111,8 @@
   let modelAddress = $state("");
   /** The default set-up's name, to say which model answered (#183). */
   let modelName = $state("The model");
+  /** The set-ups other than the default, which a hold on *Ask* offers. */
+  let otherSetups = $state.raw<readonly ModelSetup[]>([]);
   let modelCheck = $state<ModelCheck | undefined>(undefined);
   let asking = $state(false);
   /** What the model last changed, and how to take it back. */
@@ -173,6 +178,9 @@
     modelOn = setup !== undefined;
     modelAddress = setup?.address ?? "";
     modelName = setup?.name ?? "The model";
+    otherSetups = chosen.ok
+      ? chosen.value.setups.filter((other) => other.id !== setup?.id)
+      : [];
     if (modelOn) void checkModel();
     else modelCheck = undefined;
   }
@@ -248,7 +256,18 @@
    * Send one group's lines to the user's own model, and take its rows where
    * they pass the checks (M13). Empty rows are left out of the question.
    */
-  async function askModel(groupIndex: number) {
+  /** The default model, or another set-up for this one ask (#183). */
+  function askerFor(setupId: string | undefined): {
+    readonly asker: LineModel;
+    readonly who: string;
+  } {
+    const other = otherSetups.find((setup) => setup.id === setupId);
+    return other === undefined
+      ? { asker: model, who: modelName }
+      : { asker: modelFor(other), who: other.name };
+  }
+
+  async function askModel(groupIndex: number, setupId?: string) {
     const asked = draft;
     const group = asked?.groups[groupIndex];
     if (asked === undefined || group === undefined) return;
@@ -258,8 +277,9 @@
     modelAt = { draftId: asked.id, at: groupIndex };
     modelNote = undefined;
     modelFailure = undefined;
+    const { asker, who } = askerFor(setupId);
     asking = true;
-    const answer = await model.splitLines(lines);
+    const answer = await asker.splitLines(lines);
     asking = false;
     if (!answer.ok) {
       modelFailure = modelProblem(answer.error);
@@ -288,7 +308,7 @@
     );
     modelNote = {
       draftId: asked.id,
-      text: describeSplit(lines.length, read.value, modelName),
+      text: describeSplit(lines.length, read.value, who),
       changed: "rows",
       undo: (onto) => withGroupRows(onto, groupIndex, before),
     };
@@ -299,7 +319,7 @@
    * colloquial (#181). A rewrite cannot be checked word for word, so it is
    * taken whole when its shape is right, and Undo puts the steps back.
    */
-  async function askModelSteps() {
+  async function askModelSteps(setupId?: string) {
     const asked = draft;
     if (asked === undefined) return;
     const before = asked.steps;
@@ -310,8 +330,9 @@
     modelAt = { draftId: asked.id, at: "steps" };
     modelNote = undefined;
     modelFailure = undefined;
+    const { asker, who } = askerFor(setupId);
     asking = true;
-    const answer = await model.rewriteSteps(steps);
+    const answer = await asker.rewriteSteps(steps);
     asking = false;
     if (!answer.ok) {
       modelFailure = modelProblem(answer.error);
@@ -330,7 +351,7 @@
     await keep(withDraft(drafts, withSteps(current, read.value)));
     modelNote = {
       draftId: asked.id,
-      text: describeSteps(steps.length, read.value.length, modelName),
+      text: describeSteps(steps.length, read.value.length, who),
       changed: "steps",
       undo: (onto) => withSteps(onto, before),
     };
@@ -464,8 +485,13 @@
       {vocabulary}
       {issues}
       onChange={edit}
-      onAskModel={modelOn ? (group) => void askModel(group) : undefined}
-      onAskModelSteps={modelOn ? () => void askModelSteps() : undefined}
+      onAskModel={modelOn
+        ? (group, setupId) => void askModel(group, setupId)
+        : undefined}
+      onAskModelSteps={modelOn
+        ? (setupId) => void askModelSteps(setupId)
+        : undefined}
+      otherModels={otherSetups}
       {asking}
       modelAt={modelAt?.draftId === draft.id ? modelAt.at : undefined}
       {modelFeedback}

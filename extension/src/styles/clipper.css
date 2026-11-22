@@ -258,3 +258,41 @@ button.add:hover {
 .steps > li + li {
   border-top: 1px solid var(--honey-wash);
 }
+
+/* Another model, asked once (#183): a card of plain names on the paper. */
+.ask-menu {
+  background: var(--paper);
+  border: 1px solid var(--honey-wash);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 15%);
+}
+
+.ask-menu [role="menuitem"] {
+  font: 1rem/1.4 var(--font-text);
+  letter-spacing: normal;
+}
+
+.ask-menu [role="menuitem"]:hover,
+.ask-menu [role="menuitem"]:focus-visible {
+  background: var(--honey-wash);
+  color: var(--ink);
+}
+
+/* A hold fills the button with honey over its 2 seconds. */
+button.holding {
+  animation: hold 2s linear forwards;
+  background: linear-gradient(to right, var(--honey-wash) 50%, transparent 50%)
+    right / 200% 100% no-repeat;
+}
+
+@keyframes hold {
+  to {
+    background-position: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button.holding {
+    animation: none;
+    background: var(--honey-wash);
+  }
+}

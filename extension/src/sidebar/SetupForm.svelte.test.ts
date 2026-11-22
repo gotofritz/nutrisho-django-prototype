@@ -128,7 +128,7 @@ describe("the set-up form", () => {
     expect(screen.queryByLabelText("Address")).toBeNull();
     expect(screen.queryByLabelText("Server key")).toBeNull();
     expect(screen.getByLabelText("Anthropic key")).toHaveAccessibleDescription(
-      /a key for the clipper alone, with a low spending limit/,
+      /a key in a workspace of its own, with a low spend limit/,
     );
     await fill("Anthropic key", KEY);
     await save();
