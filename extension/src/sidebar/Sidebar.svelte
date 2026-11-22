@@ -13,6 +13,7 @@
     type Drafts,
   } from "@/core/drafts";
   import { describeSplit, lineOf, readModelAnswer } from "@/core/model-answer";
+  import { chosenSetup } from "@/core/model-settings";
   import { describeSteps, readStepsAnswer } from "@/core/model-steps";
   import type {
     ClippingStore,
@@ -86,12 +87,9 @@
     log: readonly LogEntry[];
     /** The user's own model, which splits a group's lines on request (M13). */
     model: LineModel;
-    /** Whether one is set up: the built-in scan offers nothing to ask. */
+    /** The set-ups and the default (#183): the built-in scan asks nothing. */
     modelSettings: ModelSettingsStore;
-    /**
-     * Called when the options page saves a model, often while the sidebar
-     * is open; returns the unsubscribe.
-     */
+    /** Called when the set-ups change in storage; returns the unsubscribe. */
     watchModelSettings?: (onChange: () => void) => () => void;
   } = $props();
 
@@ -108,6 +106,8 @@
   let saveFailure = $state<Problem | undefined>(undefined);
   let modelOn = $state(false);
   let modelAddress = $state("");
+  /** The default set-up's name, to say which model answered (#183). */
+  let modelName = $state("The model");
   let modelCheck = $state<ModelCheck | undefined>(undefined);
   let asking = $state(false);
   /** What the model last changed, and how to take it back. */
@@ -169,8 +169,10 @@
 
   async function loadModelOn() {
     const chosen = await modelSettings.load();
-    modelOn = chosen.ok && chosen.value.backend !== "built-in";
-    modelAddress = chosen.ok ? chosen.value.address : "";
+    const setup = chosen.ok ? chosenSetup(chosen.value) : undefined;
+    modelOn = setup !== undefined;
+    modelAddress = setup?.address ?? "";
+    modelName = setup?.name ?? "The model";
     if (modelOn) void checkModel();
     else modelCheck = undefined;
   }
@@ -286,7 +288,7 @@
     );
     modelNote = {
       draftId: asked.id,
-      text: describeSplit(lines.length, read.value),
+      text: describeSplit(lines.length, read.value, modelName),
       changed: "rows",
       undo: (onto) => withGroupRows(onto, groupIndex, before),
     };
@@ -328,7 +330,7 @@
     await keep(withDraft(drafts, withSteps(current, read.value)));
     modelNote = {
       draftId: asked.id,
-      text: describeSteps(steps.length, read.value.length),
+      text: describeSteps(steps.length, read.value.length, modelName),
       changed: "steps",
       undo: (onto) => withSteps(onto, before),
     };
@@ -552,6 +554,8 @@
     <!-- The server, and the log: folded away until opened. -->
     <AdvancedMode
       {settings}
+      {modelSettings}
+      onModelsChanged={() => void loadModelOn()}
       {requestHostPermission}
       onServerChanged={() => void loadLists()}
       {log}

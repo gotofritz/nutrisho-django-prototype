@@ -15,13 +15,12 @@ import { createFakeNutrishoClient } from "@/core/ports/fakes/fake-nutrisho-clien
 import { createFakeLineModel } from "@/core/ports/fakes/fake-line-model";
 import { createFakeModelSettingsStore } from "@/core/ports/fakes/fake-model-settings-store";
 import { createFakeSettingsStore } from "@/core/ports/fakes/fake-settings-store";
-import { defaultsFor } from "@/core/model-settings";
+import { defaultsFor, type ModelChoices } from "@/core/model-settings";
 import type { NutrishoClient, NutrishoError } from "@/core/ports/types";
 import { withDetails, type RecipeDraft } from "@/core/recipe-draft";
 import { err, ok } from "@/core/result";
 import { DEFAULT_SETTINGS } from "@/core/settings";
 import type { Vocabulary } from "@/core/vocabulary";
-import ModelForm from "@/options/ModelForm.svelte";
 import SettingsForm from "@/options/SettingsForm.svelte";
 import Sidebar from "@/sidebar/Sidebar.svelte";
 import type { LogEntry } from "@/nutrisho/fetch-log";
@@ -99,6 +98,27 @@ const LOG: readonly LogEntry[] = [
   text,
 }));
 
+/** A model that answers its check, as a running one does. */
+function answeringModel() {
+  const model = createFakeLineModel();
+  model.answer(ok({ rows: [] }));
+  return model;
+}
+
+/** Two set-ups, the local one the default (#183). */
+const MODELS: ModelChoices = {
+  setups: [
+    { ...defaultsFor("mlx"), id: "1", name: "Qwen3-8B-4bit on MLX" },
+    {
+      ...defaultsFor("anthropic"),
+      key: "sk-ant-preview",
+      id: "2",
+      name: "Haiku",
+    },
+  ],
+  chosen: "1",
+};
+
 function sidebar(
   options: {
     readonly clipping?: Clipping;
@@ -120,8 +140,8 @@ function sidebar(
         settings: createFakeSettingsStore(),
         requestHostPermission: async () => true,
         log: LOG,
-        model: createFakeLineModel(),
-        modelSettings: createFakeModelSettingsStore(defaultsFor("mlx")),
+        model: answeringModel(),
+        modelSettings: createFakeModelSettingsStore(MODELS),
       },
     });
 }
@@ -176,13 +196,6 @@ export const SCENES: Readonly<Record<string, Scene>> = {
             ...DEFAULT_SETTINGS,
             apiKey: "",
           }),
-          requestHostPermission: async () => true,
-        },
-      });
-      mount(ModelForm, {
-        target,
-        props: {
-          store: createFakeModelSettingsStore(defaultsFor("mlx")),
           requestHostPermission: async () => true,
         },
       });

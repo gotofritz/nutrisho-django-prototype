@@ -102,7 +102,7 @@ the *View* menu, under *Sidebar*.
 7. *Clip* sends the recipe to your Nutrisho and offers *Open in Nutrisho*.
    Saving the same recipe again changes nothing. Your lists load again after
    a save, so the names it made are no longer marked *new*.
-8. With a model of your own set up under *Ingredient lines* in the settings,
+8. With a model of your own set up under *Your models* in *Advanced Mode*,
    each group has *Ask the model*: its lines, and nothing else, go to the
    model, and the rows it answers replace the group's. A row whose fields
    are not in its line keeps its own scan, a line in another language comes
@@ -111,8 +111,11 @@ the *View* menu, under *Sidebar*.
    cooking to a step; *Undo the model's steps* puts it back. The model can be MLX or llama.cpp on your computer, as
    [timbuktu](https://github.com/gotofritz/timbuktu/blob/main/docs/user-guide.md#choosing-an-ai-backend)
    starts them, or Anthropic with your own key: make one for the clipper
-   alone, with a low spending limit. *Advanced Mode* says whether your model
-   answers, and *Check the model* asks again.
+   alone, with a low spending limit. You can keep several, each under a
+   name: *+ add model* adds one, ✎ edits one and × deletes it, and *Default
+   model* picks the one *Ask the model* uses, or *Built in* for none. The
+   note after an ask names the model that answered. *Advanced Mode* says
+   whether your model answers, and *Check the model* asks again.
 
 Recipes not yet saved are kept in your browser, even after a restart. A new
 browser session opens none of them: pick one under *Draft*, or clip from its
@@ -122,7 +125,7 @@ next to *Source* opens it in a new tab. Pick between recipes under *Draft*,
 *Discard this draft* to drop one, or *Clear all* at the top to start again.
 
 The keys, Nutrisho's and a model's, are kept in the browser's local storage,
-never synced, and the settings page never shows them again. Only the
+never synced, and are never shown again. Only the
 addresses you saved are ever contacted: the recipe goes to your Nutrisho when
 you save, and a group's lines, or the steps, to your model when you ask it.
 
@@ -169,7 +172,7 @@ src/
   background/              # the capture chain: gesture, read the page, store, open the sidebar
   content/                 # reads the selection off the page; injected on a gesture only
   sidebar/                 # the sidebar's Svelte components
-  options/                 # the settings and line scanner forms
+  options/                 # the settings form
   entrypoints/             # background, content script, sidebar and options pages: they only wire
   styles/                  # the site's tokens and faces, and the clipper's element rules
 public/                    # copies of the site's fonts and lineout plate

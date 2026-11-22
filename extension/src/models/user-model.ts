@@ -7,7 +7,7 @@ import { createOpenAiCompatibleModel } from "./openai-compatible";
 import { failure } from "./model-request";
 
 /**
- * The user's own model, whichever backend the options page saved (plan 012,
+ * The user's own model, whichever backend the default set-up uses (plan 012,
  * M13): read on every call, so a change there takes effect at once.
  */
 export interface UserModelDeps {

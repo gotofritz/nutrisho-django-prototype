@@ -10,8 +10,11 @@ export interface Problem {
   readonly cause: string;
   /** What to do about it. */
   readonly action: string;
-  /** Where the fix is: the options page, or trying again. */
-  readonly fix: "settings" | "retry";
+  /**
+   * Where the fix is: the options page, trying again, or a model's set-up
+   * under Advanced Mode (#183).
+   */
+  readonly fix: "settings" | "retry" | "advanced";
 }
 
 /** The lists would not load. */
@@ -120,15 +123,15 @@ export function modelProblem(error: ModelError): Problem {
     case "not-set-up":
       return {
         cause: "No model is set up for ingredient lines.",
-        action: "Choose one under Ingredient lines in the settings.",
-        fix: "settings",
+        action: "Set one up under Your models, in Advanced Mode.",
+        fix: "advanced",
       };
     case "permission-missing":
       return {
         cause: "The clipper has not been allowed to reach your model.",
         action:
-          "Save the line scanner again in the settings, and allow it when the browser asks.",
-        fix: "settings",
+          "Edit it under Your models, in Advanced Mode, save it again and allow it when the browser asks.",
+        fix: "advanced",
       };
     case "unreachable":
       return {
@@ -145,14 +148,15 @@ export function modelProblem(error: ModelError): Problem {
     case "unauthorised":
       return {
         cause: `Your model refused its key ${said}.`,
-        action: "Check the key in the settings, or make a new one.",
-        fix: "settings",
+        action:
+          "Check its key under Your models, in Advanced Mode, or make a new one.",
+        fix: "advanced",
       };
     case "unknown-model":
       return {
         cause: `Your model's server does not have that model ${said}.`,
-        action: "Check the model's name in the settings.",
-        fix: "settings",
+        action: "Check the model's name under Your models, in Advanced Mode.",
+        fix: "advanced",
       };
     case "rate-limited":
       return {

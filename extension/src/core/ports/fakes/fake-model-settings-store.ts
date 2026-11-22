@@ -1,4 +1,9 @@
-import { BUILT_IN, type ModelSettings } from "../../model-settings";
+import {
+  choicesFrom,
+  type ModelChoices,
+  type ModelSettings,
+  NO_CHOICES,
+} from "../../model-settings";
 import { err, ok } from "../../result";
 import type { ModelSettingsStore, StoreError } from "../types";
 
@@ -6,11 +11,14 @@ export interface FakeModelSettingsStore extends ModelSettingsStore {
   failWith(error: StoreError | undefined): void;
 }
 
-/** An in-memory `ModelSettingsStore`, starting from the built-in scan. */
+/**
+ * An in-memory `ModelSettingsStore`, with no set-ups, or with one model as
+ * its only set-up and the default, as a model saved before #183 is read.
+ */
 export function createFakeModelSettingsStore(
-  initial: ModelSettings = BUILT_IN,
+  initial: ModelChoices | ModelSettings = NO_CHOICES,
 ): FakeModelSettingsStore {
-  let stored = initial;
+  let stored = "setups" in initial ? initial : choicesFrom(initial);
   let failure: StoreError | undefined;
   return {
     failWith(error) {
@@ -19,9 +27,9 @@ export function createFakeModelSettingsStore(
     async load() {
       return failure === undefined ? ok(stored) : err(failure);
     },
-    async save(settings) {
+    async save(choices) {
       if (failure !== undefined) return err(failure);
-      stored = settings;
+      stored = choices;
       return ok(undefined);
     },
   };

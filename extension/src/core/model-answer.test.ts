@@ -452,4 +452,15 @@ describe("describeSplit", () => {
       "The model split 9 lines; it gave no row for 2 lines, so those rows are as they were.",
     );
   });
+
+  // #183: the set-up that answered, by its name.
+  it("names the model that answered", () => {
+    expect(
+      describeSplit(
+        2,
+        { rows: [], kept: [], missed: [], translated: [] },
+        "Haiku",
+      ),
+    ).toBe("Haiku split 2 lines.");
+  });
 });

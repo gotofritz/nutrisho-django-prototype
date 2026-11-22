@@ -61,6 +61,11 @@ describe("describeSteps", () => {
   ])("says %i steps became %i", (before, after, said) => {
     expect(describeSteps(before, after)).toBe(said);
   });
+
+  // #183: the set-up that answered, by its name.
+  it("names the model that answered", () => {
+    expect(describeSteps(2, 1, "Haiku")).toBe("Haiku rewrote 2 steps as 1.");
+  });
 });
 
 describe("STEPS_INSTRUCTION", () => {

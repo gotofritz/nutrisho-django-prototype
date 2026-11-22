@@ -251,10 +251,14 @@ export function lineOf(row: IngredientRow): string {
   return [parts.join(", "), row.rest].filter((part) => part !== "").join(" ");
 }
 
-/** What the model did to a group, for the sidebar to say. */
-export function describeSplit(lines: number, split: ModelRows): string {
+/** What the model did to a group, for the sidebar to say, by its name (#183). */
+export function describeSplit(
+  lines: number,
+  split: ModelRows,
+  who = "The model",
+): string {
   const { kept, missed, translated } = split;
-  let said = `The model split ${lines} ${lines === 1 ? "line" : "lines"}`;
+  let said = `${who} split ${lines} ${lines === 1 ? "line" : "lines"}`;
   if (translated.length > 0) {
     said += `, and translated ${translated.length} of them into English`;
   }

@@ -95,8 +95,11 @@ Changing one means editing this list.
   machine, or Anthropic with their own key, as timbuktu has them. The
   project never runs or proxies one (M13).
 - **D21 Embedded recipe data.** Reading a page's schema.org data is a
-  nice-to-have for the end, or for after the release (M16). The selection
+  nice-to-have for after the release, in the backlog as #186. The selection
   is the way in.
+- **D22 Unlisted until the server launches.** The clipper is unlisted on
+  AMO, signed and installed from the GitHub release, until nutrisho.com is
+  open to others; then it can be listed.
 
 ## Milestones
 
@@ -246,10 +249,15 @@ OpenAI-compatible API, or Anthropic with their own key, as timbuktu has
 them. Rows that do not keep to their lines keep the built-in scan; Undo puts
 the group back; a line not in English comes back in English. *Ask the model*
 by the steps rewrites them short and colloquial, a stage to a step, shown
-how by five of the person's own rewrites; Undo puts them back. Set up under
-*Ingredient lines* on the options page; keys are kept as D11's. The design
-note is
+how by five of the person's own rewrites; Undo puts them back. Keys are kept
+as D11's. The design note is
 [012-m13-model-line-scanner.md](012-m13-model-line-scanner.md).
+
+Since #183 the user keeps several set-ups, each under a name, made and
+changed under *Your models* in Advanced Mode rather than on the options
+page; *Default model* picks the one asked, and the note after an ask names
+it. The one model saved before becomes the first set-up. Holding *Ask the
+model* to ask another just once follows in its own PR.
 
 ### ✅ M14 · server · API keys on the Config page (#150)
 
@@ -268,35 +276,27 @@ confirmation. The clipper's settings link to the page.
   cannot be made to work, release-please for the extension only.
 - Icons, and AMO's data-collection declaration: page content goes to a
   server, so anklipper's `none` does not apply.
-- The file is signed by AMO and attached to the GitHub release, with an
-  `update_url` so installs update. The signing job follows the tagging job
+- The file is signed by AMO as an unlisted add-on (D22) and attached to the
+  GitHub release, with an `update_url` so installs update. The signing job follows the tagging job
   in one workflow, since a tag made by CI starts no workflow of its own,
   and runs in the `store-publishing` environment with a required reviewer
   (#145).
 - The production server's address, `https://nutrisho.com`, is already an
   optional host permission (M12).
 
-### M16 · extension · Fill from the page
-
-A nice-to-have, which can wait until after the release (D21). The capture
-gesture with nothing selected reads the page's schema.org `Recipe` wherever
-the page put it (alone, in a list, in `@graph`, under `mainEntity`, as
-`utils/json_ld.py` does), keeps only what the draft uses, and fills the
-draft's empty parts. Its ingredient lines go through the same scan. Real
-pages' data is loose, so its fixtures are the shapes real pages use.
-
 ## Open questions
 
-- Do the loaded lists need to refresh while the sidebar stays open, or is
-  loading on open enough?
 - The toolbar button opens the sidebar and clips the selection: assumed in
   M6, not confirmed.
 - Should an export carry recipe ids, so that importing a file twice changes
   nothing?
-- Listed or unlisted on the stores? Not needed before M15.
 
 ## Out of scope
 
+- Reloading the lists while the sidebar stays open: they load when it
+  opens and again after every clip (M8), which is enough.
+- Filling the draft from the page's schema.org data, moved to the backlog
+  (#186, was M16).
 - Images, nutrition, ratings and reviews from the page.
 - Tags from a page's keywords.
 - Microdata, and several recipes from one page.
