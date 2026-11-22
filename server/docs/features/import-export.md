@@ -109,9 +109,22 @@ session cookie plus CSRF token does not fit them; instead the client sends
   only because of that.
 - 201 answers `{"recipes": [{"id", "name", "url", "renamed", "in_trash"}],
   "warnings": [...]}`, each `id` the recipe's UUID as text (#156); 400, 401
-  (with `WWW-Authenticate: Bearer`), 405, 409 and 413 answer
-  `{"error": "..."}`. The body limit is Django's `DATA_UPLOAD_MAX_MEMORY_SIZE`
-  (2.5 MB).
+  (with `WWW-Authenticate: Bearer`), 405, 409, 413, 415 and 429 answer
+  `{"error": "..."}`, and the refusals a client must tell apart add a `code`
+  (#149): `token_expired`, `unsupported_media_type`, `rate_limited`,
+  `too_many_recipes`, `too_many_new_names`. The body limit is Django's
+  `DATA_UPLOAD_MAX_MEMORY_SIZE` (2.5 MB).
+- Hardening (#149, `services/api_limits.py`): a save that is not
+  `application/json` or `application/ld+json` is a 415. One may bring at most
+  `API_MAX_RECIPES` recipes and make at most `API_MAX_NEW_NAMES` names the user
+  lacks (ingredients and substitutes, units, tags, cuisines, each counted
+  once; `new_name_count`), else a 413 and nothing is written, so a bad client
+  cannot flood their suggestions. A key may send `API_REQUESTS_PER_MINUTE`
+  requests a minute, and an address `API_FAILED_KEYS_PER_MINUTE` wrong or
+  expired keys, before a 429 with `Retry-After` in seconds. The counts live in
+  the default cache, per process, in windows of a minute from the first
+  request in each. Each is a setting with an environment variable of the same
+  name.
 - `?id=<uuid>` (#158) names the id of the body's one recipe, made by the
   client when its draft starts, so a save sent twice makes one recipe. It must
   be a version 7 UUID, so ordering by id stays ordering by age, and the body
@@ -139,10 +152,16 @@ session cookie plus CSRF token does not fit them; instead the client sends
 - `ApiToken` (`models/api_token.py`) stores only the SHA-256 digest of a key;
   the key is `nsh_` plus 43 random characters, shown once. A user may hold
   several; an inactive user's keys stop working, and `last_used_at` is noted on
-  each use.
-- `make manage ARGS="create_api_token <username> --name clipper"` makes one and
-  prints the key. Django admin lists tokens and deletes them to revoke; it
-  cannot add one, since it could not show the key. A settings page where users
+  each use. A key expires (#149) on its own `expires_at`, if set, or once
+  unused for `API_TOKEN_IDLE_DAYS` (90; 0 turns it off), counted from its last
+  use or from when it was made. An expired key is still a 401, but with
+  `code: token_expired` and `WWW-Authenticate: Bearer error="invalid_token"`,
+  so the clipper can say to make a new one; an unknown key keeps the plain
+  reply.
+- `make manage ARGS="create_api_token <username> --name clipper [--days N]"`
+  makes one and prints the key, and its date if `--days` gave it one. Django
+  admin lists tokens, with their date and whether they have expired, and
+  deletes them to revoke; it cannot add one, since it could not show the key. A settings page where users
   make their own is for when the clipper exists.
 
 For the extension: post from the background service worker, which with a host

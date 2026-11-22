@@ -190,6 +190,10 @@ rejections and other `django.security` events, and failed logins (a warning on
 - `LOG_LEVEL` — level for the `django`, `recipes` and `nutrisho` loggers;
   default `INFO`. `django.security` always logs at `WARNING` or above, so a
   quiet level cannot hide it.
+- `API_TOKEN_IDLE_DAYS`, `API_REQUESTS_PER_MINUTE`,
+  `API_FAILED_KEYS_PER_MINUTE`, `API_MAX_RECIPES`, `API_MAX_NEW_NAMES` — the
+  clipper API's limits (#149), defaults 90, 60, 20, 20 and 150; see
+  `server/docs/features/import-export.md`.
 - `SENTRY_DSN` — optional. When set, `settings/prod.py` initialises Sentry, which
   reports unhandled exceptions and `ERROR` log records. Personal data is not
   sent. Unset, Sentry is never initialised.

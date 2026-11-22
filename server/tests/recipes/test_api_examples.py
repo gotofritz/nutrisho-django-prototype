@@ -9,11 +9,14 @@ against a small, fixed library, and the reply must match it exactly.
 import hashlib
 import json
 import uuid
+from datetime import timedelta
 from pathlib import Path
 
 import pytest
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import Client
+from django.utils import timezone
 
 from recipes.models import (
     ApiToken,
@@ -97,10 +100,21 @@ def _someone_elses_recipe_with_the_saved_id() -> None:
     Recipe.objects.create(pk=uuid.UUID(saved_id), recipe_name="Theirs", owner=other)
 
 
+def _the_key_has_expired() -> None:
+    ApiToken.objects.update(expires_at=timezone.now() - timedelta(days=1))
+
+
+def _the_key_has_sent_its_requests_this_minute() -> None:
+    for _ in range(settings.API_REQUESTS_PER_MINUTE):
+        _replay(_example("vocabulary.json"))
+
+
 # What each example assumes has happened before it.
 GIVEN = {
     "save-again.json": _the_first_save,
     "save-id-taken.json": _someone_elses_recipe_with_the_saved_id,
+    "vocabulary-key-expired.json": _the_key_has_expired,
+    "vocabulary-too-many-requests.json": _the_key_has_sent_its_requests_this_minute,
 }
 
 
@@ -109,8 +123,11 @@ def test_there_is_an_example_of_each_call():
     assert sorted(p.name for p in EXAMPLES.glob("*.json")) == [
         "save-again.json",
         "save-id-taken.json",
+        "save-not-json.json",
         "save-refused.json",
         "save.json",
+        "vocabulary-key-expired.json",
+        "vocabulary-too-many-requests.json",
         "vocabulary-without-key.json",
         "vocabulary.json",
     ]

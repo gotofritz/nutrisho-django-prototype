@@ -8,7 +8,8 @@ class ApiToken(models.Model):
     """One user's key for the JSON API, stored only as its SHA-256 digest.
 
     The key itself is shown once, when `services/api_tokens.create_token` makes
-    it. A user may hold several, one per client; deleting a row revokes it.
+    it. A user may hold several, one per client; deleting a row revokes it. It
+    expires on `expires_at`, if set, or once unused for `API_TOKEN_IDLE_DAYS`.
     """
 
     id = models.AutoField(primary_key=True)
@@ -19,6 +20,8 @@ class ApiToken(models.Model):
     key_digest = models.CharField(max_length=64, unique=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     last_used_at = models.DateTimeField(null=True, blank=True, editable=False)
+    # Blank means no date of its own; idle keys expire anyway (API_TOKEN_IDLE_DAYS, #149).
+    expires_at = models.DateTimeField(null=True, blank=True, editable=False)
 
     objects = models.Manager()
 

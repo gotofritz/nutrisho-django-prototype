@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from recipes.services.api_tokens import is_expired
+
 from .models import (
     ApiToken,
     Cuisine,
@@ -98,11 +100,21 @@ class UnitAliasAdmin(admin.ModelAdmin):
 
 @admin.register(ApiToken)
 class ApiTokenAdmin(admin.ModelAdmin):
-    """List and revoke API tokens (#78). A key is made by `create_api_token`, which shows it once."""
+    """List and revoke API tokens (#78). A key is made by `create_api_token`, which shows it once.
 
-    list_display = ("name", "user", "created_at", "last_used_at")
+    Its own expiry date and whether it has expired, by that date or by going
+    unused too long (#149), are shown so an expired key is easy to find and
+    delete.
+    """
+
+    list_display = ("name", "user", "created_at", "last_used_at", "expires_at", "expired")
     list_select_related = ("user",)
-    readonly_fields = ("user", "name", "created_at", "last_used_at")
+    readonly_fields = ("user", "name", "created_at", "last_used_at", "expires_at")
+
+    @admin.display(boolean=True, description="expired")
+    def expired(self, token: ApiToken) -> bool:
+        """Past its date, or unused for longer than API_TOKEN_IDLE_DAYS."""
+        return is_expired(token)
 
     def has_add_permission(self, request) -> bool:  # noqa: ARG002 - ModelAdmin API
         """Never: a key made here could not be shown to anyone."""

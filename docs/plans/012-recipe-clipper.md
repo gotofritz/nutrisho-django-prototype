@@ -1,6 +1,6 @@
 # Plan 012: The recipe clipper extension
 
-## Status: In progress, M1 to M9 done (#154, #156, #158, #160, #162, #166, #168, #171, #173)
+## Status: In progress, M1 to M10 done (#154, #156, #158, #160, #162, #166, #168, #171, #173, #149)
 
 ## What we are building
 
@@ -208,12 +208,14 @@ new group holding the rows below it (D7). Text too long for its field, by
 the `limits` loaded with the lists, is flagged at the field as it is typed
 and stops a save (D12).
 
-### M10 · server · Harden the API (#149)
+### ✅ M10 · server · Harden the API (#149)
 
-The parts the clipper meets: an expired key answered with
-`code: token_expired`, 415 for a wrong content type, 429 with `Retry-After`,
-and caps on the recipes and on the new names one request may bring. The cap
-on new names is set from real clips, so an honest one fits.
+Done (part of #149). A key expires on its own date or after 90 idle days, and
+is then a 401 with `code: token_expired`; a save that is not JSON is a 415;
+too many requests a key, or wrong keys an address, are a 429 with
+`Retry-After`; and one save may bring at most 20 recipes and 150 new names,
+else a 413. Each refusal the clipper must tell apart has a `code` and an API
+example. The rest of #149 (HTTPS only, an audit log, scopes) is left to it.
 
 ### M11 · extension · Failures said properly
 

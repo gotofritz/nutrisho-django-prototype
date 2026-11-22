@@ -34,8 +34,8 @@ dump for restoring with `sqlite3`). SQLite only, like the rest of the app. The
 dump is read inside one read transaction, so it is a consistent snapshot even
 while the app writes (WAL lets those writes carry on).
 
-`create_api_token <username> [--name ...]` makes an API token and prints its key
-once (#78).
+`create_api_token <username> [--name ...] [--days N]` makes an API token and
+prints its key once (#78); `--days` makes it expire (#149).
 
 `delete_recipe --id <uuid>` removes recipes by primary key, as shown in the
 recipe's address, trashed or not, for good.

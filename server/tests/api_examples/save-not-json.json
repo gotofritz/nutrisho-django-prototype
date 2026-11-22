@@ -1,0 +1,27 @@
+{
+  "description": "A save whose body is not sent as JSON.",
+  "request": {
+    "method": "POST",
+    "path": "/recipes/api/recipes/?id=01a1f5b5-dbe2-704a-b591-7ffbcff6762e",
+    "headers": {
+      "Authorization": "Bearer nsh_example-key-for-the-api-examples",
+      "Content-Type": "text/plain"
+    },
+    "body": {
+      "format": "nutrisho",
+      "version": 1,
+      "recipes": [
+        {
+          "recipe_name": "Soup"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 415,
+    "body": {
+      "error": "Send the recipe as JSON, with “Content-Type: application/json”.",
+      "code": "unsupported_media_type"
+    }
+  }
+}

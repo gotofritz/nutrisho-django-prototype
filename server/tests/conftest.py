@@ -1,6 +1,15 @@
 """Shared fixtures and mocks for the test suite."""
 
 import pytest
+from django.core.cache import cache
+
+
+@pytest.fixture(autouse=True)
+def _empty_cache():
+    """Start each test with an empty cache: the API's rate counts live there (#149)."""
+    cache.clear()
+    yield
+    cache.clear()
 
 
 @pytest.fixture

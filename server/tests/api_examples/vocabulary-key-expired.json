@@ -1,0 +1,20 @@
+{
+  "description": "Any request with a key that has expired: past its date, or unused too long.",
+  "request": {
+    "method": "GET",
+    "path": "/recipes/api/vocabulary/",
+    "headers": {
+      "Authorization": "Bearer nsh_example-key-for-the-api-examples"
+    }
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "WWW-Authenticate": "Bearer realm=\"nutrisho\", error=\"invalid_token\", error_description=\"The token has expired\""
+    },
+    "body": {
+      "error": "This API token has expired: make a new one.",
+      "code": "token_expired"
+    }
+  }
+}
