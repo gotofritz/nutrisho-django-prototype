@@ -302,8 +302,15 @@ them:
 ## Releases
 
 The server and the extension release separately, each with its own tag
-prefix: `server-v<version>` and `ext-v<version>`. The rest of this section is
-about the server; the extension's plan is in [its README](../extension/README.md).
+prefix: `server-v<version>` and `ext-v<version>`, its own changelog and its
+own commits. A commit scoped `ext` (`feat(ext): ...`) counts for the
+extension alone, and every other one for the server alone. Both are cut by
+commitizen, with the server's config in `server/pyproject.toml` and the
+extension's in `extension/.cz.toml`. Each uses `cz_customize` with the
+Conventional Commit patterns, filtered by that scope, because the default
+plugin cannot leave a scope out. The rest of this section is about the
+server; [the extension's releases](#the-extensions-releases) follow the same
+steps.
 
 The server's version lives in `server/pyproject.toml` (and its copy in
 `server/uv.lock`); it is the only server version number. Each release is tagged
@@ -314,10 +321,9 @@ prefix) and has a GitHub release whose notes are its section of
 
 Commitizen (`[tool.commitizen]` in `server/pyproject.toml`) works out the next
 version from the Conventional Commit subjects on `main` since the last server
-tag. It ignores `ext-v*` tags, but it has no path filter, so extension commits
-land in the server's changelog too: scope them `ext` (`feat(ext): ...`) so they
-are easy to spot, and trim them from the section in the release PR. A `feat` bumps the minor version, a `fix` or `perf` the patch. Until 1.0 a
-breaking change bumps the minor version too (`major_version_zero`).
+tag, leaving out `ext` commits and `ext-v*` tags. A `feat` bumps the minor
+version, a `fix`, `refactor` or `perf` the patch. Until 1.0 a breaking change
+bumps the minor version too (`major_version_zero`).
 
 `main` only takes squash-merged PRs, so a release is a PR:
 
@@ -336,6 +342,24 @@ breaking change bumps the minor version too (`major_version_zero`).
 
 Never edit the version by hand: `cz bump` keeps `pyproject.toml`, `uv.lock`
 and `CHANGELOG.md` in step, and `server/tests/test_releases.py` checks they agree.
+
+### The extension's releases
+
+The extension's version is the one in `extension/package.json`, and its notes
+are in `extension/CHANGELOG.md`. Both are written by `cz bump`, run in
+`extension/` with the server's commitizen, which counts only commits scoped
+`ext` since the last `ext-v*` tag.
+
+1. `make ext-release` on a clean checkout makes a `chore-release-ext-v<next>`
+   branch off `origin/main`, the same way `make release` does, and commits it
+   as `chore(release): ext-v<next>`.
+2. Read the new section, push the branch and open a PR with that title.
+3. When it merges, the extension workflow's `ext-qa` job zips the build on
+   `main` (`make ext-zip`: Firefox, Chrome and the sources AMO asks for), and
+   its `ext-release` job, which runs only `gh`, tags the merge commit
+   `ext-v<next>` and publishes the zips with the section as the notes. The
+   release isn't marked latest, so the server's stays the repository's
+   latest.
 
 ## Dependency updates
 

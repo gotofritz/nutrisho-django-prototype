@@ -24,7 +24,9 @@ TASKS = (
     "ext-install",
     "ext-preview",
     "ext-qa",
+    "ext-release",
     "ext-test",
+    "ext-zip",
     "help",
     "lint",
     "lint-fix",
@@ -347,6 +349,31 @@ def test_release_bumps_on_a_fresh_branch_from_main_and_commits():
 
 
 @needs_make
+def test_ext_release_bumps_the_extension_alone_on_a_fresh_branch():
+    """`make ext-release` does as `make release`, in `extension/` and on `ext-v` tags (M15)."""
+    output = run_make("--dry-run", "ext-release")
+
+    fetch = output.index("git fetch origin main --tags")
+    branch = output.index("git switch -c chore-release-ext-v")
+    bump = output.index("uv run --project ../server --frozen cz bump --version-files-only --yes")
+    commit = output.index('git commit -m "chore(release): ext-v')
+    assert fetch < branch < bump < commit
+    assert "cd extension &&" in output
+    assert "git add package.json CHANGELOG.md" in output
+    assert "git push" not in output
+    assert "git tag" not in output
+
+
+@needs_make
+def test_ext_zip_zips_for_both_browsers():
+    """The release attaches a Firefox zip, with its sources for AMO, and a Chrome zip (M15)."""
+    output = run_make("--dry-run", "ext-zip")
+
+    assert "pnpm zip\n" in output
+    assert "pnpm zip:chrome" in output
+
+
+@needs_make
 def test_qa_leaves_the_assistant_hooks_out():
     """The opt-in caveman hooks are not part of the product, so `make qa` skips their tests (#70)."""
     assert "caveman" not in run_make("--dry-run", "qa")
@@ -361,7 +388,15 @@ def test_test_hooks_runs_the_hook_tests():
     assert "test-check-tdd.sh" in output
 
 
-EXTENSION_TARGETS = ["ext-install", "ext-dev", "ext-test", "ext-build", "ext-preview", "ext-qa"]
+EXTENSION_TARGETS = [
+    "ext-install",
+    "ext-dev",
+    "ext-test",
+    "ext-build",
+    "ext-preview",
+    "ext-qa",
+    "ext-zip",
+]
 
 
 @needs_make

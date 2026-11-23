@@ -54,7 +54,7 @@ def test_only_the_badge_and_release_jobs_can_write(path: Path):
     """A job widens the token only to publish the coverage badge or a release."""
     for name, job in load(path)["jobs"].items():
         if "permissions" in job:
-            assert name in {"badge", "release"}
+            assert name in {"badge", "release", "ext-release"}
             assert job["permissions"] == {"contents": "write"}
 
 
@@ -429,6 +429,61 @@ def test_each_check_has_a_name_of_its_own():
     names = [name for path in WORKFLOWS for name in load(path)["jobs"] if name != "changes"]
 
     assert len(names) == len(set(names))
+
+
+def ext_release_workflow() -> dict[str, Any]:
+    """`extension.yml` cut down to its release job (M15)."""
+    return {"jobs": {"ext-release": load(EXTENSION_WORKFLOW)["jobs"]["ext-release"]}}
+
+
+def test_the_extension_zips_are_built_by_the_checks_on_main():
+    """The zips come from the read-only checks job, only on a push to main, for the release to take."""
+    zip_step, upload = [
+        step
+        for step in steps(extension_job())
+        if step.get("run") == "make ext-zip"
+        or step.get("uses", "").startswith("actions/upload-artifact@")
+    ]
+
+    assert "github.ref == 'refs/heads/main'" in zip_step["if"]
+    assert "github.event_name == 'push'" in zip_step["if"]
+    assert upload["if"] == zip_step["if"]
+    assert upload["with"]["path"] == "extension/.output/*.zip"
+
+
+def test_ext_release_job_runs_only_after_the_checks_pass_on_main():
+    """An extension version is released only from a green push to main (M15)."""
+    release = ext_release_workflow()["jobs"]["ext-release"]
+
+    assert release["needs"] == "ext-qa"
+    assert "needs.ext-qa.result == 'success'" in release["if"]
+    assert "github.event_name == 'push'" in release["if"]
+    assert "github.ref == 'refs/heads/main'" in release["if"]
+
+
+def test_ext_release_job_runs_no_project_code():
+    """The write-scoped job checks out without saved credentials, takes the zips, and runs only gh."""
+    workflow = ext_release_workflow()
+    (checkout,) = steps_using(workflow, "actions/checkout")
+    scripts = run_lines(workflow)
+
+    assert checkout["with"]["persist-credentials"] is False
+    assert steps_using(workflow, "actions/download-artifact")
+    for command in ("uv ", "make ", "pnpm ", "python", "node "):
+        assert command not in scripts
+
+
+def test_ext_release_job_publishes_the_changelog_section_for_a_new_tag():
+    """It tags `ext-v<version>` once, from package.json, with its CHANGELOG.md section as notes."""
+    scripts = run_lines(ext_release_workflow())
+
+    assert 'tag="ext-v$version"' in scripts
+    assert "extension/package.json" in scripts
+    assert "extension/CHANGELOG.md" in scripts
+    assert 'gh release view "$tag"' in scripts
+    assert 'gh release create "$tag"' in scripts
+    assert '--target "$GITHUB_SHA"' in scripts
+    assert "--latest=false" in scripts
 
 
 def test_the_extension_checks_run_through_make():

@@ -217,7 +217,10 @@ the Extension section of [`AGENTS.md`](../AGENTS.md#extension).
   the server's tests check them against its views, and the extension's tests
   read the same files.
 - Commits that touch only the extension are scoped `ext` (`feat(ext): ...`).
-- Releases will be tagged `ext-v<version>`, separate from the server's
-  `server-v<version>`. The release workflow will build the extension, have
-  Mozilla sign it and attach the signed file to the GitHub release. Whether it
-  is listed on a store is an open question in the plan.
+  Only those count towards its releases, and the server's leave them out.
+- Releases are tagged `ext-v<version>`, separate from the server's
+  `server-v<version>`, and its version is the one in `package.json`.
+  `make ext-release` starts one: see
+  [the developer guide](../docs/developer-guide.md#releases). When its PR
+  merges, CI tags it and attaches the zips to the GitHub release. Signing by
+  Mozilla, as an unlisted add-on, is still to come (plan 012, M15).
