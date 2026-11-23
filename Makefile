@@ -108,12 +108,13 @@ ext-install: ## Install the extension's dependencies from extension/pnpm-lock.ya
 ext-preview: $(EXT_INSTALLED) ## Show each state of the sidebar and settings in a plain page, without a browser extension
 	$(IN_EXT) pnpm preview
 
-ext-qa: $(EXT_INSTALLED) ## Run the extension's checks: formatting, lint, types, tests, and a build for each browser
+ext-qa: $(EXT_INSTALLED) ## Run the extension's checks: formatting, lint, types, tests, a build for each browser, and AMO's lint of Firefox's
 	$(IN_EXT) pnpm format:check
 	$(IN_EXT) pnpm lint
 	$(IN_EXT) pnpm check
 	$(IN_EXT) pnpm test
 	$(IN_EXT) pnpm build
+	$(IN_EXT) pnpm lint:amo
 	$(IN_EXT) pnpm build:chrome
 
 # Releases the extension alone, tagged ext-v<version> (plan 012, M15), as

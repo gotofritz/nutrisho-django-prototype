@@ -25,6 +25,7 @@ type Manifest = {
   options_ui?: { page?: string; open_in_tab?: boolean };
   sidebar_action?: { default_panel?: string };
   side_panel?: { default_path?: string };
+  icons?: Record<string, string>;
 };
 
 const built: Record<string, Manifest> = {};
@@ -77,6 +78,15 @@ describe.each(["firefox", "chrome"])("the %s build", (browser) => {
     expect(
       existsSync(resolve(`.output/${browser}-mv3${CONTENT_SCRIPT_FILE}`)),
     ).toBe(true);
+  });
+
+  // Drawn once, in public/icon/icon.svg, and rendered at each size (M15).
+  it("ships an icon at each size the browsers ask for", () => {
+    const icons = built[browser]!.icons ?? {};
+    expect(Object.keys(icons).map(Number)).toEqual([16, 32, 48, 96, 128]);
+    for (const file of Object.values(icons)) {
+      expect(existsSync(resolve(`.output/${browser}-mv3/${file}`))).toBe(true);
+    }
   });
 
   it("declares the one shortcut", () => {

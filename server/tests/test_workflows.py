@@ -1,5 +1,6 @@
 """Tests for the GitHub Actions workflows: token scope, pinning and run limits."""
 
+import json
 import os
 import re
 import shutil
@@ -54,7 +55,7 @@ def test_only_the_badge_and_release_jobs_can_write(path: Path):
     """A job widens the token only to publish the coverage badge or a release."""
     for name, job in load(path)["jobs"].items():
         if "permissions" in job:
-            assert name in {"badge", "release", "ext-release"}
+            assert name in {"badge", "release", "ext-release", "ext-sign"}
             assert job["permissions"] == {"contents": "write"}
 
 
@@ -161,8 +162,12 @@ def test_every_job_waits_for_the_changes_job(path: Path):
         if job["needs"] == "changes":
             assert job["if"] == f"needs.changes.outputs.{output} == 'true'", name
         else:
-            # The badge and release jobs follow qa, and qa follows changes.
-            assert jobs[job["needs"]]["needs"] == "changes", name
+            # The badge and release jobs follow qa, and qa follows changes;
+            # the extension's signing follows its release.
+            before = job["needs"]
+            while jobs[before]["needs"] != "changes":
+                before = jobs[before]["needs"]
+            assert before != name
 
 
 def changes_step(path: Path) -> dict[str, Any]:
@@ -484,6 +489,72 @@ def test_ext_release_job_publishes_the_changelog_section_for_a_new_tag():
     assert 'gh release create "$tag"' in scripts
     assert '--target "$GITHUB_SHA"' in scripts
     assert "--latest=false" in scripts
+
+
+def ext_sign_job() -> dict[str, Any]:
+    """`extension.yml`'s job that has AMO sign the Firefox build (M15)."""
+    return load(EXTENSION_WORKFLOW)["jobs"]["ext-sign"]
+
+
+def test_ext_release_job_names_the_tag_it_made():
+    """The signing job runs only for a release just made, which it learns from this output."""
+    release = ext_release_workflow()["jobs"]["ext-release"]
+
+    assert release["outputs"] == {"tag": "${{ steps.publish.outputs.tag }}"}
+    assert 'echo "tag=$tag" >> "$GITHUB_OUTPUT"' in run_lines(ext_release_workflow())
+
+
+def test_ext_sign_job_runs_only_for_a_new_release_with_a_reviewer():
+    """Signing follows a new release, in the environment whose reviewer lets it run (#145)."""
+    job = ext_sign_job()
+
+    assert job["needs"] == "ext-release"
+    assert job["if"] == "needs.ext-release.outputs.tag != ''"
+    assert job["environment"] == "store-publishing"
+
+
+def test_ext_sign_job_signs_unlisted_with_the_pinned_web_ext():
+    """AMO signs the zip the checks built, as unlisted (D22), with the web-ext the project pins."""
+    package = json.loads((ROOT / "extension" / "package.json").read_text())
+    scripts = run_lines({"jobs": {"ext-sign": ext_sign_job()}})
+
+    assert f"npx --yes web-ext@{package['devDependencies']['web-ext']} sign" in scripts
+    assert "--channel unlisted" in scripts
+    assert "--upload-source-code" in scripts
+    assert 'gh release upload "$TAG"' in scripts
+
+
+def test_ext_sign_job_reads_the_amo_keys_from_its_environment_only():
+    """The keys are the environment's secrets, given to the signing step alone, never echoed."""
+    job = ext_sign_job()
+    (sign,) = [step for step in job["steps"] if "web-ext" in step.get("run", "")]
+
+    assert sign["env"]["WEB_EXT_API_KEY"] == "${{ secrets.AMO_API_KEY }}"
+    assert sign["env"]["WEB_EXT_API_SECRET"] == "${{ secrets.AMO_API_SECRET }}"
+    assert "env" not in job
+    assert 'echo "$WEB_EXT' not in sign["run"]
+
+
+def test_ext_sign_job_runs_no_project_code():
+    """With the AMO keys in reach, the job checks out without credentials and installs nothing of ours."""
+    workflow = {"jobs": {"ext-sign": ext_sign_job()}}
+    (checkout,) = steps_using(workflow, "actions/checkout")
+    scripts = run_lines(workflow)
+
+    assert checkout["with"]["persist-credentials"] is False
+    for command in ("uv ", "make ", "pnpm ", "python"):
+        assert command not in scripts
+
+
+def test_ext_sign_job_tells_firefox_where_the_new_version_is():
+    """`updates.json` on the `ext-updates` branch is what the manifest's `update_url` names."""
+    workflow = {"jobs": {"ext-sign": ext_sign_job()}}
+    (publish,) = steps_using(workflow, "peaceiris/actions-gh-pages")
+    scripts = run_lines(workflow)
+
+    assert publish["with"]["publish_branch"] == "ext-updates"
+    assert "nutrisho-clipper@gotofritz.net" in scripts
+    assert "update_link" in scripts
 
 
 def test_the_extension_checks_run_through_make():

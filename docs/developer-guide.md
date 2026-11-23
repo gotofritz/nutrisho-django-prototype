@@ -360,6 +360,29 @@ are in `extension/CHANGELOG.md`. Both are written by `cz bump`, run in
    `ext-v<next>` and publishes the zips with the section as the notes. The
    release isn't marked latest, so the server's stays the repository's
    latest.
+4. Its `ext-sign` job then waits for a reviewer to approve it in the
+   `store-publishing` environment. Once approved, it has Mozilla sign the
+   Firefox zip as an unlisted add-on with `web-ext sign`, at the version
+   `package.json` pins, and uploads the sources zip with it. It attaches the
+   signed `.xpi` to the release and writes `updates.json`, which names that
+   `.xpi`, to the `ext-updates` branch. Installed copies find the new version
+   there through the manifest's `update_url`.
+
+Signing needs a one-off set-up in the repository's settings, under
+*Environments*:
+
+1. Create the `store-publishing` environment, add yourself as a required
+   reviewer, and limit it to the `main` branch
+2. On the [AMO API key page](https://addons.mozilla.org/developers/addon/api/key/),
+   generate credentials. Mozilla shows the secret only once. Generating a
+   new pair cancels the old one, so any other project that signs with your
+   account needs the new pair too
+3. Add them to the environment as the secrets `AMO_API_KEY` (the *issuer*,
+   `user:…`) and `AMO_API_SECRET`
+
+Without them the job stops and says which secrets are missing. The tag, the
+release and its zips are already published by then, so to sign that version
+afterwards, re-run the failed job.
 
 ## Dependency updates
 

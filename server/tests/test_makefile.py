@@ -429,14 +429,15 @@ def test_ext_install_installs_from_the_lockfile():
 
 @needs_make
 def test_ext_qa_runs_every_gate_and_builds_for_both_browsers():
-    """Formatting, lint, types, tests, then a Firefox and a Chrome build, in that order."""
+    """Formatting, lint, types, tests, a Firefox build and AMO's lint of it, then Chrome's build."""
     output = run_make("--dry-run", "ext-qa")
     steps = [
         "pnpm format:check",
-        "pnpm lint",
+        "pnpm lint\n",
         "pnpm check",
         "pnpm test",
         "pnpm build\n",
+        "pnpm lint:amo",
         "pnpm build:chrome",
     ]
 
