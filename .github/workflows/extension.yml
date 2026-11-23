@@ -78,6 +78,8 @@ jobs:
         with:
           name: extension-zips
           path: extension/.output/*.zip
+          # .output/ is hidden, and is left out unless this says otherwise.
+          include-hidden-files: true
           if-no-files-found: error
 
   # Runs no project code: when a push to main carries an extension version

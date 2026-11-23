@@ -454,6 +454,9 @@ def test_the_extension_zips_are_built_by_the_checks_on_main():
     assert "github.event_name == 'push'" in zip_step["if"]
     assert upload["if"] == zip_step["if"]
     assert upload["with"]["path"] == "extension/.output/*.zip"
+    # `.output/` is hidden, and upload-artifact leaves out what is under a
+    # hidden directory unless told otherwise: the first release found no zip.
+    assert upload["with"]["include-hidden-files"] is True
 
 
 def test_ext_release_job_runs_only_after_the_checks_pass_on_main():
