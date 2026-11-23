@@ -3,8 +3,29 @@
 A browser extension that clips recipes from web pages into Nutrisho. You
 select text on a recipe page, send it to the recipe's title, blurb,
 ingredients or steps, check what it made of each ingredient line, give it a
-cuisine and tags, and save. The look comes in a later milestone of
-[plan 012](../docs/plans/012-recipe-clipper.md).
+cuisine and tags, and save. It was built under
+[plan 012](../docs/archive/2026-11-23-0008-a009848-012-recipe-clipper.md).
+
+## Installing it
+
+The clipper is not listed on Firefox's add-on site while the server is not
+yet public. Each release on GitHub, tagged `ext-v` and a version, carries a
+copy signed by Mozilla:
+
+1. Open the newest `ext-v` release on the
+   [releases page](https://github.com/gotofritz/nutrisho-django-prototype/releases)
+   in Firefox, and click its `.xpi` file
+2. Allow the install when Firefox asks, then open the clipper from the
+   toolbar button, or the *View* menu under *Sidebar*
+
+Firefox then looks for newer versions by itself and updates the clipper as
+it does any other add-on. On its first save the clipper asks where your
+Nutrisho is: see *Using it* below.
+
+When you save, the recipe you clipped, with the text you picked from the
+page and the page's address, goes to your own Nutrisho. When you ask a model,
+a group's lines or the steps go to the model you set up. Firefox lists both
+as data the clipper sends, when it is installed.
 
 ## Running it
 
@@ -20,7 +41,9 @@ make ext-dev BROWSER=chrome   # the same in Chrome
 make ext-test                 # the tests; ARGS="src/sidebar" narrows them
 make ext-qa                   # every check CI runs
 make ext-build                # .output/firefox-mv3/ and .output/chrome-mv3/
+make ext-zip                  # zips of each build, and of the sources for Mozilla
 make ext-preview              # each state of the sidebar and settings, in a plain page
+make ext-release              # a release branch: the next version and its changelog
 ```
 
 The other `ext-` targets run `make ext-install` first when `node_modules` is
@@ -221,6 +244,11 @@ the Extension section of [`AGENTS.md`](../AGENTS.md#extension).
 - Releases are tagged `ext-v<version>`, separate from the server's
   `server-v<version>`, and its version is the one in `package.json`.
   `make ext-release` starts one: see
-  [the developer guide](../docs/developer-guide.md#releases). When its PR
-  merges, CI tags it and attaches the zips to the GitHub release. Signing by
-  Mozilla, as an unlisted add-on, is still to come (plan 012, M15).
+  [the developer guide](../docs/developer-guide.md#the-extensions-releases).
+  When its PR merges, CI tags it, attaches the zips to the GitHub release,
+  and has Mozilla sign the Firefox build as an unlisted add-on, whose `.xpi`
+  it attaches too. The manifest's `update_url` reads `updates.json` on the
+  `ext-updates` branch, which the signing job rewrites to name that `.xpi`.
+- The icon is drawn once, in [`public/icon/icon.svg`](public/icon/icon.svg),
+  after the site's favicon, and rendered as a PNG at each size in
+  `public/icon/`, which WXT puts in the manifest.

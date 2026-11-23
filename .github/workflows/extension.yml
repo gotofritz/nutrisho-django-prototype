@@ -92,6 +92,8 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: write
+    outputs:
+      tag: ${{ steps.publish.outputs.tag }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -104,6 +106,7 @@ jobs:
           path: zips
 
       - name: Publish a new version
+        id: publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -125,3 +128,74 @@ jobs:
           fi
           gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
             --title "$tag" --notes-file "$RUNNER_TEMP/notes.md" --latest=false zips/*.zip
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  # Has AMO sign the Firefox zip the checks built, as an unlisted add-on
+  # (D22), attaches the signed .xpi to the release just made, and points
+  # Firefox's update check at it. Runs in the store-publishing environment,
+  # whose required reviewer lets it start and whose secrets hold the AMO
+  # keys (#145). Runs no project code: web-ext comes from npm, at the
+  # version package.json pins, with no install of ours.
+  ext-sign:
+    needs: ext-release
+    if: needs.ext-release.outputs.tag != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: store-publishing
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: extension/.nvmrc
+
+      - name: Take the zips
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: extension-zips
+          path: zips
+
+      - name: Have AMO sign the Firefox build
+        env:
+          TAG: ${{ needs.ext-release.outputs.tag }}
+          WEB_EXT_API_KEY: ${{ secrets.AMO_API_KEY }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_API_SECRET }}
+        run: |
+          if [ -z "$WEB_EXT_API_KEY" ] || [ -z "$WEB_EXT_API_SECRET" ]; then
+            echo "::error::AMO_API_KEY and AMO_API_SECRET must be secrets of the store-publishing environment"
+            exit 1
+          fi
+          version="${TAG#ext-v}"
+          unzip -q "zips/nutrisho-clipper-$version-firefox.zip" -d firefox
+          npx --yes web-ext@10.6.0 sign --source-dir firefox --artifacts-dir signed \
+            --channel unlisted --upload-source-code "zips/nutrisho-clipper-$version-sources.zip"
+          mv signed/*.xpi "nutrisho-clipper-$version-firefox.xpi"
+
+      - name: Attach it to the release, and name it for Firefox's update check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.ext-release.outputs.tag }}
+        run: |
+          version="${TAG#ext-v}"
+          xpi="nutrisho-clipper-$version-firefox.xpi"
+          gh release upload "$TAG" "$xpi" --repo "$GITHUB_REPOSITORY"
+          mkdir updates
+          jq -n --arg id "nutrisho-clipper@gotofritz.net" --arg version "$version" \
+            --arg link "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$xpi" \
+            '{addons: {($id): {updates: [{version: $version, update_link: $link}]}}}' \
+            > updates/updates.json
+
+      # The manifest's update_url reads this file from the ext-updates branch.
+      - name: Publish the update manifest
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./updates
+          publish_branch: ext-updates
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'

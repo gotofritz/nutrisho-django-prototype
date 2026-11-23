@@ -21,6 +21,7 @@
     "zip:chrome": "wxt zip -b chrome",
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc --noEmit",
     "lint": "eslint .",
+    "lint:amo": "web-ext lint --self-hosted --source-dir .output/firefox-mv3",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",

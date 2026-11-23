@@ -49,7 +49,15 @@ export const PERMISSIONS = [
  * it across a reload and an update.
  */
 export const GECKO_ID = "nutrisho-clipper@gotofritz.net";
-export const GECKO_MIN_VERSION = "128.0";
+export const GECKO_MIN_VERSION = "140.0";
+
+/**
+ * Where a self-distributed Firefox install looks for a newer signed version
+ * (D22, M15). The extension workflow's signing job publishes this file to
+ * the `ext-updates` branch, naming the latest `.xpi` on its GitHub release.
+ */
+export const UPDATE_URL =
+  "https://raw.githubusercontent.com/gotofritz/nutrisho-django-prototype/ext-updates/updates.json";
 
 /**
  * The shortcut's name. The background listens for exactly this, so the two
@@ -70,6 +78,7 @@ export interface GeckoSettings {
   readonly gecko: {
     readonly id: string;
     readonly strict_min_version: string;
+    readonly update_url: string;
     readonly data_collection_permissions: { readonly required: string[] };
   };
 }
@@ -102,9 +111,15 @@ export function manifestExtras(target: string): ManifestExtras {
             gecko: {
               id: GECKO_ID,
               strict_min_version: GECKO_MIN_VERSION,
-              // Required by AMO for new extensions. Nothing leaves the
-              // browser except a draft the user saves to their own server.
-              data_collection_permissions: { required: ["none"] },
+              update_url: UPDATE_URL,
+              // Required by AMO for new extensions (M15). A saved draft
+              // carries the page's text and its address to the user's own
+              // server, and asking the model sends it a group's lines or the
+              // steps: both only on the user's gesture, but both are what
+              // the clipper is for, so neither is optional.
+              data_collection_permissions: {
+                required: ["browsingActivity", "websiteContent"],
+              },
             },
           },
         }

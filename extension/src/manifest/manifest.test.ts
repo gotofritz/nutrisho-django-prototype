@@ -6,6 +6,7 @@ import {
   LOOPBACK_HOSTS,
   MODEL_HOST,
   REMOTE_HOST,
+  UPDATE_URL,
   manifestExtras,
 } from "./manifest";
 
@@ -80,11 +81,33 @@ describe("manifest identity", () => {
     expect(GECKO_ID).toBe("nutrisho-clipper@gotofritz.net");
   });
 
-  it("declares no data collection, as AMO requires of a new extension", () => {
+  // AMO requires the declaration (M15). A saved draft carries the page's
+  // text and its address to the user's own server, and the model gets a
+  // group's lines or the steps, so neither is optional to the clipper.
+  it("declares that the page's text and address leave the browser", () => {
     expect(
       manifestExtras("firefox").browser_specific_settings?.gecko
         .data_collection_permissions,
-    ).toEqual({ required: ["none"] });
+    ).toEqual({ required: ["browsingActivity", "websiteContent"] });
+  });
+
+  // The declaration above is shown, and asked about, from Firefox 140: AMO's
+  // linter warns of an older minimum (M15).
+  it("needs a Firefox that shows what the clipper sends", () => {
+    expect(
+      manifestExtras("firefox").browser_specific_settings?.gecko
+        .strict_min_version,
+    ).toBe("140.0");
+  });
+
+  // Self-distributed (D22): Firefox looks here for a newer signed version.
+  it("tells Firefox where to look for updates", () => {
+    expect(
+      manifestExtras("firefox").browser_specific_settings?.gecko.update_url,
+    ).toBe(UPDATE_URL);
+    expect(UPDATE_URL).toBe(
+      "https://raw.githubusercontent.com/gotofritz/nutrisho-django-prototype/ext-updates/updates.json",
+    );
   });
 
   it("does not emit Firefox settings on Chrome", () => {

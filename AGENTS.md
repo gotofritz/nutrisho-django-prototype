@@ -353,14 +353,15 @@ Use what Django already provides before adding a dependency:
 ## Extension
 
 Paths in this section are relative to `extension/`. The plan is
-`docs/plans/012-recipe-clipper.md`; [anklipper](https://github.com/gotofritz/anklipper)
+`docs/archive/2026-11-23-0008-a009848-012-recipe-clipper.md` (done); [anklipper](https://github.com/gotofritz/anklipper)
 is the reference for patterns, since the extension starts as a cut-down copy.
 
 - **Stack**: WXT, Svelte 5, strict TypeScript, Vitest and pnpm, pinned in
   `package.json`, `pnpm-lock.yaml` and `.nvmrc`. Install with
   `make ext-install`, which refuses a stale lockfile.
 - **Checks**: `make ext-qa` runs Prettier, ESLint, `svelte-check` and `tsc`,
-  Vitest, and a Firefox and a Chrome build. `make ext-test ARGS="<path>"` is
+  Vitest, a Firefox and a Chrome build, and AMO's own linter on the Firefox
+  build, as a self-hosted add-on. `make ext-test ARGS="<path>"` is
   the fast loop. Pre-commit runs `make ext-qa` on any commit that touches
   `extension/`, and CI runs it in `.github/workflows/extension.yml`.
 - **Boundaries**: ports and adapters. The draft and its rules are pure
