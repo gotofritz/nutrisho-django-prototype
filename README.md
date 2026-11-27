@@ -222,6 +222,21 @@ make manage ARGS="normalise_units --apply"
 Anything it does not recognise is left alone: add it as another spelling of a
 unit in the admin, or fix the recipe, and run it again.
 
+Ingredients have other names too: **eggplant** is **aubergine**, **soy sauce**
+is **soya sauce**. Staff add these as aliases in the ingredient tool, and a
+built-in list of common ones, mostly American names for British ones, can be
+added in one go. Review it, then apply it:
+
+```bash
+make manage ARGS="add_ingredient_synonyms"          # dry run: each alias and what it means
+make manage ARGS="add_ingredient_synonyms --apply"
+```
+
+It adds an alias only for an ingredient already on the shared list, folds in
+any ingredient of that name (a recipe that used it then uses the shared one),
+and leaves a name already aliased to something else alone. It shows in the
+ingredient tool's history, where Undo takes the whole run back.
+
 ---
 
 ## License
