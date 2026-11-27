@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { MODEL_INSTRUCTION, rowsSchema } from "@/core/model-answer";
+import { BLURB_INSTRUCTION, BLURB_SCHEMA } from "@/core/model-blurb";
 import { STEPS_INSTRUCTION, STEPS_SCHEMA } from "@/core/model-steps";
 import type { FetchLike } from "@/nutrisho/client";
 
@@ -121,6 +122,24 @@ describe("createOpenAiCompatibleModel", () => {
     expect(body.messages).toEqual([
       { role: "system", content: STEPS_INSTRUCTION },
       { role: "user", content: '[{"title":"","text":"Fry it all"}]' },
+    ]);
+  });
+
+  it("asks for the blurb rewritten, in its schema's shape", async () => {
+    const BLURB = { blurb: "A summer salad." };
+    const fetch = replying(200, completion(JSON.stringify(BLURB)));
+
+    const answer = await model(fetch).rewriteBlurb("Una insalata estiva.");
+
+    expect(answer).toEqual({ ok: true, value: BLURB });
+    const { body } = sent(fetch);
+    expect(body.response_format).toEqual({
+      type: "json_schema",
+      json_schema: { name: "blurb", schema: BLURB_SCHEMA },
+    });
+    expect(body.messages).toEqual([
+      { role: "system", content: BLURB_INSTRUCTION },
+      { role: "user", content: '{"blurb":"Una insalata estiva."}' },
     ]);
   });
 

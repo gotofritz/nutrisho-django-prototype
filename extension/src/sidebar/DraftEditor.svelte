@@ -48,7 +48,10 @@
     onChange,
     onAskModel,
     onAskModelSteps,
+    onAskModelBlurb,
     otherModels = [],
+    defaultModel,
+    holdMs,
     asking = false,
     modelAt,
     modelFeedback,
@@ -62,12 +65,18 @@
     onAskModel?: (groupIndex: number, setupId?: string) => void;
     /** Ask the user's own model to rewrite the steps; none while it is off. */
     onAskModelSteps?: (setupId?: string) => void;
+    /** Ask the user's own model to rewrite the blurb (#205); none while it is off. */
+    onAskModelBlurb?: (setupId?: string) => void;
     /** The set-ups other than the default, to ask one once (#183). */
     otherModels?: readonly { readonly id: string; readonly name: string }[];
+    /** The default set-up's name, which heads that menu, faded. */
+    defaultModel?: string;
+    /** How long *Ask the model* is held to open that menu. */
+    holdMs?: number;
     /** A model is working on a group, so no other is asked meanwhile. */
     asking?: boolean;
-    /** The group, or the steps, the model was last asked about. */
-    modelAt?: number | "steps";
+    /** The group, the steps or the blurb the model was last asked about. */
+    modelAt?: number | "steps" | "blurb";
     /** What the model is doing or did, shown beside the button pressed. */
     modelFeedback?: Snippet;
   } = $props();
@@ -460,6 +469,21 @@
             onChange(withDetails(draft, { blurb: valueOf(event) }))}></textarea>
       </label>
       {@render longNote("blurb")}
+      {#if onAskModelBlurb !== undefined && draft.blurb.trim() !== ""}
+        <div class="blurb-ask">
+          <AskButton
+            label="Ask the model about the blurb"
+            others={otherModels}
+            current={defaultModel}
+            {holdMs}
+            disabled={asking}
+            onAsk={(setupId) => onAskModelBlurb(setupId)}
+          />
+        </div>
+      {/if}
+      {#if modelAt === "blurb"}
+        {@render modelFeedback?.()}
+      {/if}
 
       <div class="source">
         <label>
@@ -579,6 +603,8 @@
             <AskButton
               label="Ask the model about group {groupIndex + 1}"
               others={otherModels}
+              current={defaultModel}
+              {holdMs}
               disabled={asking}
               onAsk={(setupId) => onAskModel(groupIndex, setupId)}
             />
@@ -767,6 +793,8 @@
       <AskButton
         label="Ask the model about the steps"
         others={otherModels}
+        current={defaultModel}
+        {holdMs}
         disabled={asking}
         onAsk={(setupId) => onAskModelSteps(setupId)}
       />
@@ -1126,6 +1154,12 @@
   .new {
     justify-self: start;
     margin-top: -0.25rem;
+  }
+
+  /* Under the blurb, at its end, as the steps' button sits by their heading. */
+  .blurb-ask {
+    display: flex;
+    justify-content: flex-end;
   }
 
   /* Numbered by each title's placeholder, so the list needs no indent. */
