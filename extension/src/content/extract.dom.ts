@@ -57,6 +57,9 @@ function isBlock(element: Element): boolean {
   return BLOCK_TAGS.has(element.tagName);
 }
 
+/** A list, or an item of one: a new line even inside an item (#204). */
+const LIST_TAGS = new Set(["LI", "OL", "UL"]);
+
 function asElement(node: Node | null): Element | null {
   if (!node) return null;
   return node.nodeType === 1 ? (node as Element) : node.parentElement;
@@ -73,7 +76,8 @@ function tidy(value: string): string {
 /**
  * Flatten a fragment to text: the markup decides only where lines break.
  * Inside a list item nothing breaks, since an item is one ingredient or step
- * even when the page wraps `(about 2 tsp)` in an element of its own.
+ * even when the page wraps `(about 2 tsp)` in an element of its own; only a
+ * list nested in it does, since each of its items is a line again.
  */
 interface Context {
   /** Inside a list item, where nothing breaks a line. */
@@ -106,7 +110,8 @@ function flatten(node: Node, into: string[], context: Context): void {
   }
 
   const breaks = element !== undefined && isBlock(element);
-  const edge = breaks && !inItem ? "\n" : breaks ? " " : "";
+  const listed = element !== undefined && LIST_TAGS.has(element.tagName);
+  const edge = breaks && (!inItem || listed) ? "\n" : breaks ? " " : "";
   const inner = {
     inItem: inItem || element?.tagName === "LI",
     pre: pre || element?.tagName === "PRE",
