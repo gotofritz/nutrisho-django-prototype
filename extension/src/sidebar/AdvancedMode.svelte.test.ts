@@ -328,6 +328,40 @@ describe("your models", () => {
     );
   });
 
+  // Asked for in the #205 PR: the hold that opens the menu of the others.
+  it("sets how long Ask the model is held, a second to begin with", async () => {
+    const models = createFakeModelSettingsStore(BOTH);
+    const { onModelsChanged } = renderAdvanced({ models });
+    await open();
+    const hold = await screen.findByRole("spinbutton", {
+      name: "Hold Ask the model for (seconds)",
+    });
+    await vi.waitFor(() => expect(hold).toHaveValue(1));
+
+    await fireEvent.change(hold, { target: { value: "2.5" } });
+
+    await vi.waitFor(async () =>
+      expect((await choices(models))?.holdMs).toBe(2500),
+    );
+    expect(onModelsChanged).toHaveBeenCalled();
+  });
+
+  it("refuses a hold out of range, and keeps the one there was", async () => {
+    const models = createFakeModelSettingsStore(BOTH);
+    renderAdvanced({ models });
+    await open();
+    const hold = await screen.findByRole("spinbutton", {
+      name: "Hold Ask the model for (seconds)",
+    });
+
+    await fireEvent.change(hold, { target: { value: "9" } });
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Hold for between 0.5 and 5 seconds.",
+    );
+    expect((await choices(models))?.holdMs).toBeUndefined();
+  });
+
   it("says when there are no set-ups yet", async () => {
     renderAdvanced();
     await open();

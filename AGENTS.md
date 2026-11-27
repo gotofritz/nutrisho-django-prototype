@@ -381,7 +381,7 @@ is the reference for patterns, since the extension starts as a cut-down copy.
   `api.anthropic.com`). Never `<all_urls>`. A new one is justified in the
   plan first.
 - **Privacy**: only the draft leaves the browser, only to the user's own
-  server, and only when the user saves; a group's lines, or the steps, go to
+  server, and only when the user saves; a group's lines, the steps or the blurb go to
   the user's own model only when they ask it (`src/models/`). Keys,
   Nutrisho's and the model's, live in `storage.local`, never synced, logged
   or shown again.

@@ -4,8 +4,10 @@
   import {
     NO_CHOICES,
     chooseSetup,
+    holdOf,
     removeSetup,
     saveSetup,
+    withHold,
     type ModelChoices,
     type ModelSetup,
     type UnsavedSetup,
@@ -119,6 +121,13 @@
     }
   }
 
+  /** The hold that opens *Ask the model*'s menu, as typed in seconds. */
+  async function changeHold(typed: string) {
+    const next = withHold(models, typed);
+    if (next.ok) await changeModels(next.value);
+    else modelStatus = { kind: "problem", message: next.error };
+  }
+
   function saveOne(setup: UnsavedSetup) {
     return keepModels(saveSetup(models, setup));
   }
@@ -209,6 +218,22 @@
         {/each}
       </select>
     </label>
+    {#if models.setups.length > 0}
+      <label>
+        Hold Ask the model for (seconds)
+        <input
+          type="number"
+          min="0.5"
+          max="5"
+          step="0.5"
+          value={holdOf(models) / 1000}
+          onchange={(event) => void changeHold(event.currentTarget.value)}
+        />
+      </label>
+      <p class="quiet">
+        Holding it that long, or a right-click, picks another model once.
+      </p>
+    {/if}
     {#if models.setups.length === 0}
       <p class="quiet">
         No models of your own yet: the built-in scan reads the lines. A model

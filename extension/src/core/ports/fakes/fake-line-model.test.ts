@@ -32,6 +32,16 @@ describe("createFakeLineModel", () => {
     expect(model.stepsSent).toEqual([[{ title: "", text: "Fry it" }]]);
   });
 
+  it("keeps the blurbs it was sent, and answers them the same way", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok({ blurb: "A salad." }));
+
+    expect(await model.rewriteBlurb("Una insalata.")).toEqual(
+      ok({ blurb: "A salad." }),
+    );
+    expect(model.blurbsSent).toEqual(["Una insalata."]);
+  });
+
   it("checks as it answers, and counts the checks", async () => {
     const model = createFakeLineModel();
 
