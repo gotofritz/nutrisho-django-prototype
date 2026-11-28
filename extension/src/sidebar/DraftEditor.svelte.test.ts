@@ -579,6 +579,137 @@ describe("the ingredient rows", () => {
     });
   });
 
+  // #202: note and substitute, the two boxes and preparation, then rest
+  // across the row, under quantity, unit and ingredient.
+  it("lays a row out as the note, the boxes, preparation and rest", async () => {
+    renderEditor();
+    const first = await edit(1);
+
+    const fields = [
+      ...first.querySelectorAll<HTMLInputElement>(".fields input"),
+    ].map((input) =>
+      input.type === "checkbox"
+        ? (input.closest("label")?.textContent?.trim() ?? "")
+        : (input.labels?.[0]?.firstChild?.textContent?.trim() ?? ""),
+    );
+    expect(fields).toEqual([
+      "Qty",
+      "Unit",
+      "Ingredient",
+      "Note",
+      "Substitute",
+      "to taste",
+      "optional",
+      "Preparation",
+      "Rest",
+    ]);
+  });
+
+  // #202: ticked, each goes into the note; unticked, it comes out.
+  it.each(["to taste", "optional"])(
+    "ticks %s into the note, and out of it",
+    async (flag) => {
+      const { changed } = renderLiveEditor({
+        ...DRAFT,
+        groups: [
+          {
+            name: "",
+            rows: [{ ...EMPTY_ROW, ingredient: "lemon", note: "for garnish" }],
+          },
+        ],
+      });
+      const first = await edit(1);
+      const box = within(first).getByRole("checkbox", { name: flag });
+      expect(box).not.toBeChecked();
+
+      await fireEvent.click(box);
+      expect(changed()?.groups[0]?.rows[0]?.note).toBe(`for garnish, ${flag}`);
+      expect(
+        within(row(1)).getByRole("checkbox", { name: flag }),
+      ).toBeChecked();
+
+      await fireEvent.click(
+        within(row(1)).getByRole("checkbox", { name: flag }),
+      );
+      expect(changed()?.groups[0]?.rows[0]?.note).toBe("for garnish");
+    },
+  );
+
+  it("ticks a box the note already says", async () => {
+    renderEditor({
+      ...DRAFT,
+      groups: [
+        {
+          name: "",
+          rows: [{ ...EMPTY_ROW, ingredient: "salt", note: "To taste" }],
+        },
+      ],
+    });
+    const first = await edit(1);
+
+    expect(
+      within(first).getByRole("checkbox", { name: "to taste" }),
+    ).toBeChecked();
+    expect(
+      within(first).getByRole("checkbox", { name: "optional" }),
+    ).not.toBeChecked();
+  });
+
+  // #202: Rest (Prep, Sub, Note), each word copying rest to that field.
+  it.each([
+    ["Prep", "preparation"],
+    ["Sub", "substitute"],
+    ["Note", "note"],
+  ] as const)("copies rest to the field %s names", async (word, field) => {
+    const { changed } = renderEditor();
+    const first = await edit(1);
+
+    const copy = within(first).getByRole("button", {
+      name: `Copy rest of row 1 to ${field}`,
+    });
+    expect(copy).toHaveTextContent(word);
+    await fireEvent.click(copy);
+
+    expect(changed()?.groups[0]?.rows[0]).toMatchObject({
+      [field]: "Juice of",
+      rest: "Juice of",
+    });
+  });
+
+  it("copies only the part of rest picked, when there is one", async () => {
+    const { changed } = renderEditor({
+      ...DRAFT,
+      groups: [
+        {
+          name: "",
+          rows: [
+            { ...EMPTY_ROW, ingredient: "basil", rest: "a handful, torn" },
+          ],
+        },
+      ],
+    });
+    const first = await edit(1);
+    const rest = within(first).getByRole("textbox", { name: "Rest" });
+    (rest as HTMLInputElement).setSelectionRange(11, 15);
+
+    await fireEvent.click(
+      within(first).getByRole("button", {
+        name: "Copy rest of row 1 to preparation",
+      }),
+    );
+
+    expect(changed()?.groups[0]?.rows[0]?.preparation).toBe("torn");
+  });
+
+  // #202: folded, a row's rest is greyed, since none of it is saved.
+  it("greys out rest on a folded row", () => {
+    renderEditor();
+
+    const line = within(row(1)).getByRole("button", { name: "Edit row 1" });
+    expect(within(line).getByText("Juice of")).toHaveClass("quiet");
+    expect(within(line).getByText(/2 lemon/)).not.toHaveClass("quiet");
+  });
+
   it("says there are none yet", () => {
     renderEditor({ ...DRAFT, groups: [] });
 

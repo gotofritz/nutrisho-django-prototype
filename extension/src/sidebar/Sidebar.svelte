@@ -532,28 +532,8 @@
   {/if}
 
   {#if draft !== undefined}
-    <DraftEditor
-      {draft}
-      {vocabulary}
-      {issues}
-      onChange={edit}
-      onAskModel={modelOn
-        ? (group, setupId) => void askModel(group, setupId)
-        : undefined}
-      onAskModelBlurb={modelOn
-        ? (setupId) => void askModelBlurb(setupId)
-        : undefined}
-      onAskModelSteps={modelOn
-        ? (setupId) => void askModelSteps(setupId)
-        : undefined}
-      otherModels={otherSetups}
-      defaultModel={modelName}
-      {holdMs}
-      {asking}
-      modelAt={modelAt?.draftId === draft.id ? modelAt.at : undefined}
-      {modelFeedback}
-    />
-
+    <!-- Clip at the top (#202), where it is at hand however long the
+         recipe, and what it says beside it. -->
     <section aria-labelledby="save-heading" class="save">
       <h2 id="save-heading" class="hidden">Save</h2>
       {#if issues.length > 0}
@@ -614,6 +594,27 @@
         >
       </div>
     </section>
+    <DraftEditor
+      {draft}
+      {vocabulary}
+      {issues}
+      onChange={edit}
+      onAskModel={modelOn
+        ? (group, setupId) => void askModel(group, setupId)
+        : undefined}
+      onAskModelBlurb={modelOn
+        ? (setupId) => void askModelBlurb(setupId)
+        : undefined}
+      onAskModelSteps={modelOn
+        ? (setupId) => void askModelSteps(setupId)
+        : undefined}
+      otherModels={otherSetups}
+      defaultModel={modelName}
+      {holdMs}
+      {asking}
+      modelAt={modelAt?.draftId === draft.id ? modelAt.at : undefined}
+      {modelFeedback}
+    />
   {/if}
 
   <section aria-label="Clipping" class="clipping">

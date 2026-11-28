@@ -532,6 +532,23 @@ describe("the save", () => {
     expect(client.sent.map((draft) => draft.id)).toEqual(["draft-0"]);
   });
 
+  // #202: Clip, and what it says, at the top, over the recipe, rather than
+  // after the last step.
+  it("puts Clip and what it says above the recipe", async () => {
+    await ready();
+    const name = await nameField();
+    const clip = screen.getByRole("button", { name: "Clip" });
+
+    expect(
+      clip.compareDocumentPosition(name) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    await fireEvent.click(clip);
+    const status = await screen.findByRole("status");
+    expect(
+      status.compareDocumentPosition(name) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
   // M8: the save may have made names, so the lists load again to know them.
   it("loads the lists again after a save, keeping the ones shown meanwhile", async () => {
     const client = answering(COOKS_LISTS);
