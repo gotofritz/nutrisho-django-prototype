@@ -43,6 +43,10 @@ recipe's address, trashed or not, for good.
 `normalise_units` lists the legacy free-text units and what each becomes;
 `--apply` moves them onto the unit vocabulary (see `units.md`).
 
+`add_ingredient_synonyms` lists the aliases the curated synonym list
+(`services/ingredient_synonyms.py`, #203) would add; `--apply` adds them,
+journalled as the first superuser (see `ingredient-cleanup-tool.md`).
+
 `seed_demo` (`make seed`, #71) is development-only sample data: four recipes
 for one user (`demo`, created as staff with a random password, unless
 `--username` names an existing account) that cover duplicates of every class,

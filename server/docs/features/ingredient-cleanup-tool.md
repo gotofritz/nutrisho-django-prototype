@@ -182,7 +182,12 @@ that already resolve to the survivor (case variants, its plural). Either way,
 as a merge: those rows fold into the canonical through `delete_ingredients`, so
 no recipe is stranded. `delete_ingredients` hands a global replacement the
 victims' aliases (so Merge, Merge plural, Promote and Delete-with-replacement
-never orphan one); without one, aliases cascade with their ingredient. Capturing
+never orphan one); without one, aliases cascade with their ingredient. (3) **From
+the synonym list** (#203): `services/ingredient_synonyms.py` holds common
+synonyms, each group British name first; `add_ingredient_synonyms --apply`
+takes the first name of a group that is a global ingredient as the canonical
+and adds the rest through `add_alias`, as one journalled change, leaving a name
+aliased elsewhere alone. Edit the list there, and run it again. Capturing
 an alias when a user picks a canonical for an unknown name during input (plan
 008 phase 7) waits for an input flow that asks.
 
