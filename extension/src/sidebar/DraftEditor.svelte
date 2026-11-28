@@ -8,6 +8,13 @@
   import type { IngredientRow } from "@/core/ingredient-line";
   import { lineOf } from "@/core/model-answer";
   import {
+    fromRest,
+    hasNoteFlag,
+    withNoteFlag,
+    type NoteFlag,
+    type RestTarget,
+  } from "@/core/row-edits";
+  import {
     addGroup,
     addRow,
     addStep,
@@ -48,7 +55,10 @@
     onChange,
     onAskModel,
     onAskModelSteps,
+    onAskModelBlurb,
     otherModels = [],
+    defaultModel,
+    holdMs,
     asking = false,
     modelAt,
     modelFeedback,
@@ -62,12 +72,18 @@
     onAskModel?: (groupIndex: number, setupId?: string) => void;
     /** Ask the user's own model to rewrite the steps; none while it is off. */
     onAskModelSteps?: (setupId?: string) => void;
+    /** Ask the user's own model to rewrite the blurb (#205); none while it is off. */
+    onAskModelBlurb?: (setupId?: string) => void;
     /** The set-ups other than the default, to ask one once (#183). */
     otherModels?: readonly { readonly id: string; readonly name: string }[];
+    /** The default set-up's name, which heads that menu, faded. */
+    defaultModel?: string;
+    /** How long *Ask the model* is held to open that menu. */
+    holdMs?: number;
     /** A model is working on a group, so no other is asked meanwhile. */
     asking?: boolean;
-    /** The group, or the steps, the model was last asked about. */
-    modelAt?: number | "steps";
+    /** The group, the steps or the blurb the model was last asked about. */
+    modelAt?: number | "steps" | "blurb";
     /** What the model is doing or did, shown beside the button pressed. */
     modelFeedback?: Snippet;
   } = $props();
@@ -358,8 +374,44 @@
 
   /** A folded row, on one line as a recipe prints it: `2 lemon · Juice of`. */
   function summary(row: IngredientRow): string {
-    const named = lineOf({ ...row, rest: "" });
-    return [named, row.rest].filter((part) => part.trim() !== "").join(" · ");
+    return [named(row), row.rest]
+      .filter((part) => part.trim() !== "")
+      .join(" · ");
+  }
+
+  /** A row as a recipe prints it, without the rest, which is not saved. */
+  function named(row: IngredientRow): string {
+    return lineOf({ ...row, rest: "" });
+  }
+
+  /** The boxes a row ticks into its note (#202). */
+  const NOTE_FLAGS: readonly NoteFlag[] = ["to taste", "optional"];
+
+  /** Rest's words, each copying it to its field (#202). */
+  const REST_TARGETS: readonly { field: RestTarget; word: string }[] = [
+    { field: "preparation", word: "Prep" },
+    { field: "substitute", word: "Sub" },
+    { field: "note", word: "Note" },
+  ];
+
+  /** Copy rest to a field: the part of it picked, or all of it. */
+  function copyRest(
+    groupIndex: number,
+    index: number,
+    row: IngredientRow,
+    field: RestTarget,
+    restId: string,
+  ) {
+    const input = document.getElementById(restId);
+    const { selectionStart: from, selectionEnd: to } =
+      input instanceof HTMLInputElement
+        ? input
+        : { selectionStart: null, selectionEnd: null };
+    const text =
+      from !== null && to !== null && to > from
+        ? row.rest.slice(from, to)
+        : row.rest;
+    onChange(updateRow(draft, groupIndex, index, fromRest(row, field, text)));
   }
 
   /** Whether a folded row holds a name the lists do not, to say so on its line. */
@@ -460,6 +512,21 @@
             onChange(withDetails(draft, { blurb: valueOf(event) }))}></textarea>
       </label>
       {@render longNote("blurb")}
+      {#if onAskModelBlurb !== undefined && draft.blurb.trim() !== ""}
+        <div class="blurb-ask">
+          <AskButton
+            label="Ask the model about the blurb"
+            others={otherModels}
+            current={defaultModel}
+            {holdMs}
+            disabled={asking}
+            onAsk={(setupId) => onAskModelBlurb(setupId)}
+          />
+        </div>
+      {/if}
+      {#if modelAt === "blurb"}
+        {@render modelFeedback?.()}
+      {/if}
 
       <div class="source">
         <label>
@@ -579,6 +646,8 @@
             <AskButton
               label="Ask the model about group {groupIndex + 1}"
               others={otherModels}
+              current={defaultModel}
+              {holdMs}
               disabled={asking}
               onAsk={(setupId) => onAskModel(groupIndex, setupId)}
             />
@@ -617,8 +686,14 @@
               aria-label="Edit row {index + 1}"
               aria-expanded="false"
               onclick={() => toggle(key)}
-              ><span class:quiet={summary(row) === ""}
-                >{summary(row) || "Empty row"}</span
+              ><span
+                >{#if summary(row) === ""}<span class="quiet">Empty row</span
+                  >{:else}{named(row)}{#if row.rest.trim() !== ""}{named(
+                      row,
+                    ) === ""
+                      ? ""
+                      : " · "}<span class="quiet">{row.rest}</span
+                    >{/if}{/if}</span
               >{#if holdsNew(row)}
                 <span class="new">new</span>{/if}</button
             >
@@ -666,11 +741,13 @@
           {/if}
           {#if !shut}
             {@const restNote = `group-${groupIndex}-row-${index}-rest-note`}
+            {@const restId = `group-${groupIndex}-row-${index}-rest`}
             {@const label = (field: RowField) =>
               ROW_FIELDS.find((each) => each.field === field)?.label ?? field}
-            <!-- As a recipe says it: quantity, unit and ingredient on one
-                 line; preparation and note beneath quantity and unit, with
-                 substitute and rest beneath the ingredient. -->
+            <!-- As a recipe says it, quantity, unit and ingredient on one
+                 line (#202): the note and the substitute beneath; the two
+                 boxes, which go into the note, and preparation beneath them;
+                 and rest across the row. -->
             <div class="fields">
               {#each ["quantity", "unit", "ingredient"] as const as field (field)}
                 <div class="cell">
@@ -688,8 +765,8 @@
                   groupIndex,
                   index,
                   row,
-                  "preparation",
-                  label("preparation"),
+                  "note",
+                  label("note"),
                 )}
               </div>
               <div class="cell">
@@ -701,33 +778,64 @@
                   label("substitute"),
                 )}
               </div>
-              <div class="cell wide">
+              <div class="cell wide flags">
+                {#each NOTE_FLAGS as flag (flag)}
+                  <label class="flag">
+                    <input
+                      type="checkbox"
+                      checked={hasNoteFlag(row.note, flag)}
+                      onchange={(event) =>
+                        onChange(
+                          updateRow(draft, groupIndex, index, {
+                            note: withNoteFlag(
+                              row.note,
+                              flag,
+                              event.currentTarget.checked,
+                            ),
+                          }),
+                        )}
+                    />
+                    {flag}
+                  </label>
+                {/each}
+              </div>
+              <div class="cell">
                 {@render rowField(
                   groupIndex,
                   index,
                   row,
-                  "note",
-                  label("note"),
+                  "preparation",
+                  label("preparation"),
                 )}
               </div>
-              <!-- Rest is the row's scratch pad: what is wanted is moved out of it. -->
-              <div class="cell">
+              <!-- Rest is the row's scratch pad: what is wanted is copied
+                   out of it, by its words or by hand. -->
+              <div class="cell full">
+                <span class="rest-head"
+                  ><label for={restId}>Rest</label>
+                  ({#each REST_TARGETS as { field, word }, at (field)}{#if at > 0},&nbsp;{/if}<button
+                      type="button"
+                      class="copy"
+                      aria-label="Copy rest of row {index + 1} to {field}"
+                      onclick={() =>
+                        copyRest(groupIndex, index, row, field, restId)}
+                      >{word}</button
+                    >{/each})</span
+                >
                 <div class="rest">
-                  <label>
-                    Rest
-                    <input
-                      type="text"
-                      class="scratch"
-                      value={row.rest}
-                      aria-describedby={restNote}
-                      oninput={(event) =>
-                        onChange(
-                          updateRow(draft, groupIndex, index, {
-                            rest: valueOf(event),
-                          }),
-                        )}
-                    />
-                  </label>
+                  <input
+                    type="text"
+                    class="scratch"
+                    id={restId}
+                    value={row.rest}
+                    aria-describedby={restNote}
+                    oninput={(event) =>
+                      onChange(
+                        updateRow(draft, groupIndex, index, {
+                          rest: valueOf(event),
+                        }),
+                      )}
+                  />
                   <button
                     type="button"
                     class="icon"
@@ -767,6 +875,8 @@
       <AskButton
         label="Ask the model about the steps"
         others={otherModels}
+        current={defaultModel}
+        {holdMs}
         disabled={asking}
         onAsk={(setupId) => onAskModelSteps(setupId)}
       />
@@ -979,6 +1089,52 @@
     grid-column: span 2;
   }
 
+  .cell.full {
+    grid-column: 1 / -1;
+  }
+
+  .flags {
+    align-self: end;
+  }
+
+  .flag {
+    display: flex;
+    gap: 0.375rem;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .cell .flag input {
+    width: auto;
+    margin: 0;
+    accent-color: var(--marmalade);
+  }
+
+  /* Reads as one label, `Rest (Prep, Sub, Note)`: the words are buttons. */
+  .rest-head {
+    color: var(--marmalade);
+    font-family: var(--font-caps);
+    font-size: 0.875rem;
+    letter-spacing: 0.06em;
+  }
+
+  .rest-head label {
+    display: inline;
+  }
+
+  .copy {
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+    text-decoration: underline dotted;
+  }
+
+  .rest > input {
+    flex: 1;
+    min-width: 0;
+  }
+
   .cell input {
     width: 100%;
     min-width: 0;
@@ -1026,10 +1182,6 @@
     display: flex;
     align-items: end;
     gap: 0.25rem;
-  }
-
-  .rest > label {
-    flex: 1;
   }
 
   /* A scratch pad: pencil, italic and a dashed line, since none of it is saved. */
@@ -1126,6 +1278,12 @@
   .new {
     justify-self: start;
     margin-top: -0.25rem;
+  }
+
+  /* Under the blurb, at its end, as the steps' button sits by their heading. */
+  .blurb-ask {
+    display: flex;
+    justify-content: flex-end;
   }
 
   /* Numbered by each title's placeholder, so the list needs no indent. */

@@ -36,6 +36,9 @@ export function createUserModel(deps: UserModelDeps): LineModel {
     async rewriteSteps(steps) {
       return (await chosen())?.rewriteSteps(steps) ?? notSetUp;
     },
+    async rewriteBlurb(blurb) {
+      return (await chosen())?.rewriteBlurb(blurb) ?? notSetUp;
+    },
     async check() {
       return (await chosen())?.check() ?? notSetUp;
     },

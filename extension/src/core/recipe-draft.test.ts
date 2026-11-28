@@ -140,6 +140,28 @@ describe("an ingredient group from text", () => {
     ]);
   });
 
+  // #204: in a language the lists do not have, a row a line still takes its
+  // amount and unit.
+  it("reads a row a line in a language the lists do not have", () => {
+    const panzanella = groupFrom(
+      "50g di pane secco tagliato a cubetti\n80g di acqua di mozzarella\n30g pomodorini\n2 pesche tabacchiere\n10g di prezzemolo\n4 filetti di acciughe\n50g di mozzarella\nsale, olio Evo, pepe nero",
+      LISTS,
+    );
+
+    expect(
+      panzanella.rows.map(({ quantity, unit, rest }) => [quantity, unit, rest]),
+    ).toEqual([
+      ["50", "g", "di pane secco tagliato a cubetti"],
+      ["80", "g", "di acqua di mozzarella"],
+      ["30", "g", "pomodorini"],
+      ["2", "", "pesche tabacchiere"],
+      ["10", "g", "di prezzemolo"],
+      ["4", "", "filetti di acciughe"],
+      ["50", "g", "di mozzarella"],
+      ["", "", "sale, olio Evo, pepe nero"],
+    ]);
+  });
+
   // Pasted from the page, `(about 2 tsp)` and `peeled and sliced` can land
   // on lines of their own.
   it("joins a line to the one before when it ends in a comma, or starts with a bracket", () => {

@@ -277,9 +277,9 @@ button.add:hover {
   color: var(--ink);
 }
 
-/* A hold fills the button with honey over its 2 seconds. */
+/* A hold fills the button with honey over its length, a second unless set. */
 button.holding {
-  animation: hold 2s linear forwards;
+  animation: hold var(--hold, 1s) linear forwards;
   background: linear-gradient(to right, var(--honey-wash) 50%, transparent 50%)
     right / 200% 100% no-repeat;
 }

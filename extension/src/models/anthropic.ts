@@ -1,4 +1,9 @@
 import { MODEL_INSTRUCTION, numbered, rowsSchema } from "@/core/model-answer";
+import {
+  BLURB_INSTRUCTION,
+  BLURB_SCHEMA,
+  blurbInput,
+} from "@/core/model-blurb";
 import { STEPS_INSTRUCTION, STEPS_SCHEMA } from "@/core/model-steps";
 import { ANTHROPIC_ADDRESS } from "@/core/model-settings";
 import type { LineModel, ModelError } from "@/core/ports/types";
@@ -162,6 +167,14 @@ export function createAnthropicModel(deps: AnthropicDeps): LineModel {
         instruction: STEPS_INSTRUCTION,
         schema: STEPS_SCHEMA,
         input: steps,
+      }),
+    rewriteBlurb: (blurb) =>
+      ask({
+        tool: "blurb",
+        description: "The blurb, rewritten short and in English.",
+        instruction: BLURB_INSTRUCTION,
+        schema: BLURB_SCHEMA,
+        input: blurbInput(blurb),
       }),
     /** Looking the model up checks the key and the model's name, for free. */
     async check() {

@@ -21,6 +21,7 @@ function anyServer() {
           content: [
             { type: "tool_use", name: "rows", input: ROWS },
             { type: "tool_use", name: "steps", input: ROWS },
+            { type: "tool_use", name: "blurb", input: ROWS },
           ],
         }),
       ),
@@ -83,6 +84,29 @@ describe("createUserModel", () => {
     const answer = await model(fetch, BUILT_IN).rewriteSteps([
       { title: "", text: "Fry" },
     ]);
+
+    expect(answer.ok || answer.error.kind).toBe("not-set-up");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it.each(["mlx", "llama", "anthropic"] as const)(
+    "asks %s to rewrite the blurb",
+    async (backend) => {
+      const fetch = anyServer();
+
+      const answer = await model(fetch, {
+        ...defaultsFor(backend),
+        key: "sk-ant-api03-clipper",
+      }).rewriteBlurb("Una insalata.");
+
+      expect(answer).toEqual({ ok: true, value: ROWS });
+    },
+  );
+
+  it("rewrites no blurb while the built-in scan is chosen", async () => {
+    const fetch = anyServer();
+
+    const answer = await model(fetch, BUILT_IN).rewriteBlurb("Una insalata.");
 
     expect(answer.ok || answer.error.kind).toBe("not-set-up");
     expect(fetch).not.toHaveBeenCalled();

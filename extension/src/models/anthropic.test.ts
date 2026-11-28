@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { MODEL_INSTRUCTION, rowsSchema } from "@/core/model-answer";
+import { BLURB_INSTRUCTION, BLURB_SCHEMA } from "@/core/model-blurb";
 import { STEPS_INSTRUCTION, STEPS_SCHEMA } from "@/core/model-steps";
 import type { FetchLike } from "@/nutrisho/client";
 
@@ -126,6 +127,31 @@ describe("createAnthropicModel", () => {
       messages: [
         { role: "user", content: '[{"title":"","text":"Fry it all"}]' },
       ],
+    });
+  });
+
+  it("forces the blurb tool to rewrite the blurb", async () => {
+    const BLURB = { blurb: "A summer salad." };
+    const fetch = replying(200, toolCall(BLURB, "blurb"));
+
+    const answer = await model(fetch).rewriteBlurb("Una insalata estiva.");
+
+    expect(answer).toEqual({ ok: true, value: BLURB });
+    const body = JSON.parse(String(fetch.mock.calls[0]?.[1]?.body)) as Record<
+      string,
+      unknown
+    >;
+    expect(body).toMatchObject({
+      system: BLURB_INSTRUCTION,
+      tools: [
+        {
+          name: "blurb",
+          description: "The blurb, rewritten short and in English.",
+          input_schema: BLURB_SCHEMA,
+        },
+      ],
+      tool_choice: { type: "tool", name: "blurb" },
+      messages: [{ role: "user", content: '{"blurb":"Una insalata estiva."}' }],
     });
   });
 

@@ -1,14 +1,19 @@
 <script lang="ts">
   import { tick } from "svelte";
 
+  import { HOLD_MS } from "@/core/model-settings";
+
   /**
-   * *Ask the model* (M13): a click asks the default set-up; a 2 second hold,
-   * a right-click, the context-menu key or Shift+Enter open a menu of the
-   * other set-ups, to ask one of them once (#183).
+   * *Ask the model* (M13): a click asks the default set-up; a hold (a
+   * second, unless the user set another), a right-click, the context-menu
+   * key or Shift+Enter open a menu of the other set-ups, to ask one of them
+   * once (#183). The default heads the menu, faded, as a reminder.
    */
   const {
     label,
     others,
+    current,
+    holdMs = HOLD_MS,
     disabled,
     onAsk,
   }: {
@@ -16,14 +21,19 @@
     label: string;
     /** The set-ups other than the default, in their order. */
     others: readonly { readonly id: string; readonly name: string }[];
+    /** The default set-up's name, shown in the menu but not to be picked. */
+    current?: string;
+    /** How long a press is held before the menu opens. */
+    holdMs?: number;
     disabled: boolean;
     /** Asks the set-up with this id, or the default when there is none. */
     onAsk: (setupId?: string) => void;
   } = $props();
 
-  const HOLD_MS = 2000;
-  const HINT =
-    "Hold for 2 seconds, right-click or press Shift+Enter to ask another model once";
+  const seconds = $derived(holdMs / 1000);
+  const hint = $derived(
+    `Hold for ${seconds} ${seconds === 1 ? "second" : "seconds"}, right-click or press Shift+Enter to ask another model once`,
+  );
 
   let open = $state(false);
   /** A hold is under way: the button fills while it lasts. */
@@ -38,7 +48,11 @@
   const more = $derived(others.length > 0);
 
   function items(): HTMLElement[] {
-    return [...(menu?.querySelectorAll<HTMLElement>("[role=menuitem]") ?? [])];
+    return [
+      ...(menu?.querySelectorAll<HTMLElement>(
+        "[role=menuitem]:not(:disabled)",
+      ) ?? []),
+    ];
   }
 
   async function openMenu() {
@@ -63,7 +77,7 @@
       holding = false;
       held = true;
       void openMenu();
-    }, HOLD_MS);
+    }, holdMs);
   }
 
   function letGo() {
@@ -132,10 +146,11 @@
     bind:this={button}
     type="button"
     class:holding
+    style:--hold="{holdMs}ms"
     aria-label={label}
     aria-haspopup={more ? "menu" : undefined}
     aria-expanded={more ? open : undefined}
-    title={more ? HINT : undefined}
+    title={more ? hint : undefined}
     {disabled}
     onclick={click}
     onpointerdown={press}
@@ -152,6 +167,13 @@
       aria-label="Ask another model"
       bind:this={menu}
     >
+      {#if current !== undefined}
+        <li role="none">
+          <button type="button" role="menuitem" tabindex="-1" disabled
+            >{current} (default)</button
+          >
+        </li>
+      {/if}
       {#each others as other, index (other.id)}
         <li role="none">
           <button
