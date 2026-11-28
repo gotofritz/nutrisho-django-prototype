@@ -137,7 +137,8 @@ jobs:
   # Firefox's update check at it. Runs in the store-publishing environment,
   # whose required reviewer lets it start and whose secrets hold the AMO
   # keys (#145). Runs no project code: web-ext comes from npm, at the
-  # version package.json pins, with no install of ours.
+  # version package.json pins, read from it when the job runs, with no
+  # install of ours.
   ext-sign:
     needs: ext-release
     if: needs.ext-release.outputs.tag != ''
@@ -174,7 +175,8 @@ jobs:
           fi
           version="${TAG#ext-v}"
           unzip -q "zips/nutrisho-clipper-$version-firefox.zip" -d firefox
-          npx --yes web-ext@10.8.0 sign --source-dir firefox --artifacts-dir signed \
+          web_ext=$(node -p "require('./extension/package.json').devDependencies['web-ext']")
+          npx --yes "web-ext@$web_ext" sign --source-dir firefox --artifacts-dir signed \
             --channel unlisted --upload-source-code "zips/nutrisho-clipper-$version-sources.zip"
           mv signed/*.xpi "nutrisho-clipper-$version-firefox.xpi"
 
