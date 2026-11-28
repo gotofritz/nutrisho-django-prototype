@@ -158,8 +158,10 @@
     onpointerleave={letGo}
     onpointercancel={letGo}
     oncontextmenu={contextMenu}
-    onkeydown={buttonKey}>Ask the model</button
+    onkeydown={buttonKey}
   >
+    Ask the model
+  </button>
   {#if open}
     <ul
       class="ask-menu"
@@ -169,9 +171,9 @@
     >
       {#if current !== undefined}
         <li role="none">
-          <button type="button" role="menuitem" tabindex="-1" disabled
-            >{current} (default)</button
-          >
+          <button type="button" role="menuitem" tabindex="-1" disabled>
+            {current} (default)
+          </button>
         </li>
       {/if}
       {#each others as other, index (other.id)}
@@ -181,8 +183,10 @@
             role="menuitem"
             tabindex="-1"
             onclick={() => pick(other.id)}
-            onkeydown={(event) => menuKey(event, index)}>{other.name}</button
+            onkeydown={(event) => menuKey(event, index)}
           >
+            {other.name}
+          </button>
         </li>
       {/each}
     </ul>
