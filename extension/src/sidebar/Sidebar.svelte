@@ -13,7 +13,13 @@
     type Drafts,
   } from "@/core/drafts";
   import { describeSplit, lineOf, readModelAnswer } from "@/core/model-answer";
-  import { chosenSetup, type ModelSetup } from "@/core/model-settings";
+  import {
+    HOLD_MS,
+    chosenSetup,
+    holdOf,
+    type ModelSetup,
+  } from "@/core/model-settings";
+  import { describeBlurb, readBlurbAnswer } from "@/core/model-blurb";
   import { describeSteps, readStepsAnswer } from "@/core/model-steps";
   import type {
     ClippingStore,
@@ -29,6 +35,7 @@
     checkDraft,
     explainRefusal,
     type DraftIssue,
+    withDetails,
     withGroupRows,
     withSteps,
     withOpenGroup,
@@ -113,6 +120,8 @@
   let modelName = $state("The model");
   /** The set-ups other than the default, which a hold on *Ask* offers. */
   let otherSetups = $state.raw<readonly ModelSetup[]>([]);
+  /** How long *Ask the model* is held to open the menu of the others. */
+  let holdMs = $state(HOLD_MS);
   let modelCheck = $state<ModelCheck | undefined>(undefined);
   let asking = $state(false);
   /** What the model last changed, and how to take it back. */
@@ -120,16 +129,17 @@
     | {
         readonly draftId: string;
         readonly text: string;
-        /** "rows" or "steps", for the Undo button. */
+        /** "rows", "steps" or "blurb", for the Undo button. */
         readonly changed: string;
         readonly undo: (onto: RecipeDraft) => RecipeDraft;
       }
     | undefined
   >(undefined);
   let modelFailure = $state<Problem | undefined>(undefined);
-  /** Which draft's group, or its steps, the model was last asked about. */
+  /** Which draft's group, its steps or its blurb the model was last asked about. */
   let modelAt = $state.raw<
-    { readonly draftId: string; readonly at: number | "steps" } | undefined
+    | { readonly draftId: string; readonly at: number | "steps" | "blurb" }
+    | undefined
   >(undefined);
 
   const draft = $derived(currentDraft(drafts));
@@ -181,6 +191,7 @@
     otherSetups = chosen.ok
       ? chosen.value.setups.filter((other) => other.id !== setup?.id)
       : [];
+    holdMs = chosen.ok ? holdOf(chosen.value) : HOLD_MS;
     if (modelOn) void checkModel();
     else modelCheck = undefined;
   }
@@ -357,6 +368,47 @@
     };
   }
 
+  /**
+   * Send the blurb to the user's own model, to compact and put in English
+   * (#205). Taken whole when its shape is right, as the steps are, and Undo
+   * puts the blurb back.
+   */
+  async function askModelBlurb(setupId?: string) {
+    const asked = draft;
+    if (asked === undefined || asked.blurb.trim() === "") return;
+    const before = asked.blurb;
+    modelAt = { draftId: asked.id, at: "blurb" };
+    modelNote = undefined;
+    modelFailure = undefined;
+    const { asker, who } = askerFor(setupId);
+    asking = true;
+    const answer = await asker.rewriteBlurb(before);
+    asking = false;
+    if (!answer.ok) {
+      modelFailure = modelProblem(answer.error);
+      return;
+    }
+    const read = readBlurbAnswer(answer.value);
+    if (!read.ok) {
+      modelFailure = {
+        cause: read.error,
+        action: "The blurb is as it was. Try again, or edit it by hand.",
+        fix: "retry",
+      };
+      return;
+    }
+    const current = currentDraft(drafts) ?? asked;
+    await keep(
+      withDraft(drafts, withDetails(current, { blurb: read.value.blurb })),
+    );
+    modelNote = {
+      draftId: asked.id,
+      text: describeBlurb(who, read.value.language),
+      changed: "blurb",
+      undo: (onto) => withDetails(onto, { blurb: before }),
+    };
+  }
+
   async function undoModel() {
     const note = modelNote;
     const current = currentDraft(drafts);
@@ -480,23 +532,8 @@
   {/if}
 
   {#if draft !== undefined}
-    <DraftEditor
-      {draft}
-      {vocabulary}
-      {issues}
-      onChange={edit}
-      onAskModel={modelOn
-        ? (group, setupId) => void askModel(group, setupId)
-        : undefined}
-      onAskModelSteps={modelOn
-        ? (setupId) => void askModelSteps(setupId)
-        : undefined}
-      otherModels={otherSetups}
-      {asking}
-      modelAt={modelAt?.draftId === draft.id ? modelAt.at : undefined}
-      {modelFeedback}
-    />
-
+    <!-- Clip at the top (#202), where it is at hand however long the
+         recipe, and what it says beside it. -->
     <section aria-labelledby="save-heading" class="save">
       <h2 id="save-heading" class="hidden">Save</h2>
       {#if issues.length > 0}
@@ -557,6 +594,27 @@
         >
       </div>
     </section>
+    <DraftEditor
+      {draft}
+      {vocabulary}
+      {issues}
+      onChange={edit}
+      onAskModel={modelOn
+        ? (group, setupId) => void askModel(group, setupId)
+        : undefined}
+      onAskModelBlurb={modelOn
+        ? (setupId) => void askModelBlurb(setupId)
+        : undefined}
+      onAskModelSteps={modelOn
+        ? (setupId) => void askModelSteps(setupId)
+        : undefined}
+      otherModels={otherSetups}
+      defaultModel={modelName}
+      {holdMs}
+      {asking}
+      modelAt={modelAt?.draftId === draft.id ? modelAt.at : undefined}
+      {modelFeedback}
+    />
   {/if}
 
   <section aria-label="Clipping" class="clipping">

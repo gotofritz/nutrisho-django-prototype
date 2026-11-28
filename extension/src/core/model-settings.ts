@@ -174,6 +174,39 @@ export type UnsavedSetup = Omit<ModelSetup, "id"> & { readonly id?: string };
 export interface ModelChoices {
   readonly setups: readonly ModelSetup[];
   readonly chosen: string | undefined;
+  /** How long *Ask the model* is held to open its menu; `HOLD_MS` unset. */
+  readonly holdMs?: number;
+}
+
+/** A second's hold opens *Ask the model*'s menu, unless the user set another. */
+export const HOLD_MS = 1000;
+const HOLD_RANGE_MS = { min: 500, max: 5000 } as const;
+
+function isHold(value: unknown): value is number {
+  return (
+    typeof value === "number" &&
+    value >= HOLD_RANGE_MS.min &&
+    value <= HOLD_RANGE_MS.max
+  );
+}
+
+/** The hold that opens *Ask the model*'s menu, in milliseconds. */
+export function holdOf(choices: ModelChoices): number {
+  return choices.holdMs ?? HOLD_MS;
+}
+
+/** The hold as typed, in seconds, checked. */
+export function withHold(
+  choices: ModelChoices,
+  typed: string,
+): Result<ModelChoices, string> {
+  const text = typed.trim().replace(",", ".");
+  const ms = /^\d+(\.\d+)?$/.test(text) ? Math.round(Number(text) * 1000) : NaN;
+  return isHold(ms)
+    ? ok({ ...choices, holdMs: ms })
+    : err(
+        `Hold for between ${HOLD_RANGE_MS.min / 1000} and ${HOLD_RANGE_MS.max / 1000} seconds.`,
+      );
 }
 
 export const NO_CHOICES: ModelChoices = { setups: [], chosen: undefined };
@@ -218,7 +251,11 @@ function readSetup(stored: unknown): ModelSetup | undefined {
 /** What was stored: the set-ups, or the single model saved before them. */
 export function readModelChoices(stored: unknown): ModelChoices {
   if (typeof stored !== "object" || stored === null) return NO_CHOICES;
-  const raw = stored as { setups?: unknown; chosen?: unknown };
+  const raw = stored as {
+    setups?: unknown;
+    chosen?: unknown;
+    holdMs?: unknown;
+  };
   if (!Array.isArray(raw.setups)) {
     return choicesFrom(readModelSettings(stored));
   }
@@ -229,7 +266,9 @@ export function readModelChoices(stored: unknown): ModelChoices {
   const chosen = setups.some((setup) => setup.id === raw.chosen)
     ? (raw.chosen as string)
     : undefined;
-  return { setups, chosen };
+  return isHold(raw.holdMs)
+    ? { setups, chosen, holdMs: raw.holdMs }
+    : { setups, chosen };
 }
 
 /** The set-up *Ask the model* uses; undefined for the built-in scan. */
@@ -266,6 +305,7 @@ export function saveSetup(
     Math.max(0, ...choices.setups.map((one) => Number(one.id) || 0)) + 1,
   );
   return {
+    ...choices,
     setups: [...choices.setups, { ...setup, id }],
     chosen: choices.setups.length === 0 ? id : choices.chosen,
   };
@@ -274,6 +314,7 @@ export function saveSetup(
 /** Remove a set-up; the built-in scan is the default if it was. */
 export function removeSetup(choices: ModelChoices, id: string): ModelChoices {
   return {
+    ...choices,
     setups: choices.setups.filter((setup) => setup.id !== id),
     chosen: choices.chosen === id ? undefined : choices.chosen,
   };

@@ -135,7 +135,7 @@ export interface ModelError {
 
 /**
  * The user's own model (D20), which splits ingredient lines into rows and
- * rewrites the method.
+ * rewrites the method and the blurb.
  */
 export interface LineModel {
   /**
@@ -150,6 +150,12 @@ export interface LineModel {
    * Never throws.
    */
   rewriteSteps(steps: readonly Step[]): Promise<Result<unknown, ModelError>>;
+  /**
+   * The model's rewrite of this blurb (#205), as JSON and unchecked:
+   * `readBlurbAnswer` (core/model-blurb) decides whether it is used.
+   * Never throws.
+   */
+  rewriteBlurb(blurb: string): Promise<Result<unknown, ModelError>>;
   /**
    * Whether the model answers at all, sending nothing of the recipe (#182).
    * Never throws.
