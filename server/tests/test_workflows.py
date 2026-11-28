@@ -1,6 +1,5 @@
 """Tests for the GitHub Actions workflows: token scope, pinning and run limits."""
 
-import json
 import os
 import re
 import shutil
@@ -517,11 +516,19 @@ def test_ext_sign_job_runs_only_for_a_new_release_with_a_reviewer():
 
 
 def test_ext_sign_job_signs_unlisted_with_the_pinned_web_ext():
-    """AMO signs the zip the checks built, as unlisted (D22), with the web-ext the project pins."""
-    package = json.loads((ROOT / "extension" / "package.json").read_text())
+    """AMO signs the zip the checks built, as unlisted (D22), with the web-ext the project pins.
+
+    The job installs none of the extension's dependencies, as it holds the AMO
+    keys, so it runs web-ext from npm; it reads the version from package.json
+    when it runs, so that a bump there needs no second edit here.
+    """
     scripts = run_lines({"jobs": {"ext-sign": ext_sign_job()}})
 
-    assert f"npx --yes web-ext@{package['devDependencies']['web-ext']} sign" in scripts
+    assert (
+        "web_ext=$(node -p \"require('./extension/package.json')"
+        ".devDependencies['web-ext']\")" in scripts
+    )
+    assert 'npx --yes "web-ext@$web_ext" sign' in scripts
     assert "--channel unlisted" in scripts
     assert "--upload-source-code" in scripts
     assert 'gh release upload "$TAG"' in scripts

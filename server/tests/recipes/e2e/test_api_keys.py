@@ -17,6 +17,9 @@ def test_make_copy_and_revoke_a_key(signed_in: Page, user):
 
     signed_in.get_by_label("Name").fill("Firefox clipper")
     signed_in.get_by_role("button", name="Make a key").click()
+    # Copy works once the new page has run app.js, which is deferred; the
+    # click returns as soon as that page starts loading (#211's flaky run).
+    signed_in.wait_for_load_state()
 
     key_box = signed_in.get_by_label("New API key")
     key = key_box.input_value()
