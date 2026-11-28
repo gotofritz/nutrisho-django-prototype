@@ -3,8 +3,8 @@
     "nutrisho-clipper@gotofritz.net": {
       "updates": [
         {
-          "version": "0.1.0",
-          "update_link": "https://github.com/gotofritz/nutrisho-django-prototype/releases/download/ext-v0.1.0/nutrisho-clipper-0.1.0-firefox.xpi"
+          "version": "0.2.0",
+          "update_link": "https://github.com/gotofritz/nutrisho-django-prototype/releases/download/ext-v0.2.0/nutrisho-clipper-0.2.0-firefox.xpi"
         }
       ]
     }
