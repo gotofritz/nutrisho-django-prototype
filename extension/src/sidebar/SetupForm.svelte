@@ -185,9 +185,9 @@
   </div>
 
   <div class="field">
-    <label for="setup-key"
-      >{chosen.backend === "anthropic" ? "Anthropic key" : "Server key"}</label
-    >
+    <label for="setup-key">
+      {chosen.backend === "anthropic" ? "Anthropic key" : "Server key"}
+    </label>
     <input
       id="setup-key"
       type="password"

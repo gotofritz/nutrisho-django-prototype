@@ -468,15 +468,16 @@
       aria-label="Edit the details"
       aria-expanded="false"
       onclick={() => toggle(DETAILS)}
-      ><span
-        ><span class:quiet={detailsLine === ""}
-          >{detailsLine || "No servings, cuisine or tags yet"}</span
-        >{#if cuisineIsNew || newTags.length > 0}&nbsp;<span class="new"
-            >new</span
-          >{/if}</span
-      >{#if draft.blurb.trim() !== ""}
-        <span class="blurb">{draft.blurb}</span>{/if}</button
     >
+      <span>
+        <span class:quiet={detailsLine === ""}>
+          {detailsLine || "No servings, cuisine or tags yet"}
+        </span>{#if cuisineIsNew || newTags.length > 0}&nbsp;<span class="new">
+            new
+          </span>{/if}
+      </span>{#if draft.blurb.trim() !== ""}
+        <span class="blurb">{draft.blurb}</span>{/if}
+    </button>
   {:else}
     <div class="details open">
       <div class="tools">
@@ -486,8 +487,10 @@
           aria-label="Fold the details"
           title="Fold"
           aria-expanded="true"
-          onclick={() => toggle(DETAILS)}>▲</button
+          onclick={() => toggle(DETAILS)}
         >
+          ▲
+        </button>
       </div>
       <label>
         Servings
@@ -547,8 +550,10 @@
             target="_blank"
             rel="noreferrer"
             aria-label="Open the source"
-            title="Open the source in a new tab">↗</a
+            title="Open the source in a new tab"
           >
+            ↗
+          </a>
         {/if}
       </div>
       {@render longNote("source")}
@@ -569,10 +574,9 @@
         />
       </label>
       {#if cuisineIsNew}
-        <span class="new" id="cuisine-new"
-          >new<span class="hidden">: saving makes it one of your own</span
-          ></span
-        >
+        <span class="new" id="cuisine-new">
+          new<span class="hidden">: saving makes it one of your own</span>
+        </span>
       {/if}
       {@render longNote("cuisine")}
 
@@ -590,11 +594,11 @@
         />
       </label>
       {#if newTags.length > 0}
-        <span class="new" id="tags-new"
-          >new: {newTags.join(", ")}<span class="hidden"
-            >: saving makes them your own</span
-          ></span
-        >
+        <span class="new" id="tags-new">
+          new: {newTags.join(", ")}<span class="hidden">
+            : saving makes them your own
+          </span>
+        </span>
       {/if}
       {@render longNote("tags")}
     </div>
@@ -658,14 +662,17 @@
             aria-label="Collapse group {groupIndex + 1}"
             aria-expanded={!groupShut}
             onclick={() => toggleGroup(groupIndex)}
-            >{groupShut ? "▼" : "▲"}</button
           >
+            {groupShut ? "▼" : "▲"}
+          </button>
           <button
             type="button"
             class="icon"
             aria-label="Delete group {groupIndex + 1}"
-            onclick={() => removeWholeGroup(groupIndex)}>×</button
+            onclick={() => removeWholeGroup(groupIndex)}
           >
+            ×
+          </button>
         </div>
       </div>
       {#if !groupShut}
@@ -686,17 +693,18 @@
               aria-label="Edit row {index + 1}"
               aria-expanded="false"
               onclick={() => toggle(key)}
-              ><span
-                >{#if summary(row) === ""}<span class="quiet">Empty row</span
-                  >{:else}{named(row)}{#if row.rest.trim() !== ""}{named(
+            >
+              <span>
+                {#if summary(row) === ""}<span class="quiet">
+                    Empty row
+                  </span>{:else}{named(row)}{#if row.rest.trim() !== ""}{named(
                       row,
                     ) === ""
                       ? ""
-                      : " · "}<span class="quiet">{row.rest}</span
-                    >{/if}{/if}</span
-              >{#if holdsNew(row)}
-                <span class="new">new</span>{/if}</button
-            >
+                      : " · "}<span class="quiet">{row.rest}</span>{/if}{/if}
+              </span>{#if holdsNew(row)}
+                <span class="new">new</span>{/if}
+            </button>
           {:else}
             <div class="tools">
               <button
@@ -705,38 +713,48 @@
                 aria-label="Move row {index + 1} up"
                 title="Move up"
                 disabled={!canMoveRow(groupIndex, index, -1)}
-                onclick={() => move(groupIndex, index, -1)}>↑</button
+                onclick={() => move(groupIndex, index, -1)}
               >
+                ↑
+              </button>
               <button
                 type="button"
                 class="icon"
                 aria-label="Move row {index + 1} down"
                 title="Move down"
                 disabled={!canMoveRow(groupIndex, index, 1)}
-                onclick={() => move(groupIndex, index, 1)}>↓</button
+                onclick={() => move(groupIndex, index, 1)}
               >
+                ↓
+              </button>
               <button
                 type="button"
                 class="icon"
                 aria-label="Start a new group named after row {index + 1}"
                 title="Start a new group named after this row"
-                onclick={() => split(groupIndex, index)}>¶</button
+                onclick={() => split(groupIndex, index)}
               >
+                ¶
+              </button>
               <button
                 type="button"
                 class="icon"
                 aria-label="Delete row {index + 1}"
                 title="Delete"
-                onclick={() => remove(groupIndex, index)}>×</button
+                onclick={() => remove(groupIndex, index)}
               >
+                ×
+              </button>
               <button
                 type="button"
                 class="icon"
                 aria-label="Fold row {index + 1}"
                 title="Fold"
                 aria-expanded="true"
-                onclick={() => toggle(key)}>▲</button
+                onclick={() => toggle(key)}
               >
+                ▲
+              </button>
             </div>
           {/if}
           {#if !shut}
@@ -811,17 +829,18 @@
               <!-- Rest is the row's scratch pad: what is wanted is copied
                    out of it, by its words or by hand. -->
               <div class="cell full">
-                <span class="rest-head"
-                  ><label for={restId}>Rest</label>
+                <span class="rest-head">
+                  <label for={restId}>Rest</label>
                   ({#each REST_TARGETS as { field, word }, at (field)}{#if at > 0},&nbsp;{/if}<button
                       type="button"
                       class="copy"
                       aria-label="Copy rest of row {index + 1} to {field}"
                       onclick={() =>
                         copyRest(groupIndex, index, row, field, restId)}
-                      >{word}</button
-                    >{/each})</span
-                >
+                    >
+                      {word}
+                    </button>{/each})
+                </span>
                 <div class="rest">
                   <input
                     type="text"
@@ -843,8 +862,10 @@
                     onclick={() =>
                       onChange(
                         updateRow(draft, groupIndex, index, { rest: "" }),
-                      )}>🗑</button
+                      )}
                   >
+                    🗑
+                  </button>
                 </div>
                 <span class="not-saved" id={restNote}>Not saved</span>
               </div>
@@ -857,8 +878,10 @@
           type="button"
           class="add"
           aria-label="Add an ingredient to group {groupIndex + 1}"
-          onclick={() => addIngredient(groupIndex)}>+ ingredient</button
+          onclick={() => addIngredient(groupIndex)}
         >
+          + ingredient
+        </button>
       {/if}
     </section>
   {/each}
@@ -866,8 +889,10 @@
     type="button"
     class="add"
     aria-label="Add an ingredient group"
-    onclick={() => onChange(addGroup(draft))}>+ group</button
+    onclick={() => onChange(addGroup(draft))}
   >
+    + group
+  </button>
 
   <div class="steps-head part">
     <h3>Steps</h3>
@@ -899,13 +924,14 @@
             aria-label="Edit step {index + 1}"
             aria-expanded="false"
             onclick={() => toggle(stepKey(index))}
-            ><span class="step-line"
-              >{index + 1}.
-              <span class:quiet={stepLine(step) === "Empty step"}
-                >{stepLine(step)}</span
-              ></span
-            ></button
           >
+            <span class="step-line">
+              {index + 1}.
+              <span class:quiet={stepLine(step) === "Empty step"}>
+                {stepLine(step)}
+              </span>
+            </span>
+          </button>
         {:else}
           <div class="step-head">
             <input
@@ -924,31 +950,39 @@
               aria-label="Move step {index + 1} up"
               title="Move up"
               disabled={index === 0}
-              onclick={() => moveStepBy(index, -1)}>↑</button
+              onclick={() => moveStepBy(index, -1)}
             >
+              ↑
+            </button>
             <button
               type="button"
               class="icon"
               aria-label="Move step {index + 1} down"
               title="Move down"
               disabled={index === draft.steps.length - 1}
-              onclick={() => moveStepBy(index, 1)}>↓</button
+              onclick={() => moveStepBy(index, 1)}
             >
+              ↓
+            </button>
             <button
               type="button"
               class="icon"
               aria-label="Delete step {index + 1}"
               title="Delete"
-              onclick={() => removeStepAt(index)}>×</button
+              onclick={() => removeStepAt(index)}
             >
+              ×
+            </button>
             <button
               type="button"
               class="icon"
               aria-label="Fold step {index + 1}"
               title="Fold"
               aria-expanded="true"
-              onclick={() => toggle(stepKey(index))}>▲</button
+              onclick={() => toggle(stepKey(index))}
             >
+              ▲
+            </button>
           </div>
           {@render longNote(`steps.${index}.title`)}
           <textarea
@@ -968,8 +1002,10 @@
               type="button"
               class="add"
               aria-label="Add a step after step {index + 1}"
-              onclick={() => addStepAfter(index)}>+ step</button
+              onclick={() => addStepAfter(index)}
             >
+              + step
+            </button>
           {/if}
         {/if}
       </li>
@@ -980,15 +1016,19 @@
       type="button"
       class="add"
       aria-label="Add a step"
-      onclick={() => addStepAfter()}>+ step</button
+      onclick={() => addStepAfter()}
     >
+      + step
+    </button>
   {:else}
     <button
       type="button"
       class="add"
       aria-label="Add a step after step {draft.steps.length}"
-      onclick={() => addStepAfter(draft.steps.length - 1)}>+ step</button
+      onclick={() => addStepAfter(draft.steps.length - 1)}
     >
+      + step
+    </button>
   {/if}
 </section>
 
@@ -1021,9 +1061,9 @@
     />
   </label>
   {#if isNew(field, row[field])}
-    <span class="new" id={mark}
-      >new<span class="hidden">: saving makes it one of your own</span></span
-    >
+    <span class="new" id={mark}>
+      new<span class="hidden">: saving makes it one of your own</span>
+    </span>
   {/if}
   {@render longNote(at)}
 {/snippet}

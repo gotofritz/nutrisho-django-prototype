@@ -462,9 +462,9 @@
   {:else if modelNote !== undefined}
     <div class="model-note" role="status">
       <p>{modelNote.text}</p>
-      <button type="button" onclick={() => void undoModel()}
-        >Undo the model's {modelNote.changed}</button
-      >
+      <button type="button" onclick={() => void undoModel()}>
+        Undo the model's {modelNote.changed}
+      </button>
     </div>
   {/if}
 {/snippet}
@@ -485,8 +485,9 @@
       {#if problem.fix === "settings"}
         <button type="button" onclick={openSettings}>Open settings</button>
       {:else}
-        <button type="button" onclick={() => void loadLists()}>Try again</button
-        >
+        <button type="button" onclick={() => void loadLists()}>
+          Try again
+        </button>
       {/if}
     </section>
   {/if}
@@ -574,9 +575,9 @@
           {#each saved.warnings as warning, index (index)}
             <p class="quiet">{warning}</p>
           {/each}
-          <a href={saved.openUrl} target="_blank" rel="noreferrer"
-            >Open in Nutrisho</a
-          >
+          <a href={saved.openUrl} target="_blank" rel="noreferrer">
+            Open in Nutrisho
+          </a>
         </div>
       {/if}
       <div class="actions">
@@ -584,14 +585,17 @@
           type="button"
           class="primary"
           disabled={saving}
-          onclick={() => void save()}>{saving ? "Clipping…" : "Clip"}</button
+          onclick={() => void save()}
         >
+          {saving ? "Clipping…" : "Clip"}
+        </button>
         <button
           type="button"
           class="quiet-button"
           onclick={() => void keep(discard(drafts, draft.id))}
-          >Discard this draft</button
         >
+          Discard this draft
+        </button>
       </div>
     </section>
     <DraftEditor
@@ -627,9 +631,9 @@
     {:else if clipping.value !== undefined}
       <p class="source">
         From
-        <a href={clipping.value.url} target="_blank" rel="noreferrer"
-          >{clipping.value.title || clipping.value.url}</a
-        >
+        <a href={clipping.value.url} target="_blank" rel="noreferrer">
+          {clipping.value.title || clipping.value.url}
+        </a>
       </p>
       {#each clipping.value.warnings as warning (warning.kind)}
         <p class="problem">{warning.message}</p>

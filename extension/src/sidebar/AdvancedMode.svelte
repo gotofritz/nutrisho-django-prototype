@@ -252,16 +252,19 @@
               onclick={() => {
                 modelStatus = { kind: "idle" };
                 editing = { kind: "edit", setup };
-              }}>✎</button
+              }}
             >
+              ✎
+            </button>
             <button
               type="button"
               class="icon"
               aria-label="Delete {setup.name}"
               title="Delete"
               onclick={() => void changeModels(removeSetup(models, setup.id))}
-              >×</button
             >
+              ×
+            </button>
           </li>
         {/each}
       </ul>
@@ -273,8 +276,10 @@
         onclick={() => {
           modelStatus = { kind: "idle" };
           editing = { kind: "new" };
-        }}>+ add model</button
+        }}
       >
+        + add model
+      </button>
     {:else}
       {#key editing}
         <SetupForm
@@ -320,8 +325,10 @@
       <button
         type="button"
         disabled={modelCheck?.kind === "checking"}
-        onclick={() => onCheckModel()}>Check the model</button
+        onclick={() => onCheckModel()}
       >
+        Check the model
+      </button>
     </div>
   {/if}
   <section class="log" aria-labelledby="log-heading">
