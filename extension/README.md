@@ -27,6 +27,35 @@ page and the page's address, goes to your own Nutrisho. When you ask a model,
 a group's lines, the steps or the blurb go to the model you set up. Firefox lists both
 as data the clipper sends, when it is installed.
 
+## Updating it
+
+A change reaches an installed clipper only through a release, so a merged PR
+is not enough on its own. To release what has merged since the last `ext-v`
+tag:
+
+1. Run `make ext-release` from the repository root, on a clean checkout. It
+   makes a `chore-release-ext-v<next>` branch off `origin/main` with the new
+   version and its section of [`CHANGELOG.md`](CHANGELOG.md)
+2. Push the branch, open a PR titled `chore(release): ext-v<next>`, and
+   merge it
+3. Approve the `ext-sign` job when the extension workflow asks for a review
+   in the `store-publishing` environment. It has Mozilla sign the `.xpi`,
+   attaches it to the release and points the update feed at it
+
+Firefox then updates by itself. To update straight away, open
+`about:addons`, click the gear and choose *Check for Updates*.
+
+Chrome has no signed copy and no updates. Download the `-chrome.zip` from
+the release and unzip it, then open `chrome://extensions`, turn on
+*Developer mode* and choose *Load unpacked* on that folder. Next time, unzip
+over the same folder and click the clipper's reload icon there.
+
+To try what is on `main` before releasing it, pull, run `make ext-build`, and
+load the build by hand: in Firefox from `about:debugging` (see below), which
+stands in for the installed copy until Firefox restarts, and in Chrome with
+*Load unpacked* on `.output/chrome-mv3/`. The developer guide has
+[the release in full](../docs/developer-guide.md#the-extensions-releases).
+
 ## Running it
 
 You need Node and pnpm at the versions in [`.nvmrc`](.nvmrc) and

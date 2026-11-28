@@ -1,3 +1,14 @@
+## ext-v0.2.0 (2026-11-28)
+
+### Feat
+
+- ask the model to compact the blurb, in English (#205) (#207)
+
+### Fix
+
+- lay out a clipped row as a recipe reads, and Clip at the top (#202) (#209)
+- give each item of a nested list a line of its own (#204) (#206)
+
 ## ext-v0.1.0 (2026-11-23)
 
 ### Feat
