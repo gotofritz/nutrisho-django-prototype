@@ -38,9 +38,10 @@ tag:
    version and its section of [`CHANGELOG.md`](CHANGELOG.md)
 2. Push the branch, open a PR titled `chore(release): ext-v<next>`, and
    merge it
-3. Approve the `ext-sign` job when the extension workflow asks for a review
-   in the `store-publishing` environment. It has Mozilla sign the `.xpi`,
-   attaches it to the release and points the update feed at it
+3. Wait a few minutes. The extension workflow's `ext-sign` job has Mozilla
+   sign the `.xpi`, attaches it to the release and points the update feed at
+   it, with nothing to approve. While the run shows it waiting, on *Have AMO
+   sign the Firefox build*, it is waiting for Mozilla, not for you
 
 Firefox then updates by itself. To update straight away, open
 `about:addons`, click the gear and choose *Check for Updates*.

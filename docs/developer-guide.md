@@ -371,8 +371,9 @@ are in `extension/CHANGELOG.md`. Both are written by `cz bump`, run in
 Signing needs a one-off set-up in the repository's settings, under
 *Environments*:
 
-1. Create the `store-publishing` environment, add yourself as a required
-   reviewer, and limit it to the `main` branch
+1. Create the `store-publishing` environment and limit it to the `main`
+   branch. A required reviewer is optional: with one, each release waits
+   under *Review deployments* on the run's page until it is approved
 2. On the [AMO API key page](https://addons.mozilla.org/developers/addon/api/key/),
    generate credentials. Mozilla shows the secret only once. Generating a
    new pair cancels the old one, so any other project that signs with your
