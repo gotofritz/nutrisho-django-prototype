@@ -27,6 +27,16 @@ describe("stored model settings", () => {
     expect(await store.load()).toEqual({ ok: true, value: choices });
   });
 
+  it("keep the hold, when one is set", async () => {
+    const storage = createFakeStorage();
+    const store = createStoredModelSettings(storage);
+    const choices = { ...choicesFrom(defaultsFor("llama")), holdMs: 2000 };
+
+    await store.save(choices);
+
+    expect(await store.load()).toEqual({ ok: true, value: choices });
+  });
+
   // #183: the one model saved before is kept, as the first set-up.
   it("read the single model saved before set-ups", async () => {
     const storage = createFakeStorage();

@@ -37,6 +37,7 @@ export function createStoredModelSettings(
         await storage.set(MODEL_SETTINGS_KEY, {
           setups: choices.setups.map((setup) => ({ ...setup })),
           chosen: choices.chosen,
+          ...(choices.holdMs === undefined ? {} : { holdMs: choices.holdMs }),
         });
         return ok(undefined);
       } catch (cause) {

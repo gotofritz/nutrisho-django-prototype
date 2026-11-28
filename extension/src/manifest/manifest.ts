@@ -114,8 +114,8 @@ export function manifestExtras(target: string): ManifestExtras {
               update_url: UPDATE_URL,
               // Required by AMO for new extensions (M15). A saved draft
               // carries the page's text and its address to the user's own
-              // server, and asking the model sends it a group's lines or the
-              // steps: both only on the user's gesture, but both are what
+              // server, and asking the model sends it a group's lines, the
+              // steps or the blurb: both only on the user's gesture, but both are what
               // the clipper is for, so neither is optional.
               data_collection_permissions: {
                 required: ["browsingActivity", "websiteContent"],

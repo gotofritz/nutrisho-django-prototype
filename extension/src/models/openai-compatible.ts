@@ -1,4 +1,9 @@
 import { MODEL_INSTRUCTION, numbered, rowsSchema } from "@/core/model-answer";
+import {
+  BLURB_INSTRUCTION,
+  BLURB_SCHEMA,
+  blurbInput,
+} from "@/core/model-blurb";
 import { STEPS_INSTRUCTION, STEPS_SCHEMA } from "@/core/model-steps";
 import type { LineModel, ModelError } from "@/core/ports/types";
 import { ok, type Result } from "@/core/result";
@@ -222,6 +227,13 @@ export function createOpenAiCompatibleModel(deps: LocalModelDeps): LineModel {
         instruction: STEPS_INSTRUCTION,
         schema: STEPS_SCHEMA,
         input: steps,
+      }),
+    rewriteBlurb: (blurb) =>
+      ask({
+        name: "blurb",
+        instruction: BLURB_INSTRUCTION,
+        schema: BLURB_SCHEMA,
+        input: blurbInput(blurb),
       }),
     /** Both servers list their models at `/v1/models`. */
     async check() {

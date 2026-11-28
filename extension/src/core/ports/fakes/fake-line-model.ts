@@ -3,12 +3,14 @@ import { err, ok, type Result } from "../../result";
 import type { LineModel, ModelError } from "../types";
 
 export interface FakeLineModel extends LineModel {
-  /** What every later `splitLines()` or `rewriteSteps()` answers with. */
+  /** What every later `splitLines()`, `rewriteSteps()` or `rewriteBlurb()` answers with. */
   answer(next: Result<unknown, ModelError>): void;
   /** The lines of each call, in order. */
   readonly sent: readonly (readonly string[])[];
   /** The steps of each `rewriteSteps()`, in order. */
   readonly stepsSent: readonly (readonly Step[])[];
+  /** The blurb of each `rewriteBlurb()`, in order. */
+  readonly blurbsSent: readonly string[];
   /** How often `check()` was called; it fails as `answer` fails. */
   readonly checks: number;
 }
@@ -21,6 +23,7 @@ export function createFakeLineModel(): FakeLineModel {
   });
   const sent: (readonly string[])[] = [];
   const stepsSent: (readonly Step[])[] = [];
+  const blurbsSent: string[] = [];
   let checks = 0;
   return {
     answer(answer) {
@@ -31,6 +34,9 @@ export function createFakeLineModel(): FakeLineModel {
     },
     get stepsSent() {
       return stepsSent;
+    },
+    get blurbsSent() {
+      return blurbsSent;
     },
     get checks() {
       return checks;
@@ -45,6 +51,10 @@ export function createFakeLineModel(): FakeLineModel {
     },
     async rewriteSteps(steps) {
       stepsSent.push(steps.map((step) => ({ ...step })));
+      return next;
+    },
+    async rewriteBlurb(blurb) {
+      blurbsSent.push(blurb);
       return next;
     },
   };

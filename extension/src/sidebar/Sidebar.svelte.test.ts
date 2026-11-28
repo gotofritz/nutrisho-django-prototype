@@ -532,6 +532,23 @@ describe("the save", () => {
     expect(client.sent.map((draft) => draft.id)).toEqual(["draft-0"]);
   });
 
+  // #202: Clip, and what it says, at the top, over the recipe, rather than
+  // after the last step.
+  it("puts Clip and what it says above the recipe", async () => {
+    await ready();
+    const name = await nameField();
+    const clip = screen.getByRole("button", { name: "Clip" });
+
+    expect(
+      clip.compareDocumentPosition(name) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    await fireEvent.click(clip);
+    const status = await screen.findByRole("status");
+    expect(
+      status.compareDocumentPosition(name) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
   // M8: the save may have made names, so the lists load again to know them.
   it("loads the lists again after a save, keeping the ones shown meanwhile", async () => {
     const client = answering(COOKS_LISTS);
@@ -1038,6 +1055,7 @@ describe("asking the model", () => {
   it("says it is asking while it waits", async () => {
     const model: LineModel = {
       splitLines: () => new Promise(() => {}),
+      rewriteBlurb: () => new Promise(() => {}),
       rewriteSteps: () => new Promise(() => {}),
       check: async () => ok(undefined),
     };
@@ -1178,6 +1196,95 @@ describe("asking the model about the steps", () => {
   });
 });
 
+// #205: the blurb, compacted and in English, as the steps are.
+describe("asking the model about the blurb", () => {
+  const REWRITE = { language: "Italian", blurb: "Aubergines and olive oil." };
+
+  async function blurbed(model = createFakeLineModel()) {
+    renderSidebar({
+      clippings: createFakeClippingStore(CLIPPING),
+      client: answering(COOKS_LISTS),
+      model,
+      modelSettings: createFakeModelSettingsStore(defaultsFor("anthropic")),
+    });
+    await fireEvent.click(
+      await screen.findByRole("button", { name: "Edit the details" }),
+    );
+    return model;
+  }
+
+  function blurb(): HTMLElement {
+    return screen.getByRole("textbox", { name: "Blurb" });
+  }
+
+  async function ask() {
+    await fireEvent.click(
+      await screen.findByRole("button", {
+        name: "Ask the model about the blurb",
+      }),
+    );
+  }
+
+  it("is not offered while the built-in scan is chosen", async () => {
+    renderSidebar({ clippings: createFakeClippingStore(CLIPPING) });
+    await fireEvent.click(
+      await screen.findByRole("button", { name: "Edit the details" }),
+    );
+
+    expect(screen.getByRole("textbox", { name: "Blurb" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: /Ask the model/ })).toBeNull();
+  });
+
+  it("sends the blurb, and takes the rewrite", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok(REWRITE));
+    await blurbed(model);
+    const sent = (blurb() as HTMLTextAreaElement).value;
+
+    await ask();
+
+    expect(
+      await screen.findByText(
+        "claude-haiku-5-5 on Anthropic rewrote the blurb, from Italian.",
+      ),
+    ).toBeVisible();
+    expect(model.blurbsSent).toEqual([sent]);
+    expect(model.sent).toEqual([]);
+    expect(model.stepsSent).toEqual([]);
+    expect(blurb()).toHaveValue("Aubergines and olive oil.");
+  });
+
+  it("puts the blurb back on Undo", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok(REWRITE));
+    await blurbed(model);
+    const before = (blurb() as HTMLTextAreaElement).value;
+    await ask();
+    await screen.findByText(/on Anthropic rewrote the blurb/);
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: "Undo the model's blurb" }),
+    );
+
+    expect(blurb()).toHaveValue(before);
+    expect(screen.queryByText(/on Anthropic rewrote/)).toBeNull();
+  });
+
+  it("refuses an empty answer, and changes nothing", async () => {
+    const model = createFakeLineModel();
+    model.answer(ok({ blurb: " " }));
+    await blurbed(model);
+    const before = (blurb() as HTMLTextAreaElement).value;
+
+    await ask();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The model answered an empty blurb.",
+    );
+    expect(blurb()).toHaveValue(before);
+  });
+});
+
 describe("asking another model once (#183)", () => {
   const QWEN: ModelSetup = {
     ...defaultsFor("mlx"),
@@ -1230,7 +1337,7 @@ describe("asking another model once (#183)", () => {
     expect(model.sent).toEqual([]);
   });
 
-  it("lists only the models other than the default", async () => {
+  it("lists the models other than the default, after it, faded", async () => {
     twoModels("group");
     await fireEvent.contextMenu(
       await screen.findByRole("button", {
@@ -1240,7 +1347,20 @@ describe("asking another model once (#183)", () => {
 
     expect(
       screen.getAllByRole("menuitem").map((item) => item.textContent),
-    ).toEqual(["Haiku"]);
+    ).toEqual(["Qwen3-8B-4bit on MLX (default)", "Haiku"]);
+    expect(
+      screen.getByRole("menuitem", { name: "Qwen3-8B-4bit on MLX (default)" }),
+    ).toBeDisabled();
+  });
+
+  it("waits the hold set in Advanced Mode", async () => {
+    twoModels("group", { ...BOTH, holdMs: 2000 });
+
+    expect(
+      await screen.findByRole("button", {
+        name: "Ask the model about group 1",
+      }),
+    ).toHaveAttribute("title", expect.stringMatching(/^Hold for 2 seconds/));
   });
 
   it("goes back to the default on the next click", async () => {

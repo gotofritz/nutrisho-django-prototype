@@ -80,6 +80,35 @@ describe("extractCapture", () => {
     );
   });
 
+  // #204: a list inside a list item, a group of ingredients under its
+  // heading, is still a list item a line. The markup a user clipped.
+  it("gives each item of a list inside a list item a line of its own", () => {
+    document.body.innerHTML = `
+      <ul><li><h3>Per la panzanella</h3><ul id="target"><li>50g di pane secco tagliato a cubetti</li><li>80g di acqua di mozzarella</li><li>30g pomodorini</li><li>2 pesche tabacchiere</li><li>10g di prezzemolo</li><li>4 filetti di acciughe</li><li>50g di mozzarella</li><li>sale, olio Evo, pepe nero</li></ul></li></ul>`;
+    selectContentsOf(document.querySelector("#target")!);
+
+    expect(extract().text.split("\n")).toEqual([
+      "50g di pane secco tagliato a cubetti",
+      "80g di acqua di mozzarella",
+      "30g pomodorini",
+      "2 pesche tabacchiere",
+      "10g di prezzemolo",
+      "4 filetti di acciughe",
+      "50g di mozzarella",
+      "sale, olio Evo, pepe nero",
+    ]);
+  });
+
+  it("gives an item a line of its own, inside the item it is nested in", () => {
+    document.body.innerHTML = `
+      <ul id="target"><li>For the dressing<ul><li>2 tbsp olive oil</li><li>1 lemon</li></ul></li><li>basil</li></ul>`;
+    selectContentsOf(document.querySelector("#target")!);
+
+    expect(extract().text).toBe(
+      "For the dressing\n2 tbsp olive oil\n1 lemon\nbasil",
+    );
+  });
+
   // A line break in the page's source is a space on screen; only the markup
   // breaks a line. The markup a user clipped, as the page gave it.
   it("reads a line break in the page's source as a space", () => {

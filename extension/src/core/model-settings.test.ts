@@ -6,17 +6,20 @@ import {
   checkModelSettings,
   defaultsFor,
   NO_CHOICES,
+  HOLD_MS,
   checkSetupName,
   chooseSetup,
   choicesFrom,
   chosenSettings,
   chosenSetup,
+  holdOf,
   modelHostPattern,
   readModelChoices,
   readModelSettings,
   removeSetup,
   saveSetup,
   suggestName,
+  withHold,
   type ModelChoices,
   type ModelSetup,
   type UnsavedSetup,
@@ -324,5 +327,55 @@ describe("checkSetupName", () => {
       undefined,
     );
     expect(checkSetupName({ name: "Sonnet", choices: BOTH })).toBe(undefined);
+  });
+});
+
+// Asked for in the #205 PR: how long *Ask the model* is held for the menu.
+describe("the hold", () => {
+  it("is a second unless the user set another", () => {
+    expect(HOLD_MS).toBe(1000);
+    expect(holdOf(NO_CHOICES)).toBe(1000);
+    expect(holdOf({ ...NO_CHOICES, holdMs: 2500 })).toBe(2500);
+  });
+
+  it.each([
+    ["2", 2000],
+    [" 1.5 ", 1500],
+    ["0,5", 500],
+    ["5", 5000],
+  ])("takes %j seconds", (typed, ms) => {
+    expect(withHold(NO_CHOICES, typed)).toEqual({
+      ok: true,
+      value: { ...NO_CHOICES, holdMs: ms },
+    });
+  });
+
+  it.each(["", "0", "0.4", "5.5", "soon", "-1"])(
+    "refuses %j seconds",
+    (typed) => {
+      expect(withHold(NO_CHOICES, typed)).toEqual({
+        ok: false,
+        error: "Hold for between 0.5 and 5 seconds.",
+      });
+    },
+  );
+
+  it("is read back when saved, and forgotten when it is not a hold", () => {
+    expect(readModelChoices({ ...BOTH, holdMs: 2000 })).toEqual({
+      ...BOTH,
+      holdMs: 2000,
+    });
+    expect(readModelChoices({ ...BOTH, holdMs: 60_000 })).toEqual(BOTH);
+    expect(readModelChoices({ ...BOTH, holdMs: "2" })).toEqual(BOTH);
+  });
+
+  it("is kept as set-ups are added, removed and chosen", () => {
+    const held: ModelChoices = { ...BOTH, holdMs: 2000 };
+
+    expect(saveSetup(held, { ...unsaved(HAIKU), name: "Again" }).holdMs).toBe(
+      2000,
+    );
+    expect(removeSetup(held, HAIKU.id).holdMs).toBe(2000);
+    expect(chooseSetup(held, MLX.id).holdMs).toBe(2000);
   });
 });
