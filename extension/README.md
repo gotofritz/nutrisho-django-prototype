@@ -87,8 +87,10 @@ the *View* menu, under *Sidebar*.
    *plain* stays in *Rest*. A line with no name from your lists still keeps
    the amount and unit it starts with (`90ml dark maple syrup`). Every other
    word stays in *Rest*, commas included. *Rest* is a scratch pad and is
-   not saved: move what you want into a field such as *Note*, and clear the
-   rest with 🗑.
+   not saved: *Prep*, *Sub* and *Note* beside its name copy it, or the part
+   of it you have selected, into *Preparation*, *Substitute* or *Note*, and
+   🗑 clears it. On a folded row, what is left in *Rest* shows greyed out.
+   *to taste* and *optional* under the note tick those words into it.
    A line belongs to the one before when it starts with a comma or a bracket
    (`(about 2 tsp)`), or the line before ends with a comma. A name your
    lists do not have is marked *new*, and saving makes it one of your own.
@@ -122,7 +124,8 @@ the *View* menu, under *Sidebar*.
    cuisine or tag your lists do not have is marked *new*, and saving makes it
    one of your own: `med.italy.marche` goes inside `med.italy`, and a name
    with no dots is a new area.
-7. *Clip* sends the recipe to your Nutrisho and offers *Open in Nutrisho*.
+7. *Clip*, at the top above the recipe, sends the recipe to your Nutrisho
+   and offers *Open in Nutrisho*.
    Saving the same recipe again changes nothing. Your lists load again after
    a save, so the names it made are no longer marked *new*.
 8. With a model of your own set up under *Your models* in *Advanced Mode*,
