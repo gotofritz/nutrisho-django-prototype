@@ -174,7 +174,7 @@ jobs:
           fi
           version="${TAG#ext-v}"
           unzip -q "zips/nutrisho-clipper-$version-firefox.zip" -d firefox
-          npx --yes web-ext@10.6.0 sign --source-dir firefox --artifacts-dir signed \
+          npx --yes web-ext@10.8.0 sign --source-dir firefox --artifacts-dir signed \
             --channel unlisted --upload-source-code "zips/nutrisho-clipper-$version-sources.zip"
           mv signed/*.xpi "nutrisho-clipper-$version-firefox.xpi"
 
